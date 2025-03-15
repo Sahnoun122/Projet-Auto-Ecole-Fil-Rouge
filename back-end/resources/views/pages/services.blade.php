@@ -72,15 +72,15 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t mt-4">
             <div class="container mx-auto px-6 py-4">
                 <nav class="flex flex-col space-y-4">
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 border-b border-gray-100 transition duration-300">Accueil</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 border-b border-gray-100 transition duration-300">Services</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 border-b border-gray-100 transition duration-300">À propos</a>
+                    <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">Accueil</a>
+                    <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">Services</a>
+                    <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">À propos</a>
                     <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 transition duration-300">Contact</a>
                 </nav>
                 
                 <div class="mt-6 flex flex-col space-y-4">
-                    <a href="#" class="px-4 py-2 border border-gray-300 rounded text-center text-gray-700 hover:bg-gray-100 transition duration-300">Connexion</a>
-                    <a href="#" class="px-4 py-2 gradient-bg text-center text-white rounded hover:opacity-90 transition duration-300">Register</a>
+                    <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300">Connexion</a>
+                    <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105">Register</a>
                 </div>
             </div>
         </div>
@@ -366,7 +366,6 @@
                 mirror: true
             });
             
-            // Mobile menu toggle
             const burgerBtn = document.getElementById('burger-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             
@@ -383,7 +382,6 @@
                 }
             });
             
-            // Back to top button
             const backToTopButton = document.getElementById('back-to-top');
             window.addEventListener('scroll', function() {
                 if (window.pageYOffset > 300) {
@@ -403,7 +401,6 @@
                 });
             });
             
-            // Testimonial slider (simple version)
             const testimonials = document.querySelectorAll('.testimonial-slider > div');
             let currentTestimonial = 0;
             
@@ -421,15 +418,12 @@
                 }, 500);
             }
             
-            // Initial setup for testimonials
             for (let i = 1; i < testimonials.length; i++) {
                 testimonials[i].style.display = 'none';
             }
             
-            // Change testimonial every 5 seconds
             setInterval(showNextTestimonial, 5000);
             
-            // Add scroll animations to services
             const serviceCards = document.querySelectorAll('.service-card');
             
             function checkScroll() {
@@ -443,11 +437,7 @@
                 });
             }
             
-            // Uncomment if you want additional scroll animations beyond AOS
-            // window.addEventListener('scroll', checkScroll);
-            // checkScroll(); // Initial check
-            
-            // Animate numbers on scroll (for statistics if you add them later)
+     
             function animateValue(obj, start, end, duration) {
                 let startTimestamp = null;
                 const step = (timestamp) => {
