@@ -100,3 +100,22 @@
             </div>
         </div>
     </section>
+
+
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">À Propos de Nous</h2>
+            
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0">
+                    <img src="{{ url('photoss/about.png')}}" alt="Leçon de conduite" class="w-full rounded-lg shadow-lg">
+                </div>
+                
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-semibold mb-4">Pourquoi choisir notre auto-école ?</h3>
+                    <p class="text-gray-600 mb-6">Une brève description de l'auto-école ici. "Fondée en 2010, notre auto-école a formé plus de 1000 candidats avec un taux de réussite de 95%."</p>
+                    <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">En savoir plus</a>
+                </div>
+            </div>
+        </div>
+    </section>
