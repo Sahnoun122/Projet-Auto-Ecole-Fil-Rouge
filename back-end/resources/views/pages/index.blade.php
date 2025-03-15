@@ -163,7 +163,7 @@
                 
                 <p class="text-gray-700 mb-6">Des moniteurs qualifiés et des véhicules<br/>modernes pour vous accompagner.</p>
                 
-                <a href="#" class="px-6 py-3 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 inline-block btn-hover pulse">Register</a>
+                <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">Register</a>
             </div>
             
             <div class="md:w-1/2 mt-10 md:mt-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
