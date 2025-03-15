@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto-École</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50">
     <header class="bg-white py-4 shadow-sm">
@@ -61,6 +61,42 @@
             
             <div class="md:w-1/2 mt-10 md:mt-0">
                 <img src="{{url('resources/photoss/logo.png')}}" alt="Voiture " class="w-full rounded-lg shadow-lg">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Nos Services</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <div class="mx-auto w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-car text-3xl text-gray-700"></i>
+
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Cours de Conduite</h3>
+                    <p class="text-gray-600 mb-6">Apprenez à conduire avec des moniteurs expérimentés.</p>
+                    <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">En savoir plus</a>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <div class="mx-auto w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-book text-3xl text-gray-700"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Code de la Route</h3>
+                    <p class="text-gray-600 mb-6">Préparez-vous à l'examen théorique avec nos cours interactifs.</p>
+                    <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">En savoir plus</a>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <div class="mx-auto w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-tasks text-3xl text-gray-700"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Examens Pratiques</h3>
+                    <p class="text-gray-600 mb-6">Passez votre examen de conduite dans les meilleures conditions.</p>
+                    <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">En savoir plus</a>
+                </div>
             </div>
         </div>
     </section>
