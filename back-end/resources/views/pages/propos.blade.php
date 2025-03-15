@@ -65,5 +65,88 @@
     </section>
 
 
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl  text-center mb-16">
+                À propos
+            </h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-12">
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold mb-6 text-indigo-600">À propos de l'auto-école Sahnoun</h3>
+                        <p class="text-gray-700 mb-4">
+                            Bienvenue à l'auto-école Sahnoun, votre partenaire de confiance pour l'apprentissage de la conduite à Safi. 
+                            Depuis notre création en 2025, nous avons aidé des milliers d'élèves à obtenir leur permis de conduire en toute sécurité et confiance.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-12">
+                    <div class="md:flex">
+                        <div class="md:w-2/5 bg-indigo-600 text-white p-8 flex items-center justify-center">
+                            <h3 class="text-2xl font-bold">Notre Histoire</h3>
+                        </div>
+                        <div class="md:w-3/5 p-8">
+                            <p class="text-gray-700 leading-relaxed">
+                                L'auto-école Sahnoun a été fondée par khadija Sahnoun avec la vision de fournir une formation de conduite de haute qualité,
+                                 axée sur la sécurité routière et le respect des règles de circulation.
+                                  Au fil des années, nous avons élargi nos services pour répondre aux besoins variés de nos élèves,
+                                   qu'ils soient débutants ou conducteurs expérimentés cherchant à améliorer leurs compétences.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-12">
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold mb-6 text-indigo-600">Nos Valeurs</h3>
+                        <p class="text-gray-700 mb-6 leading-relaxed">
+                            Chez Sahnoun, nous croyons en des valeurs fondamentales qui guident notre approche pédagogique :
+                        </p>
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-indigo-600">
+                                <h4 class="font-bold text-lg mb-3 text-gray-800">Sécurité avant tout</h4>
+                                <p class="text-gray-600">La sécurité de nos élèves et de tous les usagers de la route est notre priorité absolue.</p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-indigo-600">
+                                <h4 class="font-bold text-lg mb-3 text-gray-800">Qualité d'enseignement</h4>
+                                <p class="text-gray-600">Nous nous engageons à fournir une formation de qualité, dispensée par des instructeurs expérimentés et certifiés.</p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-indigo-600">
+                                <h4 class="font-bold text-lg mb-3 text-gray-800">Confiance et respect</h4>
+                                <p class="text-gray-600">Nous valorisons une relation de confiance et de respect mutuel entre nos élèves et nos instructeurs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="md:flex">
+                        <div class="md:w-3/5 p-8">
+                            <h3 class="text-2xl font-bold mb-6 text-indigo-600">Notre Équipe</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                Notre équipe est composée de professionnels dévoués et passionnés par l'enseignement de la conduite. Nos instructeurs sont non seulement des experts en conduite, mais aussi des éducateurs patients et empathiques qui sont là pour vous soutenir à chaque étape de votre apprentissage.
+                            </p>
+                        </div>
+                        <div class="md:w-2/5 bg-cover bg-center" style="background-image: url('team.jpg');">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-indigo-600 py-12 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold mb-4">Prêt à commencer votre formation ?</h2>
+            <p class="text-indigo-100 mb-6 max-w-2xl mx-auto">Rejoignez les milliers d'élèves satisfaits qui ont obtenu leur permis avec l'auto-école Sahnoun.</p>
+            <div class="flex justify-center space-x-4">
+                <a href="#" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-md hover:bg-gray-100 transition duration-300">Nous contacter</a>
+                <a href="#" class="px-6 py-3 bg-indigo-700 text-white font-medium rounded-md hover:bg-indigo-800 transition duration-300">S'inscrire maintenant</a>
+            </div>
+        </div>
+    </section>
+
 </body>
 </html>
