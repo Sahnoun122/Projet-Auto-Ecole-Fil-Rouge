@@ -47,7 +47,23 @@
         </div>
     </header>
 
+    <section class="bg-gray-100 py-16">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 md:pr-12">
+                <h1 class="text-4xl font-bold text-indigo-700 mb-2">Apprenez à</h1>
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">conduire en<br/>toute confiance !</h1>
+                
+                <p class="text-gray-700 mb-6">Des moniteurs qualifiés et des véhicules<br/>modernes pour vous accompagner.</p>
+                
+                <a href="#" class="px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Register</a>
+            </div>
+            
+            <div class="md:w-1/2 mt-10 md:mt-0">
+                <img src="{{url('resources/photoss/logo.png')}}" alt="Voiture " class="w-full rounded-lg shadow-lg">
+            </div>
+        </div>
+    </section>
 
-    
+
 </body>
 </html>
