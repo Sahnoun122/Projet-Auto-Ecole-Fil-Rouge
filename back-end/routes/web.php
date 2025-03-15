@@ -11,7 +11,11 @@ use Illuminate\Support\Facades\Route;
 //     return view('accueil');
 // });
 
-Route::get('accueil', [PagesController::class, 'accueil']);
+
+Route::get('/accueil', [PagesController::class, 'accueil'])->name('accueil');
+
+Route::get('/services', [PagesController::class, 'services'])->name('services');
+
 
 
 

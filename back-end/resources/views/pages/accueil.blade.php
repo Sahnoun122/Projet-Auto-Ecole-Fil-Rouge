@@ -15,8 +15,8 @@
             </div>
             
             <nav class="hidden md:flex space-x-8">
-                <a href="#" class="text-gray-600 hover:text-blue-600">Accueil</a>
-                <a href="#" class="text-gray-600 hover:text-blue-600">Services</a>
+                <a href="{{ route('accueil') }}" class="text-gray-600 hover:text-blue-600">Accueil</a>
+                <a href="{{ route('services') }}" class="text-gray-600 hover:text-blue-600">Services</a>
                 <a href="#" class="text-gray-600 hover:text-blue-600">À propos</a>
                 <a href="#" class="text-gray-600 hover:text-blue-600">Contact</a>
             </nav>
@@ -177,7 +177,7 @@
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between">
                 <div class="mb-6 md:mb-0">
-                    <p class="text-sm">Copyright © 2023 Nom de l'Auto-École. Tous droits réservés.</p>
+                    <p class="text-sm">Copyright © 2025 Nom de l'Auto-École. Tous droits réservés.</p>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-8">

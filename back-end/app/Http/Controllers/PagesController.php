@@ -13,6 +13,11 @@ class PagesController extends Controller
     {
         return view('pages.accueil'); 
     }
+    public function services()
+    {
+        return view('pages.services'); 
+    }
+    
     
 
     /**
