@@ -12,11 +12,13 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::get('/accueil', [PagesController::class, 'accueil'])->name('accueil');
+Route::get('/', [PagesController::class, 'index'])->name('/');
 
 Route::get('/services', [PagesController::class, 'services'])->name('services');
 
 Route::get('/propos', [PagesController::class, 'propos'])->name('propos');
+
+Route::get('/register', [PagesController::class, 'register'])->name('register');
 
 
 

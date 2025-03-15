@@ -9,9 +9,9 @@ class PagesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function accueil()
+    public function index()
     {
-        return view('pages.accueil'); 
+        return view('pages.index'); 
     }
     public function services()
     {
@@ -21,6 +21,11 @@ class PagesController extends Controller
     public function propos()
     {
         return view('pages.propos'); 
+    }
+
+    public function register()
+    {
+        return view('pages.register'); 
     }
 
     /**
