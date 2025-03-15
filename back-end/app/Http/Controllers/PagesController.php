@@ -18,7 +18,10 @@ class PagesController extends Controller
         return view('pages.services'); 
     }
     
-    
+    public function propos()
+    {
+        return view('pages.propos'); 
+    }
 
     /**
      * Show the form for creating a new resource.

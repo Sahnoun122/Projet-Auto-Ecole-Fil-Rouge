@@ -13,11 +13,10 @@
             <div class="flex items-center">
                 <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="h-10">
             </div>
-            
             <nav class="hidden md:flex space-x-8">
                 <a href="{{ route('accueil') }}" class="text-gray-600 hover:text-blue-600">Accueil</a>
                 <a href="{{ route('services') }}" class="text-gray-600 hover:text-blue-600">Services</a>
-                <a href="#" class="text-gray-600 hover:text-blue-600">À propos</a>
+                <a href="{{ route('propos') }}" class="text-gray-600 hover:text-blue-600">À propos</a>
                 <a href="#" class="text-gray-600 hover:text-blue-600">Contact</a>
             </nav>
             

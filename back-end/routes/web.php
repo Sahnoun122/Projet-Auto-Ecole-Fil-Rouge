@@ -16,6 +16,8 @@ Route::get('/accueil', [PagesController::class, 'accueil'])->name('accueil');
 
 Route::get('/services', [PagesController::class, 'services'])->name('services');
 
+Route::get('/propos', [PagesController::class, 'propos'])->name('propos');
+
 
 
 
