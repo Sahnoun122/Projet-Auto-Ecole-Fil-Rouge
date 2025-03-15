@@ -135,7 +135,7 @@
       <div class="text-center mt-6">
         <p class="text-gray-600">
           Déjà membre ? 
-          <a href="#" class="text-cyan-500 font-medium hover:underline">Se connecter</a>
+          <a href="{{ route ('connecter') }}" class="text-cyan-500 font-medium hover:underline">Se connecter</a>
         </p>
       </div>
     </div>
