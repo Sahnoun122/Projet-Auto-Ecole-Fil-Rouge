@@ -134,3 +134,67 @@
             </div>
         </div>
     </section>
+
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <p class="text-sm">Copyright © 2025 Nom de l'Auto-École. Tous droits réservés.</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-sm font-semibold mb-4">Services</h4>
+                        <ul class="text-sm">
+                            <li class="mb-2"><a href="#" class="text-gray-300 hover:text-white">À propos</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-sm font-semibold mb-4">Accueil</h4>
+                        <ul class="text-sm">
+                            <li class="mb-2"><a href="#" class="text-gray-300 hover:text-white">Contact</a></li>
+                            <li class="mb-2"><a href="#" class="text-gray-300 hover:text-white">Politique de confidentialité</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pt-8 mt-8 border-t border-gray-700 flex justify-center space-x-6">
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const burgerBtn = document.getElementById('burger-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            burgerBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                
+                const icon = burgerBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
