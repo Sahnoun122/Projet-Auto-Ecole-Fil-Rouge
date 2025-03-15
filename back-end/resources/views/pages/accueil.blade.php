@@ -119,3 +119,56 @@
             </div>
         </div>
     </section>
+
+    <section class="py-16">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Avis des Candidats</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex justify-center mb-4">
+                        <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
+                    </div>
+                    <div class="flex justify-center text-yellow-400 mb-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-center mb-2">Alice Dupont</h4>
+                    <p class="text-gray-600 text-center">Très professionnel, j'ai obtenu mon permis du premier coup !</p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex justify-center mb-4">
+                        <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
+                    </div>
+                    <div class="flex justify-center text-yellow-400 mb-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-center mb-2">Jean Martin</h4>
+                    <p class="text-gray-600 text-center">Les moniteurs sont très patients et pédagogues.</p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex justify-center mb-4">
+                        <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
+                    </div>
+                    <div class="flex justify-center text-yellow-400 mb-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-center mb-2">Sophie Leroy</h4>
+                    <p class="text-gray-600 text-center">Je recommande cette auto-école à tous mes amis !</p>
+                </div>
+            </div>
+        </div>
+    </section>
