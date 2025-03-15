@@ -10,8 +10,6 @@
   <div class="hidden md:flex bg-indigo-700 text-white w-full md:w-2/5 p-8 flex-col items-center justify-center relative">
     <div class="mb-8">
 
-        <h2 class="text-4xl font-bold text-white-900 mb-8">Créer un compte</h2>
-
       <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="w-64">
     </div>
     
@@ -23,8 +21,6 @@
         
       </div>
     
-    <div class="flex space-x-2 mt-auto">
-    </div>
   </div>
 
 

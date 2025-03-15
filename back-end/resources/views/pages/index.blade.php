@@ -22,8 +22,8 @@
             </nav>
             
             <div class="hidden md:flex space-x-4">
-                <a href="#" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">Connexion</a>
-                <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Register</a>
+                <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">Connexion</a>
+                <a href="{{route ('register')}}" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Register</a>
             </div>
             
             <button id="burger-btn" class="md:hidden text-gray-600 focus:outline-none">

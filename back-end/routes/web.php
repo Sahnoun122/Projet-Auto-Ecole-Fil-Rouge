@@ -21,5 +21,8 @@ Route::get('/propos', [PagesController::class, 'propos'])->name('propos');
 Route::get('/register', [PagesController::class, 'register'])->name('register');
 
 
+Route::get('/connecter', [PagesController::class, 'connecter'])->name('connecter');
+
+
 
 
