@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto-École</title>
+    <title>Auto-École - Accueil</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-    {{-- <link rel="stylesheet" href="resources/css/css.css"> --}}
+    
     <style>
         .service-card {
             transition: all 0.3s ease;
@@ -44,6 +44,75 @@
         .nav-item:hover::after {
             width: 100%;
         }
+        
+        /* Enhanced animations */
+        .slide-in-right {
+            animation: slideInRight 0.8s ease-out;
+        }
+        @keyframes slideInRight {
+            0% { opacity: 0; transform: translateX(50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 0.8s ease-out;
+        }
+        @keyframes slideInLeft {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .rotate-in {
+            animation: rotateIn 0.8s ease-out;
+        }
+        @keyframes rotateIn {
+            0% { opacity: 0; transform: rotate(-20deg); }
+            100% { opacity: 1; transform: rotate(0); }
+        }
+        
+        .btn-hover {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-hover:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover:after {
+            left: 100%;
+        }
+        
+        .card-hover-effect {
+            transition: all 0.4s ease;
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -53,18 +122,18 @@
                 <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="h-10 animate__animated animate__fadeIn">
             </div>
             <nav class="hidden md:flex space-x-8">
-                <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">Accueil</a>
-                <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">Services</a>
-                <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">À propos</a>
-                <a href="#" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">Contact</a>
+                <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.1s;">Accueil</a>
+                <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.2s;">Services</a>
+                <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.3s;">À propos</a>
+                <a href="#" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.4s;">Contact</a>
             </nav>
             
             <div class="hidden md:flex space-x-4">
-                <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300">Connexion</a>
-                <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105">Register</a>
+                <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300 animate__animated animate__fadeInRight" style="animation-delay: 0.3s;">Connexion</a>
+                <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">Register</a>
             </div>
             
-            <button id="burger-btn" class="md:hidden text-gray-600 focus:outline-none">
+            <button id="burger-btn" class="md:hidden text-gray-600 focus:outline-none animate__animated animate__fadeIn">
                 <i class="fas fa-bars text-2xl"></i>
             </button>
         </div>
@@ -72,15 +141,15 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t mt-4">
             <div class="container mx-auto px-6 py-4">
                 <nav class="flex flex-col space-y-4">
-                    <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">Accueil</a>
-                    <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">Services</a>
-                    <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300">À propos</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 transition duration-300">Contact</a>
+                    <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left">Accueil</a>
+                    <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.1s;">Services</a>
+                    <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.2s;">À propos</a>
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 transition duration-300 slide-in-left" style="animation-delay: 0.3s;">Contact</a>
                 </nav>
                 
                 <div class="mt-6 flex flex-col space-y-4">
-                    <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300">Connexion</a>
-                    <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105">Register</a>
+                    <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300 slide-in-left" style="animation-delay: 0.4s;">Connexion</a>
+                    <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover slide-in-left" style="animation-delay: 0.5s;">Register</a>
                 </div>
             </div>
         </div>
@@ -88,16 +157,16 @@
 
     <section class="bg-gradient-to-r from-indigo-50 to-blue-50 py-20">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 md:pr-12 animate__animated animate__fadeInLeft">
+            <div class="md:w-1/2 md:pr-12" data-aos="fade-right" data-aos-duration="1000">
                 <h1 class="text-4xl font-bold text-indigo-700 mb-2">Apprenez à</h1>
                 <h1 class="text-4xl font-bold text-gray-800 mb-4">conduire en<br/>toute confiance !</h1>
                 
                 <p class="text-gray-700 mb-6">Des moniteurs qualifiés et des véhicules<br/>modernes pour vous accompagner.</p>
                 
-                <a href="#" class="px-6 py-3 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 inline-block">Register</a>
+                <a href="#" class="px-6 py-3 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 inline-block btn-hover pulse">Register</a>
             </div>
             
-            <div class="md:w-1/2 mt-10 md:mt-0 animate__animated animate__fadeInRight">
+            <div class="md:w-1/2 mt-10 md:mt-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
                 <img src="{{url('resources/photoss/logo.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
             </div>
         </div>
@@ -286,67 +355,43 @@
             <a href="#" class="inline-block px-8 py-3 bg-white text-indigo-700 rounded-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105" data-aos="fade-up" data-aos-delay="200">S'inscrire maintenant</a>
         </div>
     </section>
-
     <footer class="bg-gray-800 text-white py-12">
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between">
                 <div class="mb-6 md:mb-0">
-                    <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="h-12 mb-4 opacity-80">
-                    <p class="text-sm text-gray-400">Votre partenaire de confiance pour l'apprentissage de la conduite depuis 1995.</p>
-                    <p class="text-sm mt-4">Copyright © 2025 Auto-École. Tous droits réservés.</p>
+                    <p class="text-sm">Copyright © 2025 Nom de l'Auto-École. Tous droits réservés.</p>
                 </div>
                 
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-2 gap-8">
                     <div>
-                        <h4 class="text-lg font-semibold mb-4">Services</h4>
-                        <ul class="space-y-2">
-                            <li><a href="#" class="text-gray-300 hover:text-white transition duration-300">Cours de conduite</a></li>
-                            <li><a href="#" class="text-gray-300 hover:text-white transition duration-300">Code de la route</a></li>
-                            <li><a href="#" class="text-gray-300 hover:text-white transition duration-300">Examens pratiques</a></li>
+                        <h4 class="text-sm font-semibold mb-4">Services</h4>
+                        <ul class="text-sm">
+                            <li class="mb-2"><a href="#" class="text-gray-300 hover:text-white">À propos</a></li>
                         </ul>
                     </div>
                     
                     <div>
-                        <h4 class="text-lg font-semibold mb-4">À propos</h4>
-                        <ul class="space-y-2">
-                            <li><a href="#" class="text-gray-300 hover:text-white transition duration-300">Notre équipe</a></li>
-                            <li><a href="#" class="text-gray-300 hover:text-white transition duration-300">Nos véhicules</a></li>
-                            <li><a href="#" class="text-gray-300 hover:text-white transition duration-300">Témoignages</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4">Contact</h4>
-                        <ul class="space-y-2">
-                            <li class="flex items-center">
-                                <i class="fas fa-map-marker-alt mr-2 text-indigo-400"></i>
-                                <span>123 Rue Example, 75000 Paris</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-phone mr-2 text-indigo-400"></i>
-                                <span>01 23 45 67 89</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-envelope mr-2 text-indigo-400"></i>
-                                <span>contact@auto-ecole.fr</span>
-                            </li>
+                        <h4 class="text-sm font-semibold mb-4">Accueil</h4>
+                        <ul class="text-sm">
+                            <li class="mb-2"><a href="#" class="text-gray-300 hover:text-white">Contact</a></li>
+                            <li class="mb-2"><a href="#" class="text-gray-300 hover:text-white">Politique de confidentialité</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             
             <div class="pt-8 mt-8 border-t border-gray-700 flex justify-center space-x-6">
-                <a href="#" class="text-gray-400 hover:text-white transition duration-300 transform hover:scale-110">
-                    <i class="fab fa-instagram text-2xl"></i>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-instagram"></i>
                 </a>
-                <a href="#" class="text-gray-400 hover:text-white transition duration-300 transform hover:scale-110">
-                    <i class="fab fa-facebook text-2xl"></i>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-facebook"></i>
                 </a>
-                <a href="#" class="text-gray-400 hover:text-white transition duration-300 transform hover:scale-110">
-                    <i class="fab fa-twitter text-2xl"></i>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-twitter"></i>
                 </a>
-                <a href="#" class="text-gray-400 hover:text-white transition duration-300 transform hover:scale-110">
-                    <i class="fab fa-youtube text-2xl"></i>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-youtube"></i>
                 </a>
             </div>
         </div>
