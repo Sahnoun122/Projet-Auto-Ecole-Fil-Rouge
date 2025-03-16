@@ -31,7 +31,7 @@
                     <div
                         class="absolute inset-0 bg-primary rounded-full opacity-10 group-hover:opacity-20 transition-opacity">
                     </div>
-                    <img src="/api/placeholder/60/60" alt="Auto-école Khalid"
+                    <img src="/api/placeholder/60/60" alt="Auto-école"
                         class="h-16 w-16 object-contain rounded-full border-2 border-gray-200" />
                     <div class="absolute bottom-0 right-0 h-4 w-4 bg-green-500 rounded-full border-2 border-white">
                     </div>
