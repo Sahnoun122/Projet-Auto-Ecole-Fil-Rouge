@@ -54,7 +54,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
-
+                <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
             </div>
             <div id="candidats-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
                 <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
@@ -74,7 +76,9 @@
                   </svg>
 
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
-
+                <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
             </div>
             <div id="cours-theorique-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
                 <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
@@ -93,7 +97,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
-              
+                <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
               </div>
               <div id="cours-pratique-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
                 <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
@@ -112,7 +118,9 @@
                   </svg>
 
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
-              
+                <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
               </div>
               <div id="vehicule-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
                 <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
@@ -132,7 +140,9 @@
                   </svg>
 
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
-               
+                <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
               </div>
               <div id="examen-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
                 <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
@@ -153,7 +163,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                   </svg>
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
-               
+                <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
           
             </div>
             <div id="moniteurs-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
@@ -173,7 +185,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
-        
+                <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
             </div>
 
             <div id="caisse-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
