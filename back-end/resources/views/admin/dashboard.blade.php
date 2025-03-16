@@ -54,8 +54,18 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
-            
+
             </div>
+            <div id="candidats-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Candidats</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Candidats</span>
+                </a>
+              </div>
+            
+        </div>
           
             <div>
               <div id="cours-theorique-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
@@ -64,8 +74,17 @@
                   </svg>
 
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
-       
+
             </div>
+            <div id="cours-theorique-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Théorique</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Cours Théorique</span>
+                </a>
+              </div>
+         </div>
           
             <div>
               <div id="cours-pratique-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
@@ -76,7 +95,14 @@
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
               
               </div>
-         
+              <div id="cours-pratique-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Cours Pratique</span>
+                </a>
+              </div>
             </div>
           
             <div>
@@ -88,7 +114,14 @@
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
               
               </div>
-         
+              <div id="vehicule-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Véhicule</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Véhicules</span>
+                </a>
+              </div>
             </div>
           
             <div>
@@ -101,6 +134,15 @@
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
                
               </div>
+              <div id="examen-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Examen</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Examens</span>
+                </a>
+              </div>
+
             
             </div>
           
@@ -114,6 +156,16 @@
                
           
             </div>
+            <div id="moniteurs-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Moniteurs</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Moniteurs</span>
+                </a>
+              </div>
+
+             </div>
           
             <div>
               <div id="caisse-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
@@ -123,6 +175,17 @@
                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
         
             </div>
+
+            <div id="caisse-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Caisse</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
+                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Caisses</span>
+                </a>
+              </div>
+
+         </div>
           </nav>
     </div>
 
