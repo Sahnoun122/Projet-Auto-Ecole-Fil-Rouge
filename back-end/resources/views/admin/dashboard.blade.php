@@ -34,7 +34,77 @@
         Auto-école S A H N O U N 
       </div>
 
+
+        
+      <div class="flex-1 overflow-y-auto py-4">
+        <nav>
+            <a href="#" class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
+           
+              <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
+            </a>
+          
+            <div>
+              <div id="candidats-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+              
+                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
+            
+            </div>
+          
+            <div>
+              <div id="cours-theorique-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+             
+                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
+       
+            </div>
+          
+            <div>
+              <div id="cours-pratique-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+              
+                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
+              
+              </div>
+         
+            </div>
+          
+            <div>
+              <div id="vehicule-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+              
+                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
+              
+              </div>
+         
+            </div>
+          
+            <div>
+              <div id="examen-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+              
+                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
+               
+              </div>
+            
+            </div>
+          
+            <div>
+              <div id="moniteurs-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+               
+                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
+               
+          
+            </div>
+          
+            <div>
+              <div id="caisse-header" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+               
+                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
+        
+            </div>
+          </nav>
     </div>
+
+    </div>
+
+    
+
 
  </div>
 
