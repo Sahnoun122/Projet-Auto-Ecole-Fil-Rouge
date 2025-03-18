@@ -111,9 +111,19 @@
   <div class="bg-white w-full md:w-3/5 p-8 flex flex-col justify-center">
     <div class="max-w-lg mx-auto w-full">
       <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Créez votre compte</h2>
-      
-      <form class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      @if ($errors->any())
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <ul class="list-disc pl-5">
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+      </div>
+  @endif
+
+  <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="fade-in-up" style="animation-delay: 0.1s;">
             <label for="nom" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
             <input 
@@ -154,9 +164,9 @@
           <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
           <input 
             type="password" 
-            id="password" 
+            id="mot-de-passe" 
             value=""
-            name="password"
+            name="mot-de-passe"
             placeholder="Mot de passe"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
           >
@@ -173,14 +183,14 @@
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
           >
         </div>
-        
+
         <div class="fade-in-up" style="animation-delay: 0.6s;">
           <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
           <input 
             type="tel" 
-            id="phone" 
+            id="telephone" 
             value=""
-            name="phone"
+            name="telephone"
             placeholder="Téléphone"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
           >
@@ -192,7 +202,7 @@
             type="text" 
             id="licenseType" 
             value=""
-            name="type"
+            name="type-permis"
             placeholder="Type de permis"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
           >
@@ -203,10 +213,28 @@
           <div class="relative">
             <input 
               type="file" 
-              id="photos" 
+              id="photos-identité" 
               value=""
-              name="photos"
-              placeholder="photos"
+              name="photos-identité"
+              placeholder="photos identité"
+              class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            >
+            <span class="absolute right-2 top-2 text-indigo-500">
+                <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="fade-in-up" style="animation-delay: 0.8s;">
+          <label for="photos" class="block text-sm font-medium text-gray-700 mb-1">Photos</label>
+          <div class="relative">
+            <input 
+              type="file" 
+              id="photos-profile" 
+              value=""
+              name="photos-profile"
+              placeholder="photos profile"
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
             >
             <span class="absolute right-2 top-2 text-indigo-500">
