@@ -23,15 +23,15 @@ class PagesController extends Controller
         return view('pages.propos'); 
     }
 
-    public function register()
-    {
-        return view('pages.register'); 
-    }
+    // public function register()
+    // {
+    //     return view('pages.register'); 
+    // }
     
-    public function connecter()
-    {
-        return view('pages.connecter'); 
-    }
+    // public function connecter()
+    // {
+    //     return view('pages.connecter'); 
+    // }
 
     /**
      * Show the form for creating a new resource.
