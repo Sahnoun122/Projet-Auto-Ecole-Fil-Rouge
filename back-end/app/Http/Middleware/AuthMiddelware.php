@@ -1,21 +1,19 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthMiddelware
+class AuthMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string $role = null): Response
     {
-        if (!$request->user() || $request->user()->role !== $role) {
+        if ($role && (!$request->user() || $request->user()->role !== $role)) {
+            abort(403, 'Accès non autorisé.');
+        }
+
+        if (!$role && !$request->user()) {
             abort(403, 'Accès non autorisé.');
         }
 
