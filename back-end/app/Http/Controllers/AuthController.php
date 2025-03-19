@@ -43,7 +43,7 @@ class AuthController extends Controller
              'photos-identité' => 'required|image|mimes:jpeg,png,jpg|max:2048',
              'photos-profile' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
              'diplome' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
-             'password' => ['required','confirmed','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+             'mot-de-passe' => ['required','confirmed','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
              'role' => 'sometimes|in:admin,moniteur,candidats',
          ]);
