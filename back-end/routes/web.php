@@ -39,7 +39,7 @@ Route::get('/moniteur/dashboard' , [MoniteurController::class , 'dashboard'])->n
 
 Route::middleware(['guest', AuthMiddleware::class])->group(function () {
     
-    Route::get('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/register', [AuthController::class, 'CreeCompte']);
+    Route::get('/register', [AuthController::class, 'registerVue'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
     
 });

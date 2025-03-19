@@ -15,7 +15,7 @@ class AuthController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function connecter()
+    public function connecterVue()
     {
         return view('auth.connecter');
     }
@@ -23,7 +23,7 @@ class AuthController extends Controller
     /**
      * Display registration form
      */
-    public function register()
+    public function registerVue()
     {
         return view('auth.register');
     }
@@ -31,7 +31,7 @@ class AuthController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-     public function CreeCompte(Request $request)
+     public function register(Request $request)
      {
          $validated = $request->validate([
              'nom' => 'required|string|max:255',
@@ -80,6 +80,36 @@ class AuthController extends Controller
          Auth::connecter($user);
  
          return redirect()->route('auth.connecter')->with('success', 'Compte créé avec succès!');
+     }
+ 
+
+
+     public function connecter(Request $request)
+     {
+         $credentials = $request->validate([
+             'email' => 'required|email',
+             'mot-de-passe' => 'required',
+         ]);
+ 
+         if (Auth::attempt([
+             'email' => $credentials['email'],
+             'mot-de-passe' => $credentials['mot-de-passe']
+         ], $request->filled('remember'))) {
+             $request->session()->regenerate();
+ 
+             $user = Auth::user();
+             if ($user->role === 'admin') {
+                 return redirect()->intended('admin/dashboard');
+             } elseif ($user->role === 'moniteur') {
+                 return redirect()->intended('moniteur/dashboard');
+             } else {
+                 return redirect()->intended('dashboard');
+             }
+         }
+ 
+         return back()->withErrors([
+             'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
+         ])->withInput($request->except('mot-de-passe'));
      }
  
     public function create()

@@ -112,15 +112,25 @@
   <div class="bg-white w-full md:w-3/5 p-8 flex flex-col justify-center">
     <div class="max-w-lg mx-auto w-full">
       <h2 class="text-4xl font-bold text-indigo-900 mb-12 animate__animated animate__fadeInDown">Se connecter</h2>
-      
-      <form class="space-y-6">
+
+      @if ($errors->any())
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <ul class="list-disc pl-5">
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+      </div>
+  @endif
+
+        <form method="POST" action="{{ route('connecter') }}" class="space-y-6">
         <div class="fade-in-up" style="animation-delay: 0.1s;">
           <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <div class="relative">
             <input
               type="email"
               id="email"
-              value=""
+              value="{{ old('email') }}"
               name="email"
               placeholder="Email"
               class="w-full px-4 py-3 bg-gray-100 rounded-md pr-12 input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
@@ -134,9 +144,9 @@
           <div class="relative">
             <input
               type="password"
-              id="password"
+              id="mot-de-passe"
               value=""
-              name="password"
+              name="mot-de-passe"
               placeholder="••••••••••••••"
               class="w-full px-4 py-3 bg-gray-100 rounded-md pr-12 input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
             >
