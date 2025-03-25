@@ -114,4 +114,15 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     } 
+
+    
+    public function refresh(Request $request)
+    {
+        try {
+            $token = JWTAuth::refresh(JWTAuth::getToken());
+            return response()->json(['token' => $token]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Token refresh failed'], 401);
+        }
+    }
 }
