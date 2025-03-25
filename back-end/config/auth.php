@@ -18,6 +18,15 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
+
+    'guards' => [
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+    ],
+],
+
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
