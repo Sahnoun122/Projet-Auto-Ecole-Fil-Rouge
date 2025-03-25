@@ -37,9 +37,4 @@ Route::get('/candidats/dashboard' , [CandidatsController::class , 'dashboard'])-
 Route::get('/moniteur/dashboard' , [MoniteurController::class , 'dashboard'])->name('moniteur.dashboard');
 
 
-Route::middleware(['guest', AuthMiddleware::class])->group(function () {
-    
-    Route::get('/register', [AuthController::class, 'registerVue'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-    
-});
+
