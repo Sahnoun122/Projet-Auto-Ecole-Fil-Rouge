@@ -18,13 +18,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('adresse');
             $table->string('telephone');
-            $table->string('type-permis');
-            $table->string('photos-identité');
-            $table->string('photos-profile');
+            $table->string('type_permis');
+            $table->string('photo_identite');
+            $table->string('photo_profile');
             $table->string('diplome')->nullable();
-            $table->enum('role',['admin','moniteur' , 'candidats']);
+            $table->enum('role',['admin','moniteur' , 'candidat']);
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('mot-de-passe');
+            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });

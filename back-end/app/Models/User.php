@@ -22,12 +22,12 @@ class User extends Authenticatable
         'email',
         'adresse',
         'telephone',
-        'type-permis',
-        'photos-identité',
-        'photos-profile',
+        'type_permis',
+        'photo_identite',
+        'photo_profile',
         'diplome',
         'role',
-        'mot-de-passe',
+        'password',
     ];
 
     /**

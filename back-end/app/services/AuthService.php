@@ -16,13 +16,13 @@ class AuthService
         $this->AuthRepository = $AuthRepository;
     }
 
-    public function register(array $data)
+    public function register( $data)
     {
         $data['password'] = bcrypt($data['password']);
         return $this->AuthRepository->register($data);
     }
 
-    public function login(array $credentials)
+    public function login( $credentials)
     {
         $user = $this->AuthRepository->Connecter($credentials['email']);
 
@@ -33,7 +33,7 @@ class AuthService
         return $user;
     }
 
-    public function modifierMotDePasse(User $user, string $newPassword)
+    public function modifierMotDePasse(User $user, $newPassword)
     {
         $user->password = bcrypt($newPassword);
         $user->save();

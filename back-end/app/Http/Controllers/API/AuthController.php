@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\AuthService;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -19,33 +20,81 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'adresse' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20',
-            'type_permis' => 'required|string|max:50',
-            'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'photo_profile' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
-            'diplome' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
-            'password' => [
-                'required',
-                'confirmed',
-                'string',
-                'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
-            ],
-            'role' => 'sometimes|in:admin,moniteur,candidat',
+
+        $validator = Validator::make($request->all(), [
+            'nom'           => 'required|string|max:255',
+            'prenom'        => 'required|string|max:255',
+            'email'         => 'required|string|email|max:255|unique:users',
+            'adresse'       => 'required|string|max:255',
+            'telephone'     => 'required|string|max:20',
+            'type_permis'   => 'required|string|max:50',
+            'photo_identite'=> 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'diplome'       => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'password'  => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
+            'role'          => 'required|in:admin,moniteur,candidat'
         ]);
 
-        $user = $this->authService->register($request->all());
 
-        $token = JWTAuth::fromUser($user);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ], 201);
+        $identityPhoto = null ;
+        if ($request->hasFile('photo_identite')) {
+            $identityPhoto = $request->file('photo_identite')->store('identite', 'public');
+        }
+
+        $profilePhoto = null;
+        if ($request->hasFile('photo_profile')) {
+            $profilePhoto = $request->file('photo_profile')->store('profile', 'public');
+        }
+
+        $diplomePath = null;
+        if ($request->hasFile('diplome')) {
+            $diplomePath = $request->file('diplome')->store('diplome', 'public');
+        }
+
+        $user = $this->authService->register([
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'email' => $request->email,
+            'adresse' => $request->adresse,
+            'telephone' => $request->telephone,
+            'type_permis' => $request->type_permis,
+            'photo_identite' => $identityPhoto,
+            'photo_profile' => $profilePhoto,
+            'diplome' => $diplomePath,
+            'password' => $request->password,
+            'role' => $request->role
+        ]);
+
+        // $request->validate([
+        //     'nom' => 'required|string|max:255',
+        //     'prenom' => 'required|string|max:255',
+        //     'email' => 'required|string|email|max:255|unique:users',
+        //     'adresse' => 'required|string|max:255',
+        //     'telephone' => 'required|string|max:20',
+        //     'type_permis' => 'required|string|max:50',
+        //     'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        //     'photo_profile' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+        //     'diplome' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
+        //     'mot-de-passe' => [
+        //         'required',
+        //         'string',
+        //         'min:8',
+        //         'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+        //     ],
+        //     'role' => 'sometimes|in:admin,moniteur,candidat',
+        // ]);
+
+        // $photoPath = null;
+        //     if ($request->hasFile('photo')) {
+        //         $photoPath = $request->file('photo')->store('photos', 'public');
+        //     }
+
+        // $user = $this->authService->register($request->all());
+
+        return response()->json(['user' => $user], 201);
     }
 }
