@@ -90,6 +90,23 @@ class AuthController extends Controller
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $this->authService->modifierMotDePasse($user, $request->password);
+
+        return response()->json(['message' => 'Password reset successfully']);
+    }
     
     public function logout(Request $request)
     {
