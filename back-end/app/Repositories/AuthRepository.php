@@ -12,10 +12,11 @@ class AuthRepository implements AuthRepositoryInterface
         return User::create($data);
     }
 
-    public function Connecter( $email)
+    public function Connecter($email)
     {
         return User::where('email', $email)->first();
-    }
+        
+    }    
 
     public function modifierMotDePasse($user, $password)
     {
