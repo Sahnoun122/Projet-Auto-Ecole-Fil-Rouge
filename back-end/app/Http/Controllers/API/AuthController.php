@@ -1,172 +1,51 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Services\AuthService;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-
 
 class AuthController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function connecterVue()
+    protected $authService;
+
+    public function __construct(AuthService $authService)
     {
-        return view('auth.connecter');
+        $this->authService = $authService;
     }
 
-    /**
-     * Display registration form
-     */
-    public function registerVue()
+    public function register(Request $request)
     {
-        return view('auth.register');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-     public function register(Request $request)
-     {
-         $validated = $request->validate([
-             'nom' => 'required|string|max:255',
-             'prenom' => 'required|string|max:255',
-             'email' => 'required|string|email|max:255|unique:users',
-             'adresse' => 'required|string|max:255',
-             'telephone' => 'required|string|max:20',
-             'type-permis' => 'required|string|max:50',
-             'photos-identité' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-             'photos-profile' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
-             'diplome' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
-             'mot-de-passe' => ['required','confirmed','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+        $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'adresse' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'type_permis' => 'required|string|max:50',
+            'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'photo_profile' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+            'diplome' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
+            'password' => [
+                'required',
+                'confirmed',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
-             'role' => 'sometimes|in:admin,moniteur,candidats',
-         ]);
- 
-         $photosPath = null;
-         if ($request->hasFile('photos-identité')) {
-             $photosPath = $request->file('photos-identité')->store('photos-identité', 'public');
-         }
- 
-         $profilePhotoPath = null;
-         if ($request->hasFile('photos-profile')) {
-             $profilePhotoPath = $request->file('photos-profile')->store('photos-identité', 'public');
-         }
- 
-         $diplomePath = null;
-         if ($request->hasFile('diplome')) {
-             $diplomePath = $request->file('diplome')->store('diplome', 'public');
-         }
- 
-         $user = User::create([
-             'nom' => $validated['nom'],
-             'prenom' => $validated['prenom'],
-             'email' => $validated['email'],
-             'adresse' => $validated['adresse'],
-             'telephone' => $validated['phone'],
-             'type-permis' => $validated['type'],
-             'photos-identité' => $photosPath,
-             'photos-profile' => $profilePhotoPath,
-             'diplome' => $diplomePath,
-             'role' => $request->input('role', 'candidats'),
-             'mot-de-passe' => Hash::make($validated['password']),
-         ]);
- 
-         Auth::connecter($user);
- 
-         return redirect()->route('auth.connecter')->with('success', 'Compte créé avec succès!');
-     }
- 
+            'role' => 'sometimes|in:admin,moniteur,candidat',
+        ]);
 
+        $user = $this->authService->register($request->all());
 
-     public function connecter(Request $request)
-     {
-         $credentials = $request->validate([
-             'email' => 'required|email',
-             'mot-de-passe' => 'required',
-         ]);
- 
-         if (Auth::attempt([
-             'email' => $credentials['email'],
-             'mot-de-passe' => $credentials['mot-de-passe']
-         ], $request->filled('remember'))) {
-             $request->session()->regenerate();
- 
-             $user = Auth::user();
-             if ($user->role === 'admin') {
-                 return redirect()->intended('admin/dashboard');
-             } elseif ($user->role === 'moniteur') {
-                 return redirect()->intended('moniteur/dashboard');
-             } else {
-                 return redirect()->intended('dashboard');
-             }
-         }
- 
-         return back()->withErrors([
-             'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
-         ])->withInput($request->except('mot-de-passe'));
-     }
+        $token = JWTAuth::fromUser($user);
 
-
-     public function logout(Request $request)
-     {
-         Auth::logout();
- 
-         $request->session()->invalidate();
-         $request->session()->regenerateToken();
- 
-         return redirect('/');
-     } 
-
-     
-    public function create()
-    {
-        //
-    }
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ], 201);
     }
 }
