@@ -69,32 +69,24 @@ class AuthController extends Controller
             'role' => $request->role
         ]);
 
-        // $request->validate([
-        //     'nom' => 'required|string|max:255',
-        //     'prenom' => 'required|string|max:255',
-        //     'email' => 'required|string|email|max:255|unique:users',
-        //     'adresse' => 'required|string|max:255',
-        //     'telephone' => 'required|string|max:20',
-        //     'type_permis' => 'required|string|max:50',
-        //     'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        //     'photo_profile' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
-        //     'diplome' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
-        //     'mot-de-passe' => [
-        //         'required',
-        //         'string',
-        //         'min:8',
-        //         'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
-        //     ],
-        //     'role' => 'sometimes|in:admin,moniteur,candidat',
-        // ]);
-
-        // $photoPath = null;
-        //     if ($request->hasFile('photo')) {
-        //         $photoPath = $request->file('photo')->store('photos', 'public');
-        //     }
-
-        // $user = $this->authService->register($request->all());
+        
 
         return response()->json(['user' => $user], 201);
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+        
+        if ($token = JWTAuth::attempt($credentials)) {
+            return response()->json(['token' => $token]);
+        }
+
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
 }
