@@ -164,9 +164,9 @@
           <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
           <input 
             type="password" 
-            id="mot-de-passe" 
+            id="password" 
             value=""
-            name="mot-de-passe"
+            name="password"
             placeholder="Mot de passe"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
           >
@@ -297,5 +297,7 @@
       }
     });
   </script>
+
+  
 </body>
 </html>

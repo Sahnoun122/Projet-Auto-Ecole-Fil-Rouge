@@ -4,7 +4,7 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CandidatsController;
 use App\Http\Controllers\MoniteurController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\API\AuthController;
 use App\Http\Middleware\AuthMiddleware;
 
 use Illuminate\Support\Facades\Route;
@@ -24,11 +24,9 @@ Route::get('/services', [PagesController::class, 'services'])->name('services');
 
 Route::get('/propos', [PagesController::class, 'propos'])->name('propos');
 
-// Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::get('/register', [AuthController::class, 'register'])->name('register');
 
-
-// Route::get('/connecter', [AuthController::class, 'connecter'])->name('connecter');
-
+Route::get('/connecter', [AuthController::class, 'connecter'])->name('connecter');
 
 Route::get('/admin/dashboard' , [DashboardController::class , 'dashboard'])->name('admin.dashboard');
 

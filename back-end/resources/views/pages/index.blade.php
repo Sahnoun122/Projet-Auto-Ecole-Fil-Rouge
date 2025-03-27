@@ -119,7 +119,7 @@
     <header class="bg-white py-4 shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center">
-                <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="h-10 animate__animated animate__fadeIn">
+                <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="h-10 animate__animated animate__fadeIn">
             </div>
             <nav class="hidden md:flex space-x-8">
                 <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.1s;">Accueil</a>
@@ -129,8 +129,8 @@
             </nav>
             
             <div class="hidden md:flex space-x-4">
-                <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300 animate__animated animate__fadeInRight" style="animation-delay: 0.3s;">Connexion</a>
-                <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">Register</a>
+                {{-- <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300 animate__animated animate__fadeInRight" style="animation-delay: 0.3s;">Connexion</a> --}}
+                {{-- <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">Register</a> --}}
             </div>
             
             <button id="burger-btn" class="md:hidden text-gray-600 focus:outline-none animate__animated animate__fadeIn">
@@ -148,8 +148,8 @@
                 </nav>
                 
                 <div class="mt-6 flex flex-col space-y-4">
-                    <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300 slide-in-left" style="animation-delay: 0.4s;">Connexion</a>
-                    <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover slide-in-left" style="animation-delay: 0.5s;">Register</a>
+                    {{-- <a href="{{ route ('connecter')}}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition duration-300 slide-in-left" style="animation-delay: 0.4s;">Connexion</a> --}}
+                    {{-- <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover slide-in-left" style="animation-delay: 0.5s;">Register</a> --}}
                 </div>
             </div>
         </div>
@@ -163,11 +163,11 @@
                 
                 <p class="text-gray-700 mb-6">Des moniteurs qualifiés et des véhicules<br/>modernes pour vous accompagner.</p>
                 
-                <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">Register</a>
+                {{-- <a href="{{route ('register')}}" class="px-4 py-2 gradient-bg text-white rounded hover:opacity-90 transition duration-300 transform hover:scale-105 btn-hover animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">Register</a> --}}
             </div>
             
             <div class="md:w-1/2 mt-10 md:mt-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-                <img src="{{url('resources/photoss/logo.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
+                <img src="{{url('storage/images/accueil.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
             </div>
         </div>
     </section>
