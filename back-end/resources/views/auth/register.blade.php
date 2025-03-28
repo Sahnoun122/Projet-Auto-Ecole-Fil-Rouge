@@ -7,7 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-  
+
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <style>
     @keyframes float {
       0% { transform: translatey(0px); }
@@ -121,8 +122,9 @@
       </div>
   @endif
 
-  <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-6">
-
+  <form id="registerForm" method="POST" action="http://127.0.0.1:8000/api/register" enctype="multipart/form-data" class="space-y-6">
+    @csrf
+      <input type="hidden" name="_token" value="votre_token_csrf_ici">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="fade-in-up" style="animation-delay: 0.1s;">
             <label for="nom" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
@@ -146,6 +148,7 @@
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
             >
           </div>
+          <input type="hidden" name="role"  value="candidat">
         </div>
         
         <div class="fade-in-up" style="animation-delay: 0.3s;">
@@ -177,6 +180,7 @@
           <input 
             type="text" 
             id="address" 
+            name="adresse"
             value=""
             value="{{ old('adresse') }}"
             placeholder="Adresse"
@@ -195,45 +199,14 @@
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
           >
         </div>
-        
-        <div class="fade-in-up" style="animation-delay: 0.7s;">
-          <label for="licenseType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis</label>
-          <input 
-            type="text" 
-            id="licenseType" 
-            value="{{ old('type-permis') }}"
-            name="type-permis"
-            placeholder="Type de permis"
-            class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-          >
-        </div>
-        
         <div class="fade-in-up" style="animation-delay: 0.8s;">
-          <label for="photos" class="block text-sm font-medium text-gray-700 mb-1">Photos</label>
+          <label for="photos" class="block text-sm font-medium text-gray-700 mb-1">Photos Profile</label>
           <div class="relative">
             <input 
               type="file" 
-              id="photos-identité" 
+              id="photo-profile" 
               value=""
-              name="photos-identité"
-              placeholder="photos identité"
-              class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            >
-            <span class="absolute right-2 top-2 text-indigo-500">
-                <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-              </svg>
-            </span>
-          </div>
-        </div>
-
-        <div class="fade-in-up" style="animation-delay: 0.8s;">
-          <label for="photos" class="block text-sm font-medium text-gray-700 mb-1">Photos</label>
-          <div class="relative">
-            <input 
-              type="file" 
-              id="photos-profile" 
-              value=""
-              name="photos-profile"
+              name="photo_profile"
               placeholder="photos profile"
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
             >
@@ -244,13 +217,13 @@
           </div>
         </div>
         
-        <div class="fade-in-up" style="animation-delay: 0.9s;">
-          <button 
-            type="submit" 
-            class="w-full py-3 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-all duration-300 transform hover:scale-102 pulse"
-          >
-            S'inscrire
-          </button>
+        <button 
+        type="submit" 
+        id="submitBtn"
+        class="w-full py-3 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-all duration-300 transform hover:scale-102 pulse"
+      >
+        S'inscrire
+      </button>
         </div>
       </form>
       
@@ -265,6 +238,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
+
+    
     document.addEventListener('DOMContentLoaded', function() {
       AOS.init();
             const animateForm = () => {
@@ -296,8 +271,68 @@
         });
       }
     });
+
+
+    //fetch 
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.textContent = 'Inscription en cours...';
+        submitBtn.disabled = true;
+
+     
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || 
+                         document.querySelector('input[name="_token"]')?.value;
+
+        if (!csrfToken) {
+            alert('Erreur de sécurité. Veuillez rafraîchir la page.');
+            return;
+        }
+
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/register', {
+                method: 'POST',
+                body: formData, 
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken 
+                },
+                credentials: 'include' 
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) throw data; 
+
+            window.location.href = "/login?success=Inscription réussie!";
+
+        } catch (error) {
+            console.error('Erreur:', error);
+            
+            let errorMessage = "Une erreur est survenue";
+            if (error.errors) {
+                errorMessage = Object.values(error.errors).flat().join('\n');
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            alert(errorMessage);
+        } finally {
+            submitBtn.textContent = originalBtnText;
+            submitBtn.disabled = false;
+        }
+    });
+});
   </script>
 
-  
+
 </body>
 </html> 

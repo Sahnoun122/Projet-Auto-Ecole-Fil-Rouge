@@ -18,17 +18,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('adresse');
             $table->string('telephone');
-            $table->string('type_permis');
-            $table->string('photo_identite');
             $table->string('photo_profile');
-            $table->string('diplome')->nullable();
             $table->enum('role',['admin','moniteur' , 'candidat']);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
-
+        
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
