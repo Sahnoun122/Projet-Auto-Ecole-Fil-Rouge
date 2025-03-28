@@ -15,13 +15,12 @@ class CandidatService
         $this->candidatRepository = $candidatRepository;
     }
 
-    public function createOrUpdateCandidat($userId, array $data)
+    public function createCandidat($userId, array $data)
     {
         $candidatData = [
             'type_permis' => $data['type_permis'],
             'id_candidat' => $userId
         ];
-
         if (isset($data['photo_identite'])) {
             $photoPath = $data['photo_identite']->store('identite', 'public');
             $candidatData['photo_identite'] = $photoPath;
