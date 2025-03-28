@@ -4,35 +4,34 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CandidatsController;
 use App\Http\Controllers\MoniteurController;
-use App\Http\Controllers\API\AuthController;
-use App\Http\Middleware\AuthMiddleware;
-
+use App\Http\Controllers\AuthViews;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('pages/accueil', function () {
-//     return view('accueil');
+
+Route::controller(PagesController::class)->group(function () {
+    Route::get('/', 'index')->name('/');
+    Route::get('/services', 'services')->name('services');
+    Route::get('/propos', 'propos')->name('propos');
+
+});
+
+Route::get('/register', [AuthViews::class, 'VuRegister'])->name('register');
+
+Route::get('connecter', [AuthViews::class, 'VuConnecter'])->name('connecter');
+Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
+
+
+// Route::middleware(['auth'])->group(function () {
+
+//     Route::prefix('admin')->group(function () {
+//         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+//     });
+
+//     Route::prefix('candidats')->group(function () {
+//         Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
+//     });
+
+//     Route::prefix('moniteur')->group(function () {
+//         Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
+//     });
 // });
-
-// Route::get('/', function () {
-//     return view('accueil');
-// });
-
-
-Route::get('/', [PagesController::class, 'index'])->name('/');
-
-Route::get('/services', [PagesController::class, 'services'])->name('services');
-
-Route::get('/propos', [PagesController::class, 'propos'])->name('propos');
-
-Route::get('/register', [AuthController::class, 'register'])->name('register');
-
-Route::get('/connecter', [AuthController::class, 'connecter'])->name('connecter');
-
-Route::get('/admin/dashboard' , [DashboardController::class , 'dashboard'])->name('admin.dashboard');
-
-Route::get('/candidats/dashboard' , [CandidatsController::class , 'dashboard'])->name('candidats.dashboard');
-
-Route::get('/moniteur/dashboard' , [MoniteurController::class , 'dashboard'])->name('moniteur.dashboard');
-
-
-

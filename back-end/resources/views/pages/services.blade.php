@@ -404,7 +404,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize AOS animations
             AOS.init({
                 duration: 800,
                 once: false,
