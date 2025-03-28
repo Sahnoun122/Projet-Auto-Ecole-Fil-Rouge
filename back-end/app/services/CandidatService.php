@@ -29,7 +29,7 @@ class CandidatService
         $existingCandidat = $this->candidatRepository->getCandidat($userId);
         
         if ($existingCandidat) {
-            return $this->candidatRepository->updateCandidat($userId, $candidatData);
+            return $this->candidatRepository->ModifierCandidat($userId, $candidatData);
         }
 
         return $this->candidatRepository->completeCandidat($candidatData);

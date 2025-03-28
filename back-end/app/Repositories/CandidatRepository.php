@@ -2,7 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\Candidat;
-use App\Interfaces\CandidatRepositoryInterface;
+use App\Repositories\CandidatRepositoryInterface;
 
 class CandidatRepository implements CandidatRepositoryInterface
 {
@@ -16,7 +16,7 @@ class CandidatRepository implements CandidatRepositoryInterface
         return Candidat::where('id_candidat', $userId)->first();
     }
 
-    public function updateCandidat($userId, $data)
+    public function ModifierCandidat($userId, $data)
     {
         return Candidat::where('id_candidat', $userId)->update($data);
     }

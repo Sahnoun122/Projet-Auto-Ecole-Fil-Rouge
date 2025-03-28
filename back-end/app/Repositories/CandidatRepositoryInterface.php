@@ -1,10 +1,10 @@
 <?php
 // app/Interfaces/CandidatRepositoryInterface.php
-namespace App\Interfaces;
+namespace App\Repositories;
 
 interface CandidatRepositoryInterface
 {
     public function completeCandidat( $data);
     public function getCandidat($userId);
-    public function updateCandidat($userId, $data);
+    public function ModifierCandidat($userId, $data);
 }

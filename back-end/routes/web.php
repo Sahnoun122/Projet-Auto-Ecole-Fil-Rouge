@@ -21,7 +21,8 @@ Route::get('/register', [AuthViews::class, 'VuRegister'])->name('register');
 Route::get('connecter', [AuthViews::class, 'VuConnecter'])->name('connecter');
 Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
 
-// Route::post('/register', [AuthController::class, 'register']);
+
+
 
 
 
