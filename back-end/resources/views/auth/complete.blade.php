@@ -124,7 +124,9 @@
 
   <form id="completeRegistrationForm" method="POST" action="/api/complete-registration" enctype="multipart/form-data" class="space-y-6">
     @csrf
-    
+    <input type="hidden" name="_token" value="votre_token_csrf_ici">
+    <input type="hidden" name="role"  value="candidat">
+
     <div class="fade-in-up" style="animation-delay: 0.2s;">
       <label for="type_permis" class="block text-sm font-medium text-gray-700 mb-2">Type de permis</label>
       <select 
@@ -140,8 +142,10 @@
         <option value="D">Permis D (Bus)</option>
         <option value="EB">Permis EB (Remorque)</option>
       </select>
+
     </div>
-    
+
+
     <div class="fade-in-up">
         <label class="block text-sm font-medium text-gray-700 mb-2">Photo d'identité</label>
         <div class="border-2 border-dashed border-blue-500 rounded-lg p-6 hover:bg-blue-50 transition ease-in-out">
@@ -220,6 +224,237 @@
       }
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+  // 1. Initialisation des animations
+  AOS.init();
+
+  // 2. Animation des éléments du formulaire
+  const animateForm = () => {
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach((input, index) => {
+      setTimeout(() => {
+        input.classList.add('focus-within:ring-2');
+      }, 100 * index);
+    });
+  };
+  setTimeout(animateForm, 500);
+
+  // 3. Animation du logo au survol
+  const logo = document.querySelector('.logo-spin');
+  if (logo) {
+    logo.addEventListener('mouseover', () => {
+      logo.style.animation = 'logoRotate 1.5s ease';
+    });
+    logo.addEventListener('animationend', () => {
+      logo.style.animation = '';
+    });
+  }
+
+  // 4. Gestion de la photo d'identité
+  const photoInput = document.getElementById('photo_identite');
+  const previewContainer = document.getElementById('previewContainer');
+  const imagePreview = document.getElementById('imagePreview');
+  const removeImageBtn = document.getElementById('removeImage');
+  const dropZone = document.querySelector('.border-blue-500');
+
+  // 4.1. Affichage de l'aperçu quand une image est sélectionnée
+  photoInput.addEventListener('change', function(e) {
+    handleImageSelection(e.target.files);
+  });
+
+  // 4.2. Bouton pour supprimer l'image
+  removeImageBtn.addEventListener('click', function() {
+    resetImageUpload();
+  });
+
+  // 5. Gestion du drag and drop
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, highlightDropZone, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, unhighlightDropZone, false);
+  });
+
+  dropZone.addEventListener('drop', function(e) {
+    handleDrop(e);
+  });
+
+  // 6. Soumission du formulaire
+  const form = document.getElementById('completeRegistrationForm');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    await handleFormSubmission();
+  });
+
+  // Fonctions utilitaires:
+
+  // Gère la sélection d'image via input file
+  function handleImageSelection(files) {
+    if (files && files.length > 0) {
+      const file = files[0];
+      
+      // Vérification de la taille (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('La taille du fichier ne doit pas dépasser 2MB');
+        return;
+      }
+      
+      // Vérification du type (image seulement)
+      if (!file.type.match('image.*')) {
+        alert('Veuillez sélectionner une image valide (JPG, PNG)');
+        return;
+      }
+      
+      // Création de l'aperçu
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        imagePreview.src = event.target.result;
+        previewContainer.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Réinitialise le champ d'upload d'image
+  function resetImageUpload() {
+    photoInput.value = '';
+    previewContainer.classList.add('hidden');
+  }
+
+  // Empêche le comportement par défaut pour le drag and drop
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Met en surbrillance la zone de drop
+  function highlightDropZone() {
+    dropZone.classList.add('bg-blue-100', 'border-blue-600');
+  }
+
+  // Retire la surbrillance de la zone de drop
+  function unhighlightDropZone() {
+    dropZone.classList.remove('bg-blue-100', 'border-blue-600');
+  }
+
+  // Gère le drop d'un fichier
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    
+    if (files.length) {
+      photoInput.files = files;
+      const event = new Event('change');
+      photoInput.dispatchEvent(event);
+    }
+  }
+
+  // Gère la soumission du formulaire
+  async function handleFormSubmission() {
+    const originalBtnText = submitBtn.textContent;
+    
+    // Affiche un indicateur de chargement
+    submitBtn.innerHTML = `
+      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Traitement en cours...
+    `;
+    submitBtn.disabled = true;
+
+    // Récupère le token CSRF
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    
+    if (!csrfToken) {
+      alert('Erreur de sécurité. Veuillez rafraîchir la page.');
+      resetSubmitButton(originalBtnText);
+      return;
+    }
+
+    // Valide les champs requis avant envoi
+    if (!validateRequiredFields()) {
+      resetSubmitButton(originalBtnText);
+      return;
+    }
+
+    try {
+      // Prépare les données du formulaire
+      const formData = new FormData(form);
+      
+      // Envoi de la requête
+      const response = await fetch('/api/complete-registration', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken,
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      // Redirection après succès
+      window.location.href = "/dashboard?success=Inscription complétée avec succès!";
+      
+    } catch (error) {
+      handleSubmissionError(error);
+    } finally {
+      resetSubmitButton(originalBtnText);
+    }
+  }
+
+  // Valide les champs requis du formulaire
+  function validateRequiredFields() {
+    const typePermis = document.getElementById('type_permis').value;
+    const photoIdentite = document.getElementById('photo_identite').files.length;
+    
+    if (!typePermis) {
+      alert('Veuillez sélectionner un type de permis');
+      return false;
+    }
+    
+    if (!photoIdentite) {
+      alert('Veuillez télécharger une photo d\'identité');
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Gère les erreurs de soumission
+  function handleSubmissionError(error) {
+    console.error('Erreur:', error);
+    let errorMessage = "Une erreur est survenue";
+    
+    if (error.errors) {
+      errorMessage = Object.values(error.errors).flat().join('\n');
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    alert(errorMessage);
+  }
+
+  // Réinitialise le bouton de soumission
+  function resetSubmitButton(originalText) {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
+});
   </script>
 
 

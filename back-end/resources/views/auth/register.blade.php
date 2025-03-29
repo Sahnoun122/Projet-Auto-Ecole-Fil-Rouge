@@ -314,7 +314,8 @@
 
             if (!response.ok) throw data; 
 
-            window.location.href = "/login?success=Inscription réussie!";
+            localStorage.setItem('token', data.token);
+            window.location.href = '/complete-registration';
 
         } catch (error) {
             console.error('Erreur:', error);
