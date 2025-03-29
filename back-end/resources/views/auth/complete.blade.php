@@ -108,6 +108,81 @@
       </svg>
     </div>
   </div>
+   
+  <div class="bg-white w-full md:w-3/5 p-8 flex flex-col justify-center">
+    <div class="max-w-lg mx-auto w-full">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Informations complémentaires</h2>      @if ($errors->any())
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <ul class="list-disc pl-5">
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+      </div>
+  @endif
+
+
+  <form id="completeRegistrationForm" method="POST" action="/api/complete-registration" enctype="multipart/form-data" class="space-y-6">
+    @csrf
+    
+    <div class="fade-in-up" style="animation-delay: 0.2s;">
+      <label for="type_permis" class="block text-sm font-medium text-gray-700 mb-2">Type de permis</label>
+      <select 
+        id="type_permis" 
+        name="type_permis"
+        class="w-full px-4 py-3 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+        required
+      >
+        <option value="">Sélectionnez votre type de permis</option>
+        <option value="A">Permis A (Moto)</option>
+        <option value="B">Permis B (Voiture)</option>
+        <option value="C">Permis C (Poids lourd)</option>
+        <option value="D">Permis D (Bus)</option>
+        <option value="EB">Permis EB (Remorque)</option>
+      </select>
+    </div>
+    
+    <div class="fade-in-up">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Photo d'identité</label>
+        <div class="border-2 border-dashed border-blue-500 rounded-lg p-6 hover:bg-blue-50 transition ease-in-out">
+          <label for="photo_identite" class="block text-center cursor-pointer">
+            <svg class="mx-auto h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="mt-2 block text-sm font-medium text-gray-700">Glissez-déposez votre photo ou cliquez pour sélectionner</span>
+            <span class="mt-1 block text-xs text-gray-500">Format JPG, PNG (max. 2MB)</span>
+          </label>
+          <input type="file" id="photo_identite" name="photo_identite" accept="image/*" class="hidden">
+        </div>
+      
+        <div id="previewContainer" class="mt-4 hidden">
+          <img id="imagePreview" class="mx-auto rounded-lg shadow-lg" alt="Aperçu de la photo d'identité">
+          <button id="removeImage" class="mt-2 text-red-500 hover:text-red-600 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            <span class="block text-sm">Supprimer l'image</span>
+          </button>
+        </div>
+      </div>
+    
+    <button 
+      type="submit" 
+      id="submitBtn"
+      class="w-full py-3 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-all duration-300 transform hover:scale-102 pulse"
+    >
+      Finaliser l'inscription
+    </button>
+  </form>
+      
+      <div class="text-center mt-6 animate__animated animate__fadeIn" style="animation-delay: 1s;">
+        <p class="text-gray-600">
+          Déjà membre ? 
+          <a href="{{ route ('connecter') }}" class="text-indigo-600 font-medium hover:underline transition-all duration-200">Se connecter</a>
+        </p>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
