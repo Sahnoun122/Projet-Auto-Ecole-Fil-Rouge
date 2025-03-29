@@ -22,6 +22,7 @@ Route::get('connecter', [AuthViews::class, 'VuConnecter'])->name('connecter');
 Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
 
 
+Route::get('/complete-registration', [AuthViews::class, 'completeRegistration']);
 
 
 

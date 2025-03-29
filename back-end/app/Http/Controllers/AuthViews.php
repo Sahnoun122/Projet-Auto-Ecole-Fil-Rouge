@@ -15,5 +15,10 @@ class AuthViews extends Controller
     {
         return view('auth.register');
     }
+
+    public function completeRegistration()
+    {
+        return view('auth.complete');
+    }
 }
 
