@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sahnoun - Compléter l'inscription</title>
+  <title>Sahnoun - Créer un compte</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <style>
     @keyframes float {
@@ -78,45 +79,6 @@
     .logo-spin:hover {
       animation: logoRotate 1.5s ease;
     }
-    
-    .file-upload {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
-    
-    .file-upload-label {
-      display: block;
-      padding: 1.5rem;
-      border: 2px dashed #d1d5db;
-      border-radius: 0.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .file-upload-label:hover {
-      border-color: #818cf8;
-      background-color: #f8fafc;
-    }
-    
-    .file-upload-input {
-      position: absolute;
-      left: 0;
-      top: 0;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-    
-    .preview-image {
-      max-width: 100%;
-      max-height: 200px;
-      margin-top: 1rem;
-      border-radius: 0.5rem;
-      display: none;
-    }
   </style>
 </head>
 <body class="flex flex-col md:flex-row h-screen w-full">
@@ -126,8 +88,8 @@
     </div>
     
     <div class="text-center mb-16 animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
-      <h1 class="text-4xl font-bold mb-2">Dernière étape !</h1>
-      <p class="text-lg text-indigo-100 mt-4">Complétez votre inscription pour accéder à votre espace candidat.</p>
+        <h1 class="text-4xl font-bold mb-2">Dernière étape !</h1>
+        <p class="text-lg text-indigo-100 mt-4">Complétez votre inscription pour accéder à votre espace candidat.</p>
     </div>
     
     <div class="absolute bottom-10 left-10 animate-float" style="animation-delay: 1s;">
@@ -145,7 +107,46 @@
         <rect x="4" y="4" width="16" height="16" rx="2" fill="rgba(255,255,255,0.25)"/>
       </svg>
     </div>
-    
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      AOS.init();
+            const animateForm = () => {
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach((input, index) => {
+          setTimeout(() => {
+            input.classList.add('focus-within:ring-2');
+          }, 100 * index);
+        });
+      };
+      
+      setTimeout(animateForm, 500);
+      
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          input.style.transition = 'all 0.3s ease';
+        });
+      });
+      
+      const logo = document.querySelector('.logo-spin');
+      if (logo) {
+        logo.addEventListener('mouseover', () => {
+          logo.style.animation = 'logoRotate 1.5s ease';
+        });
+        
+        logo.addEventListener('animationend', () => {
+          logo.style.animation = '';
+        });
+      }
+    });
+
+  </script>
+
+
 </body>
-</html>
+</html> 
