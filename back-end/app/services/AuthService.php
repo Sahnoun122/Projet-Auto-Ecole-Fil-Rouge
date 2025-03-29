@@ -20,6 +20,7 @@ class AuthService
     {
         $data['password'] = bcrypt($data['password']);
         return $this->AuthRepository->register($data);
+
     }
 
     public function login( $credentials)

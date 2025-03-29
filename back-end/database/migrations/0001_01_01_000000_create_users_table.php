@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('role',['admin','moniteur' , 'candidat']);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('is_completed')->default(false);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

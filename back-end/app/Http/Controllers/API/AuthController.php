@@ -17,39 +17,25 @@ class AuthController extends Controller
     {
         $this->authService = $authService;
     }
-
     public function register(Request $request)
     {
-        
         $validator = Validator::make($request->all(), [
             'nom'           => 'required|string|max:255',
             'prenom'        => 'required|string|max:255',
             'email'         => 'required|string|email|max:255|unique:users',
             'adresse'       => 'required|string|max:255',
             'telephone'     => 'required|string|max:20',
-            'photo_profile' => 'required|image|mimes:jpeg,png,jpg',
-            'password'      =>['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
+            'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'password'      => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
             'role'          => 'required|in:admin,moniteur,candidat'
         ]);
+    
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
-
-        // $identityPhoto = null ;
-        // if ($request->hasFile('photo_identite')) {
-        //     $identityPhoto = $request->file('photo_identite')->store('identite', 'public');
-        // }
-
-        $profilePhoto = null;
-        if ($request->hasFile('photo_profile')) {
-            $profilePhoto = $request->file('photo_profile')->store('profile', 'public');
-        }
-
-        // $diplomePath = null;
-        // if ($request->hasFile('diplome')) {
-        //     $diplomePath = $request->file('diplome')->store('diplome', 'public');
-        // }
-
+    
+        $profilePhoto = $request->file('photo_profile')->store('profile', 'public');
+    
         $user = $this->authService->register([
             'nom' => $request->nom,
             'prenom' => $request->prenom,
@@ -58,12 +44,26 @@ class AuthController extends Controller
             'telephone' => $request->telephone,
             'photo_profile' => $profilePhoto,
             'password' => $request->password,
-            'role' => $request->role
+            'role' => $request->role,
+            'is_completed' => false 
         ]);
-
-        return response()->json(['user' => $user], 201);
+    
+        $tempToken = Str::random(60);
+        DB::table('temp_tokens')->insert([
+            'user_id' => $user->id,
+            'token' => $tempToken,
+            'created_at' => now()
+        ]);
+    
+        return response()->json([
+            'message' => 'Veuillez compléter votre inscription',
+            'user_id' => $user->id,
+            'temp_token' => $tempToken,
+            'next_step' => $user->role === 'candidat' 
+                ? '/complete-registration' 
+                : '/dashboard' 
+        ], 201);
     }
-
     public function login(Request $request)
     {
         $request->validate([
