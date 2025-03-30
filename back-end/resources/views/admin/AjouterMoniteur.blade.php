@@ -258,7 +258,7 @@
 
         <div class="bg-white w-full md:w-3/5 p-8 flex flex-col ml-32 justify-center">
             <div class="max-w-lg mx-auto w-full">
-              <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Créez votre compte</h2>
+              <h3 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Ajouter Moniteurs</h3>
               @if ($errors->any())
               <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                   {{-- <ul class="list-disc pl-5">
@@ -461,6 +461,7 @@
         
     </div>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 
     <script>
 
@@ -515,6 +516,109 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
   });
+
+  function previewProfilePhoto(event) {
+              const file = event.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                  const preview = document.getElementById('profileImagePreview');
+                  preview.src = reader.result;
+                  document.getElementById('previewProfileContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+              }
+            }
+          
+            function previewIdentityPhoto(event) {
+              const file = event.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                  const preview = document.getElementById('identityImagePreview');
+                  preview.src = reader.result;
+                  document.getElementById('previewIdentityContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+              }
+            }
+          
+            document.getElementById('removeProfileImage').addEventListener('click', function() {
+              document.getElementById('photo-profile').value = '';
+              document.getElementById('previewProfileContainer').classList.add('hidden');
+            });
+          
+            document.getElementById('removeIdentityImage').addEventListener('click', function() {
+              document.getElementById('photo_identite').value = '';
+              document.getElementById('previewIdentityContainer').classList.add('hidden');
+            });
+          
+    document.addEventListener('DOMContentLoaded', function() {
+      AOS.init();
+            const animateForm = () => {
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach((input, index) => {
+          setTimeout(() => {
+            input.classList.add('focus-within:ring-2');
+          }, 100 * index);
+        });
+      };
+      
+      setTimeout(animateForm, 500);
+      
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          input.style.transition = 'all 0.3s ease';
+        });
+      });
+      
+      const logo = document.querySelector('.logo-spin');
+      if (logo) {
+        logo.addEventListener('mouseover', () => {
+          logo.style.animation = 'logoRotate 1.5s ease';
+        });
+        
+        logo.addEventListener('animationend', () => {
+          logo.style.animation = '';
+        });
+      }
+    });
+
+    //fetch 
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Inscription en cours...';
+
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw data;
+        }
+
+        window.location.href = '/connecter'; 
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert(error.error || 'Une erreur est survenue');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'S\'inscrire';
+    }
+});
+
+
     </script>
 </body>
 
