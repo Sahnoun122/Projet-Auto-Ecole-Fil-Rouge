@@ -27,8 +27,8 @@ class AuthController extends Controller
             'adresse' => 'required|string|max:255',
             'telephone' => 'required|string|max:20',
             'photo_profile' => 'required|image|mimes:jpeg,png,jpg',
-            'photo_identite' => 'nullable|image|mimes:jpeg,png,jpg',
-            'type_permis' => 'nullable|string|max:255',
+            'photo_identite' => 'required|image|mimes:jpeg,png,jpg',
+            'type_permis' => 'required|string|max:255',
             'role' => 'required|in:admin,moniteur,candidat',
             'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
         ]);

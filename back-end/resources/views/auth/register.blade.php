@@ -398,8 +398,7 @@
             throw data;
         }
 
-        window.location.href = data.redirect;
-
+        window.location.href = '/login'; 
     } catch (error) {
         console.error('Erreur:', error);
         alert(error.error || 'Une erreur est survenue');
