@@ -290,8 +290,43 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-
-    
+            function previewProfilePhoto(event) {
+              const file = event.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                  const preview = document.getElementById('profileImagePreview');
+                  preview.src = reader.result;
+                  document.getElementById('previewProfileContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+              }
+            }
+          
+            function previewIdentityPhoto(event) {
+              const file = event.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                  const preview = document.getElementById('identityImagePreview');
+                  preview.src = reader.result;
+                  document.getElementById('previewIdentityContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+              }
+            }
+          
+            document.getElementById('removeProfileImage').addEventListener('click', function() {
+              document.getElementById('photo-profile').value = '';
+              document.getElementById('previewProfileContainer').classList.add('hidden');
+            });
+          
+            // Supprimer la photo d'identité
+            document.getElementById('removeIdentityImage').addEventListener('click', function() {
+              document.getElementById('photo_identite').value = '';
+              document.getElementById('previewIdentityContainer').classList.add('hidden');
+            });
+          
     document.addEventListener('DOMContentLoaded', function() {
       AOS.init();
             const animateForm = () => {
@@ -339,7 +374,7 @@
         const response = await fetch('/api/register', {
             method: 'POST',
             body: formData,
-            credentials: 'include' // Important pour les cookies de session
+            credentials: 'include'
         });
 
         const data = await response.json();
@@ -348,7 +383,6 @@
             throw data;
         }
 
-        // Redirection vers la page de complétion
         window.location.href = data.redirect;
 
     } catch (error) {
@@ -359,6 +393,8 @@
         submitBtn.textContent = 'S\'inscrire';
     }
 });
+
+
 
   </script>
 
