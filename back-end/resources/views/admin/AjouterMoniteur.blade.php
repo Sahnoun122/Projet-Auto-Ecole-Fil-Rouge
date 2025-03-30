@@ -270,6 +270,8 @@
         
           <form id="registerForm" method="POST" action="/api/register" enctype="multipart/form-data" class="space-y-6">
             @csrf
+            
+            <input type="hidden" name="role"  value="moniteur">
               <input type="hidden" name="_token" value="votre_token_csrf_ici">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="fade-in-up" style="animation-delay: 0.1s;">
@@ -294,7 +296,6 @@
                       class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
                     >
                   </div>
-                  <input type="hidden" name="role"  value="candidat">
                 </div>
         
                 

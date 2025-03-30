@@ -4,21 +4,14 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\AuthService;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
-    protected $authService;
-
-    public function __construct(AuthService $authService)
-    {
-        $this->authService = $authService;
-    }
-
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -40,37 +33,31 @@ class AuthController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
     
-        $profilePhoto = null;
-        if ($request->hasFile('photo_profile')) {
-            $profilePhoto = $request->file('photo_profile')->store('profile', 'public');
-        }
+        $profilePhotoPath = $request->file('photo_profile')->store('profile', 'public');
+        $identityPhotoPath = $request->file('photo_identite')->store('identite', 'public');
     
-        $identityPhoto = null;
-        if ($request->hasFile('photo_identite')) {
-            $identityPhoto = $request->file('photo_identite')->store('identite', 'public');
-        }
-    
-        $user = $this->authService->register([
+        $userData = [
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'email' => $request->email,
             'adresse' => $request->adresse,
             'telephone' => $request->telephone,
-            'photo_profile' => $profilePhoto,
-            'photo_identite' => $identityPhoto,
+            'photo_profile' => $profilePhotoPath,
+            'photo_identite' => $identityPhotoPath,
             'type_permis' => $request->type_permis,
             'role' => $request->role,
             'password' => bcrypt($request->password),
-        ]);
+        ];
     
         if ($request->role == 'moniteur') {
             $userData['certifications'] = $request->certifications;
             $userData['qualifications'] = $request->qualifications;
         }
     
+        $user = User::create($userData);
+    
         return response()->json(['user' => $user], 201);
     }
-    
     
     public function connecter(Request $request)
     {
@@ -94,12 +81,11 @@ class AuthController extends Controller
         return response()->json(['message' => 'Unauthorized'], 401);
     }
     
-
     public function resetPassword(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required',
+            'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
         ]);
     
         $user = User::where('email', $request->email)->first();
@@ -108,12 +94,12 @@ class AuthController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
     
-        $this->authService->modifierMotDePasse($user, $request->password);
+        $user->password = bcrypt($request->password);
+        $user->save();
     
         return response()->json(['message' => 'Password reset successfully']);
     }
     
-
     public function refresh(Request $request)
     {
         try {
@@ -124,13 +110,13 @@ class AuthController extends Controller
         }
     }
 
-public function logout(Request $request)
-{
-    try {
-        JWTAuth::invalidate(JWTAuth::getToken());
-        return response()->json(['message' => 'Successfully logged out']);
-    } catch (\Exception $e) {
-        return response()->json(['message' => 'Failed to logout, please try again.'], 500);
+    public function logout(Request $request)
+    {
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return response()->json(['message' => 'Successfully logged out']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to logout, please try again.'], 500);
+        }
     }
-}
 }
