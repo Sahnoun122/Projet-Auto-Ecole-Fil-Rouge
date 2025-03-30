@@ -119,17 +119,18 @@ class AuthController extends Controller
             return response()->json(['message' => 'Failed to logout, please try again.'], 500);
         }
     }
-
     public function getCandidats()
     {
-        $candidats = User::where('role', 'candidat')->get();
-        return response()->json($candidats);
+        return User::where('role', 'candidat')
+                  ->orderBy('created_at', 'desc')
+                  ->get(['id', 'nom', 'prenom', 'email', 'telephone', 'photo_profile', 'created_at']);
     }
 
     public function getMoniteurs()
     {
-        $moniteurs = User::where('role', 'moniteur')->get();
-        return response()->json($moniteurs);
+        return User::where('role', 'moniteur')
+                  ->orderBy('created_at', 'desc')
+                  ->get(['id', 'nom', 'prenom', 'email', 'certifications', 'photo_profile', 'created_at']);
     }
 
        public function updateUser(Request $request, $id)
