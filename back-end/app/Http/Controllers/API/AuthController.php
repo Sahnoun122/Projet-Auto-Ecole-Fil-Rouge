@@ -132,7 +132,7 @@ class AuthController extends Controller
         return response()->json($moniteurs);
     }
 
-    public function updateUser(Request $request, $id)
+       public function updateUser(Request $request, $id)
     {
         $user = User::find($id);
         
@@ -180,4 +180,20 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Utilisateur mis à jour avec succès']);
     }
+
+    public function deleteUser($id)
+{
+    $user = User::find($id);
+    
+    if (!$user) {
+        return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+    }
+
+    Storage::disk('public')->delete($user->photo_profile);
+    Storage::disk('public')->delete($user->photo_identite);
+
+    $user->delete();
+
+    return response()->json(['message' => 'Utilisateur supprimé avec succès']);
+}
 }
