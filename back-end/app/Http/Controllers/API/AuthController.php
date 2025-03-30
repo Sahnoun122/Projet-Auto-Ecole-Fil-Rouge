@@ -131,4 +131,53 @@ class AuthController extends Controller
         $moniteurs = User::where('role', 'moniteur')->get();
         return response()->json($moniteurs);
     }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::find($id);
+        
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'adresse' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg',
+            'photo_identite' => 'nullable|image|mimes:jpeg,png,jpg',
+            'type_permis' => 'nullable|string|max:255',
+            'role' => 'required|in:admin,moniteur,candidat',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $user->nom = $request->nom;
+        $user->prenom = $request->prenom;
+        $user->email = $request->email;
+        $user->adresse = $request->adresse;
+        $user->telephone = $request->telephone;
+        $user->role = $request->role;
+
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
+        }
+
+        if ($request->hasFile('photo_profile')) {
+            $user->photo_profile = $request->file('photo_profile')->store('profile', 'public');
+        }
+
+        if ($request->hasFile('photo_identite')) {
+            $user->photo_identite = $request->file('photo_identite')->store('identite', 'public');
+        }
+
+        $user->save();
+
+        return response()->json(['message' => 'Utilisateur mis à jour avec succès']);
+    }
 }
