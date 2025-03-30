@@ -24,8 +24,14 @@ class User extends Authenticatable implements JWTSubject
         'photo_profile',
         'role',
         'password',
+        'registration_completed'
+
     ];
 
+    public function candidat()
+{
+    return $this->hasOne(Candidat::class);
+}
     /**
      * The attributes that should be hidden for serialization.
      *

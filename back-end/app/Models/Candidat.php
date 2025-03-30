@@ -13,9 +13,11 @@ class Candidat extends Model
     protected $fillable = [
         'photo_identite',
         'type_permis',
-        'id_candidat'
+        'id_candidat',
+        'role'
+
     ];
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_candidat');

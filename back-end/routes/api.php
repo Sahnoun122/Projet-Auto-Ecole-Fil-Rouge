@@ -24,5 +24,7 @@ Route::middleware('jwt.auth')->group(function () {
 });
 
 
-Route::post('/complete-registration', [CandidatController::class, 'completeRegistration']);
-Route::get('/candidat-info', [CandidatController::class, 'getCandidatInfo']);
+
+Route::post('/register', [AuthController::class, 'register']);
+
+    

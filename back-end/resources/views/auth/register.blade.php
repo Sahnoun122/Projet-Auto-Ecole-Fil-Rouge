@@ -114,11 +114,11 @@
       <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Créez votre compte</h2>
       @if ($errors->any())
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <ul class="list-disc pl-5">
+          {{-- <ul class="list-disc pl-5">
               @foreach ($errors->all() as $error)
                   <li>{{ $error }}</li>
               @endforeach
-          </ul>
+          </ul> --}}
       </div>
   @endif
 
@@ -276,64 +276,40 @@
 
 
     //fetch 
-
-    document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('registerForm');
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
     const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Inscription en cours...';
 
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
+    const formData = new FormData(this);
 
-        const originalBtnText = submitBtn.textContent;
-        submitBtn.textContent = 'Inscription en cours...';
-        submitBtn.disabled = true;
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include' // Important pour les cookies de session
+        });
 
-     
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || 
-                         document.querySelector('input[name="_token"]')?.value;
+        const data = await response.json();
 
-        if (!csrfToken) {
-            alert('Erreur de sécurité. Veuillez rafraîchir la page.');
-            return;
+        if (!response.ok) {
+            throw data;
         }
 
-        const formData = new FormData(form);
+        // Redirection vers la page de complétion
+        window.location.href = data.redirect;
 
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/register', {
-                method: 'POST',
-                body: formData, 
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken 
-                },
-                credentials: 'include' 
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) throw data; 
-
-            localStorage.setItem('token', data.token);
-            window.location.href = '/complete-registration';
-
-        } catch (error) {
-            console.error('Erreur:', error);
-            
-            let errorMessage = "Une erreur est survenue";
-            if (error.errors) {
-                errorMessage = Object.values(error.errors).flat().join('\n');
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-            
-            alert(errorMessage);
-        } finally {
-            submitBtn.textContent = originalBtnText;
-            submitBtn.disabled = false;
-        }
-    });
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert(error.error || 'Une erreur est survenue');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'S\'inscrire';
+    }
 });
+
   </script>
 
 

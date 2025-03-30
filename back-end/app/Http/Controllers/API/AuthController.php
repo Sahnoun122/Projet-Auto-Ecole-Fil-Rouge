@@ -17,24 +17,35 @@ class AuthController extends Controller
     {
         $this->authService = $authService;
     }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nom'           => 'required|string|max:255',
-            'prenom'        => 'required|string|max:255',
-            'email'         => 'required|string|email|max:255|unique:users',
-            'adresse'       => 'required|string|max:255',
-            'telephone'     => 'required|string|max:20',
-            'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'password'      => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
-            'role'          => 'required|in:admin,moniteur,candidat'
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'adresse' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'photo_profile' => 'required|image|mimes:jpeg,png,jpg',
+            'photo_identite' => 'nullable|image|mimes:jpeg,png,jpg',
+            'type_permis' => 'nullable|string|max:255',
+            'role' => 'required|in:admin,moniteur,candidat',
+            'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
         ]);
     
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
     
-        $profilePhoto = $request->file('photo_profile')->store('profile', 'public');
+        $profilePhoto = null;
+        if ($request->hasFile('photo_profile')) {
+            $profilePhoto = $request->file('photo_profile')->store('profile', 'public');
+        }
+    
+        $identityPhoto = null;
+        if ($request->hasFile('photo_identite')) {
+            $identityPhoto = $request->file('photo_identite')->store('identite', 'public');
+        }
     
         $user = $this->authService->register([
             'nom' => $request->nom,
@@ -43,42 +54,31 @@ class AuthController extends Controller
             'adresse' => $request->adresse,
             'telephone' => $request->telephone,
             'photo_profile' => $profilePhoto,
-            'password' => $request->password,
+            'photo_identite' => $identityPhoto,
+            'type_permis' => $request->type_permis,
             'role' => $request->role,
-            'is_completed' => false 
+            'password' => bcrypt($request->password),
         ]);
     
-        $tempToken = Str::random(60);
-        DB::table('temp_tokens')->insert([
-            'user_id' => $user->id,
-            'token' => $tempToken,
-            'created_at' => now()
-        ]);
-    
-        return response()->json([
-            'message' => 'Veuillez compléter votre inscription',
-            'user_id' => $user->id,
-            'temp_token' => $tempToken,
-            'next_step' => $user->role === 'candidat' 
-                ? '/complete-registration' 
-                : '/dashboard' 
-        ], 201);
+        return response()->json(['user' => $user], 201);
     }
+    
     public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-
+    
         $credentials = $request->only('email', 'password');
         
         if ($token = JWTAuth::attempt($credentials)) {
             return response()->json(['token' => $token]);
         }
-
+    
         return response()->json(['message' => 'Unauthorized'], 401);
     }
+    
 
     public function resetPassword(Request $request)
     {

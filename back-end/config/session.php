@@ -20,6 +20,10 @@ return [
 
     'driver' => env('SESSION_DRIVER', 'database'),
 
+
+    'domain' => env('SESSION_DOMAIN', '.votredomaine.com'), // Pour les cookies cross-subdomain
+'same_site' => 'lax', // Ou 'none' si vous utilisez HTTPS cross-domain
+'secure' => env('SESSION_SECURE_COOKIE', true), // Si HTTPS
     /*
     |--------------------------------------------------------------------------
     | Session Lifetime

@@ -19,8 +19,11 @@ class CandidatService
     {
         $candidatData = [
             'type_permis' => $data['type_permis'],
-            'id_candidat' => $userId
+            'id_candidat' => $userId,
+            'role' => 'candidat'
+
         ];
+
         if (isset($data['photo_identite'])) {
             $photoPath = $data['photo_identite']->store('identite', 'public');
             $candidatData['photo_identite'] = $photoPath;
