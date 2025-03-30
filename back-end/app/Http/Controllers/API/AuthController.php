@@ -55,32 +55,32 @@ class AuthController extends Controller
         }
     
         $user = User::create($userData);
+
+        
+        // $token = JWTAuth::fromUser($user);
+
+        // return response()->json(compact('user','token'), 201);
     
         return response()->json(['user' => $user], 201);
     }
-    
-    public function connecter(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-    
-        $credentials = $request->only('email', 'password');
-    
-        $user = User::where('email', $credentials['email'])->first();
-    
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            $token = JWTAuth::fromUser($user);
-            return response()->json([
-                'token' => $token,
-                'role' => $user->role,
+
+
+        public function connecter(Request $request)
+        {
+            $request->validate([
+                'email' => 'required|string|email',
+                'password' => 'required|string',
             ]);
+    
+            $credentials = $request->only('email', 'password');
+            
+            if ($token = JWTAuth::attempt($credentials)) {
+                return response()->json(['token' => $token]);
+            }
+    
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
-    
-        return response()->json(['message' => 'Unauthorized'], 401);
-    }
-    
+ 
     public function resetPassword(Request $request)
     {
         $request->validate([
