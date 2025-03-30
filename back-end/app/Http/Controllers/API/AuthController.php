@@ -123,14 +123,14 @@ class AuthController extends Controller
     {
         return User::where('role', 'candidat')
                   ->orderBy('created_at', 'desc')
-                  ->get(['id', 'nom', 'prenom', 'email', 'telephone', 'photo_profile', 'created_at']);
+                  ->get([ 'nom', 'prenom', 'email', 'telephone', 'photo_profile', 'created_at']);
     }
 
     public function getMoniteurs()
     {
         return User::where('role', 'moniteur')
                   ->orderBy('created_at', 'desc')
-                  ->get(['id', 'nom', 'prenom', 'email', 'certifications', 'photo_profile', 'created_at']);
+                  ->get([ 'nom', 'prenom', 'email', 'certifications', 'photo_profile', 'created_at']);
     }
 
        public function updateUser(Request $request, $id)
@@ -216,8 +216,8 @@ public function searchUsers(Request $request)
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nom', 'like', $searchTerm)
                   ->orWhere('prenom', 'like', $searchTerm)
-                  ->orWhere('email', 'like', $searchTerm)
-                  ->orWhere('telephone', 'like', $searchTerm);
+                  ->orWhere('email', 'like', $searchTerm);
+              
             });
         })
         ->paginate($perPage);
