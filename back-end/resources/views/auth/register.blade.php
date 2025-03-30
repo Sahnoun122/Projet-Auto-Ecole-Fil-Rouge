@@ -122,7 +122,7 @@
       </div>
   @endif
 
-  <form id="registerForm" method="POST" action="http://127.0.0.1:8000/api/register" enctype="multipart/form-data" class="space-y-6">
+  <form id="registerForm" method="POST" action="/api/register" enctype="multipart/form-data" class="space-y-6">
     @csrf
       <input type="hidden" name="_token" value="votre_token_csrf_ici">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -398,7 +398,7 @@
             throw data;
         }
 
-        window.location.href = '/login'; 
+        window.location.href = '/connecter'; 
     } catch (error) {
         console.error('Erreur:', error);
         alert(error.error || 'Une erreur est survenue');

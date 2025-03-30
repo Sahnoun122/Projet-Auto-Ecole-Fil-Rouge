@@ -121,7 +121,7 @@
       </div>
   @endif
 
-        <form method="POST" action="{{ route('connecter') }}" class="space-y-6">
+        <form method="POST" action="/api/connecter" class="space-y-6">
         <div class="fade-in-up" style="animation-delay: 0.1s;">
           <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <div class="relative">
@@ -142,9 +142,9 @@
           <div class="relative">
             <input
               type="password"
-              id="mot-de-passe"
+              id="password"
               value=""
-              name="mot-de-passe"
+              name="password"
               placeholder="••••••••••••••"
               class="w-full px-4 py-3 bg-gray-100 rounded-md pr-12 input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
             >
@@ -229,6 +229,59 @@
         });
       }
     });
+
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Connexion en cours...';
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const requestBody = {
+        email: email,
+        password: password
+    };
+
+    try {
+        const response = await fetch('/api/connecter', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody), 
+            credentials: 'include' 
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw data; 
+        }
+
+        const role = data.role; 
+        if (role === 'admin') {
+            window.location.href = '/admin/dashboard';
+        } else if (role === 'moniteur') {
+            window.location.href = '/moniteur/dashboard';
+        } else if (role === 'candidat') {
+            window.location.href = '/candidat/dashboard';
+        } else {
+            alert('Role non reconnu.');
+        }
+
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert(error.message || 'Une erreur est survenue');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Se connecter';
+    }
+});
+
   </script>
 </body>
 </html>

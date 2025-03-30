@@ -22,23 +22,18 @@ Route::get('connecter', [AuthViews::class, 'VuConnecter'])->name('connecter');
 Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
 
 
-Route::get('/complete-registration', [AuthViews::class, 'completeRegistration']);
 
 
 
 
+    Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+    });
 
-// Route::middleware(['auth'])->group(function () {
+    Route::prefix('candidats')->group(function () {
+        Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
+    });
 
-//     Route::prefix('admin')->group(function () {
-//         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
-//     });
-
-//     Route::prefix('candidats')->group(function () {
-//         Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-//     });
-
-//     Route::prefix('moniteur')->group(function () {
-//         Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
-//     });
-// });
+    Route::prefix('moniteur')->group(function () {
+        Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
+    });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -60,10 +61,13 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
     
+
+    
         return response()->json(['user' => $user], 201);
     }
     
-    public function login(Request $request)
+    
+    public function connecter(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
@@ -71,9 +75,15 @@ class AuthController extends Controller
         ]);
     
         $credentials = $request->only('email', 'password');
-        
-        if ($token = JWTAuth::attempt($credentials)) {
-            return response()->json(['token' => $token]);
+    
+        $user = User::where('email', $credentials['email'])->first();
+    
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            $token = JWTAuth::fromUser($user);
+            return response()->json([
+                'token' => $token,
+                'role' => $user->role,
+            ]);
         }
     
         return response()->json(['message' => 'Unauthorized'], 401);
