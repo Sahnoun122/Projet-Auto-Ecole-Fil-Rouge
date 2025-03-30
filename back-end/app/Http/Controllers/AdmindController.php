@@ -13,6 +13,10 @@ class AdmindController extends Controller
     {
         return view('admin.dashboard'); 
     }
+    public function AjouterMoniteur()
+    {
+        return view('admin.AjouterMoniteur'); 
+    }
     /**
      * Show the form for creating a new resource.
      */
