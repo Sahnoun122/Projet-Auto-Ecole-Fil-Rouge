@@ -32,6 +32,8 @@ class AuthController extends Controller
             'type_permis' => 'required|string|max:255',
             'role' => 'required|in:admin,moniteur,candidat',
             'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
+            'certifications' => 'nullable|string', 
+            'qualifications' => 'nullable|string',
         ]);
     
         if ($validator->fails()) {
@@ -61,7 +63,10 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
     
-
+        if ($request->role == 'moniteur') {
+            $userData['certifications'] = $request->certifications;
+            $userData['qualifications'] = $request->qualifications;
+        }
     
         return response()->json(['user' => $user], 201);
     }
