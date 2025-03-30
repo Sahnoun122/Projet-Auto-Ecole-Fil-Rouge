@@ -27,4 +27,11 @@ Route::middleware('jwt.auth')->group(function () {
 
 Route::post('/register', [AuthController::class, 'register']);
 
+Route::get('/candidats', [AuthController::class, 'getCandidats']);
+Route::get('/candidats/search', [AuthController::class, 'searchCandidats']);
+Route::delete('/candidats/{id}', [AuthController::class, 'deleteCandidat']);
+
+Route::get('/moniteurs', [AuthController::class, 'getMoniteurs']);
+Route::get('/moniteurs/search', [AuthController::class, 'searchMoniteurs']);
+Route::delete('/moniteurs/{id}', [AuthController::class, 'deleteMoniteur']);
     

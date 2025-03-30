@@ -17,6 +17,16 @@ class AdmindController extends Controller
     {
         return view('admin.AjouterMoniteur'); 
     }
+
+    public function gestionMoniteur()
+    {
+        return view('admin.gestionMoniteur'); 
+    }
+
+    public function gestionCandidats()
+    {
+        return view('admin.gestionCandidats'); 
+    }
     /**
      * Show the form for creating a new resource.
      */

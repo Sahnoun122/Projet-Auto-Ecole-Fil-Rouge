@@ -29,8 +29,12 @@ Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
+        Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+        Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
 
     });
+
+
 
     Route::prefix('candidats')->group(function () {
         Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
