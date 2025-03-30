@@ -258,7 +258,6 @@
 
         <div class="bg-white w-full md:w-3/5 p-8 flex flex-col ml-32 justify-center">
             <div class="max-w-lg mx-auto w-full">
-              <h3 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Ajouter Moniteurs</h3>
               @if ($errors->any())
               <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                   {{-- <ul class="list-disc pl-5">
@@ -379,7 +378,23 @@
         >
     </div>
 </div>
-
+    <div class="fade-in-up" style="animation-delay: 0.2s;">
+          <label for="type_permis" class="block text-sm font-medium text-gray-700 mb-2">Type de permis</label>
+          <select 
+            id="type_permis" 
+            name="type_permis"
+            class="w-full px-4 py-3 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            required
+          >
+            <option value="">Sélectionnez votre type de permis</option>
+            <option value="A">Permis A (Moto)</option>
+            <option value="B">Permis B (Voiture)</option>
+            <option value="C">Permis C (Poids lourd)</option>
+            <option value="D">Permis D (Bus)</option>
+            <option value="EB">Permis EB (Remorque)</option>
+          </select>
+    
+        </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           
                   <div class="fade-in-up" style="animation-delay: 0.8s;">
