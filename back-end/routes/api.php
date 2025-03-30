@@ -3,40 +3,30 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\CandidatsController;
-
-use App\Http\Controllers\API\CandidatController;
-
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
+use App\Http\Controllers\CandidatController;
+use App\Http\Controllers\MoniteurController;
 
 Route::post('register', [AuthController::class, 'register']);
-
 Route::post('connecter', [AuthController::class, 'connecter']);
-
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
-
 Route::post('refresh', [AuthController::class, 'refresh']);
 
-Route::middleware('jwt.auth')->group(function () {
+Route::middleware('auth:api')->group(function () {
+
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::prefix('candidats')->group(function () {
+
+    // Route::prefix('candidats')->middleware('role:candidat')->group(function () {
+    //     Route::get('/dashboard', [CandidatController::class, 'dashboard'])->name('candidats.dashboard');
+    // });
+
+    // Route::prefix('moniteur')->middleware('role:moniteur')->group(function () {
+    //     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
+    // });
+
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::get('/dashboard', [AuthController::class, 'adminDashboard'])->name('admin.dashboard');
+        Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+        Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
     });
 
 });
-
-
-
-Route::post('/register', [AuthController::class, 'register']);
-
-Route::get('/candidats', [AuthController::class, 'getCandidats']);
-Route::get('/candidats/search', [AuthController::class, 'searchCandidats']);
-Route::delete('/candidats/{id}', [AuthController::class, 'deleteCandidat']);
-
-Route::get('/moniteurs', [AuthController::class, 'getMoniteurs']);
-Route::get('/moniteurs/search', [AuthController::class, 'searchMoniteurs']);
-Route::delete('/moniteurs/{id}', [AuthController::class, 'deleteMoniteur']);
-    
