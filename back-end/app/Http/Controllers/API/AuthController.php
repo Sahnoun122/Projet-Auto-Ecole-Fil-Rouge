@@ -119,4 +119,16 @@ class AuthController extends Controller
             return response()->json(['message' => 'Failed to logout, please try again.'], 500);
         }
     }
+
+    public function getCandidats()
+    {
+        $candidats = User::where('role', 'candidat')->get();
+        return response()->json($candidats);
+    }
+
+    public function getMoniteurs()
+    {
+        $moniteurs = User::where('role', 'moniteur')->get();
+        return response()->json($moniteurs);
+    }
 }
