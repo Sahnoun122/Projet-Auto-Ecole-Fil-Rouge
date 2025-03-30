@@ -230,7 +230,6 @@
       }
     });
 
-
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -263,15 +262,10 @@
         }
 
         const role = data.role; 
-        if (role === 'admin') {
-            window.location.href = '/admin/dashboard';
-        } else if (role === 'moniteur') {
-            window.location.href = '/moniteur/dashboard';
-        } else if (role === 'candidat') {
-            window.location.href = '/candidat/dashboard';
-        } else {
-            alert('Role non reconnu.');
-        }
+        const redirectUrl = data.redirect_url; 
+
+        localStorage.setItem('token', data.token);  
+        window.location.href = redirectUrl;  
 
     } catch (error) {
         console.error('Erreur:', error);
@@ -281,6 +275,7 @@
         submitBtn.textContent = 'Se connecter';
     }
 });
+
 
   </script>
 </body>

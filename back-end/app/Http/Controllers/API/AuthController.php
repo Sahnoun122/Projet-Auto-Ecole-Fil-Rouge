@@ -65,22 +65,65 @@ class AuthController extends Controller
     }
 
 
+        // public function connecter(Request $request)
+        // {
+        //     $request->validate([
+        //         'email' => 'required|string|email',
+        //         'password' => 'required|string',
+        //     ]);
+    
+        //     $credentials = $request->only('email', 'password');
+            
+        //     if ($token = JWTAuth::attempt($credentials)) {
+        //         return response()->json(['token' => $token,]);
+        //     }
+
+        //     return response()->json(['message' => 'Unauthorized'], 401);
+        // }
+ 
+
         public function connecter(Request $request)
         {
             $request->validate([
                 'email' => 'required|string|email',
                 'password' => 'required|string',
             ]);
-    
+        
             $credentials = $request->only('email', 'password');
             
+            // Tentative d'authentification avec les informations fournies
             if ($token = JWTAuth::attempt($credentials)) {
-                return response()->json(['token' => $token]);
+                // Récupérer l'utilisateur connecté via JWT
+                $user = JWTAuth::user();
+        
+                // Retourner le token et la redirection en fonction du rôle
+                return response()->json([
+                    'token' => $token,
+                    'role' => $user->role,  // Renvoyer le rôle pour que le frontend puisse rediriger
+                    'redirect_url' => $this->getRedirectUrlByRole($user->role)
+                ]);
             }
-    
+        
             return response()->json(['message' => 'Unauthorized'], 401);
         }
- 
+        
+
+// Fonction pour déterminer l'URL de redirection en fonction du rôle
+private function getRedirectUrlByRole($role)
+{
+    switch ($role) {
+        case 'admin':
+            return '/admin/dashboard';
+        case 'moniteur':
+            return '/moniteur/dashboard';
+        case 'candidat':
+            return '/candidats/dashboard';
+        default:
+            return '/';
+    }
+}
+
+
     public function resetPassword(Request $request)
     {
         $request->validate([

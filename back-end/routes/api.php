@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\CandidatsController;
+
 use App\Http\Controllers\API\CandidatController;
 
 
@@ -21,6 +23,9 @@ Route::post('refresh', [AuthController::class, 'refresh']);
 
 Route::middleware('jwt.auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::prefix('candidats')->group(function () {
+    });
+
 });
 
 
