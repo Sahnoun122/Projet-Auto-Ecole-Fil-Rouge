@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\PagesController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdmindController;
 use App\Http\Controllers\CandidatsController;
 use App\Http\Controllers\MoniteurController;
 use App\Http\Controllers\AuthViews;
@@ -27,7 +27,7 @@ Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
 
 
     Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
     });
 
     Route::prefix('candidats')->group(function () {
