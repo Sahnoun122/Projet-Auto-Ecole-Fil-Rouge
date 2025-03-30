@@ -196,4 +196,29 @@ class AuthController extends Controller
 
     return response()->json(['message' => 'Utilisateur supprimé avec succès']);
 }
+
+
+public function searchUsers(Request $request)
+{
+    $request->validate([
+        'role' => 'required|in:candidat,moniteur',
+        'search' => 'nullable|string|max:255',
+        'per_page' => 'nullable|integer|min:1|max:100'
+    ]);
+
+    $perPage = $request->per_page ?? 15;
+
+    return User::query()
+        ->where('role', $request->role)
+        ->when($request->search, function ($query) use ($request) {
+            $searchTerm = "%{$request->search}%";
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nom', 'like', $searchTerm)
+                  ->orWhere('prenom', 'like', $searchTerm)
+                  ->orWhere('email', 'like', $searchTerm)
+                  ->orWhere('telephone', 'like', $searchTerm);
+            });
+        })
+        ->paginate($perPage);
+}
 }
