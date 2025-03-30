@@ -91,15 +91,12 @@ class AuthController extends Controller
         
             $credentials = $request->only('email', 'password');
             
-            // Tentative d'authentification avec les informations fournies
             if ($token = JWTAuth::attempt($credentials)) {
-                // Récupérer l'utilisateur connecté via JWT
                 $user = JWTAuth::user();
         
-                // Retourner le token et la redirection en fonction du rôle
                 return response()->json([
                     'token' => $token,
-                    'role' => $user->role,  // Renvoyer le rôle pour que le frontend puisse rediriger
+                    'role' => $user->role, 
                     'redirect_url' => $this->getRedirectUrlByRole($user->role)
                 ]);
             }
@@ -108,7 +105,6 @@ class AuthController extends Controller
         }
         
 
-// Fonction pour déterminer l'URL de redirection en fonction du rôle
 private function getRedirectUrlByRole($role)
 {
     switch ($role) {
