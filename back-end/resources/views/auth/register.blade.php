@@ -150,74 +150,124 @@
           </div>
           <input type="hidden" name="role"  value="candidat">
         </div>
-        
-        <div class="fade-in-up" style="animation-delay: 0.3s;">
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input 
-            type="email" 
-            id="email" 
-            value="{{ old('email') }}"
-            name="email"
-            placeholder="Email"
-            class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-          >
-        </div>
-        
-        <div class="fade-in-up" style="animation-delay: 0.4s;">
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-          <input 
-            type="password" 
-            id="password" 
-            value=""
-            name="password"
-            placeholder="Mot de passe"
-            class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-          >
-        </div>
-        
-        <div class="fade-in-up" style="animation-delay: 0.5s;">
-          <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
-          <input 
-            type="text" 
-            id="address" 
-            name="adresse"
-            value=""
-            value="{{ old('adresse') }}"
-            placeholder="Adresse"
-            class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-          >
-        </div>
 
-        <div class="fade-in-up" style="animation-delay: 0.6s;">
-          <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
-          <input 
-            type="tel" 
-            id="telephone" 
-            value="{{ old('telephone') }}"
-            name="telephone"
-            placeholder="Téléphone"
-            class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-          >
-        </div>
         
-        <div class="fade-in-up" style="animation-delay: 0.8s;">
-          <label for="photos" class="block text-sm font-medium text-gray-700 mb-1">Photos Profile</label>
-          <div class="relative">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="fade-in-up" style="animation-delay: 0.1s;">
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input 
-              type="file" 
-              id="photo-profile" 
-              value=""
-              name="photo_profile"
-              placeholder="photos profile"
+              type="email" 
+              id="email" 
+              value="{{ old('email') }}"
+              name="email"
+              placeholder="Email"
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
             >
-            <span class="absolute right-2 top-2 text-indigo-500">
-                <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-              </svg>
-            </span>
+          </div>
+          <div class="fade-in-up" style="animation-delay: 0.2s;">
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+            <input 
+              type="password" 
+              id="password" 
+              value=""
+              name="password"
+              placeholder="Mot de passe"
+              class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            >
+          </div>
+          <input type="hidden" name="role"  value="candidat">
+        </div>
+
+
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="fade-in-up" style="animation-delay: 0.1s;">
+            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+            <input 
+              type="text" 
+              id="address" 
+              name="adresse"
+              value=""
+              value="{{ old('adresse') }}"
+              placeholder="Adresse"
+              class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            >
+          </div>
+          <div class="fade-in-up" style="animation-delay: 0.2s;">
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+            <input 
+              type="tel" 
+              id="telephone" 
+              value="{{ old('telephone') }}"
+              name="telephone"
+              placeholder="Téléphone"
+              class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            >
+          </div>
+          <input type="hidden" name="role"  value="candidat">
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  
+          <div class="fade-in-up" style="animation-delay: 0.8s;">
+            <label for="photo-profile" class="block text-sm font-medium text-gray-700 mb-2">Photo de Profil</label>
+            <div class="relative border-2 border-dashed border-blue-500 rounded-lg p-6 hover:bg-blue-50 transition ease-in-out">
+              <input 
+                type="file" 
+                id="photo-profile" 
+                name="photo_profile"
+                accept="image/*"
+                class="hidden"
+                onchange="previewProfilePhoto(event)"
+              >
+              <label for="photo-profile" class="block text-center cursor-pointer">
+                <svg class="mx-auto h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span class="mt-2 block text-sm font-medium text-gray-700">Glissez-déposez votre photo ou cliquez pour sélectionner</span>
+                <span class="mt-1 block text-xs text-gray-500">Format JPG, PNG (max. 2MB)</span>
+              </label>
+            </div>
+            
+            <!-- Preview -->
+            <div id="previewProfileContainer" class="mt-4 hidden">
+              <img id="profileImagePreview" class="mx-auto rounded-lg shadow-lg w-32 h-32 object-cover" alt="Aperçu de la photo de profil">
+              <button id="removeProfileImage" class="mt-2 text-red-500 hover:text-red-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span class="block text-sm">Supprimer l'image</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="fade-in-up">
+            <label for="photo_identite" class="block text-sm font-medium text-gray-700 mb-2">Photo d'identité</label>
+            <div class="relative border-2 border-dashed border-blue-500 rounded-lg p-6 hover:bg-blue-50 transition ease-in-out">
+              <input type="file" id="photo_identite" name="photo_identite" accept="image/*" class="hidden" onchange="previewIdentityPhoto(event)">
+              <label for="photo_identite" class="block text-center cursor-pointer">
+                <svg class="mx-auto h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span class="mt-2 block text-sm font-medium text-gray-700">Glissez-déposez votre photo ou cliquez pour sélectionner</span>
+                <span class="mt-1 block text-xs text-gray-500">Format JPG, PNG (max. 2MB)</span>
+              </label>
+            </div>
+            
+            <!-- Preview -->
+            <div id="previewIdentityContainer" class="mt-4 hidden">
+              <img id="identityImagePreview" class="mx-auto rounded-lg shadow-lg w-32 h-32 object-cover" alt="Aperçu de la photo d'identité">
+              <button id="removeIdentityImage" class="mt-2 text-red-500 hover:text-red-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span class="block text-sm">Supprimer l'image</span>
+              </button>
+            </div>
+          </div>
           
           </div>
-        </div>
+        
         
         <button 
         type="submit" 
