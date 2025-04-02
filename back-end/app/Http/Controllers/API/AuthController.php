@@ -14,7 +14,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -27,15 +27,22 @@ class AuthController extends Controller
             'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
             'certifications' => 'nullable|string', 
             'qualifications' => 'nullable|string',
-        ]);
+        ];
     
+        if ($request->role == 'moniteur') {
+            $rules['certifications'] = 'required|string|max:255';
+            $rules['qualifications'] = 'required|string|max:255';
+        }
+    
+        $validator = Validator::make($request->all(), $rules);
+        
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
     
         $profilePhotoPath = $request->file('photo_profile')->store('profile', 'public');
         $identityPhotoPath = $request->file('photo_identite')->store('identite', 'public');
-    
+        
         $userData = [
             'nom' => $request->nom,
             'prenom' => $request->prenom,
@@ -55,16 +62,10 @@ class AuthController extends Controller
         }
     
         $user = User::create($userData);
-
         
-        // $token = JWTAuth::fromUser($user);
-
-        // return response()->json(compact('user','token'), 201);
-    
         return response()->json(['user' => $user], 201);
     }
-
-
+    
         // public function connecter(Request $request)
         // {
         //     $request->validate([
