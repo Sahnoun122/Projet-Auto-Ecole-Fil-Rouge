@@ -11,22 +11,26 @@ use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
+
     public function store(Request $request, $quizId)
-    {
-        $request->validate([
-            'question_text' => 'required|string',
-            'image_path' => 'nullable|string',
-        ]);
+{
+    $quiz = Quiz::findOrFail($quizId);
 
-        $question = Question::create([
-            'quiz_id' => $quizId,
-            'admin_id' => Auth::id(), 
-            'question_text' => $request->question_text,
-            'image_path' => $request->image_path,
-        ]);
+    $request->validate([
+        'question_text' => 'required|string',
+        'image_path' => 'nullable|string',
+        'duration' => 'required|integer|min:1', // validation de la durée
+    ]);
 
-        return response()->json($question, 201); 
-    }
+    $question = $quiz->questions()->create([
+        'admin_id' => Auth::id(), 
+        'question_text' => $request->question_text,
+        'image_path' => $request->image_path,
+        'duration' => $request->duration, // Enregistrement de la durée
+    ]);
+
+    return response()->json($question);
+}
 
     public function update(Request $request, $id)
     {

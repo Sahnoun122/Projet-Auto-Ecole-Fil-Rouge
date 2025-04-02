@@ -18,6 +18,7 @@ public function up()
         $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
         $table->string('question_text');
         $table->string('image_path')->nullable();
+        $table->integer('duration')->default(30); 
         $table->timestamps();
     });
 }
