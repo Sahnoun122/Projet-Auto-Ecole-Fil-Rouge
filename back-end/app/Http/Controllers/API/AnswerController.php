@@ -147,4 +147,24 @@ class AnswerController extends Controller
         return $correctAnswers;
     }
 
+
+    public function getQuizResults($quizId)
+    {
+        $quiz = Quiz::findOrFail($quizId);
+        $results = [];
+
+        foreach ($quiz->questions as $question) {
+            $answers = $question->answers()->with('choice')->get();
+
+            foreach ($answers as $answer) {
+                $results[] = [
+                    'question' => $question->question_text,
+                    'answer' => $answer->choice->choice_text,
+                    'correct' => $answer->choice->is_correct
+                ];
+            }
+        }
+
+        return response()->json($results);
+    }
 }
