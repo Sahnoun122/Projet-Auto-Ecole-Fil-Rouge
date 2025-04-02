@@ -412,6 +412,18 @@
       }
     });
 
+    function toggleMoniteurFields() {
+    const roleSelect = document.getElementById('role');
+    const moniteurFields = document.getElementById('moniteurFields');
+    
+    if (roleSelect.value === 'moniteur') {
+        moniteurFields.classList.remove('hidden');
+    } else {
+        moniteurFields.classList.add('hidden');
+    }
+}
+
+
     //fetch 
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
