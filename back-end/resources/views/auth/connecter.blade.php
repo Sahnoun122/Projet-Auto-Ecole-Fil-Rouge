@@ -247,35 +247,54 @@
 
     try {
         const response = await fetch('/api/connecter', {
-            method: 'POST', 
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(requestBody), 
-            credentials: 'include' 
+            body: JSON.stringify(requestBody),
+            credentials: 'include'
         });
 
         const data = await response.json();
+        console.log('Réponse de l\'API:', data);
 
         if (!response.ok) {
-            throw data; 
+            throw new Error(data.message || 'Erreur inconnue');
         }
 
-        const role = data.role; 
-        const redirectUrl = data.redirect_url; 
+        if (data.token && data.role) {
+            console.log('Token:', data.token); 
+            console.log('Role:', data.role); 
 
-        localStorage.setItem('token', data.token);  
-        window.location.href = redirectUrl;  
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+
+            switch (data.role) {
+                case 'admin':
+                    window.location.href = '/admin/dashboard';  
+                    break;
+                case 'moniteur':
+                    window.location.href = '/moniteur/dashboard'; 
+                    break;
+                case 'candidat':
+                    window.location.href = '/candidats/dashboard';  
+                    break;
+                default:
+                    window.location.href = '/';  
+            }
+        } else {
+            console.error('Le token ou le role est manquant');
+            alert('Erreur dans la réponse du serveur : Token ou rôle manquant');
+        }
 
     } catch (error) {
-        console.error('Erreur:', error);
-        alert(error.message || 'Une erreur est survenue');
+        console.error('Erreur de connexion:', error);
+        alert(error.message || 'Une erreur est survenue lors de la connexion');
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Se connecter';
     }
 });
-
 
   </script>
 </body>

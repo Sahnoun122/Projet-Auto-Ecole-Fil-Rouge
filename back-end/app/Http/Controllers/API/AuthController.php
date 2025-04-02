@@ -98,7 +98,6 @@ class AuthController extends Controller
                 return response()->json([
                     'token' => $token,
                     'role' => $user->role, 
-                    'redirect_url' => $this->getRedirectUrlByRole($user->role)
                 ]);
             }
         
@@ -106,19 +105,6 @@ class AuthController extends Controller
         }
         
 
-private function getRedirectUrlByRole($role)
-{
-    switch ($role) {
-        case 'admin':
-            return 'admin/dashboard';
-        case 'moniteur':
-            return 'moniteur/dashboard';
-        case 'candidat':
-            return 'candidats/dashboard';
-        default:
-            return '/';
-    }
-}
 
 
     public function resetPassword(Request $request)

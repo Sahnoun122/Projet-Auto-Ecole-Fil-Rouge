@@ -7,7 +7,7 @@ use App\Http\Controllers\CandidatController;
 use App\Http\Controllers\MoniteurController;
 
 Route::post('register', [AuthController::class, 'register']);
-Route::post('connecter', [AuthController::class, 'connecter']);
+Route::post('/connecter', [AuthController::class, 'connecter']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::post('refresh', [AuthController::class, 'refresh']);
 
