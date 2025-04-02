@@ -238,7 +238,29 @@
               </select>
           </div>
       </div>
-      
+      <div id="moniteurFields" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+        <div class="fade-in-up" style="animation-delay: 0.3s;">
+            <label for="certifications" class="block text-sm font-medium text-gray-700 mb-2">Certification</label>
+            <input 
+                type="text" 
+                id="certifications" 
+                name="certifications"
+                placeholder="Certification"
+                class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            >
+        </div>
+    
+        <div class="fade-in-up" style="animation-delay: 0.4s;">
+            <label for="qualifications" class="block text-sm font-medium text-gray-700 mb-2">Qualification</label>
+            <input 
+                type="text" 
+                id="qualifications" 
+                name="qualifications"
+                placeholder="Qualification"
+                class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            >
+        </div>
+    </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
   
           <div class="fade-in-up" style="animation-delay: 0.8s;">
@@ -261,7 +283,6 @@
               </label>
             </div>
             
-            <!-- Preview -->
             <div id="previewProfileContainer" class="mt-4 hidden">
               <img id="profileImagePreview" class="mx-auto rounded-lg shadow-lg w-32 h-32 object-cover" alt="Aperçu de la photo de profil">
               <button id="removeProfileImage" class="mt-2 text-red-500 hover:text-red-600 transition">
