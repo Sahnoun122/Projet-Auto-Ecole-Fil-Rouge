@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Answer;
 use App\Models\Choice;
+use App\Models\Quiz;
+
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -112,6 +114,37 @@ class AnswerController extends Controller
                 ];
             })
         ]);
+    }
+
+
+    public function getCandidateResults($quizId)
+    {
+        $user = Auth::id();  
+        $quiz = Quiz::findOrFail($quizId);
+
+        $score = $this->calculateScore($quiz, $user->id);
+        $passed = $score >= 32; 
+
+        return response()->json([
+            'score' => $score,
+            'passed' => $passed
+        ]);
+    }
+
+    
+    private function calculateScore($quiz, $userId)
+    {
+        $questions = $quiz->questions;
+        $correctAnswers = 0;
+
+        foreach ($questions as $question) {
+            $answer = $question->answers()->where('candidat_id', $userId)->first();
+            if ($answer && $answer->choice->is_correct) {
+                $correctAnswers++;
+            }
+        }
+
+        return $correctAnswers;
     }
 
 }
