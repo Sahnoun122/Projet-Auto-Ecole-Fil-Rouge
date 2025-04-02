@@ -23,10 +23,17 @@ Route::middleware('auth:api')->group(function () {
     //     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
     // });
 
-    Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/dashboard', [AuthController::class, 'adminDashboard'])->name('admin.dashboard');
-        // Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
-        // Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
-    });
+    // Route::prefix('admin')->middleware('role:admin')->group(function () {
+    //     Route::get('/dashboard', [AuthController::class, 'adminDashboard'])->name('admin.dashboard');
+    //     Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+    //     Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+    // });
+
 
 });
+Route::get('/gestionCandidats', [AuthController::class, 'getCandidats'])->name('admin.gestionCandidats');
+
+
+Route::get('/getMoniteurs', [AuthController::class, 'getMoniteurs'])->name('admin.gestionMoniteur');
+
+Route::put('ModifierMoniteur/{id}', [AuthController::class, 'updateUser'])->name('admin.gestionMoniteur');
