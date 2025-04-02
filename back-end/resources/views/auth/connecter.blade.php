@@ -121,7 +121,9 @@
       </div>
   @endif
 
-        <form method="POST" action="/api/connecter" class="space-y-6">
+        <form method="POST" action="/api/connecter" id="loginForm" class="space-y-6"> 
+          @csrf 
+
         <div class="fade-in-up" style="animation-delay: 0.1s;">
           <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <div class="relative">
@@ -177,7 +179,8 @@
           <button
             type="submit"
             class="w-full py-3 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-all duration-300 transform hover:scale-102 pulse"
-          >
+            id="submitBtn"
+            >
             Se connecter
           </button>
         </div>
@@ -187,7 +190,7 @@
         <p class="text-gray-600">
           Vous n'avez pas de compte ?
           <a href="{{ route ('register')}}" class="text-indigo-600 font-medium hover:underline transition-all duration-300">S'inscrire</a>
-        </p>
+                </p>
       </div>
     </div>
   </div>
