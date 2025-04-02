@@ -84,5 +84,34 @@ class AnswerController extends Controller
         }
     }
 
+    public function getResults($quizId)
+    {
+        $answers = Answer::with(['question', 'choice'])
+            ->where('candidat_id', Auth::id())
+            ->whereHas('question', function($q) use ($quizId) {
+                $q->where('quiz_id', $quizId);
+            })
+            ->get();
+
+        $totalQuestions = Question::where('quiz_id', $quizId)->count();
+        $correctAnswers = $answers->where('is_correct', true)->count();
+
+        return response()->json([
+            'score' => [
+                'correct' => $correctAnswers,
+                'total' => $totalQuestions,
+                'percentage' => round(($correctAnswers/$totalQuestions)*100, 2)
+            ],
+            'answers' => $answers->map(function($answer) {
+                return [
+                    'question_id' => $answer->question_id,
+                    'choice_id' => $answer->choice_id,
+                    'is_correct' => $answer->is_correct,
+                    'question_text' => $answer->question->question_text,
+                    'choice_text' => $answer->choice->choice_text
+                ];
+            })
+        ]);
+    }
 
 }
