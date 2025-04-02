@@ -117,19 +117,19 @@ class AnswerController extends Controller
     }
 
 
-    public function getCandidateResults($quizId)
-    {
-        $user = Auth::id();  
-        $quiz = Quiz::findOrFail($quizId);
+    // public function getCandidateResults($quizId)
+    // {
+    //     $user = Auth::id();  
+    //     $quiz = Quiz::findOrFail($quizId);
 
-        $score = $this->calculateScore($quiz, $user->id);
-        $passed = $score >= 32; 
+    //     $score = $this->calculateScore($quiz, $userId);
+    //     $passed = $score >= 32; 
 
-        return response()->json([
-            'score' => $score,
-            'passed' => $passed
-        ]);
-    }
+    //     return response()->json([
+    //         'score' => $score,
+    //         'passed' => $passed
+    //     ]);
+    // }
 
     
     private function calculateScore($quiz, $userId)

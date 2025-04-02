@@ -33,7 +33,15 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
         Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+
+        Route::resource('quizzes', QuizController::class); 
+        Route::resource('questions', QuestionController::class); 
+    
+        Route::resource('choices', ChoiceController::class);
+    
+        Route::get('results/{quizId}', [AnswerController::class, 'getResults']); 
     });
+
 
 });
 
