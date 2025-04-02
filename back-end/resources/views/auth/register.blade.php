@@ -206,23 +206,39 @@
           </div>
           <input type="hidden" name="role"  value="candidat">
         </div>
-        <div class="fade-in-up" style="animation-delay: 0.2s;">
-          <label for="type_permis" class="block text-sm font-medium text-gray-700 mb-2">Type de permis</label>
-          <select 
-            id="type_permis" 
-            name="type_permis"
-            class="w-full px-4 py-3 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            required
-          >
-            <option value="">Sélectionnez votre type de permis</option>
-            <option value="A">Permis A (Moto)</option>
-            <option value="B">Permis B (Voiture)</option>
-            <option value="C">Permis C (Poids lourd)</option>
-            <option value="D">Permis D (Bus)</option>
-            <option value="EB">Permis EB (Remorque)</option>
-          </select>
-    
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="fade-in-up" style="animation-delay: 0.1s;">
+              <label for="type_permis" class="block text-sm font-medium text-gray-700 mb-2">Type de permis</label>
+              <select 
+                  id="type_permis" 
+                  name="type_permis"
+                  class="w-full px-4 py-3 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                  required
+              >
+                  <option value="">Sélectionnez votre type de permis</option>
+                  <option value="A">Permis A (Moto)</option>
+                  <option value="B">Permis B (Voiture)</option>
+                  <option value="C">Permis C (Poids lourd)</option>
+                  <option value="D">Permis D (Bus)</option>
+                  <option value="EB">Permis EB (Remorque)</option>
+              </select>
+          </div>
+      
+          <div class="fade-in-up" style="animation-delay: 0.2s;">
+              <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Rôle</label>
+              <select 
+                  id="role" 
+                  name="role"
+                  class="w-full px-4 py-3 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                  onchange="toggleMoniteurFields()"
+                  required
+              >
+                  <option value="candidat">Candidat</option>
+                  <option value="moniteur">Moniteur</option>
+              </select>
+          </div>
+      </div>
+      
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
   
           <div class="fade-in-up" style="animation-delay: 0.8s;">
