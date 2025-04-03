@@ -3,15 +3,16 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Services\AuthService;
-use App\Repositories\AuthRepositoryInterface;
-use App\Repositories\AuthRepository;
+use App\Models\Vehicle;
+use App\Policies\VehiclePolicy;
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-
+    protected $policies = [
+        Vehicle::class => VehiclePolicy::class,
+    ];
      
     public function register(): void
     {
