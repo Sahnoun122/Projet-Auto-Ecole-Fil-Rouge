@@ -10,6 +10,7 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\TitleController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\API\VehicleController;
 
 
 use App\Http\Controllers\CandidatsController;
@@ -105,3 +106,13 @@ Route::prefix('progress')->group(function () {
     Route::get('/{candidateId}/{courseId}', [ProgressController::class, 'show']); 
     Route::put('/{candidateId}/{courseId}', [ProgressController::class, 'update']); 
 });
+
+
+
+    Route::get('/vehicles', [VehicleController::class, 'index']);
+    Route::post('/vehicles', [VehicleController::class, 'store']);
+    Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+    Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
+    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+    
+    Route::get('/vehicles/maintenance/alerts', [VehicleController::class, 'maintenanceAlerts']);
