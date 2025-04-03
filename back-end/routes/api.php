@@ -7,6 +7,9 @@ use App\Http\Controllers\API\QuizController;
 use App\Http\Controllers\API\QuestionController;
 use App\Http\Controllers\API\ChoiceController;
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\TitleController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ProgressController;
 
 
 use App\Http\Controllers\CandidatsController;
@@ -84,3 +87,21 @@ Route::get('/getMoniteurs', [AuthController::class, 'getMoniteurs'])->name('admi
 
 Route::put('ModifierMoniteur/{id}', [AuthController::class, 'updateUser'])->name('admin.gestionMoniteur');
 
+Route::prefix('admin')->group(function () {
+    Route::get('/titles', [TitleController::class, 'index']);       
+    Route::post('/titles', [TitleController::class, 'store']);     
+    Route::get('/titles/{id}', [TitleController::class, 'show']);     
+    Route::put('/titles/{id}', [TitleController::class, 'update']);   
+    Route::delete('/titles/{id}', [TitleController::class, 'destroy']); 
+
+    Route::get('/courses', [CourseController::class, 'index']);    
+    Route::post('/courses', [CourseController::class, 'store']);    
+    Route::get('/courses/{id}', [CourseController::class, 'show']);  
+    Route::put('/courses/{id}', [CourseController::class, 'update']); 
+    Route::delete('/courses/{id}', [CourseController::class, 'destroy']); 
+});
+
+Route::prefix('progress')->group(function () {
+    Route::get('/{candidateId}/{courseId}', [ProgressController::class, 'show']); 
+    Route::put('/{candidateId}/{courseId}', [ProgressController::class, 'update']); 
+});
