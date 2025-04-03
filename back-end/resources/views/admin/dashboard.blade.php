@@ -133,7 +133,7 @@
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
-                            <a href="#"
+                            <a href="{{ route('AjouterQuiz')}}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Cours Pratique</span>
                             </a>

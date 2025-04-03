@@ -3,11 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-
 use App\Http\Controllers\API\QuizController;
 use App\Http\Controllers\API\QuestionController;
 use App\Http\Controllers\API\ChoiceController;
-use App\Http\Controllers\API\AnswerController;
+use App\Http\Controllers\AnswerController;
 
 
 use App\Http\Controllers\CandidatsController;
@@ -20,6 +19,10 @@ Route::post('refresh', [AuthController::class, 'refresh']);
 
 Route::middleware('auth:api')->group(function () {
 
+
+    Route::get('/quizzes', [QuizController::class, 'index']);
+    Route::post('/quizzes', [QuizController::class, 'store']);
+    
     Route::post('logout', [AuthController::class, 'logout']);
 
     // Route::prefix('candidats')->middleware('role:candidat')->group(function () {
@@ -30,18 +33,32 @@ Route::middleware('auth:api')->group(function () {
     //     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
     // });
 
-    Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
-        Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+    // Route::prefix('admin')->group(function () {
+    //     Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+    //     Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
 
-        Route::resource('quizzes', QuizController::class); 
-        Route::resource('questions', QuestionController::class); 
-    
-        Route::resource('choices', ChoiceController::class);
-    
-        Route::get('results/{quizId}', [AnswerController::class, 'getResults']); 
-    });
-
+    //         // Routes pour les quizzes
+    //         Route::get('/quizzes', [QuizController::class, 'index']);
+    //         Route::post('/quizzes', [QuizController::class, 'store']);
+    //         Route::get('/quizzes/{id}', [QuizController::class, 'show']);
+    //         Route::delete('/quizzes/{id}', [QuizController::class, 'destroy']);
+            
+    //         // Routes pour les questions
+    //         Route::post('/quizzes/{quizId}/questions', [QuestionController::class, 'store']);
+    //         Route::put('/questions/{id}', [QuestionController::class, 'update']);
+    //         Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
+            
+    //         // Routes pour les choix
+    //         Route::post('/questions/{questionId}/choices', [ChoiceController::class, 'store']);
+    //         Route::put('/choices/{id}', [ChoiceController::class, 'update']);
+    //         Route::delete('/choices/{id}', [ChoiceController::class, 'destroy']);
+            
+    //         // Routes pour les réponses
+    //         Route::post('/quizzes/{quizId}/answers', [AnswerController::class, 'store']);
+    //         Route::get('/quizzes/{quizId}/results', [AnswerController::class, 'getResults']);
+    //         Route::get('/quizzes/{quizId}/quiz-results', [AnswerController::class, 'getQuizResults']);
+   
+    // });
 
 });
 
@@ -66,3 +83,4 @@ Route::get('/gestionCandidats', [AuthController::class, 'getCandidats'])->name('
 Route::get('/getMoniteurs', [AuthController::class, 'getMoniteurs'])->name('admin.gestionMoniteur');
 
 Route::put('ModifierMoniteur/{id}', [AuthController::class, 'updateUser'])->name('admin.gestionMoniteur');
+

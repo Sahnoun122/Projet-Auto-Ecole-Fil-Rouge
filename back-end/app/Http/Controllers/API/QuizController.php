@@ -17,8 +17,8 @@ class QuizController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string',
-            'description' => 'nullable|string',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string'
         ]);
 
         $quiz = Quiz::create([

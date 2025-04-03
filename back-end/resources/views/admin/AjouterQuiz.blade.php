@@ -129,7 +129,7 @@
                         </div>
                         <div id="cours-pratique-list"
                             class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href= "{{ route('AjouterQuiz')}} "
+                            <a href="{{ route('AjouterQuiz')}}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
@@ -252,10 +252,13 @@
                 </nav>
             </div>
 
+
+             
         </div>
-
+   
+        
     </div>
-
+   
 
     <script>
 
@@ -314,3 +317,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
+
+

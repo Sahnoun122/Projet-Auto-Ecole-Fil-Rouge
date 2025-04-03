@@ -27,6 +27,12 @@ class AdmindController extends Controller
     {
         return view('admin.gestionCandidats'); 
     }
+
+
+    public function  AjouterQuiz() {
+        return view('admin.AjouterQuiz'); 
+
+    }
     /**
      * Show the form for creating a new resource.
      */
