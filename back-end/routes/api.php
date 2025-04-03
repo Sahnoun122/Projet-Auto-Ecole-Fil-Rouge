@@ -11,6 +11,8 @@ use App\Http\Controllers\TitleController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\API\VehicleController;
+use App\Http\Controllers\API\ExamController;
+
 
 
 use App\Http\Controllers\CandidatsController;
@@ -88,7 +90,13 @@ Route::get('/getMoniteurs', [AuthController::class, 'getMoniteurs'])->name('admi
 
 Route::put('ModifierMoniteur/{id}', [AuthController::class, 'updateUser'])->name('admin.gestionMoniteur');
 
+
+
 Route::prefix('admin')->group(function () {
+
+
+    
+
     Route::get('/titles', [TitleController::class, 'index']);       
     Route::post('/titles', [TitleController::class, 'store']);     
     Route::get('/titles/{id}', [TitleController::class, 'show']);     
@@ -100,19 +108,28 @@ Route::prefix('admin')->group(function () {
     Route::get('/courses/{id}', [CourseController::class, 'show']);  
     Route::put('/courses/{id}', [CourseController::class, 'update']); 
     Route::delete('/courses/{id}', [CourseController::class, 'destroy']); 
-});
 
-Route::prefix('progress')->group(function () {
-    Route::get('/{candidateId}/{courseId}', [ProgressController::class, 'show']); 
-    Route::put('/{candidateId}/{courseId}', [ProgressController::class, 'update']); 
-});
-
-
-
+    
     Route::get('/vehicles', [VehicleController::class, 'index']);
     Route::post('/vehicles', [VehicleController::class, 'store']);
     Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
     Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
     
+
+    Route::prefix('progress')->group(function () {
+        Route::get('/{candidateId}/{courseId}', [ProgressController::class, 'show']); 
+        Route::put('/{candidateId}/{courseId}', [ProgressController::class, 'update']); 
+    });
+
     Route::get('/vehicles/maintenance/alerts', [VehicleController::class, 'maintenanceAlerts']);
+
+        Route::apiResource('exams', ExamController::class);
+        Route::post('exams/{exam}/candidats', [ExamController::class, 'addCandidat']);
+        Route::post('exams/{exam}/candidats/{candidat}/results', [ExamController::class, 'saveResult']);
+});
+
+
+
+
+
