@@ -8,6 +8,8 @@ use App\Models\Vehicle;
 use App\Policies\VehiclePolicy;
 use App\Models\Exam;
 use App\Policies\ExamPolicy;
+use App\Models\CoursConduite;
+use App\Policies\CoursConduitePolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -18,6 +20,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Vehicle::class => VehiclePolicy::class,
         Exam::class => ExamPolicy::class,
+        CoursConduite::class => CoursConduitePolicy::class,
+
     ];
 
     /**
