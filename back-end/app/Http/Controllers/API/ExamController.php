@@ -89,5 +89,22 @@ class ExamController extends Controller
         return response()->noContent();
     }
 
-  
+    public function addCandidat(Request $request, Exam $exam)
+    {
+        Gate::authorize('manageCandidats', $exam);
+
+        $request->validate([
+            'candidat_id' => 'required|exists:users,id'
+        ]);
+
+        if ($exam->candidats()->count() >= $exam->places_max) {
+            return response()->json(['message' => 'Nombre maximum de candidats atteint'], 422);
+        }
+
+        $exam->candidats()->syncWithoutDetaching([$request->candidat_id]);
+
+        return response()->json($exam->load('candidats'));
+    }
+
+
 }
