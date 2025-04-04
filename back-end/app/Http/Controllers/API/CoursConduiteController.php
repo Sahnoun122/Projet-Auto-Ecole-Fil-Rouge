@@ -196,4 +196,21 @@ class CoursConduiteController extends Controller
 
         return $colors[$statut] ?? '#6c757d';
     }
+
+     // Candidats
+     
+     public function listeCours(Request $request)
+     {
+         $user = Auth::user();
+         
+         $cours = CoursConduite::with(['moniteur', 'vehicule'])
+             ->whereHas('candidats', function($q) use ($user) {
+                 $q->where('users.id', $user->id);
+             })
+             ->orderBy('date_heure', 'desc')
+             ->paginate(10);
+ 
+         return response()->json($cours);
+     }
+ 
 }

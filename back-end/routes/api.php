@@ -13,9 +13,9 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\API\VehicleController;
 use App\Http\Controllers\API\ExamController;
 use App\Http\Controllers\API\ReportingController;
+use App\Http\Controllers\API\ProfileController;
 
 use App\Http\Controllers\CoursConduiteController;
-;
 use App\Http\Controllers\CandidatsController;
 use App\Http\Controllers\MoniteurController;
 
