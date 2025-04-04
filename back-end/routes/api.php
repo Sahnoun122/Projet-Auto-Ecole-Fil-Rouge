@@ -12,10 +12,10 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\API\VehicleController;
 use App\Http\Controllers\API\ExamController;
+use App\Http\Controllers\API\ReportingController;
+
 use App\Http\Controllers\CoursConduiteController;
-
-
-
+;
 use App\Http\Controllers\CandidatsController;
 use App\Http\Controllers\MoniteurController;
 
@@ -138,6 +138,10 @@ Route::prefix('admin')->group(function () {
     Route::delete('/cours/{cours}', [CoursConduiteController::class, 'destroy']);
     Route::post('/cours/{cours}/presence', [CoursConduiteController::class, 'marquerPresence']);
     Route::get('/cours/events', [CoursConduiteController::class, 'apiIndex']);
+
+
+        Route::get('/', [ReportingController::class, 'index']);
+        Route::post('/pdf', [ReportingController::class, 'generatePdfReport']);
 
 });
 
