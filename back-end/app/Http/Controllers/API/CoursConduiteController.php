@@ -198,7 +198,7 @@ class CoursConduiteController extends Controller
     }
 
      // Candidats
-     
+
      public function listeCours(Request $request)
      {
          $user = Auth::user();
@@ -213,4 +213,19 @@ class CoursConduiteController extends Controller
          return response()->json($cours);
      }
  
+
+    public function DetailsCours($id)
+    {
+        $user = Auth::user();
+        $cours = CoursConduite::with(['moniteur', 'vehicule'])
+            ->whereHas('candidats', function($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->findOrFail($id);
+
+        return response()->json([
+            'cours' => $cours,
+            'presence' => $cours->candidats()->where('users.id', $user->id)->first()->pivot
+        ]);
+    }
 }
