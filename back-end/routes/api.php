@@ -142,7 +142,8 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/', [ReportingController::class, 'index']);
         Route::post('/pdf', [ReportingController::class, 'generatePdfReport']);
-
+        Route::get('/profile', [ProfileController::class, 'show']);
+        Route::put('/profile', [ProfileController::class, 'update']);
 });
 
 
