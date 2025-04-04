@@ -12,6 +12,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\API\VehicleController;
 use App\Http\Controllers\API\ExamController;
+use App\Http\Controllers\CoursConduiteController;
 
 
 
@@ -127,6 +128,16 @@ Route::prefix('admin')->group(function () {
         Route::apiResource('exams', ExamController::class);
         Route::post('exams/{exam}/candidats', [ExamController::class, 'addCandidat']);
         Route::post('exams/{exam}/candidats/{candidat}/results', [ExamController::class, 'saveResult']);
+
+
+    Route::get('/cours', [CoursConduiteController::class, 'index']);
+    Route::post('/cours', [CoursConduiteController::class, 'store']);
+    Route::get('/cours/{cours}', [CoursConduiteController::class, 'show']);
+    Route::put('/cours/{cours}', [CoursConduiteController::class, 'update']);
+    Route::delete('/cours/{cours}', [CoursConduiteController::class, 'destroy']);
+    Route::post('/cours/{cours}/presence', [CoursConduiteController::class, 'marquerPresence']);
+    Route::get('/cours/events', [CoursConduiteController::class, 'apiIndex']);
+
 });
 
 
