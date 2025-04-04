@@ -126,8 +126,9 @@ Route::prefix('admin')->group(function () {
     Route::get('/vehicles/maintenance/alerts', [VehicleController::class, 'maintenanceAlerts']);
 
         Route::apiResource('exams', ExamController::class);
+        Route::apiResource('exams', ExamController::class);
         Route::post('exams/{exam}/candidats', [ExamController::class, 'addCandidat']);
-        Route::post('exams/{exam}/candidats/{candidat}/results', [ExamController::class, 'saveResult']);
+        Route::post('exams/{exam}/candidats/{candidat}/results', [ExamController::class, 'recordResult']);
 
 
     Route::get('/cours', [CoursConduiteController::class, 'index']);
