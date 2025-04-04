@@ -6,45 +6,57 @@ use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class ExamController extends Controller
 {
-  
+
     public function index()
     {
         Gate::authorize('viewAny', Exam::class);
-
-        return Exam::with(['admin', 'candidats'])->get();
+    
+        $query = Exam::with(['admin', 'moniteur', 'candidats']);
+        $user = Auth::user();
+    
+        if ($user->roles->contains('name', 'moniteur')) {
+            $query->where('moniteur_id', $user->id);
+        } 
+        elseif ($user->roles->contains('name', 'candidat')) {
+            $query->whereHas('candidats', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+    
+        return $query->latest()->paginate(10);
     }
 
-   
     public function store(Request $request)
     {
         Gate::authorize('create', Exam::class);
 
         $validated = $request->validate([
-            'type' => 'required|in:théorique,pratique',
+            'type' => 'required|in:theorique,pratique',
             'date_exam' => 'required|date|after:now',
             'lieu' => 'required|string|max:100',
-            'places_max' => 'required|integer|min:1'
+            'places_max' => 'required|integer|min:1',
+            'moniteur_id' => 'nullable|exists:users,id',
+            'instructions' => 'nullable|string'
         ]);
 
         $exam = Exam::create([
             ...$validated,
-            'admin_id' => Auth::id(), 
+            'admin_id' => Auth::id(),
+            'statut' => 'planifie'
         ]);
 
-        return response()->json($exam->load('admin'), 201);
+        return response()->json($exam->load(['admin', 'moniteur']), 201);
     }
 
-  
     public function show(Exam $exam)
     {
         Gate::authorize('view', $exam);
-
-        return $exam->load(['admin', 'candidats']);
+        return $exam->load(['admin', 'moniteur', 'candidats']);
     }
 
     public function update(Request $request, Exam $exam)
@@ -52,52 +64,30 @@ class ExamController extends Controller
         Gate::authorize('update', $exam);
 
         $validated = $request->validate([
-            'type' => 'sometimes|in:théorique,pratique',
+            'type' => 'sometimes|in:theorique,pratique',
             'date_exam' => 'sometimes|date|after:now',
             'lieu' => 'sometimes|string|max:100',
-            'places_max' => 'sometimes|integer|min:1'
+            'places_max' => 'sometimes|integer|min:1',
+            'statut' => 'sometimes|in:planifie,en_cours,termine,annule',
+            'moniteur_id' => 'nullable|exists:users,id',
+            'instructions' => 'nullable|string'
         ]);
 
         $exam->update($validated);
-        return $exam->load('admin');
-    }
 
+        if ($exam->statut === 'termine') {
+            $exam->updateStats();
+        }
+
+        return $exam->load(['admin', 'moniteur']);
+    }
 
     public function destroy(Exam $exam)
     {
         Gate::authorize('delete', $exam);
-
         $exam->delete();
         return response()->noContent();
     }
 
-    public function addCandidat(Request $request, Exam $exam)
-    {
-        Gate::authorize('addCandidat', $exam);
-
-        $request->validate([
-            'candidat_id' => 'required|exists:users,id'
-        ]);
-
-        $exam->candidats()->attach($request->candidat_id);
-        return response()->json($exam->load('candidats'));
-    }
-
   
-    public function saveResult(Request $request, Exam $exam, User $candidat)
-    {
-        Gate::authorize('manageResults', $exam);
-
-        $request->validate([
-            'resultat' => 'required|integer|between:0,100',
-            'observations' => 'nullable|string'
-        ]);
-
-        $exam->candidats()->updateExistingPivot($candidat->id, [
-            'resultat' => $request->resultat,
-            'observations' => $request->observations
-        ]);
-
-        return response()->json($exam->load('candidats'));
-    }
 }
