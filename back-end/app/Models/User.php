@@ -1,20 +1,15 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory  ;
+    use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'nom',
         'prenom',
@@ -24,47 +19,40 @@ class User extends Authenticatable implements JWTSubject
         'photo_profile',
         'photo_identite',
         'type_permis',
-        'role',
-        'password',
         'certifications',
-        'qualifications'
-
+        'Qualifications',
+        'role',
+        'password'
     ];
 
-    public function candidat()
-{
-    return $this->hasOne(Candidat::class);
-}
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 
-    public function getJWTIdentifier()
+    public function getProfilePhotoUrlAttribute()
     {
-        return $this->getKey(); 
+        return $this->photo_profile 
+            ? asset('storage/'.$this->photo_profile)
+            : asset('images/default-profile.png');
     }
 
-    public function getJWTCustomClaims()
+    public function isAdmin()
     {
-        return []; 
+        return $this->role === 'admin';
     }
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+
+    public function isMoniteur()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->role === 'moniteur';
+    }
+
+    public function isCandidat()
+    {
+        return $this->role === 'candidat';
     }
 }
