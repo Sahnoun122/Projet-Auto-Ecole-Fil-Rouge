@@ -106,5 +106,28 @@ class ExamController extends Controller
         return response()->json($exam->load('candidats'));
     }
 
+    public function recordResult(Request $request, Exam $exam, User $candidat)
+    {
+        Gate::authorize('recordResults', $exam);
 
+        $request->validate([
+            'present' => 'required|boolean',
+            'resultat' => 'required_if:present,true|in:excellent,tres_bien,bien,moyen,insuffisant',
+            'score' => 'required_if:present,true|integer|between:0,100',
+            'observations' => 'nullable|string',
+            'feedbacks' => 'nullable|string'
+        ]);
+
+        $exam->candidats()->updateExistingPivot($candidat->id, [
+            'present' => $request->present,
+            'resultat' => $request->present ? $request->resultat : null,
+            'score' => $request->present ? $request->score : null,
+            'observations' => $request->observations,
+            'feedbacks' => $request->feedbacks
+        ]);
+
+        $exam->updateStats();
+
+        return response()->json($exam->load('candidats'));
+    }
 }
