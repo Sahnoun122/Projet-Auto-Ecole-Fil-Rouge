@@ -10,6 +10,7 @@ class CreateTitlesTable extends Migration
         Schema::create('titles', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('type_permis');
             $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');  
             $table->timestamps();
         });

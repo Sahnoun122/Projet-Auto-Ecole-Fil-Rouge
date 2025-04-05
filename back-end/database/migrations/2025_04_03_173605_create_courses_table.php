@@ -11,9 +11,11 @@ class CreateCoursesTable extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('title_id')->constrained()->onDelete('cascade');
-            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');  // Ajout du admin_id
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');  
             $table->string('title');
             $table->text('description');
+            $table->date('duration')->nullable();
+
             $table->string('image')->nullable();
             $table->timestamps();
         });
