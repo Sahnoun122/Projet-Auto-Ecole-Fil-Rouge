@@ -45,4 +45,22 @@ class ProgressController extends Controller
         return response()->json($progress);
     }
 
+    
+    public function getUserProgress()
+    {
+        $user = Auth::user();
+
+        Gate::authorize('viewAny', Progress::class);
+
+        $titles = Title::where('type_permis', $user->type_permis)
+                      ->with(['courses' => function($query) use ($user) {
+                          $query->with(['progress' => function($q) use ($user) {
+                              $q->where('candidate_id', $user->id);
+                          }]);
+                      }])
+                      ->get();
+
+        return response()->json($titles);
+    }
+
 }
