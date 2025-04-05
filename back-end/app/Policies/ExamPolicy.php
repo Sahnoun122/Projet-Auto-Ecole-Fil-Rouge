@@ -44,4 +44,15 @@ class ExamPolicy
     {
         return $user->hasRole('admin') || $user->id === $exam->moniteur_id;
     }
+
+    
+    public function viewCandidat(User $user, Exam $exam)
+    {
+        return $exam->candidats->contains($user->id);
+    }
+
+    public function viewAnyCandidat(User $user)
+    {
+        return $user->hasRole('candidat');
+    }
 }
