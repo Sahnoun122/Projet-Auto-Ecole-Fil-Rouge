@@ -5,19 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Choice;
 use App\Models\Quiz;
-
-use App\Models\Question;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class AnswerController extends Controller
 {
-  
+
 
     public function store(Request $request, $quizId)
     {
+        $quiz = Quiz::findOrFail($quizId);
+
+        Gate::authorize('create', Answer::class);
+
         $validated = $request->validate([
             'answers' => 'required|array',
             'answers.*.question_id' => [
@@ -37,7 +40,7 @@ class AnswerController extends Controller
 
             $results = [];
             $totalScore = 0;
-            $totalQuestions = Question::where('quiz_id', $quizId)->count();
+            $totalQuestions = $quiz->questions()->count();
 
             foreach ($validated['answers'] as $answer) {
                 $choice = Choice::find($answer['choice_id']);
@@ -88,14 +91,19 @@ class AnswerController extends Controller
 
     public function getResults($quizId)
     {
+        $quiz = Quiz::findOrFail($quizId);
+        $user = Auth::user();
+
+        Gate::authorize('view-results', [$quiz, $user]);
+
         $answers = Answer::with(['question', 'choice'])
-            ->where('candidat_id', Auth::id())
+            ->where('candidat_id', $user->id)
             ->whereHas('question', function($q) use ($quizId) {
                 $q->where('quiz_id', $quizId);
             })
             ->get();
 
-        $totalQuestions = Question::where('quiz_id', $quizId)->count();
+        $totalQuestions = $quiz->questions()->count();
         $correctAnswers = $answers->where('is_correct', true)->count();
 
         return response()->json([
@@ -114,57 +122,5 @@ class AnswerController extends Controller
                 ];
             })
         ]);
-    }
-
-
-    // public function getCandidateResults($quizId)
-    // {
-    //     $user = Auth::id();  
-    //     $quiz = Quiz::findOrFail($quizId);
-
-    //     $score = $this->calculateScore($quiz, $userId);
-    //     $passed = $score >= 32; 
-
-    //     return response()->json([
-    //         'score' => $score,
-    //         'passed' => $passed
-    //     ]);
-    // }
-
-    
-    private function calculateScore($quiz, $userId)
-    {
-        $questions = $quiz->questions;
-        $correctAnswers = 0;
-
-        foreach ($questions as $question) {
-            $answer = $question->answers()->where('candidat_id', $userId)->first();
-            if ($answer && $answer->choice->is_correct) {
-                $correctAnswers++;
-            }
-        }
-
-        return $correctAnswers;
-    }
-
-
-    public function getQuizResults($quizId)
-    {
-        $quiz = Quiz::findOrFail($quizId);
-        $results = [];
-
-        foreach ($quiz->questions as $question) {
-            $answers = $question->answers()->with('choice')->get();
-
-            foreach ($answers as $answer) {
-                $results[] = [
-                    'question' => $question->question_text,
-                    'answer' => $answer->choice->choice_text,
-                    'correct' => $answer->choice->is_correct
-                ];
-            }
-        }
-
-        return response()->json($results);
     }
 }
