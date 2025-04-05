@@ -150,6 +150,9 @@ Route::prefix('admin')->group(function () {
 Route::prefix('candidat')->group(function () {
     Route::get('/cours', [CoursConduiteController::class, 'listeCours']);
     Route::get('/cours/{id}', [CoursConduiteController::class, 'DetailsCours']);
+
+    Route::get('/VuDatesExam', [ExamController::class, 'VuDatesExam']);
+    Route::get('/RsultatsEXma/{id}', [ExamController::class, 'RsultatsEXma']);
 });
 
 
