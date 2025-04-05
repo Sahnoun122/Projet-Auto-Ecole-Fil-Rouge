@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\Response;
 
 class ExamPolicy
 {
+    //admin
     public function viewAny(User $user): bool
     {
         return $user->hasAnyRole(['admin', 'moniteur']);
@@ -45,7 +46,7 @@ class ExamPolicy
         return $user->hasRole('admin') || $user->id === $exam->moniteur_id;
     }
 
-    
+    //candidats 
     public function viewCandidat(User $user, Exam $exam)
     {
         return $exam->candidats->contains($user->id);
@@ -55,4 +56,6 @@ class ExamPolicy
     {
         return $user->hasRole('candidat');
     }
+
+    
 }

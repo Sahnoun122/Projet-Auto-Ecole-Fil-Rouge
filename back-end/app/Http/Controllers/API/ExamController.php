@@ -130,4 +130,26 @@ class ExamController extends Controller
 
         return response()->json($exam->load('candidats'));
     }
+
+//candidats
+    public function VuDatesExam(Request $request)
+    {
+        $user = Auth::user();
+        
+        $query = Exam::with(['moniteur'])
+            ->whereHas('candidats', function($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->orderBy('date_exam', 'desc');
+
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->has('statut')) {
+            $query->where('statut', $request->statut);
+        }
+
+        return $query->paginate(10);
+    }
 }
