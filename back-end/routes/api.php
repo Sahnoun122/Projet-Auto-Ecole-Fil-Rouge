@@ -155,4 +155,19 @@ Route::prefix('candidat')->group(function () {
     Route::get('/RsultatsEXma/{id}', [ExamController::class, 'RsultatsEXma']);
 });
 
+Route::get('/quizzes', [QuizController::class, 'index']);
+Route::post('/quizzes', [QuizController::class, 'store']);
+Route::get('/quizzes/{quiz}', [QuizController::class, 'show']);
+Route::put('/quizzes/{quiz}', [QuizController::class, 'update']);
+Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy']);
 
+Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store']);
+Route::put('/questions/{question}', [QuestionController::class, 'update']);
+Route::delete('/questions/{question}', [QuestionController::class, 'destroy']);
+
+Route::post('/questions/{question}/choices', [ChoiceController::class, 'store']);
+Route::put('/choices/{choice}', [ChoiceController::class, 'update']);
+Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy']);
+
+Route::post('/quizzes/{quiz}/answers', [AnswerController::class, 'store']);
+Route::get('/quizzes/{quiz}/results', [AnswerController::class, 'getResults']);
