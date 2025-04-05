@@ -19,6 +19,8 @@ use App\Models\Course;
 use App\Policies\ProgressPolicy;
 use App\Models\Progress;
 
+use App\Policies\QuizPolicy;
+use App\Models\Quiz;
 use App\Policies\CoursConduitePolicy;
 
 class AuthServiceProvider extends ServiceProvider
@@ -34,6 +36,8 @@ class AuthServiceProvider extends ServiceProvider
         Title::class => TitlePolicy::class,
         Course::class => CoursePolicy::class,
         Progress::class => ProgressPolicy::class,
+        Quiz::class => QuizPolicy::class,
+
     ]; 
 
     /**
@@ -65,5 +69,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('view', [ProgressPolicy::class, 'view']);
         Gate::define('update', [ProgressPolicy::class, 'update']);
         Gate::define('viewAny', [ProgressPolicy::class, 'viewAny']);
+
+        Gate::define('view', [QuizPolicy::class, 'view']);
+        Gate::define('create', [QuizPolicy::class, 'create']);
+        Gate::define('update', [QuizPolicy::class, 'update']);
+        Gate::define('delete', [QuizPolicy::class, 'delete']);
     }
 }
