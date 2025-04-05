@@ -12,6 +12,9 @@ use App\Models\CoursConduite;
 
 use App\Policies\TitlePolicy;
 use App\Models\Title;
+
+use App\Policies\CoursePolicy;
+
 use App\Policies\CoursConduitePolicy;
 
 class AuthServiceProvider extends ServiceProvider
@@ -46,5 +49,11 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('viewAny', [TitlePolicy::class, 'viewAny']);
         Gate::define('view', [TitlePolicy::class, 'view']);
+
+        Gate::define('viewAny', [CoursePolicy::class, 'viewAny']);
+        Gate::define('view', [CoursePolicy::class, 'view']);
+        Gate::define('create', [CoursePolicy::class, 'create']);
+        Gate::define('update', [CoursePolicy::class, 'update']);
+        Gate::define('delete', [CoursePolicy::class, 'delete']);
     }
 }
