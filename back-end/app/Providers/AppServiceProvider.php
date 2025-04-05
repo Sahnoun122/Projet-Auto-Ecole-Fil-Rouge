@@ -9,6 +9,9 @@ use App\Policies\VehiclePolicy;
 use App\Models\Exam;
 use App\Policies\ExamPolicy;
 use App\Models\CoursConduite;
+
+use App\Policies\TitlePolicy;
+use App\Models\Title;
 use App\Policies\CoursConduitePolicy;
 
 class AuthServiceProvider extends ServiceProvider
@@ -21,8 +24,8 @@ class AuthServiceProvider extends ServiceProvider
         Vehicle::class => VehiclePolicy::class,
         Exam::class => ExamPolicy::class,
         CoursConduite::class => CoursConduitePolicy::class,
-
-    ];
+        Title::class => TitlePolicy::class,
+    ]; 
 
     /**
      *
@@ -39,5 +42,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('manage-results', function ($user) {
             return $user->role === 'admin' || $user->role === 'instructor';
         });
+
+
+        Gate::define('viewAny', [TitlePolicy::class, 'viewAny']);
+        Gate::define('view', [TitlePolicy::class, 'view']);
     }
 }
