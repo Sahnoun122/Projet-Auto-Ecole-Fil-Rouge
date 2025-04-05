@@ -25,4 +25,15 @@ class Course extends Model
     {
         return $this->hasMany(Progress::class);
     }
+
+    public function getCandidateProgress($candidateId)
+    {
+        $progress = $this->progress()->where('candidate_id', $candidateId)->first();
+
+        return [
+            'percentage' => $progress ? $progress->progress_percentage : 0,
+            'completed' => $progress ? $progress->is_completed : false
+        ];
+    }
 }
+
