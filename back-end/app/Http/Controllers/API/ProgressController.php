@@ -3,33 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Models\Progress;
-use App\Models\User;
 use App\Models\Course;
+use App\Models\Title;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ProgressController extends Controller
 {
-    public function show($candidateId, $courseId)
+    public function show(Course $course)
     {
-        $progress = Progress::where('candidate_id', $candidateId)
-                            ->where('course_id', $courseId)
-                            ->first();
+        Gate::authorize('view', $course);
 
-        if ($progress) {
-            return response()->json($progress);
-        } else {
-            return response()->json(['message' => 'No progress found for this candidate and course'], 404);
-        }
+        $progress = Progress::where('course_id', $course->id)
+                           ->where('candidate_id', Auth::id())
+                           ->firstOrFail();
+        
+        return response()->json($progress);
     }
 
-    public function update(Request $request, $candidateId, $courseId)
+    public function update(Request $request, Course $course)
     {
+        Gate::authorize('update', $course);
+
         $request->validate([
             'progress_percentage' => 'required|integer|min:0|max:100',
+            'is_completed' => 'required|boolean'
         ]);
 
-        $progress = Progress::updateProgress($candidateId, $courseId, $request->progress_percentage);
+        $progress = Progress::updateOrCreate(
+            [
+                'course_id' => $course->id,
+                'candidate_id' => Auth::id()
+            ],
+            [
+                'progress_percentage' => $request->progress_percentage,
+                'is_completed' => $request->is_completed
+            ]
+        );
 
         return response()->json($progress);
     }
+
 }
