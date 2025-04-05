@@ -137,7 +137,7 @@ class ExamController extends Controller
         $user = Auth::user();
         
         $query = Exam::with(['moniteur'])
-            ->whereHas('candidats', function($q) use ($user) {
+            ->whereHas('candidat', function($q) use ($user) {
                 $q->where('users.id', $user->id);
             })
             ->orderBy('date_exam', 'desc');
@@ -151,5 +151,21 @@ class ExamController extends Controller
         }
 
         return $query->paginate(10);
+    }
+
+    public function RsultatsEXma($id)
+    {
+        $user = Auth::user();
+        $exam = Exam::with(['moniteur'])
+            ->whereHas('candidats', function($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->findOrFail($id);
+
+        $exam->load(['candidat' => function($query) use ($user) {
+            $query->where('users.id', $user->id);
+        }]);
+
+        return response()->json($exam);
     }
 }
