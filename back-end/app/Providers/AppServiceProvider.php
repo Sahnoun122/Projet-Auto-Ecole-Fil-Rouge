@@ -16,6 +16,9 @@ use App\Models\Title;
 use App\Policies\CoursePolicy;
 use App\Models\Course;
 
+use App\Policies\ProgressPolicy;
+use App\Models\Progress;
+
 use App\Policies\CoursConduitePolicy;
 
 class AuthServiceProvider extends ServiceProvider
@@ -30,6 +33,7 @@ class AuthServiceProvider extends ServiceProvider
         CoursConduite::class => CoursConduitePolicy::class,
         Title::class => TitlePolicy::class,
         Course::class => CoursePolicy::class,
+        Progress::class => ProgressPolicy::class,
     ]; 
 
     /**
@@ -57,5 +61,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('create', [CoursePolicy::class, 'create']);
         Gate::define('update', [CoursePolicy::class, 'update']);
         Gate::define('delete', [CoursePolicy::class, 'delete']);
+
+        Gate::define('view', [ProgressPolicy::class, 'view']);
+        Gate::define('update', [ProgressPolicy::class, 'update']);
+        Gate::define('viewAny', [ProgressPolicy::class, 'viewAny']);
     }
 }
