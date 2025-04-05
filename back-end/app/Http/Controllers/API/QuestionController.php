@@ -1,61 +1,59 @@
 <?php
 
-
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
 
     public function store(Request $request, $quizId)
-{
-    $quiz = Quiz::findOrFail($quizId);
-
-    $request->validate([
-        'question_text' => 'required|string',
-        'image_path' => 'nullable|string',
-        'duration' => 'required|integer|min:1', // validation de la durée
-    ]);
-
-    $question = $quiz->questions()->create([
-        'admin_id' => Auth::id(), 
-        'question_text' => $request->question_text,
-        'image_path' => $request->image_path,
-        'duration' => $request->duration, // Enregistrement de la durée
-    ]);
-
-    return response()->json($question);
-}
-
-    public function update(Request $request, $id)
     {
-        $question = Question::findOrFail($id);
+        $quiz = Quiz::findOrFail($quizId);
 
-        $request->validate([
+        Gate::authorize('create', Question::class); 
+
+        $validated = $request->validate([
             'question_text' => 'required|string',
             'image_path' => 'nullable|string',
+            'duration' => 'required|integer|min:1',
         ]);
 
-        $question->update([
-            'question_text' => $request->question_text,
-            'image_path' => $request->image_path,
+        $question = $quiz->questions()->create([
+            'admin_id' => Auth::id(),
+            'question_text' => $validated['question_text'],
+            'image_path' => $validated['image_path'],
+            'duration' => $validated['duration'],
         ]);
+
+        return response()->json($question, 201);
+    }
+
+    public function update(Request $request, Question $question)
+    {
+        Gate::authorize('update', $question); 
+
+        $validated = $request->validate([
+            'question_text' => 'sometimes|string',
+            'image_path' => 'nullable|string',
+            'duration' => 'sometimes|integer|min:1',
+        ]);
+
+        $question->update($validated);
 
         return response()->json($question);
     }
 
-    public function destroy($id)
+    public function destroy(Question $question)
     {
-        $question = Question::findOrFail($id);
-        $question->delete();
+        Gate::authorize('delete', $question);
 
-        return response()->json([
-            'message' => 'Question deleted successfully.'
-        ], 200);
+        $question->delete();
+        return response()->json(['message' => 'Question deleted successfully.'], 200);
     }
 }
