@@ -14,6 +14,7 @@ use App\Policies\TitlePolicy;
 use App\Models\Title;
 
 use App\Policies\CoursePolicy;
+use App\Models\Course;
 
 use App\Policies\CoursConduitePolicy;
 
@@ -28,6 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         Exam::class => ExamPolicy::class,
         CoursConduite::class => CoursConduitePolicy::class,
         Title::class => TitlePolicy::class,
+        Course::class => CoursePolicy::class,
     ]; 
 
     /**
