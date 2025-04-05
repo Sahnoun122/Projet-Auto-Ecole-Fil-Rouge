@@ -27,6 +27,10 @@ use App\Models\Question;
 
 use App\Policies\ChoicePolicy;
 use App\Models\Choice;
+
+use App\Policies\AnswerPolicy;
+use App\Models\Answer;
+
 use App\Policies\CoursConduitePolicy;
 
 class AuthServiceProvider extends ServiceProvider
@@ -45,6 +49,8 @@ class AuthServiceProvider extends ServiceProvider
         Quiz::class => QuizPolicy::class,
         Question::class => QuestionPolicy::class,
         Choice::class => ChoicePolicy::class,
+        Answer::class => AnswerPolicy::class,
+    
     ]; 
 
     /**
@@ -89,5 +95,8 @@ class AuthServiceProvider extends ServiceProvider
        Gate::define('create', [ChoicePolicy::class, 'create']);
        Gate::define('update', [ChoicePolicy::class, 'update']);
        Gate::define('delete', [ChoicePolicy::class, 'delete']);
+
+       Gate::define('create', [AnswerPolicy::class, 'create']);
+       Gate::define('view', [AnswerPolicy::class, 'view']);
     }
 }
