@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
@@ -54,5 +55,25 @@ class User extends Authenticatable
     public function isCandidat()
     {
         return $this->role === 'candidat';
+    }
+
+    /**
+     * Retourne l'identifiant unique de l'utilisateur pour le JWT
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();  // Habituellement, l'ID de l'utilisateur
+    }
+
+    /**
+     * Retourne les réclamations personnalisées du JWT
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
