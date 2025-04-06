@@ -9,12 +9,15 @@ class CreateProgressTable extends Migration
     public function up()
     {
         Schema::create('progress', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('candidate_id')->constrained()->onDelete('cascade');
-            $table->foreignId('course_id')->constrained()->onDelete('cascade');
+            $table->id(); 
+            $table->unsignedBigInteger('candidate_id');
+            $table->unsignedBigInteger('course_id');
+            $table->foreign('candidate_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->integer('progress_percentage')->default(0);
             $table->timestamps();
         });
+        
     }
 
     public function down()
