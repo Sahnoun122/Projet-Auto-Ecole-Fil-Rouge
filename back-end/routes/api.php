@@ -24,7 +24,7 @@ Route::post('connecter', [AuthController::class, 'connecter']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::post('refresh', [AuthController::class, 'refresh']);
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('jwt')->group(function () {
 
 
     Route::get('/quizzes', [QuizController::class, 'index']);

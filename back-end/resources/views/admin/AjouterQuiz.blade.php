@@ -319,7 +319,38 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
   });
+
+  
+async function logout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+            },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            alert(data.message);
+            window.location.href = '/connecter'; 
+        } else {
+            alert('Échec de la déconnexion : ' + data.message); 
+        }
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+        alert('Une erreur est survenue. Veuillez réessayer.');
+    }
+}
+
+document.getElementById('logoutButton').addEventListener('click', logout);
     </script>
+
+    
 </body>
 
 </html>
