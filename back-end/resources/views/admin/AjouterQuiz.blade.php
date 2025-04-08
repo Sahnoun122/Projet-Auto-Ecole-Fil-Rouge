@@ -41,7 +41,7 @@
             <div :class="sidebarOpen ? 'block' : 'hidden'" class="text-center py-2 text-sm font-medium text-gray-600">
                 Auto-école S A H N O U N
             </div>
-            <div class="flex-1 overflow-y-auto py-4">
+            <div class="flex flex-col h-screen">
                 <nav>
                     <a href="{{ route('dashboard') }}"
                         class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
@@ -255,17 +255,16 @@
                         </div>
                         
                     </div>
+
+                    
                 </nav>
+
+                
             </div>
-
-
-             
-        </div>
-   
         
+                   
     </div>
-   
-
+    
     <script>
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -252,3 +252,4 @@ public function searchUsers(Request $request)
         ->paginate($perPage);
 }
 }
+

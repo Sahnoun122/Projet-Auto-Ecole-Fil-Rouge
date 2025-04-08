@@ -24,15 +24,74 @@ Route::post('connecter', [AuthController::class, 'connecter']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::post('refresh', [AuthController::class, 'refresh']);
 
-Route::middleware('jwt')->group(function () {
-
-
-    Route::get('/quizzes', [QuizController::class, 'index']);
-    Route::post('/quizzes', [QuizController::class, 'store']);
+// Route::middleware('jwt')->group(function () {
     
-    Route::post('logout', [AuthController::class, 'logout']);
+//     Route::post('logout', [AuthController::class, 'logout']);
 
-    // Route::prefix('candidats')->middleware('role:candidat')->group(function () {
+//     Route::prefix('admin')->group(function () {
+//         Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+//         Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+
+//             // Routes pour les quizzes
+//             Route::get('/quizzes', [QuizController::class, 'index']);
+//             Route::post('/quizzes', [QuizController::class, 'store']);
+//             Route::get('/quizzes/{id}', [QuizController::class, 'show']);
+//             Route::delete('/quizzes/{id}', [QuizController::class, 'destroy']);
+            
+//             // Routes pour les questions
+//             Route::post('/quizzes/{quizId}/questions', [QuestionController::class, 'store']);
+//             Route::put('/questions/{id}', [QuestionController::class, 'update']);
+//             Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
+            
+//             // Routes pour les choix
+//             Route::post('/questions/{questionId}/choices', [ChoiceController::class, 'store']);
+//             Route::put('/choices/{id}', [ChoiceController::class, 'update']);
+//             Route::delete('/choices/{id}', [ChoiceController::class, 'destroy']);
+            
+//             // Routes pour les réponses
+//             Route::post('/quizzes/{quizId}/answers', [AnswerController::class, 'store']);
+//             Route::get('/quizzes/{quizId}/results', [AnswerController::class, 'getResults']);
+//             Route::get('/quizzes/{quizId}/quiz-results', [AnswerController::class, 'getQuizResults']);
+   
+//     });
+    
+    Route::middleware(['jwt', 'auth:api'])->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('refresh', [AuthController::class, 'refresh']);
+        Route::get('me', [AuthController::class, 'me']);
+    
+        // Routes admin
+        Route::middleware(['role:admin'])->prefix('admin')->group(function () {
+            Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats']);
+            Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur']);
+    
+            // Routes pour les quizzes
+            Route::apiResource('quizzes', QuizController::class);
+            
+            // Routes pour les questions
+            Route::post('quizzes/{quiz}/questions', [QuestionController::class, 'store']);
+            Route::apiResource('questions', QuestionController::class)->except(['store']);
+            
+            // Routes pour les choix
+            Route::post('questions/{question}/choices', [ChoiceController::class, 'store']);
+            Route::apiResource('choices', ChoiceController::class)->except(['store']);
+            
+            // Routes pour les réponses
+            Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
+            Route::get('quizzes/{quiz}/results', [AnswerController::class, 'getResults']);
+            Route::get('quizzes/{quiz}/quiz-results', [AnswerController::class, 'getQuizResults']);
+        });
+    
+        // Routes candidat
+        Route::middleware(['role:candidat'])->prefix('candidat')->group(function () {
+            Route::get('quizzes', [QuizController::class, 'indexForCandidat']);
+            Route::get('quizzes/{quiz}', [QuizController::class, 'showForCandidat']);
+            Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
+            Route::get('quizzes/{quiz}/my-results', [AnswerController::class, 'getMyResults']);
+        });
+    });
+
+       // Route::prefix('candidats')->middleware('role:candidat')->group(function () {
     //     Route::get('/dashboard', [CandidatController::class, 'dashboard'])->name('candidats.dashboard');
     // });
 
@@ -40,34 +99,8 @@ Route::middleware('jwt')->group(function () {
     //     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
     // });
 
-    // Route::prefix('admin')->group(function () {
-    //     Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
-    //     Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
 
-    //         // Routes pour les quizzes
-    //         Route::get('/quizzes', [QuizController::class, 'index']);
-    //         Route::post('/quizzes', [QuizController::class, 'store']);
-    //         Route::get('/quizzes/{id}', [QuizController::class, 'show']);
-    //         Route::delete('/quizzes/{id}', [QuizController::class, 'destroy']);
-            
-    //         // Routes pour les questions
-    //         Route::post('/quizzes/{quizId}/questions', [QuestionController::class, 'store']);
-    //         Route::put('/questions/{id}', [QuestionController::class, 'update']);
-    //         Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
-            
-    //         // Routes pour les choix
-    //         Route::post('/questions/{questionId}/choices', [ChoiceController::class, 'store']);
-    //         Route::put('/choices/{id}', [ChoiceController::class, 'update']);
-    //         Route::delete('/choices/{id}', [ChoiceController::class, 'destroy']);
-            
-    //         // Routes pour les réponses
-    //         Route::post('/quizzes/{quizId}/answers', [AnswerController::class, 'store']);
-    //         Route::get('/quizzes/{quizId}/results', [AnswerController::class, 'getResults']);
-    //         Route::get('/quizzes/{quizId}/quiz-results', [AnswerController::class, 'getQuizResults']);
-   
-    // });
 
-});
 
 
 // Route::middleware('auth:api')->prefix('admin')->group(function () {

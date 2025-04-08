@@ -19,23 +19,26 @@ class QuizController extends Controller
         return response()->json($quizzes);
     }
 
+
     public function store(Request $request)
-    {
-        Gate::authorize('create', Quiz::class);
+{
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string'
-        ]);
+     Gate::authorize('create', Quiz::class);
 
-        $quiz = Quiz::create([
-            'admin_id' => Auth::id(),
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-        ]);
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'admin_id' => 'sometimes|integer|exists:users,id' 
+    ]);
 
-        return response()->json($quiz, 201);
-    }
+    $quiz = Quiz::create([
+        'admin_id' => $validated['admin_id'] ?? Auth::id(),
+        'title' => $validated['title'],
+        'description' => $validated['description'],
+    ]);
+
+    return response()->json($quiz, 201);
+}
 
     public function show(Quiz $quiz)
     {
