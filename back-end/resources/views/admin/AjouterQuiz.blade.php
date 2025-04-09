@@ -490,15 +490,13 @@ async function handleQuizSave(e) {
     try {
         let data;
         if (quizId) {
-            // Mode édition - mise à jour
             data = await updateExistingQuiz(quizId, quizData);
             const index = quizzes.findIndex(q => q.id === quizId);
             if (index !== -1) quizzes[index] = data;
             showToast('Quiz mis à jour avec succès', 'success');
         } else {
-            // Mode création - nouveau quiz
             data = await createNewQuiz(quizData);
-            quizzes.unshift(data); // Ajoute au début du tableau
+            quizzes.unshift(data); 
             showToast('Quiz créé avec succès', 'success');
         }
 
@@ -509,6 +507,34 @@ async function handleQuizSave(e) {
         showToast(`Erreur: ${error.message}`, 'error');
     }
 }
+
+function prepareEditForm(quizId) {
+    const quiz = quizzes.find(q => q.id === quizId);
+    if (!quiz) return;
+
+    document.getElementById('quizId').value = quiz.id;
+    document.getElementById('quizTitle').value = quiz.title;
+    document.getElementById('quizDescription').value = quiz.description || '';
+    
+    document.getElementById('quizModalTitle').textContent = 'Modifier Quiz';
+    document.getElementById('saveQuizBtn').textContent = 'Mettre à jour';
+    
+    openModal();
+}
+
+function prepareCreateForm() {
+    document.getElementById('quizId').value = '';
+    document.getElementById('quizTitle').value = '';
+    document.getElementById('quizDescription').value = '';
+    
+    document.getElementById('quizModalTitle').textContent = 'Nouveau Quiz';
+    document.getElementById('saveQuizBtn').textContent = 'Créer';
+    
+    openModal();
+}
+
+
+
 
     </script>
 </body>
