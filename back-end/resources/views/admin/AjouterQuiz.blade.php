@@ -533,6 +533,28 @@ function prepareCreateForm() {
     openModal();
 }
 
+async function deleteQuiz(quizId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce quiz ?')) return;
+
+    try {
+        const response = await fetch(`/api/quizzes/${quizId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Authorization': `Bearer ${authToken}`,
+            }
+        });
+
+        if (!response.ok) throw new Error('Erreur lors de la suppression');
+
+        quizzes = quizzes.filter(q => q.id !== quizId);
+        renderQuizzes();
+        showToast('Quiz supprimé avec succès', 'success');
+    } catch (error) {
+        console.error("Erreur:", error);
+        showToast('Erreur lors de la suppression du quiz', 'error');
+    }
+}
 
 
 
