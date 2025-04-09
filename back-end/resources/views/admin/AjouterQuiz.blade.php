@@ -598,6 +598,32 @@ function renderQuizzes() {
     `).join('');
 }
 
+
+
+function openModal() {
+    document.getElementById('quizModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('quizModal').style.display = 'none';
+}
+
+function setupEventListeners() {
+    document.getElementById('newQuizBtn').addEventListener('click', prepareCreateForm);
+    document.getElementById('emptyStateBtn')?.addEventListener('click', prepareCreateForm);
+    
+    document.getElementById('quizForm').addEventListener('submit', handleQuizSave);
+    
+    document.getElementById('closeQuizModal').addEventListener('click', closeModal);
+    document.getElementById('cancelQuizBtn').addEventListener('click', closeModal);
+    
+    document.getElementById('searchInput').addEventListener('input', renderQuizzes);
+}
+
+window.handleEditQuiz = prepareEditForm;
+window.handleDeleteQuiz = deleteQuiz;
+
+document.getElementById('logoutButton')?.addEventListener('click', logout);
     </script>
 </body>
 
