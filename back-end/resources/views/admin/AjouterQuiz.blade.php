@@ -304,11 +304,10 @@
             </div>
         </div>
 
-      
         <div class="flex-1 overflow-auto">
             <header class="bg-[#4D44B5] text-white shadow-md">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <h1 class="text-2xl font-bold">QuizMaster</h1>
+                    <h1 class="text-2xl font-bold">QuizMaster Pro</h1>
                     <div class="flex items-center space-x-4">
                         <button id="newQuizBtn"
                             class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
@@ -322,7 +321,6 @@
             </header>
 
             <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <!-- Quiz List -->
                 <div class="bg-white rounded-xl shadow overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                         <h2 class="text-xl font-semibold text-gray-800">Mes Quiz</h2>
@@ -334,7 +332,6 @@
                     </div>
 
                     <div id="quizList" class="divide-y divide-gray-200">
-                        <!-- Les quiz seront chargés ici dynamiquement -->
                         <div class="p-6 text-center text-gray-500">
                             <i class="fas fa-clipboard-list text-4xl mb-3 text-gray-300"></i>
                             <p>Aucun quiz créé pour le moment</p>
@@ -346,9 +343,9 @@
                 </div>
             </main>
         </div>
-      </div>
+    </div>
 
-      <div id="quizModal" class="modal">
+    <div id="quizModal" class="modal">
         <div class="modal-content">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
@@ -390,8 +387,10 @@
         </div>
     </div>
 
+    <div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium hidden">
+    </div>
 
-    <script>
+ <script>
 let quizzes = [];
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 const authToken = localStorage.getItem('token');
@@ -496,7 +495,7 @@ async function handleQuizSave(e) {
             showToast('Quiz mis à jour avec succès', 'success');
         } else {
             data = await createNewQuiz(quizData);
-            quizzes.unshift(data); 
+            quizzes.unshift(data);
             showToast('Quiz créé avec succès', 'success');
         }
 
@@ -598,14 +597,25 @@ function renderQuizzes() {
     `).join('');
 }
 
-
-
 function openModal() {
     document.getElementById('quizModal').style.display = 'flex';
 }
 
 function closeModal() {
     document.getElementById('quizModal').style.display = 'none';
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    }`;
+    toast.classList.remove('hidden');
+
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
 }
 
 function setupEventListeners() {
@@ -624,7 +634,7 @@ window.handleEditQuiz = prepareEditForm;
 window.handleDeleteQuiz = deleteQuiz;
 
 document.getElementById('logoutButton')?.addEventListener('click', logout);
-    </script>
+</script>
 </body>
 
 </html>
