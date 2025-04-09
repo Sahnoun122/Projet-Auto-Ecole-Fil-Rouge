@@ -447,6 +447,31 @@ async function createNewQuiz(quizData) {
         throw error;
     }
 }
+
+async function updateExistingQuiz(quizId, quizData) {
+    try {
+        const response = await fetch(`/api/quizzes/${quizId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Authorization': `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(quizData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de la mise à jour');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Erreur mise à jour:", error);
+        throw error;
+    }
+}
     </script>
 </body>
 
