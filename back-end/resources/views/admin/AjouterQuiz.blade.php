@@ -347,6 +347,49 @@
             </main>
         </div>
       </div>
+
+      <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="quizModalTitle" class="text-2xl font-bold text-gray-800">Nouveau Quiz</h3>
+                    <button id="closeQuizModal" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form method="POST" action="/api/quizzes" id="quizForm"  enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                  
+                    <input type="hidden" id="quizId">
+                   
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Titre du quiz *</label>
+                        <input type="text" id="quizTitle" required name="title"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="quizDescription" rows="3" name="description"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]"></textarea>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelQuizBtn"
+                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Annuler
+                        </button>
+                        <button type="submit" id="saveQuizBtn"
+                            class="px-6 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                            Créer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
