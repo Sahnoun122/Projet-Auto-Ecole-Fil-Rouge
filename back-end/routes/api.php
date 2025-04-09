@@ -61,7 +61,7 @@ Route::post('refresh', [AuthController::class, 'refresh']);
         Route::get('me', [AuthController::class, 'me']);
     
         // Routes admin
-        Route::middleware(['role:admin'])->prefix('admin')->group(function () {
+        Route::middleware(['role:admin'])->group(function () {
             Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats']);
             Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur']);
     

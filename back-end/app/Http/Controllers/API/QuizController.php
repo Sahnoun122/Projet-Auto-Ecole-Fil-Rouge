@@ -28,11 +28,10 @@ class QuizController extends Controller
     $validated = $request->validate([
         'title' => 'required|string|max:255',
         'description' => 'nullable|string',
-        'admin_id' => 'sometimes|integer|exists:users,id' 
     ]);
 
     $quiz = Quiz::create([
-        'admin_id' => (int)$validated['admin_id'] ?? Auth::id(),
+        'admin_id' =>  2,
         'title' => $validated['title'],
         'description' => $validated['description'],
     ]);

@@ -304,51 +304,23 @@
             </div>
         </div>
 
-      <script> 
-        async function logout() {
-            try {
-                const response = await fetch('/api/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('role');
-                    alert(data.message);
-                    window.location.href = '/connecter';
-                } else {
-                    alert('Échec de la déconnexion : ' + data.message);
-                }
-            } catch (error) {
-                console.error('Erreur lors de la déconnexion:', error);
-                alert('Une erreur est survenue. Veuillez réessayer.');
-            }
-        }
-
-        document.getElementById('logoutButton').addEventListener('click', logout);
-
-        window.editQuiz = function(index) {
-            openQuizForm(index);
-        };
-
-        window.viewQuiz = function(quizId) {
-            viewQuiz(quizId);
-        };
-
-        window.deleteQuiz = function(quizId) {
-            deleteQuiz(quizId);
-        };
-
-        window.startQuiz = function(quizId) {
-            startQuiz(quizId);
-        };
-    </script>
+      
+        <div class="flex-1 overflow-auto">
+            <header class="bg-[#4D44B5] text-white shadow-md">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold">QuizMaster</h1>
+                    <div class="flex items-center space-x-4">
+                        <button id="newQuizBtn"
+                            class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                            <i class="fas fa-plus mr-2"></i> Nouveau Quiz
+                        </button>
+                        <div
+                            class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#4D44B5] font-bold">
+                        </div>
+                    </div>
+                </div>
+            </header>
+      </div>
 </body>
 
 </html>
