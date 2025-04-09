@@ -556,7 +556,47 @@ async function deleteQuiz(quizId) {
     }
 }
 
+function renderQuizzes() {
+    const quizList = document.getElementById('quizList');
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
+    const filteredQuizzes = searchQuery 
+        ? quizzes.filter(quiz =>
+            quiz.title.toLowerCase().includes(searchQuery) ||
+            (quiz.description && quiz.description.toLowerCase().includes(searchQuery)))
+        : quizzes;
+
+    if (filteredQuizzes.length === 0) {
+        quizList.innerHTML = `
+            <div class="p-6 text-center text-gray-500">
+                <i class="fas fa-clipboard-list text-4xl mb-3 text-gray-300"></i>
+                <p>Aucun quiz trouvé</p>
+                <button id="emptyStateBtn" class="mt-4 text-[#4D44B5] font-medium">
+                    Créer votre premier quiz
+                </button>
+            </div>`;
+        return;
+    }
+
+    quizList.innerHTML = filteredQuizzes.map(quiz => `
+        <div class="p-6 hover:bg-gray-50 transition cursor-pointer">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-lg font-semibold text-[#4D44B5]">${quiz.title}</h3>
+                    <p class="text-gray-600 mt-1">${quiz.description || 'Aucune description'}</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="handleDeleteQuiz('${quiz.id}')" class="text-red-500 hover:text-red-700 p-2">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button onclick="handleEditQuiz('${quiz.id}')" class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
 
     </script>
 </body>
