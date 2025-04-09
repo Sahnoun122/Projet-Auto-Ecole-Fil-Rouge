@@ -390,6 +390,64 @@
         </div>
     </div>
 
+
+    <script>
+let quizzes = [];
+const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+const authToken = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('user'));
+const userId = user?.id;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchQuizzes();
+    setupEventListeners();
+    setupSidebarToggle();
+});
+
+async function fetchQuizzes() {
+    try {
+        const response = await fetch('/api/quizzes', {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+            }
+        });
+
+        if (!response.ok) throw new Error('Erreur réseau');
+        
+        quizzes = await response.json();
+        renderQuizzes();
+    } catch (error) {
+        console.error("Erreur:", error);
+        showToast('Impossible de charger les quizzes', 'error');
+    }
+}
+
+async function createNewQuiz(quizData) {
+    try {
+        const response = await fetch('/api/quizzes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Authorization': `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(quizData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de la création');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Erreur création:", error);
+        throw error;
+    }
+}
+    </script>
 </body>
 
 </html>
