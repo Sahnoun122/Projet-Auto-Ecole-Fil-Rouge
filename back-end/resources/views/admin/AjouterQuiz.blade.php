@@ -320,6 +320,32 @@
                     </div>
                 </div>
             </header>
+
+            <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Quiz List -->
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-800">Mes Quiz</h2>
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="Rechercher un quiz..."
+                                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <div id="quizList" class="divide-y divide-gray-200">
+                        <!-- Les quiz seront chargés ici dynamiquement -->
+                        <div class="p-6 text-center text-gray-500">
+                            <i class="fas fa-clipboard-list text-4xl mb-3 text-gray-300"></i>
+                            <p>Aucun quiz créé pour le moment</p>
+                            <button id="emptyStateBtn" class="mt-4 text-[#4D44B5] font-medium">
+                                Créer votre premier quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
       </div>
 </body>
 
