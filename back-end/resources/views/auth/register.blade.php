@@ -450,7 +450,7 @@
         window.location.href = '/connecter'; 
     } catch (error) {
         console.error('Erreur:', error);
-        alert(error.error || 'Une erreur est survenue');
+        // alert(error.error || 'Une erreur est survenue');
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'S\'inscrire';

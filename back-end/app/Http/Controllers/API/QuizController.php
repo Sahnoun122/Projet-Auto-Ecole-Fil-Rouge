@@ -22,7 +22,7 @@ class QuizController extends Controller
 
     public function store(Request $request)
 {
-
+   
     //  Gate::authorize('create', Quiz::class);
 
     $validated = $request->validate([
@@ -36,7 +36,7 @@ class QuizController extends Controller
         'title' => $validated['title'],
         'description' => $validated['description'],
     ]);
-
+  
     return response()->json($quiz, 201);
 }
 

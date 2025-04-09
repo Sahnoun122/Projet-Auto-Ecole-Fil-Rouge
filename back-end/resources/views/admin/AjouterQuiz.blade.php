@@ -21,9 +21,9 @@
         width: 100%;
         height: 100%;
         overflow: auto;
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0, 0, 0, 0.4);
     }
-    
+
     .modal-content {
         background-color: #fefefe;
         margin: 5% auto;
@@ -34,15 +34,17 @@
         border-radius: 0.5rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
-    
+
     .transition-max-height {
         transition: max-height 0.3s ease-in-out;
     }
 </style>
+
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <div :class="sidebarOpen ? 'w-64' : 'w-20'" class="bg-white shadow-lg transition-all duration-300 flex flex-col">
+        <div :class="sidebarOpen ? 'w-64' : 'w-20'"
+            class="bg-white shadow-lg transition-all duration-300 flex flex-col">
             <div class="p-4 flex justify-between items-center border-b">
                 <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -55,7 +57,8 @@
 
             <div class="p-4 border-b flex justify-center">
                 <div class="relative group">
-                    <div class="absolute inset-0 bg-primary rounded-full opacity-10 group-hover:opacity-20 transition-opacity">
+                    <div
+                        class="absolute inset-0 bg-primary rounded-full opacity-10 group-hover:opacity-20 transition-opacity">
                     </div>
                     <img src="/api/placeholder/60/60" alt="Auto-école"
                         class="h-16 w-16 object-contain rounded-full border-2 border-gray-200" />
@@ -67,7 +70,7 @@
             <div :class="sidebarOpen ? 'block' : 'hidden'" class="text-center py-2 text-sm font-medium text-gray-600">
                 Auto-école S A H N O U N
             </div>
-            
+
             <div class="flex flex-col h-screen">
                 <nav>
                     <a href="{{ route('dashboard') }}"
@@ -101,7 +104,8 @@
                                     d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
-                        <div id="candidats-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
+                        <div id="candidats-list"
+                            class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Candidats</span>
@@ -123,11 +127,14 @@
                             </svg>
 
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
-                            <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
-                        <div id="cours-theorique-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
+                        <div id="cours-theorique-list"
+                            class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Théorique</span>
@@ -142,21 +149,23 @@
                     <div>
                         <div id="cours-pratique-header"
                             class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
-                            <svg id="cours-pratique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            <svg id="cours-pratique-arrow" class="ml-auto h-4 w-4 transition-transform"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
                         <div id="cours-pratique-list"
                             class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
-                            <a href="{{ route('AjouterQuiz')}}"
+                            <a href="{{ route('AjouterQuiz') }}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
@@ -177,11 +186,14 @@
                             </svg>
 
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
-                            <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
-                        <div id="vehicule-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
+                        <div id="vehicule-list"
+                            class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Véhicule</span>
@@ -204,8 +216,10 @@
                             </svg>
 
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
-                            <svg id="examen-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            <svg id="examen-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
                         <div id="examen-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
@@ -230,11 +244,14 @@
                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
-                            <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
-                        <div id="moniteurs-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
+                        <div id="moniteurs-list"
+                            class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Moniteurs</span>
@@ -255,8 +272,10 @@
                                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
-                            <svg id="caisse-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            <svg id="caisse-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
 
@@ -271,10 +290,13 @@
                             </a>
                         </div>
                     </div>
-                    
-                    <div class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer" id="logoutButton">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
+
+                    <div class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer"
+                        id="logoutButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H3" />
                         </svg>
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
                     </div>
@@ -282,15 +304,14 @@
             </div>
         </div>
 
-<script> 
-
+      <script> 
         async function logout() {
             try {
                 const response = await fetch('/api/logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
                 });
 
@@ -300,9 +321,9 @@
                     localStorage.removeItem('token');
                     localStorage.removeItem('role');
                     alert(data.message);
-                    window.location.href = '/connecter'; 
+                    window.location.href = '/connecter';
                 } else {
-                    alert('Échec de la déconnexion : ' + data.message); 
+                    alert('Échec de la déconnexion : ' + data.message);
                 }
             } catch (error) {
                 console.error('Erreur lors de la déconnexion:', error);
@@ -329,4 +350,5 @@
         };
     </script>
 </body>
+
 </html>

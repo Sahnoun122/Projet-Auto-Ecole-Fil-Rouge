@@ -242,7 +242,7 @@
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-
+    
     const requestBody = {
         email: email,
         password: password
@@ -261,35 +261,34 @@
         const data = await response.json();
         console.log('Réponse de l\'API:', data);
 
-        if (!response.ok) {
+        // Check if the response is valid
+        if (!response.ok || !data.token || !data.role || !data.user) {
             throw new Error(data.message || 'Erreur inconnue');
         }
 
-        if (data.token && data.role) {
-            console.log('Token:', data.token); 
-            console.log('Role:', data.role); 
+        // Store the user data, token, and role in localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+        localStorage.setItem('user', JSON.stringify(data.user));
 
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('role', data.role);
+        console.log('Token:', data.token); 
+        console.log('Role:', data.role); 
+        console.log('User:', data.id);
 
-            switch (data.role) {
-                case 'admin':
-                    window.location.href = '/admin/dashboard';  
-                    break;
-                case 'moniteur':
-                    window.location.href = '/moniteur/dashboard'; 
-                    break;
-                case 'candidat':
-                    window.location.href = '/candidats/dashboard';  
-                    break;
-                default:
-                    window.location.href = '/';  
-            }
-        } else {
-            console.error('Le token ou le role est manquant');
-            alert('Erreur dans la réponse du serveur : Token ou rôle manquant');
+        // Redirect based on the role
+        switch (data.role) {
+            case 'admin':
+                window.location.href = '/admin/dashboard';  
+                break;
+            case 'moniteur':
+                window.location.href = '/moniteur/dashboard'; 
+                break;
+            case 'candidat':
+                window.location.href = '/candidats/dashboard';  
+                break;
+            default:
+                window.location.href = '/';  
         }
-
     } catch (error) {
         console.error('Erreur de connexion:', error);
         alert(error.message || 'Une erreur est survenue lors de la connexion');
@@ -298,6 +297,7 @@
         submitBtn.textContent = 'Se connecter';
     }
 });
+
 
   </script>
 </body>
