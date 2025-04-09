@@ -13,12 +13,14 @@ return new class extends Migration
 public function up()
 {
     Schema::create('quizzes', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
+        $table->id(); 
+        $table->unsignedBigInteger('admin_id');
+        $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
         $table->string('title');
         $table->text('description')->nullable();
         $table->timestamps();
     });
+    
 }
 
 

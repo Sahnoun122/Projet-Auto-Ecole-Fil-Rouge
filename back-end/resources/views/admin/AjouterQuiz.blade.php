@@ -6,17 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto-école Sahnoun - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 50;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+    
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 800px;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .transition-max-height {
+        transition: max-height 0.3s ease-in-out;
+    }
+</style>
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
     <div class="flex h-screen">
+        <!-- Sidebar -->
         <div :class="sidebarOpen ? 'w-64' : 'w-20'" class="bg-white shadow-lg transition-all duration-300 flex flex-col">
             <div class="p-4 flex justify-between items-center border-b">
-
                 <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -28,8 +55,7 @@
 
             <div class="p-4 border-b flex justify-center">
                 <div class="relative group">
-                    <div
-                        class="absolute inset-0 bg-primary rounded-full opacity-10 group-hover:opacity-20 transition-opacity">
+                    <div class="absolute inset-0 bg-primary rounded-full opacity-10 group-hover:opacity-20 transition-opacity">
                     </div>
                     <img src="/api/placeholder/60/60" alt="Auto-école"
                         class="h-16 w-16 object-contain rounded-full border-2 border-gray-200" />
@@ -41,6 +67,7 @@
             <div :class="sidebarOpen ? 'block' : 'hidden'" class="text-center py-2 text-sm font-medium text-gray-600">
                 Auto-école S A H N O U N
             </div>
+            
             <div class="flex flex-col h-screen">
                 <nav>
                     <a href="{{ route('dashboard') }}"
@@ -59,7 +86,6 @@
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
                     </a>
 
-
                     <div>
                         <div id="candidats-header"
                             class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
@@ -75,12 +101,12 @@
                                     d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
-                        <div id="candidats-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                        <div id="candidats-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Candidats</span>
                             </a>
-                            <a href="" {{ route('gestionCandidats') }}""
+                            <a href="{{ route('gestionCandidats') }}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Candidats</span>
                             </a>
@@ -99,8 +125,9 @@
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
                             <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>                            </div>
-                        <div id="cours-theorique-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                            </svg>
+                        </div>
+                        <div id="cours-theorique-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Théorique</span>
@@ -125,10 +152,10 @@
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
                             <svg id="cours-pratique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
+                            </svg>
                         </div>
                         <div id="cours-pratique-list"
-                            class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                            class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="{{ route('AjouterQuiz')}}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
@@ -152,9 +179,9 @@
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
                             <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
+                            </svg>
                         </div>
-                        <div id="vehicule-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                        <div id="vehicule-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Véhicule</span>
@@ -179,9 +206,9 @@
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
                             <svg id="examen-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
+                            </svg>
                         </div>
-                        <div id="examen-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                        <div id="examen-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Examen</span>
@@ -191,8 +218,6 @@
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Examens</span>
                             </a>
                         </div>
-
-
                     </div>
 
                     <div>
@@ -207,10 +232,9 @@
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
                             <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
-
+                            </svg>
                         </div>
-                        <div id="moniteurs-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                        <div id="moniteurs-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Moniteurs</span>
@@ -220,7 +244,6 @@
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Moniteurs</span>
                             </a>
                         </div>
-
                     </div>
 
                     <div>
@@ -234,10 +257,10 @@
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
                             <svg id="caisse-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
+                            </svg>
                         </div>
 
-                        <div id="caisse-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
+                        <div id="caisse-list" class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
                             <a href="#"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Caisse</span>
@@ -247,111 +270,63 @@
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Caisses</span>
                             </a>
                         </div>
-                        <div id="logout-button" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer" id="logoutButton">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
-                            </svg>
-                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
-                        </div>
-                        
                     </div>
-
                     
+                    <div class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer" id="logoutButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
+                        </svg>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
+                    </div>
                 </nav>
-
-                
             </div>
-        
-                   
-    </div>
-    
-    <script>
+        </div>
 
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-      const progressBars = document.querySelectorAll('.progress-bar');
-      progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-          bar.style.width = width;
-        }, 300);
-      });
-    }, 500);
-    
-    const badge = document.querySelector('.pulse');
-    if (badge) {
-      setInterval(() => {
-        badge.classList.add('animate-pulse');
-        setTimeout(() => {
-          badge.classList.remove('animate-pulse');
-        }, 1000);
-      }, 2000);
-    }
-  });
-        
-  document.addEventListener("DOMContentLoaded", function () {
-    function toggleSection(headerId, listId, arrowId) {
-      const header = document.getElementById(headerId);
-      const list = document.getElementById(listId);
-      const arrow = document.getElementById(arrowId);
-  
-      let isOpen = list.style.maxHeight !== "0px";
-  
-      header.addEventListener("click", function () {
-        if (isOpen) {
-          list.style.maxHeight = "0";
-          arrow.style.transform = "rotate(0deg)";
-        } else {
-          list.style.maxHeight = `${list.scrollHeight}px`;
-          arrow.style.transform = "rotate(90deg)";
+<script> 
+
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    alert(data.message);
+                    window.location.href = '/connecter'; 
+                } else {
+                    alert('Échec de la déconnexion : ' + data.message); 
+                }
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+                alert('Une erreur est survenue. Veuillez réessayer.');
+            }
         }
-        isOpen = !isOpen;
-      });
-    }
-  
-    toggleSection("candidats-header", "candidats-list", "candidats-arrow");
-    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-    toggleSection("vehicule-header", "vehicule-list", "vehicule-arrow");
-    toggleSection("examen-header", "examen-list", "examen-arrow");
-    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
-  });
 
-  
-async function logout() {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
-            },
-        });
+        document.getElementById('logoutButton').addEventListener('click', logout);
 
-        const data = await response.json();
+        window.editQuiz = function(index) {
+            openQuizForm(index);
+        };
 
-        if (response.ok) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            alert(data.message);
-            window.location.href = '/connecter'; 
-        } else {
-            alert('Échec de la déconnexion : ' + data.message); 
-        }
-    } catch (error) {
-        console.error('Erreur lors de la déconnexion:', error);
-        alert('Une erreur est survenue. Veuillez réessayer.');
-    }
-}
+        window.viewQuiz = function(quizId) {
+            viewQuiz(quizId);
+        };
 
-document.getElementById('logoutButton').addEventListener('click', logout);
+        window.deleteQuiz = function(quizId) {
+            deleteQuiz(quizId);
+        };
+
+        window.startQuiz = function(quizId) {
+            startQuiz(quizId);
+        };
     </script>
-
-    
 </body>
-
 </html>
-
-

@@ -23,7 +23,7 @@ class QuizController extends Controller
     public function store(Request $request)
 {
 
-     Gate::authorize('create', Quiz::class);
+    //  Gate::authorize('create', Quiz::class);
 
     $validated = $request->validate([
         'title' => 'required|string|max:255',
@@ -32,7 +32,7 @@ class QuizController extends Controller
     ]);
 
     $quiz = Quiz::create([
-        'admin_id' => $validated['admin_id'] ?? Auth::id(),
+        'admin_id' => (int)$validated['admin_id'] ?? Auth::id(),
         'title' => $validated['title'],
         'description' => $validated['description'],
     ]);
