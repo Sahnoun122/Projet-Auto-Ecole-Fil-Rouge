@@ -472,6 +472,44 @@ async function updateExistingQuiz(quizId, quizData) {
         throw error;
     }
 }
+
+async function handleQuizSave(e) {
+    e.preventDefault();
+    
+    const quizId = document.getElementById('quizId').value;
+    const title = document.getElementById('quizTitle').value.trim();
+    const description = document.getElementById('quizDescription').value.trim();
+    
+    if (!title) {
+        showToast('Le titre du quiz est obligatoire', 'error');
+        return;
+    }
+
+    const quizData = { title, description };
+
+    try {
+        let data;
+        if (quizId) {
+            // Mode édition - mise à jour
+            data = await updateExistingQuiz(quizId, quizData);
+            const index = quizzes.findIndex(q => q.id === quizId);
+            if (index !== -1) quizzes[index] = data;
+            showToast('Quiz mis à jour avec succès', 'success');
+        } else {
+            // Mode création - nouveau quiz
+            data = await createNewQuiz(quizData);
+            quizzes.unshift(data); // Ajoute au début du tableau
+            showToast('Quiz créé avec succès', 'success');
+        }
+
+        closeModal();
+        renderQuizzes();
+    } catch (error) {
+        console.error("Erreur:", error);
+        showToast(`Erreur: ${error.message}`, 'error');
+    }
+}
+
     </script>
 </body>
 
