@@ -33,6 +33,11 @@ class AdmindController extends Controller
         return view('admin.AjouterQuiz'); 
 
     }
+    
+    public function  AjouterQuestions() {
+        return view('admin.AjouterQuestions'); 
+
+    }
     /**
      * Show the form for creating a new resource.
      */
