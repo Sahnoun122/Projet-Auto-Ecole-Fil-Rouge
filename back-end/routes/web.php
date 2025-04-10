@@ -37,11 +37,7 @@ Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
 
 
         
-        Route::get('/AjouterQuiz', [QuizController::class, 'index'])->name('AjouterQuiz');
-        Route::post('/AjouterQuiz', [QuizController::class, 'store'])->name('AjouterQuiz.store');
-        Route::put('/AjouterQuiz/{quiz}', [QuizController::class, 'update'])->name('AjouterQuiz.update');
-        Route::delete('/AjouterQuiz/{quiz}', [QuizController::class, 'destroy'])->name('AjouterQuiz.destroy');
-        
+  
 
             
                 });

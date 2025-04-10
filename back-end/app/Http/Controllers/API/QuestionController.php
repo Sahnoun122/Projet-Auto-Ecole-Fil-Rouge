@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+namespace App\Http\Controllers;
+
 use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
@@ -11,50 +11,69 @@ use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
-
-    public function store(Request $request, $quizId)
+    public function index(Quiz $quiz)
     {
-       
-        $quiz = Quiz::findOrFail($quizId);
+        Gate::authorize('view', $quiz);
+        
+        $questions = $quiz->questions()->with('choices')->get();
+        
+        return view('admin.questions.index', compact('quiz', 'questions'));
+    }
 
-        // Gate::authorize('create', Question::class); 
-
+    public function store(Request $request, Quiz $quiz)
+    {
+        Gate::authorize('create', Question::class);
+        
         $validated = $request->validate([
             'question_text' => 'required|string',
             'image_path' => 'nullable|string',
             'duration' => 'required|integer|min:1',
         ]);
-
+        
         $question = $quiz->questions()->create([
             'admin_id' => Auth::id(),
             'question_text' => $validated['question_text'],
             'image_path' => $validated['image_path'],
             'duration' => $validated['duration'],
         ]);
- 
-        return response()->json($question, 201);
+        
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'question' => $question]);
+        }
+        
+        return redirect()->route('questions.index', $quiz)->with('success', 'Question ajoutée avec succès!');
     }
 
     public function update(Request $request, Question $question)
     {
-        Gate::authorize('update', $question); 
-
+        Gate::authorize('update', $question);
+        
         $validated = $request->validate([
             'question_text' => 'sometimes|string',
             'image_path' => 'nullable|string',
             'duration' => 'sometimes|integer|min:1',
         ]);
-
+        
         $question->update($validated);
-
-        return response()->json($question);
+        
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        
+        return redirect()->route('questions.index', $question->quiz)->with('success', 'Question mise à jour avec succès!');
     }
 
     public function destroy(Question $question)
     {
         Gate::authorize('delete', $question);
-
+        
+        $quiz = $question->quiz;
         $question->delete();
-        return response()->json(['message' => 'Question deleted successfully.'], 200);
+        
+        if (request()->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        
+        return redirect()->route('questions.index', $quiz)->with('success', 'Question supprimée avec succès!');
     }
 }

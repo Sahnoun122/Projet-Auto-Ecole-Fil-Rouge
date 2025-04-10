@@ -280,7 +280,105 @@
         </div>
 
         <div class="flex-1 overflow-auto">
-   
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Manage Quiz Questions</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link rel="stylesheet" href="/css/styles.css">
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="d-flex justify-content-between align-items-center my-4">
+                        <h1 class="text-primary">Manage Questions: {{ $quiz->title }}</h1>
+                        <a href="/admin/quizzes" class="btn btn-outline-primary">Back to Quizzes</a>
+                    </div>
+                    
+                    <!-- Question Creation Form -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Add New Question</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="questionForm">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="question_text" class="form-label">Question Text</label>
+                                    <input type="text" class="form-control" id="question_text" name="question_text" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image_path" class="form-label">Image URL (Optional)</label>
+                                    <input type="text" class="form-control" id="image_path" name="image_path">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="duration" class="form-label">Time Duration (seconds)</label>
+                                    <input type="number" class="form-control" id="duration" name="duration" min="1" value="30" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add Question</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Questions List -->
+                    {{-- <div id="questionsList" class="row">
+                        @foreach($questions as $question)
+                        <div class="col-md-6 mb-4">
+                            <div class="card question-card">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Question #{{ $loop->iteration }}</h5>
+                                    <span class="badge bg-light text-primary">{{ $question->duration }}s</span>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $question->question_text }}</h5>
+                                    @if($question->image_path)
+                                    <img src="{{ $question->image_path }}" class="img-fluid mb-3" alt="Question Image">
+                                    @endif
+                                    
+                                    <div class="choices-container">
+                                        <h6>Choices:</h6>
+                                        <ul class="list-group" id="choicesList-{{ $question->id }}">
+                                            @foreach($question->choices as $choice)
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                {{ $choice->choice_text }}
+                                                @if($choice->is_correct)
+                                                <span class="badge bg-success">Correct</span>
+                                                @endif
+                                                <button class="btn btn-sm btn-danger delete-choice" data-id="{{ $choice->id }}">Delete</button>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        
+                                        <!-- Add Choice Form -->
+                                        <form class="add-choice-form mt-3" data-question-id="{{ $question->id }}">
+                                            @csrf
+                                            <div class="input-group mb-2">
+                                                <input type="text" class="form-control" name="choice_text" placeholder="Choice text" required>
+                                                <div class="input-group-text">
+                                                    <input class="form-check-input mt-0" type="checkbox" name="is_correct" value="1">
+                                                    <label class="form-check-label ms-2">Correct?</label>
+                                                </div>
+                                                <button class="btn btn-outline-primary" type="submit">Add</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-danger delete-question" data-id="{{ $question->id }}">Delete Question</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div> --}}
+                </div>
+                
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="/js/quiz-questions.js"></script>
+            </body>
+            </html>
 
 
     <script>
