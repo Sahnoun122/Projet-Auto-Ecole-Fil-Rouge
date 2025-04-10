@@ -68,13 +68,13 @@ Route::post('refresh', [AuthController::class, 'refresh']);
             // Routes pour les quizzes
             Route::apiResource('quizzes', QuizController::class);
             
-            // Routes pour les questions
-            Route::post('quizzes/{id}/questions', [QuestionController::class, 'store']);
-            Route::apiResource('questions', QuestionController::class)->except(['store']);
+            // // Routes pour les questions
+            // Route::post('quizzes/{id}/questions', [QuestionController::class, 'store']);
+            // Route::apiResource('questions', QuestionController::class)->except(['store']);
             
-            // Routes pour les choix
-            Route::post('questions/{question}/choices', [ChoiceController::class, 'store']);
-            Route::apiResource('choices', ChoiceController::class)->except(['store']);
+            // // Routes pour les choix
+            // Route::post('questions/{question}/choices', [ChoiceController::class, 'store']);
+            // Route::apiResource('choices', ChoiceController::class)->except(['store']);
             
             // Routes pour les réponses
             Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
