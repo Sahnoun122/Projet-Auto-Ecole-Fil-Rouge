@@ -347,8 +347,103 @@
                     </div>
                 </div>
             
-                
+                <script>
 
+
+ $(document).ready(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    const modal = $('#quizModal');
+    const form = $('#quizForm'); 
+    const quizList = $('#quizList'); 
+
+  
+    $('#newQuizBtn').click(function () {
+        $('#modalTitle').text('Nouveau Quiz'); 
+        $('#quizId').val(''); 
+        $('#quizTitle').val(''); 
+        $('#quizDescription').val(''); 
+        modal.removeClass('hidden'); 
+    });
+
+    $('#cancelBtn').click(function () {
+        modal.addClass('hidden'); 
+    });
+
+
+    form.submit(function (e) {
+        e.preventDefault(); 
+
+        const id = $('#quizId').val(); 
+        const url = id ? `/admin/AjouterQuiz/${id}` : '/admin/AjouterQuiz';
+        const method = id ? 'POST' : 'POST'; 
+
+        $.ajax({
+            url: url,
+            method: method,
+            data: {
+                _method: id ? 'PUT' : 'POST', 
+                title: $('#quizTitle').val(), 
+                description: $('#quizDescription').val()
+            },
+            success: function (response) {
+                quizList.html($(response).find('#quizList').html());
+                modal.addClass('hidden'); 
+            },
+            error: function (xhr) {
+                alert('Erreur lors de l\'ajout ou de la mise à jour du quiz.'); 
+                console.error(xhr.responseText); 
+            }
+        });
+    });
+
+    window.handleEditQuiz = function (id) {
+        const row = $(`[data-id="${id}"]`); 
+        const title = row.find('a').text();
+        const description = row.find('p').text(); 
+
+        $('#modalTitle').text('Modifier Quiz'); 
+        $('#quizId').val(id); 
+        $('#quizTitle').val(title); 
+        $('#quizDescription').val(description); 
+        modal.removeClass('hidden'); 
+    };
+
+    window.handleDeleteQuiz = function (id) {
+        if (!confirm('Voulez-vous vraiment supprimer ce quiz ?')) return; 
+
+        $.ajax({
+            url: `/admin/AjouterQuiz/${id}`, 
+            method: 'POST', 
+            data: {
+                _method: 'DELETE' 
+            },
+            success: function (response) {
+                quizList.html($(response).find('#quizList').html());
+            },
+            error: function (xhr) {
+                alert('Erreur lors de la suppression du quiz.'); 
+                console.error(xhr.responseText); 
+            }
+        });
+    };
+
+   
+    $('#searchInput').on('input', function () {
+        const searchTerm = $(this).val().toLowerCase(); 
+        $('#quizList .p-6').each(function () {
+            const title = $(this).find('a').text().toLowerCase(); 
+            const description = $(this).find('p').text().toLowerCase(); 
+            $(this).toggle(title.includes(searchTerm) || description.includes(searchTerm));
+        });
+    });
+});
+               
+               </script>
             </body>
             
             </html>
