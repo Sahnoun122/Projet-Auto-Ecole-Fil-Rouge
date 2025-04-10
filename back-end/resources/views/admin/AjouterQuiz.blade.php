@@ -318,7 +318,42 @@
                     </div>
                 </header>
             
-                <!-- Modal -->
+
+                <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <h2 class="text-xl font-semibold text-gray-800">Mes Quiz</h2>
+                        </div>
+            
+                        <div id="quizList" class="divide-y divide-gray-200">
+                            @foreach ($quizzes as $quiz)
+                            <div class="p-6 hover:bg-gray-50 transition cursor-pointer" data-id="{{ $quiz->id }}">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <a href="/admin/AjouterQuestions/{{ $quiz->id }}"
+                                            class="text-lg font-semibold text-[#4D44B5] hover:underline">
+                                            {{ $quiz->title }}
+                                        </a>
+                                        <p class="text-gray-600 mt-1">
+                                            {{ $quiz->description ?? 'Aucune description' }}
+                                        </p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button onclick="handleEditQuiz('{{ $quiz->id }}')"
+                                            class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="handleDeleteQuiz('{{ $quiz->id }}')"
+                                            class="text-red-500 hover:text-red-700 p-2">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </main>
                 <div id="quizModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
                     <div class="bg-white w-96 p-6 rounded-lg">
                         <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Quiz</h2>
