@@ -13,19 +13,15 @@ use Illuminate\Support\Facades\Auth;
 
 class AnswerController extends Controller
 {
-
-
-    public function store(Request $request, $quizId)
+    public function store(Request $request, Quiz $quiz)
     {
-        $quiz = Quiz::findOrFail($quizId);
-
         Gate::authorize('create', Answer::class);
 
         $validated = $request->validate([
             'answers' => 'required|array',
             'answers.*.question_id' => [
                 'required',
-                'exists:questions,id,quiz_id,'.$quizId
+                'exists:questions,id,quiz_id,'.$quiz->id
             ],
             'answers.*.choice_id' => [
                 'required',
@@ -70,57 +66,55 @@ class AnswerController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'Answers submitted successfully',
+            session()->flash('quiz_results', [
                 'score' => [
                     'total' => $totalScore,
                     'max' => $totalQuestions,
                     'percentage' => round(($totalScore/$totalQuestions)*100, 2)
                 ],
                 'results' => $results
-            ], 201);
+            ]);
+
+            return redirect()->route('quiz.results', $quiz);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Failed to submit answers',
-                'error' => $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Échec de soumission des réponses: ' . $e->getMessage());
         }
     }
 
-    public function getResults($quizId)
+    public function getResults(Quiz $quiz)
     {
-        $quiz = Quiz::findOrFail($quizId);
         $user = Auth::user();
 
         Gate::authorize('view-results', [$quiz, $user]);
 
         $answers = Answer::with(['question', 'choice'])
             ->where('candidat_id', $user->id)
-            ->whereHas('question', function($q) use ($quizId) {
-                $q->where('quiz_id', $quizId);
+            ->whereHas('question', function($q) use ($quiz) {
+                $q->where('quiz_id', $quiz->id);
             })
             ->get();
 
         $totalQuestions = $quiz->questions()->count();
         $correctAnswers = $answers->where('is_correct', true)->count();
+        
+        $scoreData = [
+            'correct' => $correctAnswers,
+            'total' => $totalQuestions,
+            'percentage' => $totalQuestions > 0 ? round(($correctAnswers/$totalQuestions)*100, 2) : 0
+        ];
+        
+        $answerData = $answers->map(function($answer) {
+            return [
+                'question_id' => $answer->question_id,
+                'choice_id' => $answer->choice_id,
+                'is_correct' => $answer->is_correct,
+                'question_text' => $answer->question->question_text,
+                'choice_text' => $answer->choice->choice_text
+            ];
+        });
 
-        return response()->json([
-            'score' => [
-                'correct' => $correctAnswers,
-                'total' => $totalQuestions,
-                'percentage' => round(($correctAnswers/$totalQuestions)*100, 2)
-            ],
-            'answers' => $answers->map(function($answer) {
-                return [
-                    'question_id' => $answer->question_id,
-                    'choice_id' => $answer->choice_id,
-                    'is_correct' => $answer->is_correct,
-                    'question_text' => $answer->question->question_text,
-                    'choice_text' => $answer->choice->choice_text
-                ];
-            })
-        ]);
+        return view('quiz.results', compact('quiz', 'scoreData', 'answerData'));
     }
 }
