@@ -293,7 +293,26 @@
                             </div>
                         </header>
             
-                       
+                        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                            <div class="bg-white rounded-xl shadow overflow-hidden">
+                                <div class="px-6 py-4 border-b border-gray-200">
+                                    <h2 class="text-xl font-semibold text-gray-800">Questions du Quiz</h2>
+                                </div>
+            
+                                <div id="questionsList" class="divide-y divide-gray-200">
+                                    <div class="p-6 text-center text-gray-500">
+                                        <i class="fas fa-question-circle text-4xl mb-3 text-gray-300"></i>
+                                        <p>Aucune question pour ce quiz</p>
+                                        <button id="emptyStateBtn" class="mt-4 text-[#4D44B5] font-medium">
+                                            Ajouter votre première question
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            
             
                 <div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium hidden">
                 </div>
