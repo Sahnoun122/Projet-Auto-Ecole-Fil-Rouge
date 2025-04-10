@@ -7,65 +7,48 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
-
 class QuizController extends Controller
 {
-   
     public function index()
     {
-        Gate::authorize('viewAny', Quiz::class); 
-
-        $quizzes = Quiz::with('admin')->get();
-        return response()->json($quizzes);
+        $quizzes = Quiz::all();
+        return view('admin.AjouterQuiz', compact('quizzes'));
     }
 
-
     public function store(Request $request)
-{
-   
-    //  Gate::authorize('create', Quiz::class);
-
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-    ]);
-
-    $quiz = Quiz::create([
-        'admin_id' =>  2,
-        'title' => $validated['title'],
-        'description' => $validated['description'],
-    ]);
-  
-    return response()->json($quiz, 201);
-}
-
-    public function show(Quiz $quiz)
     {
-        Gate::authorize('view', $quiz); 
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
 
-        $quiz->load('questions.choices');
-        return response()->json($quiz);
+        $quiz = Quiz::create([
+            // 'admin_id' => Auth::id(), 
+            'admin_id' => 2, 
+
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+        ]);
+
+        return view('admin.AjouterQuiz', ['quizzes' => Quiz::all()]);
     }
 
     public function update(Request $request, Quiz $quiz)
     {
-        Gate::authorize('update', $quiz);
-
         $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'description' => 'nullable|string'
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
         $quiz->update($validated);
 
-        return response()->json($quiz);
+        return view('admin.AjouterQuiz', ['quizzes' => Quiz::all()]);
     }
 
     public function destroy(Quiz $quiz)
     {
-        Gate::authorize('delete', $quiz); 
-
         $quiz->delete();
-        return response()->json(['message' => 'Quiz deleted successfully.'], 200);
+
+        return view('admin.AjouterQuiz', ['quizzes' => Quiz::all()]);
     }
 }

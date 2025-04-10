@@ -69,7 +69,7 @@ Route::post('refresh', [AuthController::class, 'refresh']);
             Route::apiResource('quizzes', QuizController::class);
             
             // Routes pour les questions
-            Route::post('quizzes/{quiz}/questions', [QuestionController::class, 'store']);
+            Route::post('quizzes/{id}/questions', [QuestionController::class, 'store']);
             Route::apiResource('questions', QuestionController::class)->except(['store']);
             
             // Routes pour les choix

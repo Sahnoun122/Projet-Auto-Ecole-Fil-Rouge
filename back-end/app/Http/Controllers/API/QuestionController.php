@@ -14,9 +14,10 @@ class QuestionController extends Controller
 
     public function store(Request $request, $quizId)
     {
+       
         $quiz = Quiz::findOrFail($quizId);
 
-        Gate::authorize('create', Question::class); 
+        // Gate::authorize('create', Question::class); 
 
         $validated = $request->validate([
             'question_text' => 'required|string',
@@ -30,7 +31,7 @@ class QuestionController extends Controller
             'image_path' => $validated['image_path'],
             'duration' => $validated['duration'],
         ]);
-
+ 
         return response()->json($question, 201);
     }
 

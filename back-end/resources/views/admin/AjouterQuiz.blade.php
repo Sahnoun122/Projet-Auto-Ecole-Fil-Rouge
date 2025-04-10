@@ -8,7 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <style>
@@ -305,338 +307,52 @@
         </div>
 
         <div class="flex-1 overflow-auto">
-            <header class="bg-[#4D44B5] text-white shadow-md">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <h1 class="text-2xl font-bold">QuizMaster Pro</h1>
-                    <div class="flex items-center space-x-4">
+         
+                <header class="bg-[#4D44B5] text-white shadow-md">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold">QuizMaster Pro</h1>
                         <button id="newQuizBtn"
                             class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
                             <i class="fas fa-plus mr-2"></i> Nouveau Quiz
                         </button>
-                        <div
-                            class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#4D44B5] font-bold">
-                        </div>
+                    </div>
+                </header>
+            
+                <!-- Modal -->
+                <div id="quizModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+                    <div class="bg-white w-96 p-6 rounded-lg">
+                        <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Quiz</h2>
+                        <form id="quizForm" method="POST" action="/admin/AjouterQuiz" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="_method" id="_method" value="POST">
+                            <input type="hidden" name="_method" value="PUT"> 
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" id="quizId">
+                            <div class="mb-4">
+                                <label for="quizTitle" class="block text-sm font-medium text-gray-700">Titre</label>
+                                <input type="text" id="quizTitle" name="title"
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-500" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="quizDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea id="quizDescription" name="description"
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="flex justify-end space-x-2">
+                                <button type="button" id="cancelBtn"
+                                    class="px-4 py-2 bg-gray-500 text-white rounded">Annuler</button>
+                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Enregistrer</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </header>
+            
+                
 
-            <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="bg-white rounded-xl shadow overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                        <h2 class="text-xl font-semibold text-gray-800">Mes Quiz</h2>
-                        <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Rechercher un quiz..."
-                                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        </div>
-                    </div>
-
-                    <div id="quizList" class="divide-y divide-gray-200">
-                        <div class="p-6 text-center text-gray-500">
-                            <i class="fas fa-clipboard-list text-4xl mb-3 text-gray-300"></i>
-                            <p>Aucun quiz créé pour le moment</p>
-                            <button id="emptyStateBtn" class="mt-4 text-[#4D44B5] font-medium">
-                                Créer votre premier quiz
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <div id="quizModal" class="modal">
-        <div class="modal-content">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="quizModalTitle" class="text-2xl font-bold text-gray-800">Nouveau Quiz</h3>
-                    <button id="closeQuizModal" class="text-gray-400 hover:text-gray-500">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <form method="POST" action="/api/quizzes" id="quizForm"  enctype="multipart/form-data" class="space-y-6">
-                    @csrf
-                  
-                    <input type="hidden" id="quizId">
-                   
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Titre du quiz *</label>
-                        <input type="text" id="quizTitle" required name="title"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea id="quizDescription" rows="3" name="description"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]"></textarea>
-                    </div>
-
-                    <div class="flex justify-end space-x-3 pt-4">
-                        <button type="button" id="cancelQuizBtn"
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                            Annuler
-                        </button>
-                        <button type="submit" id="saveQuizBtn"
-                            class="px-6 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
-                            Créer
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium hidden">
-    </div>
-
- <script>
-let quizzes = [];
-const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-const authToken = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user'));
-const userId = user?.id;
-
-document.addEventListener('DOMContentLoaded', async () => {
-    await fetchQuizzes();
-    setupEventListeners();
-    setupSidebarToggle();
-});
-
-async function fetchQuizzes() {
-    try {
-        const response = await fetch('/api/quizzes', {
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${authToken}`,
-            }
-        });
-
-        if (!response.ok) throw new Error('Erreur réseau');
-        
-        quizzes = await response.json();
-        renderQuizzes();
-    } catch (error) {
-        console.error("Erreur:", error);
-        showToast('Impossible de charger les quizzes', 'error');
-    }
-}
-
-async function createNewQuiz(quizData) {
-    try {
-        const response = await fetch('/api/quizzes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Authorization': `Bearer ${authToken}`,
-            },
-            body: JSON.stringify(quizData)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Erreur lors de la création');
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Erreur création:", error);
-        throw error;
-    }
-}
-
-async function updateExistingQuiz(quizId, quizData) {
-    try {
-        const response = await fetch(`/api/quizzes/${quizId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Authorization': `Bearer ${authToken}`,
-            },
-            body: JSON.stringify(quizData)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Erreur lors de la mise à jour');
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Erreur mise à jour:", error);
-        throw error;
-    }
-}
-
-async function handleQuizSave(e) {
-    e.preventDefault();
-    
-    const quizId = document.getElementById('quizId').value;
-    const title = document.getElementById('quizTitle').value.trim();
-    const description = document.getElementById('quizDescription').value.trim();
-    
-    if (!title) {
-        showToast('Le titre du quiz est obligatoire', 'error');
-        return;
-    }
-
-    const quizData = { title, description };
-
-    try {
-        let data;
-        if (quizId) {
-            data = await updateExistingQuiz(quizId, quizData);
-            const index = quizzes.findIndex(q => q.id === quizId);
-            if (index !== -1) quizzes[index] = data;
-            showToast('Quiz mis à jour avec succès', 'success');
-        } else {
-            data = await createNewQuiz(quizData);
-            quizzes.unshift(data);
-            showToast('Quiz créé avec succès', 'success');
-        }
-
-        closeModal();
-        renderQuizzes();
-    } catch (error) {
-        console.error("Erreur:", error);
-        showToast(`Erreur: ${error.message}`, 'error');
-    }
-}
-
-function prepareEditForm(quizId) {
-    const quiz = quizzes.find(q => q.id === quizId);
-    if (!quiz) return;
-
-    document.getElementById('quizId').value = quiz.id;
-    document.getElementById('quizTitle').value = quiz.title;
-    document.getElementById('quizDescription').value = quiz.description || '';
-    
-    document.getElementById('quizModalTitle').textContent = 'Modifier Quiz';
-    document.getElementById('saveQuizBtn').textContent = 'Mettre à jour';
-    
-    openModal();
-}
-
-function prepareCreateForm() {
-    document.getElementById('quizId').value = '';
-    document.getElementById('quizTitle').value = '';
-    document.getElementById('quizDescription').value = '';
-    
-    document.getElementById('quizModalTitle').textContent = 'Nouveau Quiz';
-    document.getElementById('saveQuizBtn').textContent = 'Créer';
-    
-    openModal();
-}
-
-async function deleteQuiz(quizId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce quiz ?')) return;
-
-    try {
-        const response = await fetch(`/api/quizzes/${quizId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Authorization': `Bearer ${authToken}`,
-            }
-        });
-
-        if (!response.ok) throw new Error('Erreur lors de la suppression');
-
-        quizzes = quizzes.filter(q => q.id !== quizId);
-        renderQuizzes();
-        showToast('Quiz supprimé avec succès', 'success');
-    } catch (error) {
-        console.error("Erreur:", error);
-        showToast('Erreur lors de la suppression du quiz', 'error');
-    }
-}
-
-function renderQuizzes() {
-    const quizList = document.getElementById('quizList');
-    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-
-    const filteredQuizzes = searchQuery 
-        ? quizzes.filter(quiz =>
-            quiz.title.toLowerCase().includes(searchQuery) ||
-            (quiz.description && quiz.description.toLowerCase().includes(searchQuery)))
-        : quizzes;
-
-    if (filteredQuizzes.length === 0) {
-        quizList.innerHTML = `
-            <div class="p-6 text-center text-gray-500">
-                <i class="fas fa-clipboard-list text-4xl mb-3 text-gray-300"></i>
-                <p>Aucun quiz trouvé</p>
-                <button id="emptyStateBtn" class="mt-4 text-[#4D44B5] font-medium">
-                    Créer votre premier quiz
-                </button>
-            </div>`;
-        return;
-    }
-
-    quizList.innerHTML = filteredQuizzes.map(quiz => `
-        <div class="p-6 hover:bg-gray-50 transition cursor-pointer">
-            <div class="flex justify-between items-start">
-                <div>
-<a href="/admin/AjouterQuestions/${quiz.id}" class="text-lg font-semibold text-[#4D44B5] hover:underline">
-  ${quiz.title}
-</a>
-                    <p class="text-gray-600 mt-1">${quiz.description || 'Aucune description'}</p>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="handleDeleteQuiz('${quiz.id}')" class="text-red-500 hover:text-red-700 p-2">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button onclick="handleEditQuiz('${quiz.id}')" class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function openModal() {
-    document.getElementById('quizModal').style.display = 'flex';
-}
-
-function closeModal() {
-    document.getElementById('quizModal').style.display = 'none';
-}
-
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium ${
-        type === 'success' ? 'bg-green-500' : 'bg-red-500'
-    }`;
-    toast.classList.remove('hidden');
-
-    setTimeout(() => {
-        toast.classList.add('hidden');
-    }, 3000);
-}
-
-function setupEventListeners() {
-    document.getElementById('newQuizBtn').addEventListener('click', prepareCreateForm);
-    document.getElementById('emptyStateBtn')?.addEventListener('click', prepareCreateForm);
-    
-    document.getElementById('quizForm').addEventListener('submit', handleQuizSave);
-    
-    document.getElementById('closeQuizModal').addEventListener('click', closeModal);
-    document.getElementById('cancelQuizBtn').addEventListener('click', closeModal);
-    
-    document.getElementById('searchInput').addEventListener('input', renderQuizzes);
-}
-
-window.handleEditQuiz = prepareEditForm;
-window.handleDeleteQuiz = deleteQuiz;
-
-document.getElementById('logoutButton')?.addEventListener('click', logout);
-</script>
+            </body>
+            
+            </html>
+ </div>            
 </body>
 
 </html>

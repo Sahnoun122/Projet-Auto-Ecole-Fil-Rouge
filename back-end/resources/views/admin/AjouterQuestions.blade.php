@@ -9,7 +9,26 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
+
+    <style>
+        .hidden {
+    display: none;
+}
+.flex {
+    display: flex;
+}
+.fixed {
+    position: fixed;
+}
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+    </style>
 </head>
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
@@ -261,129 +280,12 @@
         </div>
 
         <div class="flex-1 overflow-auto">
-      
-                <div class="flex h-screen">
-                    <div class=" bg-[#4D44B5] text-white hidden ">
-                        <div class="flex items-center space-x-2 mb-8">
-                            <h1 class="text-xl font-bold">Questions</h1>
-                        </div>
-                        <nav>
-                            <a href="/admin/AjouterQuiz" class="block py-2.5 px-4 rounded hover:bg-[#3a32a1] mb-2">
-                                <i class="fas fa-arrow-left mr-2"></i> Retour aux quiz
-                            </a>
-                        </nav>
-                    </div>
-            
-                    <div class="flex-1 overflow-auto">
-                        <header class="bg-[#4D44B5] text-white shadow-md">
-                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                                <div class="flex items-center">
-                                    <button id="sidebarToggle" class="md:hidden mr-4">
-                                        <i class="fas fa-bars text-xl"></i>
-                                    </button>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <button id="newQuestionBtn"
-                                        class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
-                                        <i class="fas fa-plus mr-2"></i> Nouvelle Question
-                                    </button>
-                                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#4D44B5] font-bold">
-                                    </div>
-                                </div>
-                            </div>
-                        </header>
-            
-                        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                            <div class="bg-white rounded-xl shadow overflow-hidden">
-                                <div class="px-6 py-4 border-b border-gray-200">
-                                    <h2 class="text-xl font-semibold text-gray-800">Questions du Quiz</h2>
-                                </div>
-            
-                                <div id="questionsList" class="divide-y divide-gray-200">
-                                    <div class="p-6 text-center text-gray-500">
-                                        <i class="fas fa-question-circle text-4xl mb-3 text-gray-300"></i>
-                                        <p>Aucune question pour ce quiz</p>
-                                        <button id="emptyStateBtn" class="mt-4 text-[#4D44B5] font-medium">
-                                            Ajouter votre première question
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </main>
-                    </div>
-                </div>
-            
-                <div id="questionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-                    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 id="questionModalTitle" class="text-2xl font-bold text-gray-800">Nouvelle Question</h3>
-                                <button id="closeQuestionModal" class="text-gray-400 hover:text-gray-500">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-            
-                            <form id="questionForm" class="space-y-6">
-                                <input type="hidden" id="questionId">
-                                <input type="hidden" id="quizId">
-                               
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Question *</label>
-                                    <textarea id="questionText" rows="3" required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]"></textarea>
-                                </div>
-            
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Durée (secondes) *</label>
-                                    <input type="number" id="questionDuration" min="5" max="120" value="30" required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]">
-                                </div>
-            
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Image (optionnel)</label>
-                                    <input type="file" id="questionImage" accept="image/*"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]">
-                                </div>
-            
-                                <div class="border-t pt-4">
-                                    <h4 class="text-lg font-medium text-gray-800 mb-3">Choix de réponse</h4>
-                                    
-                                    <div id="choicesContainer" class="space-y-4">
-                                        <!-- Les choix seront ajoutés ici dynamiquement -->
-                                    </div>
-            
-                                    <button type="button" id="addChoiceBtn" class="mt-3 text-[#4D44B5] font-medium">
-                                        <i class="fas fa-plus mr-1"></i> Ajouter un choix
-                                    </button>
-                                </div>
-            
-                                <div class="flex justify-end space-x-3 pt-4">
-                                    <button type="button" id="cancelQuestionBtn"
-                                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                                        Annuler
-                                    </button>
-                                    <button type="submit" id="saveQuestionBtn"
-                                        class="px-6 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
-                                        Enregistrer
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            
-                <div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium hidden">
-                </div>
-        
-
-        </div>
-    </div>
-
    
 
 
     <script>
-
+        
+console.log(localStorage.getItem('id_quiz'))
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       const progressBars = document.querySelectorAll('.progress-bar');
@@ -426,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isOpen = !isOpen;
       });
     }
-  
+ 
     toggleSection("candidats-header", "candidats-list", "candidats-arrow");
     toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
     toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
@@ -463,7 +365,6 @@ async function logout() {
     }
 }
 
-document.getElementById('logoutButton').addEventListener('click', logout);
     </script>
 </body>
 

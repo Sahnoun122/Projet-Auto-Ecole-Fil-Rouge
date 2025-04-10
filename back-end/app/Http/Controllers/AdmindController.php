@@ -29,10 +29,10 @@ class AdmindController extends Controller
     }
 
 
-    public function  AjouterQuiz() {
-        return view('admin.AjouterQuiz'); 
+    // public function  AjouterQuiz() {
+    //     return view('admin.AjouterQuiz'); 
 
-    }
+    // }
     
     public function  AjouterQuestions() {
         return view('admin.AjouterQuestions'); 
