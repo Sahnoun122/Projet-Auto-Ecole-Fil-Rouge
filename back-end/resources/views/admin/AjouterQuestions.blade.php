@@ -259,7 +259,50 @@
             </div>
 
         </div>
+
+        <div class="flex-1 overflow-auto">
+      
+                <div class="flex h-screen">
+                    <div class=" bg-[#4D44B5] text-white hidden ">
+                        <div class="flex items-center space-x-2 mb-8">
+                            <h1 class="text-xl font-bold">Questions</h1>
+                        </div>
+                        <nav>
+                            <a href="/admin/AjouterQuiz" class="block py-2.5 px-4 rounded hover:bg-[#3a32a1] mb-2">
+                                <i class="fas fa-arrow-left mr-2"></i> Retour aux quiz
+                            </a>
+                        </nav>
+                    </div>
+            
+                    <div class="flex-1 overflow-auto">
+                        <header class="bg-[#4D44B5] text-white shadow-md">
+                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <button id="sidebarToggle" class="md:hidden mr-4">
+                                        <i class="fas fa-bars text-xl"></i>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <button id="newQuestionBtn"
+                                        class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                                        <i class="fas fa-plus mr-2"></i> Nouvelle Question
+                                    </button>
+                                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#4D44B5] font-bold">
+                                    </div>
+                                </div>
+                            </div>
+                        </header>
+            
+                       
+            
+                <div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium hidden">
+                </div>
+        
+
+        </div>
     </div>
+
+   
 
 
     <script>

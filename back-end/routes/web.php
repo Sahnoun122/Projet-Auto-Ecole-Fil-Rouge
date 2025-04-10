@@ -59,7 +59,7 @@ Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
         Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('gestionCandidats');
         Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('gestionMoniteur');
         Route::get('/AjouterQuiz', [AdmindController::class, 'AjouterQuiz'])->name('AjouterQuiz');
-        Route::get('/AjouterQuestions', [AdmindController::class, 'AjouterQuestions'])->name('AjouterQuestions');
+        Route::get('/AjouterQuestions/{quiz}', [AdmindController::class, 'AjouterQuestions'])->name('AjouterQuestions');
 
         
         // Route::get('quizzes/create', [QuizController::class, 'create'])->name('admin.quizzes.create'); // Créer un quiz

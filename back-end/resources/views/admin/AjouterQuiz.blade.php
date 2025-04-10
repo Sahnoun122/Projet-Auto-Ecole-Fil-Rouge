@@ -581,7 +581,9 @@ function renderQuizzes() {
         <div class="p-6 hover:bg-gray-50 transition cursor-pointer">
             <div class="flex justify-between items-start">
                 <div>
-                    <h3 class="text-lg font-semibold text-[#4D44B5]">${quiz.title}</h3>
+<a href="/admin/AjouterQuestions/${quiz.id}" class="text-lg font-semibold text-[#4D44B5] hover:underline">
+  ${quiz.title}
+</a>
                     <p class="text-gray-600 mt-1">${quiz.description || 'Aucune description'}</p>
                 </div>
                 <div class="flex space-x-2">
