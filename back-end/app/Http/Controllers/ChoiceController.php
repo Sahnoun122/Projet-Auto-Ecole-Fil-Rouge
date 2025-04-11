@@ -1,6 +1,7 @@
 <?php
-namespace App\Http\Controllers;
 
+
+namespace App\Http\Controllers;
 use App\Models\Choice;
 use App\Models\Question;
 use Illuminate\Http\Request;

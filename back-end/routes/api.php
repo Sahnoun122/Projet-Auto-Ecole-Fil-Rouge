@@ -1,4 +1,6 @@
 <?php
+namespace App\Http\Controllers\API;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,12 +63,12 @@ Route::post('refresh', [AuthController::class, 'refresh']);
         Route::get('me', [AuthController::class, 'me']);
     
         // Routes admin
-        Route::middleware(['role:admin'])->group(function () {
-            Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats']);
-            Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur']);
+        // Route::middleware(['role:admin'])->group(function () {
+        //     Route::get('/gestionCandidats', [AuthController::class, 'gestionCandidats']);
+        //     Route::get('/gestionMoniteur', [AuthController::class, 'gestionMoniteur']);
     
             // Routes pour les quizzes
-            Route::apiResource('quizzes', QuizController::class);
+            // Route::apiResource('quizzes', QuizController::class);
             
             // // Routes pour les questions
             // Route::post('quizzes/{id}/questions', [QuestionController::class, 'store']);
@@ -77,19 +79,18 @@ Route::post('refresh', [AuthController::class, 'refresh']);
             // Route::apiResource('choices', ChoiceController::class)->except(['store']);
             
             // Routes pour les réponses
-            Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
-            Route::get('quizzes/{quiz}/results', [AnswerController::class, 'getResults']);
-            Route::get('quizzes/{quiz}/quiz-results', [AnswerController::class, 'getQuizResults']);
+            // Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
+            // Route::get('quizzes/{quiz}/results', [AnswerController::class, 'getResults']);
+            // Route::get('quizzes/{quiz}/quiz-results', [AnswerController::class, 'getQuizResults']);
         });
     
         // Routes candidat
-        Route::middleware(['role:candidat'])->prefix('candidat')->group(function () {
-            Route::get('quizzes', [QuizController::class, 'indexForCandidat']);
-            Route::get('quizzes/{quiz}', [QuizController::class, 'showForCandidat']);
-            Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
-            Route::get('quizzes/{quiz}/my-results', [AnswerController::class, 'getMyResults']);
-        });
-    });
+        // Route::middleware(['role:candidat'])->prefix('candidat')->group(function () {
+        //     Route::get('quizzes', [QuizController::class, 'indexForCandidat']);
+        //     Route::get('quizzes/{quiz}', [QuizController::class, 'showForCandidat']);
+            // Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
+            // Route::get('quizzes/{quiz}/my-results', [AnswerController::class, 'getMyResults']);
+        // });
 
        // Route::prefix('candidats')->middleware('role:candidat')->group(function () {
     //     Route::get('/dashboard', [CandidatController::class, 'dashboard'])->name('candidats.dashboard');
@@ -117,76 +118,76 @@ Route::post('refresh', [AuthController::class, 'refresh']);
 //     Route::get('results', [AnswerController::class, 'getCandidateResults']);
 // });
 
-Route::get('/gestionCandidats', [AuthController::class, 'getCandidats'])->name('admin.gestionCandidats');
+// Route::get('/gestionCandidats', [AuthController::class, 'getCandidats'])->name('admin.gestionCandidats');
 
 
-Route::get('/getMoniteurs', [AuthController::class, 'getMoniteurs'])->name('admin.gestionMoniteur');
+// Route::get('/getMoniteurs', [AuthController::class, 'getMoniteurs'])->name('admin.gestionMoniteur');
 
-Route::put('ModifierMoniteur/{id}', [AuthController::class, 'updateUser'])->name('admin.gestionMoniteur');
+// Route::put('ModifierMoniteur/{id}', [AuthController::class, 'updateUser'])->name('admin.gestionMoniteur');
 
 
 
-Route::prefix('admin')->group(function () {
+// Route::prefix('admin')->group(function () {
 
 
     
 
-    Route::get('/titles', [TitleController::class, 'index']);       
-    Route::post('/titles', [TitleController::class, 'store']);     
-    Route::get('/titles/{id}', [TitleController::class, 'show']);     
-    Route::put('/titles/{id}', [TitleController::class, 'update']);   
-    Route::delete('/titles/{id}', [TitleController::class, 'destroy']); 
+//     Route::get('/titles', [TitleController::class, 'index']);       
+//     Route::post('/titles', [TitleController::class, 'store']);     
+//     Route::get('/titles/{id}', [TitleController::class, 'show']);     
+//     Route::put('/titles/{id}', [TitleController::class, 'update']);   
+//     Route::delete('/titles/{id}', [TitleController::class, 'destroy']); 
 
-    Route::get('/courses', [CourseController::class, 'index']);    
-    Route::post('/courses', [CourseController::class, 'store']);    
-    Route::get('/courses/{id}', [CourseController::class, 'show']);  
-    Route::put('/courses/{id}', [CourseController::class, 'update']); 
-    Route::delete('/courses/{id}', [CourseController::class, 'destroy']); 
+//     Route::get('/courses', [CourseController::class, 'index']);    
+//     Route::post('/courses', [CourseController::class, 'store']);    
+//     Route::get('/courses/{id}', [CourseController::class, 'show']);  
+//     Route::put('/courses/{id}', [CourseController::class, 'update']); 
+//     Route::delete('/courses/{id}', [CourseController::class, 'destroy']); 
 
     
-    Route::get('/vehicles', [VehicleController::class, 'index']);
-    Route::post('/vehicles', [VehicleController::class, 'store']);
-    Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
-    Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
-    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+//     Route::get('/vehicles', [VehicleController::class, 'index']);
+//     Route::post('/vehicles', [VehicleController::class, 'store']);
+//     Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+//     Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
+//     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
     
 
-    Route::prefix('progress')->group(function () {
-        Route::get('/{candidateId}/{courseId}', [ProgressController::class, 'show']); 
-        Route::put('/{candidateId}/{courseId}', [ProgressController::class, 'update']); 
-    });
+//     Route::prefix('progress')->group(function () {
+//         Route::get('/{candidateId}/{courseId}', [ProgressController::class, 'show']); 
+//         Route::put('/{candidateId}/{courseId}', [ProgressController::class, 'update']); 
+//     });
 
-    Route::get('/vehicles/maintenance/alerts', [VehicleController::class, 'maintenanceAlerts']);
+//     Route::get('/vehicles/maintenance/alerts', [VehicleController::class, 'maintenanceAlerts']);
 
-        Route::apiResource('exams', ExamController::class);
-        Route::apiResource('exams', ExamController::class);
-        Route::post('exams/{exam}/candidats', [ExamController::class, 'addCandidat']);
-        Route::post('exams/{exam}/candidats/{candidat}/results', [ExamController::class, 'recordResult']);
-
-
-    Route::get('/cours', [CoursConduiteController::class, 'index']);
-    Route::post('/cours', [CoursConduiteController::class, 'store']);
-    Route::get('/cours/{cours}', [CoursConduiteController::class, 'show']);
-    Route::put('/cours/{cours}', [CoursConduiteController::class, 'update']);
-    Route::delete('/cours/{cours}', [CoursConduiteController::class, 'destroy']);
-    Route::post('/cours/{cours}/presence', [CoursConduiteController::class, 'marquerPresence']);
-    Route::get('/cours/events', [CoursConduiteController::class, 'apiIndex']);
+//         Route::apiResource('exams', ExamController::class);
+//         Route::apiResource('exams', ExamController::class);
+//         Route::post('exams/{exam}/candidats', [ExamController::class, 'addCandidat']);
+//         Route::post('exams/{exam}/candidats/{candidat}/results', [ExamController::class, 'recordResult']);
 
 
-        Route::get('/', [ReportingController::class, 'index']);
-        Route::post('/pdf', [ReportingController::class, 'generatePdfReport']);
-        Route::get('/profile', [ProfileController::class, 'show']);
-        Route::put('/profile', [ProfileController::class, 'update']);
-});
+//     Route::get('/cours', [CoursConduiteController::class, 'index']);
+//     Route::post('/cours', [CoursConduiteController::class, 'store']);
+//     Route::get('/cours/{cours}', [CoursConduiteController::class, 'show']);
+//     Route::put('/cours/{cours}', [CoursConduiteController::class, 'update']);
+//     Route::delete('/cours/{cours}', [CoursConduiteController::class, 'destroy']);
+//     Route::post('/cours/{cours}/presence', [CoursConduiteController::class, 'marquerPresence']);
+//     Route::get('/cours/events', [CoursConduiteController::class, 'apiIndex']);
 
 
-Route::prefix('candidat')->group(function () {
-    Route::get('/cours', [CoursConduiteController::class, 'listeCours']);
-    Route::get('/cours/{id}', [CoursConduiteController::class, 'DetailsCours']);
+//         Route::get('/', [ReportingController::class, 'index']);
+//         Route::post('/pdf', [ReportingController::class, 'generatePdfReport']);
+//         Route::get('/profile', [ProfileController::class, 'show']);
+//         Route::put('/profile', [ProfileController::class, 'update']);
+// });
 
-    Route::get('/VuDatesExam', [ExamController::class, 'VuDatesExam']);
-    Route::get('/RsultatsEXma/{id}', [ExamController::class, 'RsultatsEXma']);
-});
+
+// Route::prefix('candidat')->group(function () {
+//     Route::get('/cours', [CoursConduiteController::class, 'listeCours']);
+//     Route::get('/cours/{id}', [CoursConduiteController::class, 'DetailsCours']);
+
+//     Route::get('/VuDatesExam', [ExamController::class, 'VuDatesExam']);
+//     Route::get('/RsultatsEXma/{id}', [ExamController::class, 'RsultatsEXma']);
+// });
 
 
 // Route::get('/quizzes', [QuizController::class, 'index']);
@@ -204,4 +205,4 @@ Route::prefix('candidat')->group(function () {
 // Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy']);
 
 // Route::post('/quizzes/{quiz}/answers', [AnswerController::class, 'store']);
-// Route::get('/quizzes/{quiz}/results', [AnswerController::class, 'getResults']);
+// Route::get('/quizzes/{quiz}/results', [AnswerController::class, 'getResults']); -->

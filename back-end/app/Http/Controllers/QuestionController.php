@@ -2,7 +2,7 @@
 
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
@@ -13,16 +13,16 @@ class QuestionController extends Controller
 {
     public function index(Quiz $quiz)
     {
-        Gate::authorize('view', $quiz);
+        // Gate::authorize('view', $quiz);
         
         $questions = $quiz->questions()->with('choices')->get();
         
-        return view('admin.questions.index', compact('quiz', 'questions'));
+        return view('admin.questions', compact('quiz', 'questions'));
     }
 
     public function store(Request $request, Quiz $quiz)
     {
-        Gate::authorize('create', Question::class);
+        // Gate::authorize('create', Question::class);
         
         $validated = $request->validate([
             'question_text' => 'required|string',
@@ -41,7 +41,7 @@ class QuestionController extends Controller
             return response()->json(['success' => true, 'question' => $question]);
         }
         
-        return redirect()->route('questions.index', $quiz)->with('success', 'Question ajoutée avec succès!');
+        return redirect()->route('questions', $quiz)->with('success', 'Question ajoutée avec succès!');
     }
 
     public function update(Request $request, Question $question)
@@ -60,7 +60,7 @@ class QuestionController extends Controller
             return response()->json(['success' => true]);
         }
         
-        return redirect()->route('questions.index', $question->quiz)->with('success', 'Question mise à jour avec succès!');
+        return redirect()->route('questions', $question->quiz)->with('success', 'Question mise à jour avec succès!');
     }
 
     public function destroy(Question $question)
@@ -74,6 +74,6 @@ class QuestionController extends Controller
             return response()->json(['success' => true]);
         }
         
-        return redirect()->route('questions.index', $quiz)->with('success', 'Question supprimée avec succès!');
+        return redirect()->route('questions', $quiz)->with('success', 'Question supprimée avec succès!');
     }
 }

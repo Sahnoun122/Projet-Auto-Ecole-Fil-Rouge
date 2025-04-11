@@ -44,7 +44,6 @@
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
     <div class="flex h-screen">
-        <!-- Sidebar -->
         <div :class="sidebarOpen ? 'w-64' : 'w-20'"
             class="bg-white shadow-lg transition-all duration-300 flex flex-col">
             <div class="p-4 flex justify-between items-center border-b">
@@ -75,7 +74,7 @@
 
             <div class="flex flex-col h-screen">
                 <nav>
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('admin.dashboard') }}"
                         class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -112,7 +111,7 @@
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Candidats</span>
                             </a>
-                            <a href="{{ route('gestionCandidats') }}"
+                            <a href="{{ route('admin.gestionCandidats') }}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Candidats</span>
                             </a>
@@ -167,7 +166,7 @@
                         </div>
                         <div id="cours-pratique-list"
                             class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
-                            <a href="{{ route('AjouterQuiz') }}"
+                            <a href="{{ route('admin.AjouterQuiz') }}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
@@ -330,7 +329,7 @@
                             <div class="p-6 hover:bg-gray-50 transition cursor-pointer" data-id="{{ $quiz->id }}">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <a href="/admin/AjouterQuestions/{{ $quiz->id }}"
+                                        <a href="/admin/quiz/{{ $quiz->id }}/questions"
                                             class="text-lg font-semibold text-[#4D44B5] hover:underline">
                                             {{ $quiz->title }}
                                         </a>
@@ -479,10 +478,7 @@
 });
                
                </script>
-            </body>
-            
-            </html>
- </div>            
+         
 </body>
 
 </html>

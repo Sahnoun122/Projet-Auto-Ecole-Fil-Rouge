@@ -43,7 +43,7 @@
             </div>
             <div class="flex-1 overflow-y-auto py-4">
                 <nav>
-                    <a href=" {{ route('dashboard') }}"
+                    <a href=" {{ route('admin.dashboard') }}"
                         class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -80,7 +80,7 @@
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Candidats</span>
                             </a>
-                            <a href=" {{ route('gestionCandidats') }} "
+                            <a href=" {{ route('admin.gestionCandidats') }} "
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Candidats</span>
                             </a>
@@ -129,11 +129,11 @@
                         </div>
                         <div id="cours-pratique-list"
                             class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="{{ route('AjouterQuiz') }} "
+                            <a href="{{ route('admin.AjouterQuiz') }} "
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
-                            <a href="{{ route('AjouterQuiz')}}"
+                            <a href="{{ route('admin.AjouterQuiz')}}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Cours Pratique</span>
                             </a>

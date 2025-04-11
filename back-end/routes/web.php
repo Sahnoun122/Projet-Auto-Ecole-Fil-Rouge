@@ -1,7 +1,6 @@
 <?php
 
-
-namespace App\Http\Controllers\API;
+// namespace App\Http\Controllers;
 
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\AdmindController;
@@ -9,106 +8,49 @@ use App\Http\Controllers\CandidatsController;
 use App\Http\Controllers\MoniteurController;
 use App\Http\Controllers\AuthViews;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\QuizController;
-use App\Http\Controllers\API\AnswerController;
-use App\Http\Controllers\API\QuestionController;
-use App\Http\Controllers\API\ChoiceController;
-use App\Http\Controllers\API\QuizPlayController;
-
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\ChoiceController;
+use App\Http\Controllers\QuizPlayController;
 use App\Http\Controllers\API\AuthController;
-
 
 Route::controller(PagesController::class)->group(function () {
     Route::get('/', 'index')->name('/');
     Route::get('/services', 'services')->name('services');
     Route::get('/propos', 'propos')->name('propos');
-
 });
 
 Route::get('/register', [AuthViews::class, 'VuRegister'])->name('register');
-
 Route::get('connecter', [AuthViews::class, 'VuConnecter'])->name('connecter');
-Route::get('register', [AuthViews::class, 'VuRegister'])->name('register');
 
-// Route::middleware('auth:api')->group(function () {
+Route::prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
+    Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+    Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+});
 
-//     // // Routes Admin
-    Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
-        Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
-        Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
-        Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+Route::prefix('candidats')->group(function () {
+    Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
+});
 
+Route::prefix('admin')->group(function () {
+    Route::get('/AjouterQuiz', [QuizController::class, 'index'])->name('admin.AjouterQuiz');
+    Route::post('/AjouterQuiz', [QuizController::class, 'store'])->name('admin.AjouterQuiz.store');
+    Route::put('/AjouterQuiz/{quiz}', [QuizController::class, 'update'])->name('admin.AjouterQuiz.update');
+    Route::delete('/AjouterQuiz/{quiz}', [QuizController::class, 'destroy'])->name('admin.AjouterQuiz.destroy');
 
-        
-  
+    Route::get('/quiz/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.quiz.questions.index');
+    Route::post('/quiz/questions', [QuestionController::class, 'store'])->name('admin.quiz.questions.store');
+    Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
+    Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
 
-            
-                });
+    Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
+    Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
+    Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
+});
 
-    
-
-
-
-//     // Routes Candidat
-    // Route::prefix('candidats')->middleware('role:candidat')->group(function () {
-    //     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-    // });
-
-//     // Routes Moniteur
-    // Route::prefix('moniteur')->middleware('role:moniteur')->group(function () {
-    //     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
-    // });
-// });
-
-
-  Route::prefix('candidats')->group(function () {
-        Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-    });
-
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('dashboard');
-        Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('AjouterMoniteur');
-        Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('gestionCandidats');
-        Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('gestionMoniteur');
-        // Route::get('/AjouterQuiz', [AdmindController::class, 'AjouterQuiz'])->name('AjouterQuiz');
-        // Route::get('/AjouterQuestions/{quiz}/questions', [AdmindController::class, 'AjouterQuestions'])->name('AjouterQuestions');
-
-        
-        // Route::get('quizzes/create', [QuizController::class, 'create'])->name('admin.quizzes.create'); // Créer un quiz
-        // Route::post('quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store'); // Soumettre un quiz
-    
-        // // Routes pour afficher et gérer les questions du quiz
-        // Route::get('quizzes/{quizId}/questions', [QuestionController::class, 'index'])->name('admin.questions.index'); // Voir les questions du quiz
-        // Route::get('quizzes/{quizId}/questions/create', [QuestionController::class, 'create'])->name('admin.questions.create'); // Créer une question
-        // Route::post('quizzes/{quizId}/questions', [QuestionController::class, 'store'])->name('admin.questions.store'); // Soumettre une question
-        // Route::get('questions/{questionId}/edit', [QuestionController::class, 'edit'])->name('admin.questions.edit'); // Modifier une question
-        // Route::put('questions/{questionId}', [QuestionController::class, 'update'])->name('admin.questions.update'); // Mettre à jour une question
-        // Route::delete('questions/{questionId}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy'); // Supprimer une question
-    
-        // // Routes pour gérer les choix de réponse
-        // Route::get('questions/{questionId}/choices/create', [ChoiceController::class, 'create'])->name('admin.choices.create'); // Créer un choix pour une question
-        // Route::post('questions/{questionId}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store'); // Soumettre un choix
-        // Route::delete('choices/{choiceId}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy'); // Supprimer un choix
-    });
-    
-    Route::get('/admin/AjouterQuiz', [QuizController::class, 'index'])->name('AjouterQuiz');
-    Route::post('/admin/AjouterQuiz', [QuizController::class, 'store'])->name('AjouterQuiz.store');
-    Route::put('/admin/AjouterQuiz/{quiz}', [QuizController::class, 'update'])->name('AjouterQuiz.update');
-    Route::delete('/admin/AjouterQuiz/{quiz}', [QuizController::class, 'destroy'])->name('AjouterQuiz.destroy');
-
-    
-Route::get('/admin/quiz/{quiz}/questions', [QuestionController::class, 'index'])->name('questions.index');
-Route::post('/admin/quiz/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
-Route::put('/admin/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
-Route::delete('/admin/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
-
-// Routes pour les Choix
-Route::post('/admin/questions/{question}/choices', [ChoiceController::class, 'store'])->name('choices.store');
-Route::put('/admin/choices/{choice}', [ChoiceController::class, 'update'])->name('choices.update');
-Route::delete('/admin/choices/{choice}', [ChoiceController::class, 'destroy'])->name('choices.destroy');
-
-// Routes pour jouer au Quiz
 Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
 Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
 Route::get('/quiz/{quiz}/results', [AnswerController::class, 'getResults'])->name('quiz.results');

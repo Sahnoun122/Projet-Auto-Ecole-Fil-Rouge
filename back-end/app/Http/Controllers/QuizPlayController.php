@@ -1,12 +1,15 @@
 <?php
 
+
+
 namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
 
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
-class QuizPlayController extends Controller
+class QuizPlayController  extends Controller
 {
     public function show(Quiz $quiz)
     {
