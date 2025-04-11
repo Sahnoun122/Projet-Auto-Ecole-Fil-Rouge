@@ -1,4 +1,6 @@
 <?php
+
+
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\PagesController;
@@ -11,6 +13,8 @@ use App\Http\Controllers\API\QuizController;
 use App\Http\Controllers\API\AnswerController;
 use App\Http\Controllers\API\QuestionController;
 use App\Http\Controllers\API\ChoiceController;
+use App\Http\Controllers\API\QuizPlayController;
+
 use App\Http\Controllers\API\AuthController;
 
 
@@ -105,6 +109,6 @@ Route::put('/admin/choices/{choice}', [ChoiceController::class, 'update'])->name
 Route::delete('/admin/choices/{choice}', [ChoiceController::class, 'destroy'])->name('choices.destroy');
 
 // Routes pour jouer au Quiz
-// Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
+Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
 Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
 Route::get('/quiz/{quiz}/results', [AnswerController::class, 'getResults'])->name('quiz.results');
