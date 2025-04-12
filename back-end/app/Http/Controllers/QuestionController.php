@@ -34,24 +34,21 @@ class QuestionController extends Controller
             'correct_choice' => 'required|integer'
         ]);
 
-        // Handle image upload
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('questions', 'public');
         }
 
-        // Create question
         $question = $quiz->questions()->create([
-            'admin_id' => Auth::id(),
+            'admin_id' => 2,
             'question_text' => $validated['question_text'],
             'image_path' => $imagePath,
             'duration' => $validated['duration'],
         ]);
 
-        // Create choices
         foreach ($validated['choices'] as $index => $choiceData) {
             $question->choices()->create([
-                'admin_id' => Auth::id(),
+                'admin_id' => 2,
                 'choice_text' => $choiceData['text'],
                 'is_correct' => $index == $validated['correct_choice']
             ]);
@@ -86,37 +83,30 @@ class QuestionController extends Controller
             'correct_choice' => 'required|integer'
         ]);
 
-        // Handle image update
         $imagePath = $question->image_path;
         
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($imagePath) {
                 Storage::disk('public')->delete($imagePath);
             }
-            // Store new image
             $imagePath = $request->file('image')->store('questions', 'public');
         } elseif ($request->remove_image) {
-            // Remove image if requested
             if ($imagePath) {
                 Storage::disk('public')->delete($imagePath);
                 $imagePath = null;
             }
         }
 
-        // Update question
         $question->update([
             'question_text' => $validated['question_text'],
             'image_path' => $imagePath,
             'duration' => $validated['duration'],
         ]);
 
-        // Update or create choices
         $existingChoiceIds = [];
         
         foreach ($validated['choices'] as $index => $choiceData) {
             if (isset($choiceData['id'])) {
-                // Update existing choice
                 $choice = $question->choices()->find($choiceData['id']);
                 if ($choice) {
                     $choice->update([
@@ -126,7 +116,6 @@ class QuestionController extends Controller
                     $existingChoiceIds[] = $choice->id;
                 }
             } else {
-                // Create new choice
                 $newChoice = $question->choices()->create([
                     'admin_id' => Auth::id(),
                     'choice_text' => $choiceData['text'],
@@ -136,7 +125,6 @@ class QuestionController extends Controller
             }
         }
 
-        // Delete choices not present in the request
         $question->choices()->whereNotIn('id', $existingChoiceIds)->delete();
 
         return response()->json([
@@ -148,12 +136,10 @@ class QuestionController extends Controller
 
     public function destroy(Question $question)
     {
-        // Delete image if exists
         if ($question->image_path) {
             Storage::disk('public')->delete($question->image_path);
         }
 
-        // Delete question and related choices
         $question->delete();
 
         return response()->json([
@@ -162,7 +148,7 @@ class QuestionController extends Controller
         ]);
     }
 
-    public function details(Question $question)
+    public function showDetails(Question $question)
     {
         $question->load(['choices', 'quiz']);
         

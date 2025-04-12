@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto-école Sahnoun - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -284,600 +283,226 @@
         </div>
 
         <div class="flex-1 overflow-auto">
-            <div class="bg-[#4D44B5] text-white shadow-md">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl font-bold">Questions pour: {{ $quiz->title }}</h1>
-                        <p class="text-white opacity-80">{{ $quiz->description }}</p>
-                    </div>
-                    <div class="flex space-x-3">
-                        <a href="{{ route('admin.AjouterQuiz') }}" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
-                            <i class="fas fa-arrow-left mr-2"></i>Retour aux Quiz
-                        </a>
-                        <button onclick="openQuestionModal('{{ $quiz->id }}')" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
-                            <i class="fas fa-plus mr-2"></i>Nouvelle Question
-                        </button>
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta name="csrf-token" content="{{ csrf_token() }}">
+                <title>Gestion des Questions - {{ $quiz->title }}</title>
+                <script src="https://cdn.tailwindcss.com"></script>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <style>
+                    @media (max-width: 640px) {
+                        .question-card {
+                            width: 100%;
+                        }
+                        .modal-content {
+                            width: 95%;
+                            margin: 10px auto;
+                        }
+                        .choice-item {
+                            flex-direction: column;
+                            gap: 8px;
+                        }
+                        .choice-item input[type="text"] {
+                            width: 100%;
+                        }
+                    }
+                </style>
+            </head>
+            <body class="bg-gray-50">
+                <div class="bg-[#4D44B5] text-white shadow-md">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold">Questions pour: {{ $quiz->title }}</h1>
+                            <p class="text-white opacity-80 text-sm md:text-base">{{ $quiz->description }}</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                            <a href="{{ route('admin.AjouterQuiz') }}" class="bg-white text-[#4D44B5] px-3 py-1 md:px-4 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition text-center text-sm md:text-base">
+                                <i class="fas fa-arrow-left mr-2"></i>Retour aux Quiz
+                            </a>
+                            <button onclick="openQuestionModal('{{ $quiz->id }}')" class="bg-white text-[#4D44B5] px-3 py-1 md:px-4 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition text-sm md:text-base">
+                                <i class="fas fa-plus mr-2"></i>Nouvelle Question
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
             
-            @if(session('success'))
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
-                        <div class="flex justify-between items-center">
-                            <p>{{ session('success') }}</p>
-                            <button type="button" class="text-green-700" onclick="this.parentElement.parentElement.remove()">
+                @if(session('success'))
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm md:text-base">{{ session('success') }}</p>
+                                <button type="button" class="text-green-700" onclick="this.parentElement.parentElement.remove()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            
+                <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        @if($questions->isEmpty())
+                            <div class="text-center p-6 md:p-12">
+                                <div class="mx-auto w-16 h-16 md:w-24 md:h-24 bg-gray-100 rounded-full flex items-center justify-center mb-3 md:mb-4">
+                                    <i class="fas fa-question text-gray-400 text-xl md:text-3xl"></i>
+                                </div>
+                                <h3 class="text-base md:text-lg font-medium text-gray-900 mb-1 md:mb-2">Aucune question disponible</h3>
+                                <p class="text-gray-500 text-sm md:text-base mb-4 md:mb-6">Commencez par créer votre première question pour ce quiz.</p>
+                                <button onclick="openQuestionModal('{{ $quiz->id }}')" class="bg-[#4D44B5] text-white px-4 py-1 md:px-6 md:py-2 rounded-lg font-medium hover:bg-[#3a32a1] transition text-sm md:text-base">
+                                    <i class="fas fa-plus mr-2"></i>Créer une question
+                                </button>
+                            </div>
+                        @else
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-4 md:p-6">
+                                @foreach($questions as $question)
+                                <div class="question-card bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                                    <div class="p-3 md:p-5">
+                                        <div class="flex justify-between items-start mb-2 md:mb-3">
+                                            <h3 class="text-base md:text-lg font-semibold text-[#4D44B5] line-clamp-2" title="{{ $question->question_text }}">
+                                                {{ $loop->iteration }}. {{ Str::limit($question->question_text, 50) }}
+                                            </h3>
+                                            <button type="button" onclick="deleteQuestion('{{ $question->id }}')" 
+                                                    class="text-red-500 hover:text-red-700 text-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+            
+                                        @if($question->image_path)
+                                            <div class="mb-2 md:mb-3 rounded-lg overflow-hidden h-32 md:h-40 flex items-center justify-center bg-gray-100">
+                                                <img src="{{ asset('storage/'.$question->image_path) }}" 
+                                                     class="max-h-full max-w-full object-contain cursor-pointer" 
+                                                     alt="Image de question"
+                                                     onclick="showQuestionDetails('{{ $question->id }}')">
+                                            </div>
+                                        @endif
+            
+                                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                                            <span class="bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-full flex items-center">
+                                                <i class="fas fa-clock mr-1"></i> {{ $question->duration }}s
+                                            </span>
+                                            <span class="text-xs text-gray-500">
+                                                {{ count($question->choices) }} choix
+                                            </span>
+                                        </div>
+            
+                                        <button onclick="showQuestionDetails('{{ $question->id }}')" 
+                                                class="w-full mt-1 md:mt-2 bg-[#4D44B5] bg-opacity-10 text-[#4D44B5] hover:bg-opacity-20 px-2 py-1 md:px-3 md:py-1 rounded-lg text-xs md:text-sm font-medium transition">
+                                            Voir détails
+                                        </button>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </main>
+            
+                <div id="questionDetailsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-2 md:p-4">
+                    <div class="bg-white w-full max-w-md md:max-w-2xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto modal-content">
+                        <div class="bg-[#4D44B5] text-white px-4 py-3 md:px-6 md:py-4 flex justify-between items-center">
+                            <h2 class="text-lg md:text-xl font-bold">Détails de la question</h2>
+                            <button onclick="closeModal('questionDetailsModal')" class="text-white hover:text-gray-200 text-lg">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
-                    </div>
-                </div>
-            @endif
-            
-            <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="bg-white rounded-xl shadow overflow-hidden">
-                    @if($questions->isEmpty())
-                        <div class="text-center p-12">
-                            <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                <i class="fas fa-question text-gray-400 text-3xl"></i>
+                        <div class="p-4 md:p-6" id="questionDetailsContent">
+                            <div class="flex justify-center items-center py-4">
+                                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#4D44B5]"></div>
+                                <span class="ml-3">Chargement...</span>
                             </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune question disponible</h3>
-                            <p class="text-gray-500 mb-6">Commencez par créer votre première question pour ce quiz.</p>
-                            <button onclick="openQuestionModal('{{ $quiz->id }}')" class="bg-[#4D44B5] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#3a32a1] transition">
-                                <i class="fas fa-plus mr-2"></i>Créer une question
-                            </button>
                         </div>
-                    @else
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-                            @foreach($questions as $question)
-                            <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                                <div class="p-5">
-                                    <div class="flex justify-between items-start mb-3">
-                                        <h3 class="text-lg font-semibold text-[#4D44B5] line-clamp-2" title="{{ $question->question_text }}">
-                                            {{ $loop->iteration }}. {{ Str::limit($question->question_text, 50) }}
-                                        </h3>
-                                        <button type="button" onclick="deleteQuestion('{{ $question->id }}')" 
-                                                class="text-red-500 hover:text-red-700">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                    </div>
+                </div>
             
-                                    @if($question->image_path)
-                                        <div class="mb-3 rounded-lg overflow-hidden h-40 flex items-center justify-center bg-gray-100">
-                                            <img src="{{ asset('storage/'.$question->image_path) }}" 
-                                                 class="max-h-full max-w-full object-contain" 
-                                                 alt="Image de question"
-                                                 onclick="showQuestionDetails('{{ $question->id }}')">
-                                        </div>
-                                    @endif
-            
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-0.5 rounded-full flex items-center">
-                                            <i class="fas fa-clock mr-1"></i> {{ $question->duration }}s
-                                        </span>
-                                        <span class="text-xs text-gray-500">
-                                            {{ count($question->choices) }} choix
-                                        </span>
-                                    </div>
-            
-                                    <button onclick="showQuestionDetails('{{ $question->id }}')" 
-                                            class="w-full mt-2 bg-[#4D44B5] bg-opacity-10 text-[#4D44B5] hover:bg-opacity-20 px-3 py-1 rounded-lg text-sm font-medium transition">
-                                        Voir détails
-                                    </button>
-                                </div>
-                            </div>
-                            @endforeach
+                <div id="questionModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-2 md:p-4">
+                    <div class="bg-white w-full max-w-md md:max-w-2xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto modal-content">
+                        <div class="bg-[#4D44B5] text-white px-4 py-3 md:px-6 md:py-4">
+                            <h2 class="text-lg md:text-xl font-bold" id="modalQuestionTitle">Nouvelle Question</h2>
                         </div>
-                    @endif
-                </div>
-            </main>
-            
-            <div id="questionDetailsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-                <div class="bg-white w-full max-w-2xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
-                    <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
-                        <h2 class="text-xl font-bold">Détails de la question</h2>
-                        <button onclick="closeQuestionDetails()" class="text-white hover:text-gray-200">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="p-6" id="questionDetailsContent">
-                    </div>
-                </div>
-            </div>
-            
-            <div id="questionModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-                <div class="bg-white w-full max-w-2xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
-                    <div class="bg-[#4D44B5] text-white px-6 py-4">
-                        <h2 class="text-xl font-bold" id="modalQuestionTitle">Nouvelle Question</h2>
-                    </div>
-                    <form id="questionForm" method="POST" enctype="multipart/form-data" class="p-6">
-                        @csrf
-                        <input type="hidden" id="quizId" name="quiz_id">
-                        <input type="hidden" id="questionId" name="question_id">
-                        
-                        <div class="space-y-6">
-                            <div>
-                                <label for="questionText" class="block text-sm font-medium text-gray-700 mb-1">Texte de la question *</label>
-                                <textarea id="questionText" name="question_text" rows="3" 
-                                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition"
-                                          required></textarea>
-                            </div>
+                        <form id="questionForm" method="POST" enctype="multipart/form-data" class="p-4 md:p-6">
+                            @csrf
+                            <input type="hidden" id="quizId" name="quiz_id">
+                            <input type="hidden" id="questionId" name="question_id">
                             
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Image</label>
-                                <div class="flex items-center space-x-4">
-                                    <div class="relative flex-1">
-                                        <input type="file" id="questionImage" name="image" accept="image/*" 
-                                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#4D44B5] transition">
-                                            <div class="flex flex-col items-center justify-center space-y-2">
-                                                <i class="fas fa-cloud-upload-alt text-3xl text-[#4D44B5]"></i>
-                                                <p class="text-sm text-gray-600">
-                                                    <span class="font-medium text-[#4D44B5]">Cliquez pour uploader</span> ou glissez-déposez
-                                                </p>
-                                                <p class="text-xs text-gray-500">PNG, JPG, GIF (max. 2MB)</p>
+                            <div class="space-y-4 md:space-y-6">
+                                <div>
+                                    <label for="questionText" class="block text-sm md:text-base font-medium text-gray-700 mb-1">Texte de la question *</label>
+                                    <textarea id="questionText" name="question_text" rows="3" 
+                                              class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm md:text-base"
+                                              required></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm md:text-base font-medium text-gray-700 mb-1 md:mb-2">Image</label>
+                                    <div class="flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-4">
+                                        <div class="relative w-full">
+                                            <input type="file" id="questionImage" name="image" accept="image/*" 
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        </div>
+                                        <div id="imagePreviewContainer" class="hidden flex-shrink-0">
+                                            <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border border-gray-200">
+                                                <img id="imagePreview" class="w-full h-full object-cover">
+                                                <button type="button" onclick="removeImage()" 
+                                                        class="absolute top-0.5 right-0.5 md:top-1 md:right-1 bg-red-500 text-white rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center">
+                                                    <i class="fas fa-times text-xs"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="imagePreviewContainer" class="hidden flex-shrink-0">
-                                        <div class="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
-                                            <img id="imagePreview" class="w-full h-full object-cover">
-                                            <button type="button" onclick="removeImage()" 
-                                                    class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                                                <i class="fas fa-times text-xs"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="removeImageFlag" name="remove_image" value="0">
-                            </div>
-                            
-                            <!-- Duration -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="questionDuration" class="block text-sm font-medium text-gray-700 mb-1">Durée (secondes) *</label>
-                                    <input type="number" id="questionDuration" name="duration" min="5" max="300" value="30" 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition"
-                                           required>
-                                </div>
-                            </div>
-                            
-                            <!-- Choices -->
-                            <div class="pt-4 border-t border-gray-200">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-sm font-medium text-gray-700">Choix de réponse *</h3>
-                                    <button type="button" id="addChoiceBtn" 
-                                            class="text-[#4D44B5] hover:text-[#3a32a1] text-sm font-medium flex items-center">
-                                        <i class="fas fa-plus-circle mr-1"></i>Ajouter un choix
-                                    </button>
+                                    <input type="hidden" id="removeImageFlag" name="remove_image" value="0">
                                 </div>
                                 
-                                <div id="choicesContainer" class="space-y-3">
-                                    <!-- Choices will be added here -->
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Form Actions -->
-                        <div class="mt-8 flex justify-end space-x-3">
-                            <button type="button" id="cancelQuestionBtn" 
-                                    class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
-                                Annuler
-                            </button>
-                            <button type="submit" 
-                                    class="px-6 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition font-medium">
-                                Enregistrer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <div id="successToast" class="hidden fixed top-4 right-4 z-50">
-                <div class="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center">
-                    <i class="fas fa-check-circle mr-2"></i>
-                    <span id="successMessage"></span>
-                </div>
-            </div>
-            
-    <script> 
-        
-
-        let currentQuizId = '{{ $quiz->id }}';
-            
-            function showQuestionDetails(questionId) {
-                document.getElementById('questionDetailsContent').innerHTML = `
-                    <div class="flex justify-center items-center py-8">
-                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4D44B5]"></div>
-                        <span class="ml-3">Chargement...</span>
-                    </div>
-                `;
-                
-                document.getElementById('questionDetailsModal').classList.remove('hidden');
-            
-                fetch(`/admin/questions/${questionId}/details`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Erreur HTTP! Statut: ' + response.status);
-                        return response.json();
-                    })
-                    .then(data => {
-                        const question = data.question;
-                        
-                        const modalContent = `
-                            <div>
-                                <h3 class="text-lg font-semibold text-[#4D44B5] mb-3">${question.question_text || 'Sans texte'}</h3>
-                                
-                                ${question.image_url ? `
-                                <div class="mb-4 flex justify-center">
-                                    <img src="${question.image_url}" 
-                                         onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'text-red-500\'>Image non disponible</div>';"
-                                         class="rounded-lg border border-gray-200 max-w-full h-auto max-h-48" 
-                                         alt="Image de question">
-                                </div>
-                                ` : '<p class="text-gray-400 mb-4">Aucune image</p>'}
-                                
-                                <div class="mb-4 flex items-center justify-between">
-                                    <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-0.5 rounded-full flex items-center">
-                                        <i class="fas fa-clock mr-1"></i> ${question.duration || 0} secondes
-                                    </span>
-                                    <div class="flex space-x-3">
-                                        <button onclick="openEditModal('${question.id}')" 
-                                                class="text-[#4D44B5] hover:text-[#3a32a1] text-sm flex items-center">
-                                            <i class="fas fa-edit mr-1"></i> Modifier
-                                        </button>
-                                        <button onclick="deleteQuestion('${question.id}')" 
-                                                class="text-red-500 hover:text-red-700 text-sm flex items-center">
-                                            <i class="fas fa-trash mr-1"></i> Supprimer
-                                        </button>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                                    <div>
+                                        <label for="questionDuration" class="block text-sm md:text-base font-medium text-gray-700 mb-1">Durée (secondes) *</label>
+                                        <input type="number" id="questionDuration" name="duration" min="5" max="300" value="30" 
+                                               class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm md:text-base"
+                                               required>
                                     </div>
                                 </div>
                                 
-                                <h4 class="font-medium text-gray-700 mb-2">Choix de réponses:</h4>
-                                <div class="space-y-2">
-                                    ${question.choices && question.choices.length ? 
-                                        question.choices.map((choice, index) => `
-                                        <div class="flex items-center p-3 rounded-lg ${choice.is_correct ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}">
-                                            <span class="font-medium mr-3">${String.fromCharCode(65 + index)}.</span>
-                                            <span class="${choice.is_correct ? 'font-medium text-green-600' : 'text-gray-700'}">
-                                                ${choice.choice_text || 'Choix sans texte'}
-                                            </span>
-                                            ${choice.is_correct ? `
-                                            <span class="ml-auto bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
-                                                Bonne réponse
-                                            </span>
-                                            ` : ''}
-                                        </div>
-                                        `).join('') 
-                                        : '<p class="text-gray-400">Aucun choix disponible</p>'}
+                                <div class="pt-3 border-t border-gray-200">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h3 class="text-sm md:text-base font-medium text-gray-700">Choix de réponse *</h3>
+                                        <button type="button" id="addChoiceBtn" 
+                                                class="text-[#4D44B5] hover:text-[#3a32a1] text-xs md:text-sm font-medium flex items-center">
+                                            <i class="fas fa-plus-circle mr-1"></i>Ajouter un choix
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="choicesContainer" class="space-y-2 md:space-y-3">
+                                    </div>
                                 </div>
                             </div>
-                        `;
-                        
-                        document.getElementById('questionDetailsContent').innerHTML = modalContent;
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        document.getElementById('questionDetailsContent').innerHTML = `
-                            <div class="text-center py-8 text-red-500">
-                                <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
-                                <p>Erreur lors du chargement des détails</p>
-                                <p class="text-sm mt-2">${error.message}</p>
-                                <button onclick="retryLoadDetails('${questionId}')" 
-                                        class="mt-4 text-[#4D44B5] hover:underline">
-                                    <i class="fas fa-redo mr-1"></i> Réessayer
+                            
+                            <div class="mt-6 md:mt-8 flex justify-end space-x-2 md:space-x-3">
+                                <button type="button" id="cancelQuestionBtn" 
+                                        class="px-4 py-1 md:px-6 md:py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium text-sm md:text-base">
+                                    Annuler
+                                </button>
+                                <button type="submit" 
+                                        class="px-4 py-1 md:px-6 md:py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition font-medium text-sm md:text-base">
+                                    Enregistrer
                                 </button>
                             </div>
-                        `;
-                    });
-            }
-            
-            function retryLoadDetails(questionId) {
-                showQuestionDetails(questionId);
-            }
-            
-            function closeQuestionDetails() {
-                document.getElementById('questionDetailsModal').classList.add('hidden');
-            }
-            
-            function openQuestionModal(quizId, questionId = null) {
-                document.getElementById('quizId').value = quizId;
-                const form = document.getElementById('questionForm');
-                const choicesContainer = document.getElementById('choicesContainer');
-                
-                resetForm();
-                
-                if (questionId) {
-                    document.getElementById('modalQuestionTitle').textContent = 'Modifier la question';
-                    form.action = `/admin/questions/${questionId}`;
-                    document.getElementById('questionId').value = questionId;
-                    
-                    if (!document.querySelector('input[name="_method"]')) {
-                        const methodInput = document.createElement('input');
-                        methodInput.type = 'hidden';
-                        methodInput.name = '_method';
-                        methodInput.value = 'PUT';
-                        form.appendChild(methodInput);
-                    }
-                    
-                    fetch(`/admin/questions/${questionId}/edit`)
-                        .then(response => response.json())
-                        .then(data => {
-                            const question = data.question;
-                            const choices = data.choices;
-                            
-                            document.getElementById('questionText').value = question.question_text;
-                            document.getElementById('questionDuration').value = question.duration;
-                            
-                            if (question.image_path) {
-                                document.getElementById('imagePreviewContainer').classList.remove('hidden');
-                                document.getElementById('imagePreview').src = `/storage/${question.image_path}`;
-                                document.getElementById('removeImageFlag').value = '0';
-                            }
-                            
-                            choicesContainer.innerHTML = '';
-                            choices.forEach((choice, index) => {
-                                addChoiceToForm(choice.choice_text, choice.is_correct, choice.id, index);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showSuccessToast('Erreur lors du chargement de la question', false);
-                        });
-                } else {
-                    document.getElementById('modalQuestionTitle').textContent = 'Nouvelle Question';
-                    form.action = `/admin/${quizId}/questions`;
-                    document.getElementById('questionId').value = '';
-                    
-                    const methodInput = document.querySelector('input[name="_method"]');
-                    if (methodInput) methodInput.remove();
-                    
-                    form.reset();
-                    choicesContainer.innerHTML = '';
-                    addChoiceToForm('', true);
-                    addChoiceToForm('', false);
-                }
-                
-                document.getElementById('questionModal').classList.remove('hidden');
-            }
-             
-
-            function resetForm() {
-                document.getElementById('imagePreviewContainer').classList.add('hidden');
-                document.getElementById('imagePreview').src = '';
-                document.getElementById('questionImage').value = '';
-                document.getElementById('removeImageFlag').value = '0';
-            }
-            
-            function removeImage() {
-                document.getElementById('imagePreviewContainer').classList.add('hidden');
-                document.getElementById('questionImage').value = '';
-                document.getElementById('removeImageFlag').value = '1';
-            }
-            
-            function openEditModal(questionId) {
-                closeQuestionDetails();
-                openQuestionModal(currentQuizId, questionId);
-            }
-            
-            function deleteQuestion(questionId) {
-                if (!confirm('Êtes-vous sûr de vouloir supprimer cette question?')) return;
-                
-                fetch(`/admin/questions/${questionId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Erreur lors de la suppression');
-                    return response.json();
-                })
-                .then(data => {
-                    showSuccessToast(data.message || 'Question supprimée avec succès');
-                    closeQuestionDetails();
-                    window.location.reload();
-                })
-                .catch(error => {
-                    showSuccessToast(error.message, false);
-                });
-            }
-
-
-            function addChoiceToForm(text = '', isCorrect = false, choiceId = null, index = null) {
-                const container = document.getElementById('choicesContainer');
-                const newIndex = index !== null ? index : container.children.length;
-                
-                if (container.children.length >= 5) {
-                    showSuccessToast('Maximum 5 choix par question', false);
-                    return;
-                }
-                
-                const choiceDiv = document.createElement('div');
-                choiceDiv.className = 'choice-item p-3 border border-gray-200 rounded-lg bg-gray-50';
-                choiceDiv.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <input type="radio" name="correct_choice" value="${newIndex}" 
-                               class="h-4 w-4 text-[#4D44B5] border-gray-300 focus:ring-[#4D44B5]"
-                               ${isCorrect ? 'checked' : ''}>
-                        <input type="text" name="choices[${newIndex}][text]" 
-                               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition" 
-                               placeholder="Texte du choix" 
-                               value="${text}" required>
-                        <button type="button" class="remove-choice-btn text-gray-400 hover:text-red-500 p-1 rounded-full"
-                                ${container.children.length < 2 ? 'disabled' : ''}>
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <input type="hidden" name="choices[${newIndex}][id]" value="${choiceId || ''}">
+                        </form>
                     </div>
-                `;
-                
-                container.appendChild(choiceDiv);
-                updateRemoveButtons();
-            }
+                </div>
             
-            function updateRemoveButtons() {
-                const container = document.getElementById('choicesContainer');
-                const removeButtons = container.querySelectorAll('.remove-choice-btn');
-                
-                removeButtons.forEach(button => {
-                    button.disabled = container.children.length <= 2;
-                });
-            }
+                <!-- Success Toast -->
+                <div id="successToast" class="hidden fixed top-4 right-4 z-50">
+                    <div class="bg-green-500 text-white px-4 py-3 md:px-6 md:py-4 rounded-lg shadow-lg flex items-center text-sm md:text-base">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span id="successMessage"></span>
+                    </div>
+                </div>
             
-
-            function showSuccessToast(message, isSuccess = true) {
-                const toast = document.getElementById('successToast');
-                const toastMessage = document.getElementById('successMessage');
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
                 
-                toastMessage.textContent = message;
-                toast.className = `fixed top-4 right-4 z-50 ${isSuccess ? 'bg-green-500' : 'bg-red-500'} text-white px-6 py-4 rounded-lg shadow-lg flex items-center`;
-                toast.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                }, 3000);
-            }
-            
-            function setupDragAndDrop() {
-                const dropArea = document.querySelector('.border-dashed');
-                const fileInput = document.getElementById('questionImage');
-                
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, preventDefaults, false);
-                });
-                
-                function preventDefaults(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                
-                ['dragenter', 'dragover'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, highlight, false);
-                });
-                
-                ['dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, unhighlight, false);
-                });
-                
-                function highlight() {
-                    dropArea.classList.add('border-[#4D44B5]', 'bg-blue-50');
-                }
-                
-                function unhighlight() {
-                    dropArea.classList.remove('border-[#4D44B5]', 'bg-blue-50');
-                }
-                
-                dropArea.addEventListener('drop', handleDrop, false);
-                
-                function handleDrop(e) {
-                    const dt = e.dataTransfer;
-                    const files = dt.files;
-                    fileInput.files = files;
-                    handleFiles(files);
-                }
-                
-                fileInput.addEventListener('change', function() {
-                    handleFiles(this.files);
-                });
-                
-                function handleFiles(files) {
-                    if (files.length) {
-                        const file = files[0];
-                        if (file.type.match('image.*')) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                document.getElementById('imagePreviewContainer').classList.remove('hidden');
-                                document.getElementById('imagePreview').src = e.target.result;
-                                document.getElementById('removeImageFlag').value = '0';
-                            };
-                            reader.readAsDataURL(file);
-                        } else {
-                            showSuccessToast('Veuillez sélectionner une image valide', false);
-                        }
-                    }
-                }
-            }
-            
-            document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('addChoiceBtn').addEventListener('click', function() {
-                    addChoiceToForm();
-                });
-                
-                document.getElementById('choicesContainer').addEventListener('click', function(e) {
-                    if (e.target.closest('.remove-choice-btn') && !e.target.closest('.remove-choice-btn').disabled) {
-                        const container = document.getElementById('choicesContainer');
-                        if (container.children.length <= 2) {
-                            showSuccessToast('Minimum 2 choix requis', false);
-                            return;
-                        }
-                        
-                        const choiceItem = e.target.closest('.choice-item');
-                        const radio = choiceItem.querySelector('input[type="radio"]');
-                        if (radio.checked) {
-                            container.querySelector('input[type="radio"]').checked = true;
-                        }
-                        
-                        choiceItem.remove();
-                        updateRemoveButtons();
-                    }
-                });
-                
-                document.getElementById('cancelQuestionBtn').addEventListener('click', function() {
-                    document.getElementById('questionModal').classList.add('hidden');
-                });
-                
-                setupDragAndDrop();
-                
-                document.getElementById('questionForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const form = e.target;
-                    const formData = new FormData(form);
-                    const url = form.action;
-                    const method = form.querySelector('input[name="_method"]') ? 
-                                  form.querySelector('input[name="_method"]').value : 'POST';
-                    
-                    const correctChoice = form.querySelector('input[name="correct_choice"]:checked');
-                    if (!correctChoice) {
-                        showSuccessToast('Veuillez sélectionner une réponse correcte', false);
-                        return;
-                    }
-                    
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    const originalBtnText = submitBtn.innerHTML;
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...';
-                    
-                    fetch(url, {
-                        method: method,
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Erreur lors de l\'enregistrement');
-                        return response.json();
-                    })
-                    .then(data => {
-                        showSuccessToast(data.message || 'Question enregistrée avec succès');
-                        document.getElementById('questionModal').classList.add('hidden');
-                        window.location.reload();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showSuccessToast(error.message || 'Erreur lors de l\'enregistrement', false);
-                    })
-                    .finally(() => {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalBtnText;
-                    });
-                });
-            });
-            
-            
             
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
