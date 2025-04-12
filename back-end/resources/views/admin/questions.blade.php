@@ -572,16 +572,48 @@
     </div>
 </div>
 @endif
-
             <div> 
-
-
-                
 <script> 
 
 
 
 
+
+document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('successToast')) {
+            setTimeout(() => {
+                document.getElementById('successToast').remove();
+            }, 3000);
+        }
+
+        document.getElementById('addChoiceBtn')?.addEventListener('click', function() {
+            const container = document.getElementById('choicesContainer');
+            if (container.children.length >= 5) {
+                alert('Maximum 5 choix par question');
+                return;
+            }
+            
+            const index = container.children.length;
+            const choiceDiv = document.createElement('div');
+            choiceDiv.className = 'choice-item p-3 border rounded-lg';
+            choiceDiv.innerHTML = `
+                <div class="flex items-center">
+                    <input type="radio" name="correct_choice" value="${index}" 
+                           class="h-4 w-4 text-[#4D44B5] border-gray-300 focus:ring-[#4D44B5]">
+                    <input type="text" name="choices[${index}][text]" 
+                           class="ml-3 flex-1 px-3 py-1 border-b focus:outline-none focus:border-[#4D44B5]" 
+                           placeholder="Texte du choix" required>
+                    <button type="button" class="ml-2 text-gray-400 hover:text-red-500 remove-choice-btn"
+                            ${container.children.length < 2 ? 'disabled' : ''}>
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(choiceDiv);
+            updateRemoveButtons();
+        });
+
+        
                 function confirmDelete(questionId) {
                     if (confirm('Êtes-vous sûr de vouloir supprimer cette question?')) {
                         document.getElementById('deleteForm' + questionId).submit();
