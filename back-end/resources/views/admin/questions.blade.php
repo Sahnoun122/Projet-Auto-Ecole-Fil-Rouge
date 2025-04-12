@@ -612,8 +612,57 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(choiceDiv);
             updateRemoveButtons();
         });
-
         
+        document.getElementById('choicesContainer')?.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-choice-btn') && !e.target.closest('.remove-choice-btn').disabled) {
+                const container = document.getElementById('choicesContainer');
+                if (container.children.length <= 2) {
+                    alert('Minimum 2 choix requis');
+                    return;
+                }
+                
+                const choiceItem = e.target.closest('.choice-item');
+                const radio = choiceItem.querySelector('input[type="radio"]');
+                if (radio.checked) {
+                    container.querySelector('input[type="radio"]').checked = true;
+                }
+                
+                choiceItem.remove();
+                updateRemoveButtons();
+            }
+        });
+
+
+        document.getElementById('questionImage')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const previewContainer = document.getElementById('imagePreviewContainer');
+                    const preview = document.getElementById('imagePreview');
+                    
+                    if (!previewContainer) {
+                        const container = document.createElement('div');
+                        container.id = 'imagePreviewContainer';
+                        container.className = 'mt-2';
+                        
+                        const img = document.createElement('img');
+                        img.id = 'imagePreview';
+                        img.className = 'max-h-32 rounded-lg border border-gray-200';
+                        img.src = event.target.result;
+                        
+                        container.appendChild(img);
+                        e.target.parentNode.appendChild(container);
+                    } else {
+                        preview.src = event.target.result;
+                        previewContainer.classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
                 function confirmDelete(questionId) {
                     if (confirm('Êtes-vous sûr de vouloir supprimer cette question?')) {
                         document.getElementById('deleteForm' + questionId).submit();
