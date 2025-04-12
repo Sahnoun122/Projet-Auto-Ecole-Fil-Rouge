@@ -640,6 +640,49 @@
                 document.getElementById('questionModal').classList.remove('hidden');
             }
              
+
+            function resetForm() {
+                document.getElementById('imagePreviewContainer').classList.add('hidden');
+                document.getElementById('imagePreview').src = '';
+                document.getElementById('questionImage').value = '';
+                document.getElementById('removeImageFlag').value = '0';
+            }
+            
+            function removeImage() {
+                document.getElementById('imagePreviewContainer').classList.add('hidden');
+                document.getElementById('questionImage').value = '';
+                document.getElementById('removeImageFlag').value = '1';
+            }
+            
+            function openEditModal(questionId) {
+                closeQuestionDetails();
+                openQuestionModal(currentQuizId, questionId);
+            }
+            
+            function deleteQuestion(questionId) {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer cette question?')) return;
+                
+                fetch(`/admin/questions/${questionId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erreur lors de la suppression');
+                    return response.json();
+                })
+                .then(data => {
+                    showSuccessToast(data.message || 'Question supprimée avec succès');
+                    closeQuestionDetails();
+                    window.location.reload();
+                })
+                .catch(error => {
+                    showSuccessToast(error.message, false);
+                });
+            }
+            
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
       const header = document.getElementById(headerId);
