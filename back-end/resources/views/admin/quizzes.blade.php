@@ -319,26 +319,35 @@
             
 
                 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    @if(session('success'))
+                        <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                            <p>{{ session('success') }}</p>
+                        </div>
+                    @endif
+            
                     <div class="bg-white rounded-xl shadow overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                             <h2 class="text-xl font-semibold text-gray-800">Mes Quiz</h2>
                         </div>
             
-                        <div id="quizList" class="divide-y divide-gray-200">
-                            @foreach ($quizzes as $quiz)
-                            <div class="p-6 hover:bg-gray-50 transition cursor-pointer" data-id="{{ $quiz->id }}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+                            @forelse ($quizzes as $quiz)
+                            <div class="border rounded-lg p-4 hover:shadow-md transition">
                                 <div class="flex justify-between items-start">
-                                    <div> 
-                                        <a href="/admin/{{ $quiz->id }}/questions"
-                                            class="text-lg font-semibold text-[#4D44B5] hover:underline">
-                                            {{ $quiz->title }}
-                                        </a>
-                                        <p class="text-gray-600 mt-1">
-                                            {{ $quiz->description ?? 'Aucune description' }}
-                                        </p>
+                                    <div>
+                                        <span class="inline-block px-2 py-1 bg-[#4D44B5] text-white text-xs rounded-full mb-2">
+                                            Permis {{ $quiz->permis_type }}
+                                        </span>
+                                        <h3 class="text-lg font-semibold text-[#4D44B5]">
+                                            <a href="{{ route('admin.questions.index', $quiz->id) }}">{{ $quiz->title }}</a>
+                                        </h3>
+                                        @if($quiz->description)
+                                            <p class="text-sm text-gray-600 mt-2">{{ Str::limit($quiz->description, 100) }}</p>
+                                        @endif
+                                        <p class="text-sm text-gray-500 mt-2">{{ $quiz->questions_count }} questions</p>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <button onclick="handleEditQuiz('{{ $quiz->id }}')"
+                                        <button onclick="handleEditQuiz('{{ $quiz->id }}', '{{ $quiz->permis_type }}', '{{ $quiz->title }}', `{{ $quiz->description }}`)"
                                             class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -349,7 +358,11 @@
                                     </div>
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                            <div class="col-span-3 text-center py-8">
+                                <p class="text-gray-500">Aucun quiz disponible</p>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
                 </main>
