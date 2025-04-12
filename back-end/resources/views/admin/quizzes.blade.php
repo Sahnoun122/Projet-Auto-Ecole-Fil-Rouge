@@ -441,6 +441,7 @@
     const form = $('#quizForm');
     const submitBtn = $('#submitBtn');
 
+    // Nouveau quiz
     $('#newQuizBtn').click(function() {
         $('#modalTitle').text('Nouveau Quiz');
         form.attr('action', "{{ route('admin.quizzes.store') }}");
@@ -452,6 +453,7 @@
         modal.removeClass('hidden');
     });
 
+    // Édition de quiz
     window.handleEditQuiz = function(id, permisType, title, description) {
         $('#modalTitle').text('Modifier Quiz');
         form.attr('action', "{{ route('admin.quizzes.update', '') }}/" + id);
