@@ -20,7 +20,7 @@ class QuestionController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
-        return view('admin.questions.index', compact('quiz', 'questions'));
+        return view('admin.questions', compact('quiz', 'questions'));
     }
 
     public function store(Request $request, Quiz $quiz)
