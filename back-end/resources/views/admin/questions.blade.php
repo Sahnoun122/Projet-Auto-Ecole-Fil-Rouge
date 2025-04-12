@@ -332,7 +332,7 @@
                     <p class="text-white opacity-80 text-sm md:text-base">{{ $quiz->description }}</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                    <a href="{{ route('admin.AjouterQuiz') }}"
+                    <a href="{{ route('admin.quizzes') }}"
                         class="bg-white text-[#4D44B5] px-3 py-1 md:px-4 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition text-center text-sm md:text-base">
                         <i class="fas fa-arrow-left mr-2"></i>Retour aux Quiz
                     </a>

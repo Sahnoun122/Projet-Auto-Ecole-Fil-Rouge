@@ -36,10 +36,10 @@ Route::prefix('candidats')->group(function () {
 });
 
 Route::prefix('admin')->group(function () {
-    Route::get('/AjouterQuiz', [QuizController::class, 'index'])->name('admin.AjouterQuiz');
-    Route::post('/AjouterQuiz', [QuizController::class, 'store'])->name('admin.AjouterQuiz.store');
-    Route::put('/AjouterQuiz/{quiz}', [QuizController::class, 'update'])->name('admin.AjouterQuiz.update');
-    Route::delete('/AjouterQuiz/{quiz}', [QuizController::class, 'destroy'])->name('admin.AjouterQuiz.destroy');
+    Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
+    Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
+    Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
+    Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
 
         Route::get('/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.questions');
         Route::post('/{quiz}/questions', [QuestionController::class, 'store'])->name('admin.questions');

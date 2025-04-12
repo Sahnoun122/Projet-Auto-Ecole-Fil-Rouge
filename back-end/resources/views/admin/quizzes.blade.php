@@ -166,7 +166,7 @@
                         </div>
                         <div id="cours-pratique-list"
                             class="pl-8 overflow-hidden transition-max-height duration-300 max-h-0">
-                            <a href="{{ route('admin.AjouterQuiz') }}"
+                            <a href="{{ route('admin.quizzes') }}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
@@ -353,29 +353,57 @@
                         </div>
                     </div>
                 </main>
-                <div id="quizModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-                    <div class="bg-white w-96 p-6 rounded-lg">
+                <div id="quizModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                    <div class="bg-white w-full max-w-md p-6 rounded-lg">
                         <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Quiz</h2>
-                        <form id="quizForm" method="POST" action="/admin/AjouterQuiz" enctype="multipart/form-data">
+                        <form id="quizForm" method="POST">
                             @csrf
-                            <input type="hidden" name="_method" id="_method" value="POST">
-                            <input type="hidden" name="_method" value="PUT"> 
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" id="quizId">
+                            <input type="hidden" id="quizId" name="id">
+                            <input type="hidden" id="_method" name="_method" value="POST">
+            
                             <div class="mb-4">
-                                <label for="quizTitle" class="block text-sm font-medium text-gray-700">Titre</label>
-                                <input type="text" id="quizTitle" name="title"
-                                    class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-500" required>
+                                <label for="quizPermisType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
+                                <select id="quizPermisType" name="permis_type" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="">Sélectionnez un type</option>
+                                    <option value="A">Permis A (Moto)</option>
+                                    <option value="B">Permis B (Voiture)</option>
+                                    <option value="C">Permis C (Poids lourd)</option>
+                                    <option value="D">Permis D (Bus)</option>
+                                    <option value="EB">Permis EB (Remorque)</option>
+                                    <option value="A1">Permis A1 (Moto légère)</option>
+                                    <option value="A2">Permis A2 (Moto intermédiaire)</option>
+                                    <option value="B1">Permis B1 (Quadricycle lourd)</option>
+                                    <option value="C1">Permis C1 (Poids lourd moyen)</option>
+                                    <option value="D1">Permis D1 (Bus moyen)</option>
+                                    <option value="BE">Permis BE (Remorque lourde)</option>
+                                    <option value="C1E">Permis C1E (PL + remorque)</option>
+                                    <option value="D1E">Permis D1E (Bus + remorque)</option>
+                                </select>
+                                <p id="permisError" class="text-red-500 text-xs mt-1 hidden">Veuillez sélectionner un type de permis</p>
                             </div>
+                            
                             <div class="mb-4">
-                                <label for="quizDescription" class="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea id="quizDescription" name="description"
-                                    class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-500"></textarea>
+                                <label for="quizTitle" class="block text-sm font-medium text-gray-700 mb-1">Titre *</label>
+                                <input type="text" id="quizTitle" name="title" maxlength="255"
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                <p id="titleError" class="text-red-500 text-xs mt-1 hidden">Le titre est requis (max 255 caractères)</p>
                             </div>
+            
+                            <div class="mb-4">
+                                <label for="quizDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea id="quizDescription" name="description" rows="3"
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]"></textarea>
+                            </div>
+                            
                             <div class="flex justify-end space-x-2">
                                 <button type="button" id="cancelBtn"
-                                    class="px-4 py-2 bg-gray-500 text-white rounded">Annuler</button>
-                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Enregistrer</button>
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                    Annuler
+                                </button>
+                                <button type="submit" id="submitBtn"
+                                    class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                                    Enregistrer
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -413,7 +441,7 @@
         e.preventDefault(); 
 
         const id = $('#quizId').val(); 
-        const url = id ? `/admin/AjouterQuiz/${id}` : '/admin/AjouterQuiz';
+        const url = id ? `/admin/quizzes/${id}` : '/admin/quizzes';
         const method = id ? 'POST' : 'POST'; 
 
         $.ajax({
@@ -451,7 +479,7 @@
         if (!confirm('Voulez-vous vraiment supprimer ce quiz ?')) return; 
 
         $.ajax({
-            url: `/admin/AjouterQuiz/${id}`, 
+            url: `/admin/quizzes/${id}`, 
             method: 'POST', 
             data: {
                 _method: 'DELETE' 
