@@ -441,7 +441,142 @@
             </div>
 
 
+
+            
+<div id="questionModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+    <div class="bg-white w-full max-w-2xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div class="bg-[#4D44B5] text-white px-6 py-4">
+            <h2 class="text-xl font-bold" id="modalQuestionTitle">Nouvelle Question</h2>
+        </div>
+        <form id="questionForm" method="POST" enctype="multipart/form-data" class="p-6"
+              action="{{ isset($questionToEdit) ? route('admin.questions', [$quiz, $questionToEdit]) : route('admin.questions', $quiz) }}">
+            @csrf
+            @if(isset($questionToEdit))
+                @method('PUT')
+            @endif
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="questionText" class="block text-sm font-medium text-gray-700 mb-1">Texte de la question *</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-[#4D44B5]" 
+                              id="questionText" name="question_text" rows="3" required>{{ old('question_text', $questionToEdit->question_text ?? '') }}</textarea>
+                    @error('question_text')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="questionImage" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                        <input type="file" class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-[#4D44B5]" 
+                               id="questionImage" name="image" accept="image/*">
+                        @error('image')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        @if(isset($questionToEdit) && $questionToEdit->image_path))
+                            <div class="mt-2">
+                                <img src="{{ asset('storage/'.$questionToEdit->image_path) }}" 
+                                     class="max-h-32 rounded-lg border border-gray-200">
+                                <label class="flex items-center mt-2">
+                                    <input type="checkbox" name="remove_image" class="rounded text-[#4D44B5]">
+                                    <span class="ml-2 text-sm text-gray-600">Supprimer l'image</span>
+                                </label>
+                            </div>
+                        @endif
+                    </div>
+                    <div>
+                        <label for="questionDuration" class="block text-sm font-medium text-gray-700 mb-1">Durée (secondes) *</label>
+                        <input type="number" class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-[#4D44B5]" 
+                               id="questionDuration" name="duration" min="5" max="300" 
+                               value="{{ old('duration', $questionToEdit->duration ?? 30) }}" required>
+                        @error('duration')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                
+                <div class="pt-2">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-medium text-gray-700">Choix de réponse *</h3>
+                        <button type="button" id="addChoiceBtn" class="text-[#4D44B5] hover:text-[#3a32a1] text-sm font-medium">
+                            <i class="fas fa-plus mr-1"></i>Ajouter un choix
+                        </button>
+                    </div>
+                    
+                    <div id="choicesContainer" class="space-y-3">
+                        @if(isset($questionToEdit) && $questionToEdit->choices->count() > 0)
+                            @foreach($questionToEdit->choices as $index => $choice)
+                            <div class="choice-item p-3 border rounded-lg">
+                                <div class="flex items-center">
+                                    <input type="radio" name="correct_choice" value="{{ $index }}" 
+                                           class="h-4 w-4 text-[#4D44B5] border-gray-300 focus:ring-[#4D44B5]"
+                                           {{ $choice->is_correct ? 'checked' : '' }}>
+                                    <input type="text" name="choices[{{ $index }}][text]" 
+                                           class="ml-3 flex-1 px-3 py-1 border-b focus:outline-none focus:border-[#4D44B5]" 
+                                           placeholder="Texte du choix" 
+                                           value="{{ old('choices.'.$index.'.text', $choice->choice_text) }}" required>
+                                    <input type="hidden" name="choices[{{ $index }}][id]" value="{{ $choice->id }}">
+                                    <button type="button" class="ml-2 text-gray-400 hover:text-red-500 remove-choice-btn"
+                                            {{ $questionToEdit->choices->count() <= 2 ? 'disabled' : '' }}>
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                            @for($i = 0; $i < max(2, count(old('choices', []))); $i++)
+                            <div class="choice-item p-3 border rounded-lg">
+                                <div class="flex items-center">
+                                    <input type="radio" name="correct_choice" value="{{ $i }}" 
+                                           class="h-4 w-4 text-[#4D44B5] border-gray-300 focus:ring-[#4D44B5]"
+                                           {{ $i === 0 ? 'checked' : '' }}>
+                                    <input type="text" name="choices[{{ $i }}][text]" 
+                                           class="ml-3 flex-1 px-3 py-1 border-b focus:outline-none focus:border-[#4D44B5]" 
+                                           placeholder="Texte du choix" 
+                                           value="{{ old('choices.'.$i.'.text', '') }}" required>
+                                    <button type="button" class="ml-2 text-gray-400 hover:text-red-500 remove-choice-btn"
+                                            {{ $i < 2 ? 'disabled' : '' }}>
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            @endfor
+                        @endif
+                    </div>
+                    @error('choices')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    @error('correct_choice')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button type="button" onclick="document.getElementById('questionModal').classList.add('hidden')" 
+                        class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                    Annuler
+                </button>
+                <button type="submit" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1]">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if(session('success'))
+<div id="successToast" class="fixed top-4 right-4 z-50">
+    <div class="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span>{{ session('success') }}</span>
+    </div>
+</div>
+@endif
+
             <div> 
+
+
+                
 <script> 
 
 
@@ -460,7 +595,7 @@
                 }
 
 
-                
+
     toggleSection("candidats-header", "candidats-list", "candidats-arrow");
     toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
     toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
