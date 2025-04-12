@@ -291,7 +291,7 @@
                         <p class="text-white opacity-80">{{ $quiz->description }}</p>
                     </div>
                     <div class="flex space-x-3">
-                        <a href="{{ route('admin.questions') }}" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                        <a href="{{ route('admin.AjouterQuiz') }}" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
                             <i class="fas fa-arrow-left mr-2"></i>Retour aux Quiz
                         </a>
                         <button onclick="openQuestionModal('{{ $quiz->id }}')" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
@@ -390,50 +390,82 @@
                     <div class="bg-[#4D44B5] text-white px-6 py-4">
                         <h2 class="text-xl font-bold" id="modalQuestionTitle">Nouvelle Question</h2>
                     </div>
-                    <form id="questionForm" method="POST" action="" enctype="multipart/form-data" class="p-6">
+                    <form id="questionForm" method="POST" enctype="multipart/form-data" class="p-6">
                         @csrf
                         <input type="hidden" id="quizId" name="quiz_id">
                         <input type="hidden" id="questionId" name="question_id">
-                        <div class="space-y-4">
+                        
+                        <div class="space-y-6">
                             <div>
                                 <label for="questionText" class="block text-sm font-medium text-gray-700 mb-1">Texte de la question *</label>
-                                <textarea class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-[#4D44B5]" 
-                                          id="questionText" name="question_text" rows="3" required></textarea>
+                                <textarea id="questionText" name="question_text" rows="3" 
+                                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition"
+                                          required></textarea>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="questionImage" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
-                                    <input type="file" class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-[#4D44B5]" 
-                                           id="questionImage" name="image" accept="image/*">
-                                    <div id="imagePreviewContainer" class="mt-2 hidden">
-                                        <img id="imagePreview" class="max-h-32 rounded-lg border border-gray-200">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Image</label>
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative flex-1">
+                                        <input type="file" id="questionImage" name="image" accept="image/*" 
+                                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#4D44B5] transition">
+                                            <div class="flex flex-col items-center justify-center space-y-2">
+                                                <i class="fas fa-cloud-upload-alt text-3xl text-[#4D44B5]"></i>
+                                                <p class="text-sm text-gray-600">
+                                                    <span class="font-medium text-[#4D44B5]">Cliquez pour uploader</span> ou glissez-déposez
+                                                </p>
+                                                <p class="text-xs text-gray-500">PNG, JPG, GIF (max. 2MB)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="imagePreviewContainer" class="hidden flex-shrink-0">
+                                        <div class="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
+                                            <img id="imagePreview" class="w-full h-full object-cover">
+                                            <button type="button" onclick="removeImage()" 
+                                                    class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                                                <i class="fas fa-times text-xs"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+                                <input type="hidden" id="removeImageFlag" name="remove_image" value="0">
+                            </div>
+                            
+                            <!-- Duration -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="questionDuration" class="block text-sm font-medium text-gray-700 mb-1">Durée (secondes) *</label>
-                                    <input type="number" class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-[#4D44B5]" 
-                                           id="questionDuration" name="duration" min="5" max="300" value="30" required>
+                                    <input type="number" id="questionDuration" name="duration" min="5" max="300" value="30" 
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition"
+                                           required>
                                 </div>
                             </div>
                             
-                            <div class="pt-2">
-                                <div class="flex justify-between items-center mb-3">
+                            <!-- Choices -->
+                            <div class="pt-4 border-t border-gray-200">
+                                <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-sm font-medium text-gray-700">Choix de réponse *</h3>
-                                    <button type="button" id="addChoiceBtn" class="text-[#4D44B5] hover:text-[#3a32a1] text-sm font-medium">
-                                        <i class="fas fa-plus mr-1"></i>Ajouter un choix
+                                    <button type="button" id="addChoiceBtn" 
+                                            class="text-[#4D44B5] hover:text-[#3a32a1] text-sm font-medium flex items-center">
+                                        <i class="fas fa-plus-circle mr-1"></i>Ajouter un choix
                                     </button>
                                 </div>
                                 
                                 <div id="choicesContainer" class="space-y-3">
+                                    <!-- Choices will be added here -->
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-6 flex justify-end space-x-3">
-                            <button type="button" id="cancelQuestionBtn" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                        
+                        <!-- Form Actions -->
+                        <div class="mt-8 flex justify-end space-x-3">
+                            <button type="button" id="cancelQuestionBtn" 
+                                    class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
                                 Annuler
                             </button>
-                            <button type="submit" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1]">
+                            <button type="submit" 
+                                    class="px-6 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition font-medium">
                                 Enregistrer
                             </button>
                         </div>
@@ -448,12 +480,8 @@
                 </div>
             </div>
             
-
-            <script>
-              
-
-
-            
+    <script> 
+        
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
       const header = document.getElementById(headerId);
