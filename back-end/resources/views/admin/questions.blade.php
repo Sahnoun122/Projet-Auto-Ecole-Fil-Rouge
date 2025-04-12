@@ -725,6 +725,159 @@
                 });
             }
             
+
+            function showSuccessToast(message, isSuccess = true) {
+                const toast = document.getElementById('successToast');
+                const toastMessage = document.getElementById('successMessage');
+                
+                toastMessage.textContent = message;
+                toast.className = `fixed top-4 right-4 z-50 ${isSuccess ? 'bg-green-500' : 'bg-red-500'} text-white px-6 py-4 rounded-lg shadow-lg flex items-center`;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+            
+            function setupDragAndDrop() {
+                const dropArea = document.querySelector('.border-dashed');
+                const fileInput = document.getElementById('questionImage');
+                
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, preventDefaults, false);
+                });
+                
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, highlight, false);
+                });
+                
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, unhighlight, false);
+                });
+                
+                function highlight() {
+                    dropArea.classList.add('border-[#4D44B5]', 'bg-blue-50');
+                }
+                
+                function unhighlight() {
+                    dropArea.classList.remove('border-[#4D44B5]', 'bg-blue-50');
+                }
+                
+                dropArea.addEventListener('drop', handleDrop, false);
+                
+                function handleDrop(e) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    fileInput.files = files;
+                    handleFiles(files);
+                }
+                
+                fileInput.addEventListener('change', function() {
+                    handleFiles(this.files);
+                });
+                
+                function handleFiles(files) {
+                    if (files.length) {
+                        const file = files[0];
+                        if (file.type.match('image.*')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                                document.getElementById('imagePreview').src = e.target.result;
+                                document.getElementById('removeImageFlag').value = '0';
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            showSuccessToast('Veuillez sélectionner une image valide', false);
+                        }
+                    }
+                }
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('addChoiceBtn').addEventListener('click', function() {
+                    addChoiceToForm();
+                });
+                
+                document.getElementById('choicesContainer').addEventListener('click', function(e) {
+                    if (e.target.closest('.remove-choice-btn') && !e.target.closest('.remove-choice-btn').disabled) {
+                        const container = document.getElementById('choicesContainer');
+                        if (container.children.length <= 2) {
+                            showSuccessToast('Minimum 2 choix requis', false);
+                            return;
+                        }
+                        
+                        const choiceItem = e.target.closest('.choice-item');
+                        const radio = choiceItem.querySelector('input[type="radio"]');
+                        if (radio.checked) {
+                            container.querySelector('input[type="radio"]').checked = true;
+                        }
+                        
+                        choiceItem.remove();
+                        updateRemoveButtons();
+                    }
+                });
+                
+                document.getElementById('cancelQuestionBtn').addEventListener('click', function() {
+                    document.getElementById('questionModal').classList.add('hidden');
+                });
+                
+                setupDragAndDrop();
+                
+                document.getElementById('questionForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const form = e.target;
+                    const formData = new FormData(form);
+                    const url = form.action;
+                    const method = form.querySelector('input[name="_method"]') ? 
+                                  form.querySelector('input[name="_method"]').value : 'POST';
+                    
+                    const correctChoice = form.querySelector('input[name="correct_choice"]:checked');
+                    if (!correctChoice) {
+                        showSuccessToast('Veuillez sélectionner une réponse correcte', false);
+                        return;
+                    }
+                    
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalBtnText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...';
+                    
+                    fetch(url, {
+                        method: method,
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erreur lors de l\'enregistrement');
+                        return response.json();
+                    })
+                    .then(data => {
+                        showSuccessToast(data.message || 'Question enregistrée avec succès');
+                        document.getElementById('questionModal').classList.add('hidden');
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showSuccessToast(error.message || 'Erreur lors de l\'enregistrement', false);
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    });
+                });
+            });
+            
+            
             
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
