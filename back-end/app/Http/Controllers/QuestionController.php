@@ -147,5 +147,26 @@ class QuestionController extends Controller
         ]);
     }
 
-
+    public function details(Question $question)
+    {
+        $question->load(['choices', 'quiz']);
+        
+        return response()->json([
+            'question' => [
+                'id' => $question->id,
+                'quiz_id' => $question->quiz_id,
+                'question_text' => $question->question_text,
+                'image_url' => $question->image_path ? asset('storage/'.$question->image_path) : null,
+                'duration' => $question->duration,
+                'choices' => $question->choices->map(function($choice, $index) {
+                    return [
+                        'id' => $choice->id,
+                        'choice_text' => $choice->choice_text,
+                        'is_correct' => (bool)$choice->is_correct,
+                        'index' => $index
+                    ];
+                })
+            ]
+        ]);
+    }
 }
