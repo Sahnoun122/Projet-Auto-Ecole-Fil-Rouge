@@ -380,12 +380,87 @@
     </div>
 </main>
 
+<div id="questionDetailsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+    <div class="bg-white w-full max-w-2xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold">Détails de la question</h2>
+            <button onclick="document.getElementById('questionDetailsModal').classList.add('hidden')" class="text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <div>
+                <h3 class="text-lg font-semibold text-[#4D44B5] mb-3">{{ $question->question_text }}</h3>
+                
+                @if($question->image_path)
+                <div class="mb-4 flex justify-center">
+                    <img src="{{ asset('storage/'.$question->image_path) }}" 
+                         class="rounded-lg border border-gray-200 max-w-full h-auto max-h-48" 
+                         alt="Image de question">
+                </div>
+                @else
+                <p class="text-gray-400 mb-4">Aucune image</p>
+                @endif
+                
+                <div class="mb-4 flex items-center justify-between">
+                    <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-0.5 rounded-full flex items-center">
+                        <i class="fas fa-clock mr-1"></i> {{ $question->duration }} secondes
+                    </span>
+                    <div class="flex space-x-3">
+                        <button onclick="openEditModal('{{ $quiz->id }}', '{{ $question->id }}')" 
+                                class="text-[#4D44B5] hover:text-[#3a32a1] text-sm flex items-center">
+                            <i class="fas fa-edit mr-1"></i> Modifier
+                        </button>
+                        <form id="deleteForm{{ $question->id }}" action="{{ route('admin.questions', [$quiz, $question]) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" onclick="confirmDelete('{{ $question->id }}')" 
+                                    class="text-red-500 hover:text-red-700 text-sm flex items-center">
+                                <i class="fas fa-trash mr-1"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <h4 class="font-medium text-gray-700 mb-2">Choix de réponses:</h4>
+                <div class="space-y-2">
+                    @foreach($question->choices as $index => $choice)
+                    <div class="flex items-center p-3 rounded-lg {{ $choice->is_correct ? 'bg-green-50 border border-green-200' : 'bg-gray-50' }}">
+                        <span class="font-medium mr-3">{{ chr(65 + $index) }}.</span>
+                        <span class="{{ $choice->is_correct ? 'font-medium text-green-600' : 'text-gray-700' }}">
+                            {{ $choice->choice_text }}
+                        </span>
+                        @if($choice->is_correct)
+                        <span class="ml-auto bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                            Bonne réponse
+                        </span>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
 
             <div> 
 <script> 
 
 
 
+
+                function confirmDelete(questionId) {
+                    if (confirm('Êtes-vous sûr de vouloir supprimer cette question?')) {
+                        document.getElementById('deleteForm' + questionId).submit();
+                    }
+                }
+                
+                function openEditModal(quizId, questionId) {
+                    document.getElementById('questionDetailsModal').classList.add('hidden');
+                    
+                    window.location.href = `/admin/${quizId}/questions?edit=${questionId}#questionModal`;
+                }
+
+
+                
     toggleSection("candidats-header", "candidats-list", "candidats-arrow");
     toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
     toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
