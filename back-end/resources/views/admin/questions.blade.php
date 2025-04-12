@@ -571,7 +571,75 @@
                     });
             }
             
+            function retryLoadDetails(questionId) {
+                showQuestionDetails(questionId);
+            }
             
+            function closeQuestionDetails() {
+                document.getElementById('questionDetailsModal').classList.add('hidden');
+            }
+            
+            function openQuestionModal(quizId, questionId = null) {
+                document.getElementById('quizId').value = quizId;
+                const form = document.getElementById('questionForm');
+                const choicesContainer = document.getElementById('choicesContainer');
+                
+                resetForm();
+                
+                if (questionId) {
+                    document.getElementById('modalQuestionTitle').textContent = 'Modifier la question';
+                    form.action = `/admin/questions/${questionId}`;
+                    document.getElementById('questionId').value = questionId;
+                    
+                    if (!document.querySelector('input[name="_method"]')) {
+                        const methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        methodInput.value = 'PUT';
+                        form.appendChild(methodInput);
+                    }
+                    
+                    fetch(`/admin/questions/${questionId}/edit`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const question = data.question;
+                            const choices = data.choices;
+                            
+                            document.getElementById('questionText').value = question.question_text;
+                            document.getElementById('questionDuration').value = question.duration;
+                            
+                            if (question.image_path) {
+                                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                                document.getElementById('imagePreview').src = `/storage/${question.image_path}`;
+                                document.getElementById('removeImageFlag').value = '0';
+                            }
+                            
+                            choicesContainer.innerHTML = '';
+                            choices.forEach((choice, index) => {
+                                addChoiceToForm(choice.choice_text, choice.is_correct, choice.id, index);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showSuccessToast('Erreur lors du chargement de la question', false);
+                        });
+                } else {
+                    document.getElementById('modalQuestionTitle').textContent = 'Nouvelle Question';
+                    form.action = `/admin/${quizId}/questions`;
+                    document.getElementById('questionId').value = '';
+                    
+                    const methodInput = document.querySelector('input[name="_method"]');
+                    if (methodInput) methodInput.remove();
+                    
+                    form.reset();
+                    choicesContainer.innerHTML = '';
+                    addChoiceToForm('', true);
+                    addChoiceToForm('', false);
+                }
+                
+                document.getElementById('questionModal').classList.remove('hidden');
+            }
+             
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
       const header = document.getElementById(headerId);
