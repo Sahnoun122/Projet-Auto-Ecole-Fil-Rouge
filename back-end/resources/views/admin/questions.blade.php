@@ -482,6 +482,96 @@
             
     <script> 
         
+
+        let currentQuizId = '{{ $quiz->id }}';
+            
+            function showQuestionDetails(questionId) {
+                document.getElementById('questionDetailsContent').innerHTML = `
+                    <div class="flex justify-center items-center py-8">
+                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4D44B5]"></div>
+                        <span class="ml-3">Chargement...</span>
+                    </div>
+                `;
+                
+                document.getElementById('questionDetailsModal').classList.remove('hidden');
+            
+                fetch(`/admin/questions/${questionId}/details`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erreur HTTP! Statut: ' + response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        const question = data.question;
+                        
+                        const modalContent = `
+                            <div>
+                                <h3 class="text-lg font-semibold text-[#4D44B5] mb-3">${question.question_text || 'Sans texte'}</h3>
+                                
+                                ${question.image_url ? `
+                                <div class="mb-4 flex justify-center">
+                                    <img src="${question.image_url}" 
+                                         onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'text-red-500\'>Image non disponible</div>';"
+                                         class="rounded-lg border border-gray-200 max-w-full h-auto max-h-48" 
+                                         alt="Image de question">
+                                </div>
+                                ` : '<p class="text-gray-400 mb-4">Aucune image</p>'}
+                                
+                                <div class="mb-4 flex items-center justify-between">
+                                    <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-0.5 rounded-full flex items-center">
+                                        <i class="fas fa-clock mr-1"></i> ${question.duration || 0} secondes
+                                    </span>
+                                    <div class="flex space-x-3">
+                                        <button onclick="openEditModal('${question.id}')" 
+                                                class="text-[#4D44B5] hover:text-[#3a32a1] text-sm flex items-center">
+                                            <i class="fas fa-edit mr-1"></i> Modifier
+                                        </button>
+                                        <button onclick="deleteQuestion('${question.id}')" 
+                                                class="text-red-500 hover:text-red-700 text-sm flex items-center">
+                                            <i class="fas fa-trash mr-1"></i> Supprimer
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <h4 class="font-medium text-gray-700 mb-2">Choix de réponses:</h4>
+                                <div class="space-y-2">
+                                    ${question.choices && question.choices.length ? 
+                                        question.choices.map((choice, index) => `
+                                        <div class="flex items-center p-3 rounded-lg ${choice.is_correct ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}">
+                                            <span class="font-medium mr-3">${String.fromCharCode(65 + index)}.</span>
+                                            <span class="${choice.is_correct ? 'font-medium text-green-600' : 'text-gray-700'}">
+                                                ${choice.choice_text || 'Choix sans texte'}
+                                            </span>
+                                            ${choice.is_correct ? `
+                                            <span class="ml-auto bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                                                Bonne réponse
+                                            </span>
+                                            ` : ''}
+                                        </div>
+                                        `).join('') 
+                                        : '<p class="text-gray-400">Aucun choix disponible</p>'}
+                                </div>
+                            </div>
+                        `;
+                        
+                        document.getElementById('questionDetailsContent').innerHTML = modalContent;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('questionDetailsContent').innerHTML = `
+                            <div class="text-center py-8 text-red-500">
+                                <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                                <p>Erreur lors du chargement des détails</p>
+                                <p class="text-sm mt-2">${error.message}</p>
+                                <button onclick="retryLoadDetails('${questionId}')" 
+                                        class="mt-4 text-[#4D44B5] hover:underline">
+                                    <i class="fas fa-redo mr-1"></i> Réessayer
+                                </button>
+                            </div>
+                        `;
+                    });
+            }
+            
+            
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
       const header = document.getElementById(headerId);
