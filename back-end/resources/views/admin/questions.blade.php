@@ -503,6 +503,202 @@
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
                 
+                function toggleModal(modalId, show = true) {
+                        const modal = document.getElementById(modalId);
+                        if (show) {
+                            modal.classList.remove('hidden');
+                            document.body.classList.add('overflow-hidden');
+                        } else {
+                            modal.classList.add('hidden');
+                            document.body.classList.remove('overflow-hidden');
+                        }
+                    }
+            
+                    function closeModal(modalId) {
+                        toggleModal(modalId, false);
+                    }
+            
+                    function showQuestionDetails(questionId) {
+                        const modalContent = $('#questionDetailsContent');
+                        
+                        modalContent.html(`
+                            <div class="flex justify-center items-center py-4">
+                                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#4D44B5]"></div>
+                                <span class="ml-3">Chargement...</span>
+                            </div>
+                        `);
+                        
+                        toggleModal('questionDetailsModal');
+                        
+                        $.ajax({
+                            url: `/admin/questions/${questionId}/details`,
+                            method: 'GET',
+                            success: function(response) {
+                                const question = response.question;
+                                
+                                const detailsHtml = `
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-[#4D44B5] mb-3">${question.question_text || 'Sans texte'}</h3>
+                                        
+                                        ${question.image_url ? `
+                                        <div class="mb-4 flex justify-center">
+                                            <img src="${question.image_url}" 
+                                                 onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'text-red-500\'>Image non disponible</div>';"
+                                                 class="rounded-lg border border-gray-200 max-w-full h-auto max-h-48" 
+                                                 alt="Image de question">
+                                        </div>
+                                        ` : `<p class="text-gray-400 mb-4">Aucune image</p>`}
+                                        
+                                        <div class="mb-4 flex items-center justify-between">
+                                            <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-0.5 rounded-full flex items-center">
+                                                <i class="fas fa-clock mr-1"></i> ${question.duration || 0} secondes
+                                            </span>
+                                            <div class="flex space-x-3">
+                                                <button onclick="openEditModal('${question.id}')" 
+                                                        class="text-[#4D44B5] hover:text-[#3a32a1] text-sm flex items-center">
+                                                    <i class="fas fa-edit mr-1"></i> Modifier
+                                                </button>
+                                                <button onclick="deleteQuestion('${question.id}')" 
+                                                        class="text-red-500 hover:text-red-700 text-sm flex items-center">
+                                                    <i class="fas fa-trash mr-1"></i> Supprimer
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <h4 class="font-medium text-gray-700 mb-2">Choix de réponses:</h4>
+                                        <div class="space-y-2">
+                                            ${question.choices.map((choice, index) => `
+                                                <div class="flex items-center p-3 rounded-lg ${choice.is_correct ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}">
+                                                    <span class="font-medium mr-3">${String.fromCharCode(65 + index)}.</span>
+                                                    <span class="${choice.is_correct ? 'font-medium text-green-600' : 'text-gray-700'}">
+                                                        ${choice.choice_text || 'Choix sans texte'}
+                                                    </span>
+                                                    ${choice.is_correct ? `
+                                                    <span class="ml-auto bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                                                        Bonne réponse
+                                                    </span>
+                                                    ` : ''}
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                modalContent.html(detailsHtml);
+                            },
+                            error: function(xhr) {
+                                let errorMsg = 'Erreur lors du chargement des détails';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMsg = xhr.responseJSON.message;
+                                }
+                                modalContent.html(`
+                                    <div class="text-center py-4 text-red-500">
+                                        <i class="fas fa-exclamation-circle text-xl mb-2"></i>
+                                        <p>${errorMsg}</p>
+                                        <button onclick="retryLoadDetails('${questionId}')" 
+                                                class="mt-2 px-3 py-1 bg-[#4D44B5] text-white rounded hover:bg-[#3a32a1] text-sm">
+                                            <i class="fas fa-redo mr-1"></i> Réessayer
+                                        </button>
+                                    </div>
+                                `);
+                            }
+                        });
+                    }
+            
+                    function retryLoadDetails(questionId) {
+                        showQuestionDetails(questionId);
+                    }
+            
+                    function openEditModal(questionId) {
+                        closeModal('questionDetailsModal');
+                        openQuestionModal($('#quizId').val(), questionId);
+                    }
+            
+                    function openQuestionModal(quizId, questionId = null) {
+                        const $form = $('#questionForm');
+                        $form[0].reset();
+                        $('#imagePreviewContainer').addClass('hidden');
+                        $('#choicesContainer').empty();
+                        $('#quizId').val(quizId);
+            
+                        if (questionId) {
+                            $('#modalQuestionTitle').text('Modifier la question');
+                            $form.attr('action', `/admin/questions/${questionId}`);
+                            $form.find('input[name="_method"]').remove();
+                            $form.append('<input type="hidden" name="_method" value="PUT">');
+                            $('#questionId').val(questionId);
+                            
+                            $.ajax({
+                                url: `/admin/questions/${questionId}/edit`,
+                                method: 'GET',
+                                success: function(data) {
+                                    $('#questionText').val(data.question.question_text);
+                                    $('#questionDuration').val(data.question.duration);
+                                    
+                                    if (data.question.image_path) {
+                                        $('#imagePreview').attr('src', `/storage/${data.question.image_path}`);
+                                        $('#imagePreviewContainer').removeClass('hidden');
+                                    }
+                                    
+                                    data.choices.forEach((choice, index) => {
+                                        addChoiceToForm(choice.choice_text, choice.is_correct, choice.id, index);
+                                    });
+                                },
+                                error: function() {
+                                    showToast('Erreur lors du chargement de la question', false);
+                                    closeModal('questionModal');
+                                }
+                            });
+                        } else {
+                            $('#modalQuestionTitle').text('Nouvelle Question');
+                            $form.attr('action', `/admin/${quizId}/questions`);
+                            $form.find('input[name="_method"]').remove();
+                            $('#questionId').val('');
+                            addChoiceToForm('', true);
+                            addChoiceToForm('', false);
+                        }
+                        
+                        toggleModal('questionModal');
+                    }
+            
+                    // Ajouter un choix au formulaire
+                    function addChoiceToForm(text = '', isCorrect = false, choiceId = null, index = null) {
+                        const $container = $('#choicesContainer');
+                        const newIndex = index !== null ? index : $container.children().length;
+                        
+                        if ($container.children().length >= 5) {
+                            showToast('Maximum 5 choix par question', false);
+                            return;
+                        }
+                        
+                        const choiceHtml = `
+                            <div class="choice-item p-2 md:p-3 border border-gray-200 rounded-lg bg-gray-50">
+                                <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+                                    <div class="flex items-center gap-2 md:gap-3">
+                                        <input type="radio" name="correct_choice" value="${newIndex}" 
+                                               class="h-4 w-4 text-[#4D44B5] border-gray-300 focus:ring-[#4D44B5]"
+                                               ${isCorrect ? 'checked' : ''}>
+                                        <input type="text" name="choices[${newIndex}][text]" 
+                                               class="flex-1 px-2 py-1 md:px-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm md:text-base" 
+                                               placeholder="Texte du choix" 
+                                               value="${text}" required>
+                                    </div>
+                                    <div class="flex justify-end md:block">
+                                        <button type="button" class="remove-choice-btn text-gray-400 hover:text-red-500 p-1 rounded-full text-sm"
+                                                ${$container.children().length < 2 ? 'disabled' : ''}>
+                                            <i class="fas fa-times"></i> Supprimer
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="choices[${newIndex}][id]" value="${choiceId || ''}">
+                                </div>
+                            </div>
+                        `;
+                        
+                        $container.append(choiceHtml);
+                        updateRemoveButtons();
+                    }
+            
+              
             
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
