@@ -285,13 +285,10 @@
 
         <div class="flex-1 overflow-auto">
 
-
-    
 <div class="bg-[#4D44B5] text-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold">Questions pour: {{ $quiz->title }}</h1>
-            <p class="text-white opacity-80">{{ $quiz->description }}</p>
         </div>
         <div class="flex space-x-3">
             <a href="{{ route('admin.AjouterQuiz') }}" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
@@ -439,10 +436,22 @@
                     @endforeach
                 </div>
             </div>
-
-
-
             
+            <script>
+                function confirmDelete(questionId) {
+                    if (confirm('Êtes-vous sûr de vouloir supprimer cette question?')) {
+                        document.getElementById('deleteForm' + questionId).submit();
+                    }
+                }
+                
+                function openEditModal(quizId, questionId) {
+                    document.getElementById('questionDetailsModal').classList.add('hidden');
+                    
+                    window.location.href = `/admin/${quizId}/questions?edit=${questionId}#questionModal`;
+                }
+            </script>
+</div>
+
 <div id="questionModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
     <div class="bg-white w-full max-w-2xl rounded-lg overflow-hidden max-h-[90vh] overflow-y-auto">
         <div class="bg-[#4D44B5] text-white px-6 py-4">
@@ -572,14 +581,44 @@
     </div>
 </div>
 @endif
-            <div> 
-<script> 
 
 
+<script>
 
+function showQuestionDetails(quizId, questionId) {
+    document.getElementById('questionDetailsContent').innerHTML = `
+        <div class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4D44B5]"></div>
+            <span class="ml-3">Chargement en cours...</span>
+        </div>
+    `;
+    
+    document.getElementById('questionDetailsModal').classList.remove('hidden');
+    
+    fetch(`/quizzes/${quizId}/questions/${questionId}/details`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('questionDetailsContent').innerHTML = data.html;
+        })
+        .catch(error => {
+            document.getElementById('questionDetailsContent').innerHTML = `
+                <div class="text-center py-8 text-red-500">
+                    <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                    <p>Erreur lors du chargement des détails</p>
+                    <button onclick="showQuestionDetails('${quizId}', '${questionId}')" 
+                            class="mt-4 text-[#4D44B5] hover:underline">
+                        <i class="fas fa-redo mr-1"></i> Réessayer
+                    </button>
+                </div>
+            `;
+        });
+}
 
+function closeQuestionDetails() {
+    document.getElementById('questionDetailsModal').classList.add('hidden');
+} 
 
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         if (document.getElementById('successToast')) {
             setTimeout(() => {
                 document.getElementById('successToast').remove();
@@ -612,7 +651,7 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(choiceDiv);
             updateRemoveButtons();
         });
-        
+
         document.getElementById('choicesContainer')?.addEventListener('click', function(e) {
             if (e.target.closest('.remove-choice-btn') && !e.target.closest('.remove-choice-btn').disabled) {
                 const container = document.getElementById('choicesContainer');
@@ -632,6 +671,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        function updateRemoveButtons() {
+            const container = document.getElementById('choicesContainer');
+            const removeButtons = container?.querySelectorAll('.remove-choice-btn');
+            
+            removeButtons?.forEach(button => {
+                button.disabled = container.children.length <= 2;
+            });
+        }
 
         document.getElementById('questionImage')?.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -663,7 +710,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-                function confirmDelete(questionId) {
+    
+    function confirmDelete(questionId) {
                     if (confirm('Êtes-vous sûr de vouloir supprimer cette question?')) {
                         document.getElementById('deleteForm' + questionId).submit();
                     }
@@ -675,7 +723,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = `/admin/${quizId}/questions?edit=${questionId}#questionModal`;
                 }
 
-                function showQuestionDetails(questionId) {
+
+    function showQuestionDetails(questionId) {
         window.location.href = `{{ route('admin.questions', $quiz) }}?question=${questionId}`;
     }
 
@@ -711,16 +760,6 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
   });
-
-  
-
-    toggleSection("candidats-header", "candidats-list", "candidats-arrow");
-    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-    toggleSection("vehicule-header", "vehicule-list", "vehicule-arrow");
-    toggleSection("examen-header", "examen-list", "examen-arrow");
-    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
 
   
 async function logout() {
