@@ -20,12 +20,7 @@ class QuestionController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
-        return view('admin.questions', compact('quiz', 'questions'));
-    }
-
-    public function create(Quiz $quiz)
-    {
-        return view('admin.questions.create', compact('quiz'));
+        return view('admin.questions.index', compact('quiz', 'questions'));
     }
 
     public function store(Request $request, Quiz $quiz)
@@ -59,27 +54,28 @@ class QuestionController extends Controller
             ]);
         }
 
-        return redirect()->route('quizzes.questions.index', $quiz)
-            ->with('success', 'Question ajoutée avec succès!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Question ajoutée avec succès!',
+            'question' => $question->load('choices')
+        ]);
     }
 
-    public function show(Quiz $quiz, Question $question)
+    public function edit(Question $question)
     {
         $question->load('choices');
-        return view('admin.questions.show', compact('quiz', 'question'));
+        return response()->json([
+            'question' => $question,
+            'choices' => $question->choices
+        ]);
     }
 
-    public function edit(Quiz $quiz, Question $question)
-    {
-        $question->load('choices');
-        return view('admin.questions.edit', compact('quiz', 'question'));
-    }
-
-    public function update(Request $request, Quiz $quiz, Question $question)
+    public function update(Request $request, Question $question)
     {
         $validated = $request->validate([
             'question_text' => 'required|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'remove_image' => 'nullable|boolean',
             'duration' => 'required|integer|min:5|max:300',
             'choices' => 'required|array|min:2|max:5',
             'choices.*.id' => 'nullable|integer',
@@ -93,6 +89,11 @@ class QuestionController extends Controller
                 Storage::disk('public')->delete($imagePath);
             }
             $imagePath = $request->file('image')->store('questions', 'public');
+        } elseif ($request->remove_image) {
+            if ($imagePath) {
+                Storage::disk('public')->delete($imagePath);
+                $imagePath = null;
+            }
         }
 
         $question->update([
@@ -125,11 +126,14 @@ class QuestionController extends Controller
 
         $question->choices()->whereNotIn('id', $existingChoiceIds)->delete();
 
-        return redirect()->route('quizzes.questions', $quiz)
-            ->with('success', 'Question mise à jour avec succès!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Question mise à jour avec succès!',
+            'question' => $question->fresh('choices')
+        ]);
     }
 
-    public function destroy(Quiz $quiz, Question $question)
+    public function destroy(Question $question)
     {
         if ($question->image_path) {
             Storage::disk('public')->delete($question->image_path);
@@ -137,19 +141,11 @@ class QuestionController extends Controller
 
         $question->delete();
 
-        return redirect()->route('quizzes.questions', $quiz)
-            ->with('success', 'Question supprimée avec succès!');
-    }
-
-    public function details(Quiz $quiz, Question $question)
-    {
-        $question->load(['choices', 'quiz']);
-        
         return response()->json([
-            'html' => view('admin.questions.partials.details_modal_content', [
-                'quiz' => $quiz,
-                'question' => $question
-            ])->render()
+            'success' => true,
+            'message' => 'Question supprimée avec succès!'
         ]);
     }
+
+
 }
