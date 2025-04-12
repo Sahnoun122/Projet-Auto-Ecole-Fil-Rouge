@@ -436,7 +436,52 @@
             
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
-              
+                 $(document).ready(function() {
+    const modal = $('#quizModal');
+    const form = $('#quizForm');
+    const submitBtn = $('#submitBtn');
+
+    $('#newQuizBtn').click(function() {
+        $('#modalTitle').text('Nouveau Quiz');
+        form.attr('action', "{{ route('admin.quizzes.store') }}");
+        $('#_method').val('POST');
+        $('#quizId').val('');
+        $('#quizPermisType').val('');
+        $('#quizTitle').val('');
+        $('#quizDescription').val('');
+        modal.removeClass('hidden');
+    });
+
+    window.handleEditQuiz = function(id, permisType, title, description) {
+        $('#modalTitle').text('Modifier Quiz');
+        form.attr('action', "{{ route('admin.quizzes.update', '') }}/" + id);
+        $('#_method').val('PUT');
+        $('#quizId').val(id);
+        $('#quizPermisType').val(permisType);
+        $('#quizTitle').val(title);
+        $('#quizDescription').val(description);
+        modal.removeClass('hidden');
+    };
+
+    window.handleDeleteQuiz = function(id) {
+        if (!confirm('Voulez-vous vraiment supprimer ce quiz ?')) return;
+        
+        $.ajax({
+            url: "{{ route('admin.quizzes.destroy', '') }}/" + id,
+            method: 'POST',
+            data: { 
+                _method: 'DELETE', 
+                _token: "{{ csrf_token() }}" 
+            },
+            success: function() {
+                window.location.reload();
+            },
+            error: function(xhr) {
+                alert('Erreur lors de la suppression: ' + xhr.responseJSON?.message);
+            }
+        });
+    };
+});
                 </script>
             </body>
             </html>
