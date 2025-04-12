@@ -305,6 +305,81 @@
     </div>
 </div>
 
+@if(session('success'))
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+            <div class="flex justify-between items-center">
+                <p>{{ session('success') }}</p>
+                <button type="button" class="text-green-700" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+@endif
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+        @if($questions->isEmpty())
+            <div class="text-center p-12">
+                <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-question text-gray-400 text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune question disponible</h3>
+                <p class="text-gray-500 mb-6">Commencez par créer votre première question pour ce quiz.</p>
+                <button onclick="document.getElementById('questionModal').classList.remove('hidden')" 
+                        class="bg-[#4D44B5] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#3a32a1] transition">
+                    <i class="fas fa-plus mr-2"></i>Créer une question
+                </button>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                @foreach($questions as $question)
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-lg font-semibold text-[#4D44B5] line-clamp-2" title="{{ $question->question_text }}">
+                                {{ $loop->iteration }}. {{ Str::limit($question->question_text, 50) }}
+                            </h3>
+                            <form action="{{ route('admin.questions', [$quiz, $question]) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700" 
+                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette question?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        @if($question->image_path)
+                            <div class="mb-3 rounded-lg overflow-hidden h-40 flex items-center justify-center bg-gray-100">
+                                <img src="{{ asset('storage/'.$question->image_path) }}" 
+                                     class="max-h-full max-w-full object-contain" 
+                                     alt="Image de question">
+                            </div>
+                        @endif
+
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-0.5 rounded-full flex items-center">
+                                <i class="fas fa-clock mr-1"></i> {{ $question->duration }}s
+                            </span>
+                            <span class="text-xs text-gray-500">
+                                {{ count($question->choices) }} choix
+                            </span>
+                        </div>
+
+                        <button onclick="showQuestionDetails('{{ $question->id }}')" 
+                                class="w-full mt-2 bg-[#4D44B5] bg-opacity-10 text-[#4D44B5] hover:bg-opacity-20 px-3 py-1 rounded-lg text-sm font-medium transition">
+                            Voir détails
+                        </button>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</main>
+
 
             <div> 
 <script> 
