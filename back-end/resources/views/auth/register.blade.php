@@ -215,12 +215,20 @@
                   class="w-full px-4 py-3 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
                   required
               >
-                  <option value="">Sélectionnez votre type de permis</option>
-                  <option value="A">Permis A (Moto)</option>
-                  <option value="B">Permis B (Voiture)</option>
-                  <option value="C">Permis C (Poids lourd)</option>
-                  <option value="D">Permis D (Bus)</option>
-                  <option value="EB">Permis EB (Remorque)</option>
+              <option value="">Sélectionnez un type</option>
+              <option value="A">Permis A (Moto)</option>
+              <option value="B">Permis B (Voiture)</option>
+              <option value="C">Permis C (Poids lourd)</option>
+              <option value="D">Permis D (Bus)</option>
+              <option value="EB">Permis EB (Remorque)</option>
+              <option value="A1">Permis A1 (Moto légère)</option>
+              <option value="A2">Permis A2 (Moto intermédiaire)</option>
+              <option value="B1">Permis B1 (Quadricycle lourd)</option>
+              <option value="C1">Permis C1 (Poids lourd moyen)</option>
+              <option value="D1">Permis D1 (Bus moyen)</option>
+              <option value="BE">Permis BE (Remorque lourde)</option>
+              <option value="C1E">Permis C1E (PL + remorque)</option>
+              <option value="D1E">Permis D1E (Bus + remorque)</option>
               </select>
           </div>
       

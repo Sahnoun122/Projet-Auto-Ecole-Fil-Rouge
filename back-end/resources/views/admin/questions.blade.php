@@ -322,6 +322,7 @@
             </div>
 
         </div>
+        <div class="flex-1 overflow-auto">
 
         <div class="bg-[#4D44B5] text-white shadow-md">
             <div
