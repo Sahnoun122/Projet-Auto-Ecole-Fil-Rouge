@@ -19,10 +19,9 @@ class QuestionController extends Controller
             }])
             ->orderBy('created_at', 'asc')
             ->get();
-
-        return view('admin.questions', compact('quiz', 'questions'));
+    
+        return view('admin.questions', compact('quiz', 'questions')); 
     }
-
     public function store(Request $request, Quiz $quiz)
     {
         $validated = $request->validate([
@@ -40,7 +39,7 @@ class QuestionController extends Controller
         }
 
         $question = $quiz->questions()->create([
-            'admin_id' => 2,
+            'admin_id' => 1,
             'question_text' => $validated['question_text'],
             'image_path' => $imagePath,
             'duration' => $validated['duration'],
@@ -48,7 +47,7 @@ class QuestionController extends Controller
 
         foreach ($validated['choices'] as $index => $choiceData) {
             $question->choices()->create([
-                'admin_id' => 2,
+                'admin_id' => 1,
                 'choice_text' => $choiceData['text'],
                 'is_correct' => $index == $validated['correct_choice']
             ]);

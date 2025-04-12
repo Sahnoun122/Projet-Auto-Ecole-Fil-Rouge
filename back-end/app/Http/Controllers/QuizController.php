@@ -20,7 +20,7 @@ class QuizController extends Controller
                       ->withCount('questions')
                       ->get();
         
-        return view('candidat.quizzes.index', compact('quizzes'));
+        return view('candidat.quizzes', compact('quizzes'));
     }
 
     public function store(Request $request)
@@ -32,13 +32,13 @@ class QuizController extends Controller
         ]);
 
         Quiz::create([
-            'admin_id' => Auth::id(),
+            'admin_id' => 1,
             'permis_type' => $validated['permis_type'],
             'title' => $validated['title'],
             'description' => $validated['description'],
         ]);
 
-        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz créé avec succès');
+        return redirect()->route('admin.quizzes')->with('success', 'Quiz créé avec succès');
     }
 
     public function update(Request $request, Quiz $quiz)
@@ -51,13 +51,13 @@ class QuizController extends Controller
 
         $quiz->update($validated);
 
-        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz mis à jour avec succès');
+        return redirect()->route('admin.quizzes')->with('success', 'Quiz mis à jour avec succès');
     }
 
     public function destroy(Quiz $quiz)
     {
         $quiz->delete();
-        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz supprimé avec succès');
+        return redirect()->route('admin.quizzes')->with('success', 'Quiz supprimé avec succès');
     }
 
     public function showForCandidat(Quiz $quiz)
