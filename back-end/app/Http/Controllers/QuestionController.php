@@ -141,5 +141,15 @@ class QuestionController extends Controller
             ->with('success', 'Question supprimée avec succès!');
     }
 
-
+    public function details(Quiz $quiz, Question $question)
+    {
+        $question->load(['choices', 'quiz']);
+        
+        return response()->json([
+            'html' => view('admin.questions.partials.details_modal_content', [
+                'quiz' => $quiz,
+                'question' => $question
+            ])->render()
+        ]);
+    }
 }
