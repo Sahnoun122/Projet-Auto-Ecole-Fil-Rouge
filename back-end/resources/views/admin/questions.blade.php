@@ -492,7 +492,6 @@
                     </div>
                 </div>
             
-                <!-- Success Toast -->
                 <div id="successToast" class="hidden fixed top-4 right-4 z-50">
                     <div class="bg-green-500 text-white px-4 py-3 md:px-6 md:py-4 rounded-lg shadow-lg flex items-center text-sm md:text-base">
                         <i class="fas fa-check-circle mr-2"></i>
@@ -661,7 +660,6 @@
                         toggleModal('questionModal');
                     }
             
-                    // Ajouter un choix au formulaire
                     function addChoiceToForm(text = '', isCorrect = false, choiceId = null, index = null) {
                         const $container = $('#choicesContainer');
                         const newIndex = index !== null ? index : $container.children().length;
@@ -698,7 +696,127 @@
                         updateRemoveButtons();
                     }
             
-              
+                    function updateRemoveButtons() {
+                        const $container = $('#choicesContainer');
+                        $container.find('.remove-choice-btn').each(function() {
+                            $(this).prop('disabled', $container.children().length <= 2);
+                        });
+                    }
+            
+                    function deleteQuestion(questionId) {
+                        if (!confirm('Êtes-vous sûr de vouloir supprimer cette question?')) return;
+                        
+                        $.ajax({
+                            url: `/admin/questions/${questionId}`,
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function() {
+                                window.location.reload();
+                            },
+                            error: function() {
+                                showToast('Erreur lors de la suppression', false);
+                            }
+                        });
+                    }
+            
+                    function removeImage() {
+                        $('#imagePreviewContainer').addClass('hidden');
+                        $('#questionImage').val('');
+                        $('#removeImageFlag').val('1');
+                    }
+            
+                    function showToast(message, isSuccess = true) {
+                        const toast = $('#successToast');
+                        const toastMessage = $('#successMessage');
+                        
+                        toastMessage.text(message);
+                        toast.removeClass('hidden bg-red-500').addClass(isSuccess ? 'bg-green-500' : 'bg-red-500');
+                        
+                        setTimeout(() => {
+                            toast.addClass('hidden');
+                        }, 3000);
+                    }
+            
+                    $(document).ready(function() {
+                        $('#questionImage').change(function() {
+                            if (this.files && this.files[0]) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    $('#imagePreviewContainer').removeClass('hidden');
+                                    $('#imagePreview').attr('src', e.target.result);
+                                    $('#removeImageFlag').val('0');
+                                };
+                                reader.readAsDataURL(this.files[0]);
+                            }
+                        });
+                        
+                        $('#addChoiceBtn').click(function() {
+                            addChoiceToForm();
+                        });
+                        
+                        $('#choicesContainer').on('click', '.remove-choice-btn', function() {
+                            if ($(this).prop('disabled')) return;
+                            
+                            const $container = $('#choicesContainer');
+                            if ($container.children().length <= 2) {
+                                showToast('Minimum 2 choix requis', false);
+                                return;
+                            }
+                            
+                            const $choiceItem = $(this).closest('.choice-item');
+                            if ($choiceItem.find('input[type="radio"]').prop('checked')) {
+                                $container.find('input[type="radio"]').first().prop('checked', true);
+                            }
+                            
+                            $choiceItem.remove();
+                            updateRemoveButtons();
+                        });
+                        
+                        $('#cancelQuestionBtn').click(function() {
+                            closeModal('questionModal');
+                        });
+                        
+                        $('#questionForm').submit(function(e) {
+                            e.preventDefault();
+                            
+                            const $form = $(this);
+                            const formData = new FormData(this);
+                            const $submitBtn = $form.find('button[type="submit"]');
+                            const originalBtnText = $submitBtn.html();
+                            
+                            if (!$form.find('input[name="correct_choice"]:checked').length) {
+                                showToast('Veuillez sélectionner une réponse correcte', false);
+                                return;
+                            }
+                            
+                            $submitBtn.prop('disabled', true);
+                            $submitBtn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...');
+                            
+                            $.ajax({
+                                url: $form.attr('action'),
+                                method: $form.attr('method'),
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(response) {
+                                    window.location.reload();
+                                },
+                                error: function(xhr) {
+                                    showToast(xhr.responseJSON?.message || 'Erreur lors de l\'enregistrement', false);
+                                },
+                                complete: function() {
+                                    $submitBtn.prop('disabled', false);
+                                    $submitBtn.html(originalBtnText);
+                                }
+                            });
+                        });
+                    });
+          
             
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
