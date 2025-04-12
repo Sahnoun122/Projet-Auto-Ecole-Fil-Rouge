@@ -41,10 +41,12 @@ Route::prefix('admin')->group(function () {
     Route::put('/AjouterQuiz/{quiz}', [QuizController::class, 'update'])->name('admin.AjouterQuiz.update');
     Route::delete('/AjouterQuiz/{quiz}', [QuizController::class, 'destroy'])->name('admin.AjouterQuiz.destroy');
 
-    Route::get('/quiz/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.quiz.questions.index');
-    Route::post('/quiz/questions', [QuestionController::class, 'store'])->name('admin.quiz.questions.store');
-    Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
-    Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
+    Route::get('/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.questions');
+    Route::post('/{quiz}/questions', [QuestionController::class, 'store'])->name('admin.questions');
+    Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions');
+    Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions');
+    Route::get('/{quiz}/questions/{question}/details', [QuestionController::class, 'details'])
+    ->name('admin.questions.details');
 
     Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
     Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');

@@ -284,28 +284,9 @@
         </div>
 
         <div class="flex-1 overflow-auto">
-           <script>
-        
-  document.addEventListener("DOMContentLoaded", function () {
-    function toggleSection(headerId, listId, arrowId) {
-      const header = document.getElementById(headerId);
-      const list = document.getElementById(listId);
-      const arrow = document.getElementById(arrowId);
-  
-      let isOpen = list.style.maxHeight !== "0px";
-  
-      header.addEventListener("click", function () {
-        if (isOpen) {
-          list.style.maxHeight = "0";
-          arrow.style.transform = "rotate(0deg)";
-        } else {
-          list.style.maxHeight = `${list.scrollHeight}px`;
-          arrow.style.transform = "rotate(90deg)";
-        }
-        isOpen = !isOpen;
-      });
-    }
- 
+
+            <div> 
+<script> 
     toggleSection("candidats-header", "candidats-list", "candidats-arrow");
     toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
     toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");

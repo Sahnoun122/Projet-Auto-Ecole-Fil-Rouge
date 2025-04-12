@@ -1,79 +1,145 @@
 <?php
 
-
 namespace App\Http\Controllers;
-use App\Http\Controllers\Controller;
+
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Choice;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
     public function index(Quiz $quiz)
     {
-        // Gate::authorize('view', $quiz);
-        
-        $questions = $quiz->questions()->with('choices')->get();
-        
+        $questions = $quiz->questions()
+            ->with(['choices' => function($query) {
+                $query->orderBy('is_correct', 'desc')->orderBy('id');
+            }])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
         return view('admin.questions', compact('quiz', 'questions'));
+    }
+
+    public function create(Quiz $quiz)
+    {
+        return view('admin.questions.create', compact('quiz'));
     }
 
     public function store(Request $request, Quiz $quiz)
     {
-        // Gate::authorize('create', Question::class);
-        
         $validated = $request->validate([
-            'question_text' => 'required|string',
-            'image_path' => 'nullable|string',
-            'duration' => 'required|integer|min:1',
+            'question_text' => 'required|string|max:1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'duration' => 'required|integer|min:5|max:300',
+            'choices' => 'required|array|min:2|max:5',
+            'choices.*.text' => 'required|string|max:255',
+            'correct_choice' => 'required|integer'
         ]);
-        
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('questions', 'public');
+        }
+
         $question = $quiz->questions()->create([
             'admin_id' => Auth::id(),
             'question_text' => $validated['question_text'],
-            'image_path' => $validated['image_path'],
+            'image_path' => $imagePath,
             'duration' => $validated['duration'],
         ]);
-        
-        if ($request->ajax()) {
-            return response()->json(['success' => true, 'question' => $question]);
+
+        foreach ($validated['choices'] as $index => $choiceData) {
+            $question->choices()->create([
+                'admin_id' => Auth::id(),
+                'choice_text' => $choiceData['text'],
+                'is_correct' => $index == $validated['correct_choice']
+            ]);
         }
-        
-        return redirect()->route('questions', $quiz)->with('success', 'Question ajoutée avec succès!');
+
+        return redirect()->route('quizzes.questions.index', $quiz)
+            ->with('success', 'Question ajoutée avec succès!');
     }
 
-    public function update(Request $request, Question $question)
+    public function show(Quiz $quiz, Question $question)
     {
-        Gate::authorize('update', $question);
-        
+        $question->load('choices');
+        return view('admin.questions.show', compact('quiz', 'question'));
+    }
+
+    public function edit(Quiz $quiz, Question $question)
+    {
+        $question->load('choices');
+        return view('admin.questions.edit', compact('quiz', 'question'));
+    }
+
+    public function update(Request $request, Quiz $quiz, Question $question)
+    {
         $validated = $request->validate([
-            'question_text' => 'sometimes|string',
-            'image_path' => 'nullable|string',
-            'duration' => 'sometimes|integer|min:1',
+            'question_text' => 'required|string|max:1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'duration' => 'required|integer|min:5|max:300',
+            'choices' => 'required|array|min:2|max:5',
+            'choices.*.id' => 'nullable|integer',
+            'choices.*.text' => 'required|string|max:255',
+            'correct_choice' => 'required|integer'
         ]);
-        
-        $question->update($validated);
-        
-        if ($request->ajax()) {
-            return response()->json(['success' => true]);
+
+        $imagePath = $question->image_path;
+        if ($request->hasFile('image')) {
+            if ($imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
+            $imagePath = $request->file('image')->store('questions', 'public');
         }
+
+        $question->update([
+            'question_text' => $validated['question_text'],
+            'image_path' => $imagePath,
+            'duration' => $validated['duration'],
+        ]);
+
+        $existingChoiceIds = [];
         
-        return redirect()->route('questions', $question->quiz)->with('success', 'Question mise à jour avec succès!');
+        foreach ($validated['choices'] as $index => $choiceData) {
+            if (isset($choiceData['id'])) {
+                $choice = $question->choices()->find($choiceData['id']);
+                if ($choice) {
+                    $choice->update([
+                        'choice_text' => $choiceData['text'],
+                        'is_correct' => $index == $validated['correct_choice']
+                    ]);
+                    $existingChoiceIds[] = $choice->id;
+                }
+            } else {
+                $newChoice = $question->choices()->create([
+                    'admin_id' => Auth::id(),
+                    'choice_text' => $choiceData['text'],
+                    'is_correct' => $index == $validated['correct_choice']
+                ]);
+                $existingChoiceIds[] = $newChoice->id;
+            }
+        }
+
+        $question->choices()->whereNotIn('id', $existingChoiceIds)->delete();
+
+        return redirect()->route('quizzes.questions.index', $quiz)
+            ->with('success', 'Question mise à jour avec succès!');
     }
 
-    public function destroy(Question $question)
+    public function destroy(Quiz $quiz, Question $question)
     {
-        Gate::authorize('delete', $question);
-        
-        $quiz = $question->quiz;
-        $question->delete();
-        
-        if (request()->ajax()) {
-            return response()->json(['success' => true]);
+        if ($question->image_path) {
+            Storage::disk('public')->delete($question->image_path);
         }
-        
-        return redirect()->route('questions', $quiz)->with('success', 'Question supprimée avec succès!');
+
+        $question->delete();
+
+        return redirect()->route('quizzes.questions.index', $quiz)
+            ->with('success', 'Question supprimée avec succès!');
     }
+
+
 }

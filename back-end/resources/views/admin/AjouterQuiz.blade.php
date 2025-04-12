@@ -328,8 +328,8 @@
                             @foreach ($quizzes as $quiz)
                             <div class="p-6 hover:bg-gray-50 transition cursor-pointer" data-id="{{ $quiz->id }}">
                                 <div class="flex justify-between items-start">
-                                    <div>
-                                        <a href="/admin/quiz/{{ $quiz->id }}/questions"
+                                    <div> 
+                                        <a href="/admin/{{ $quiz->id }}/questions"
                                             class="text-lg font-semibold text-[#4D44B5] hover:underline">
                                             {{ $quiz->title }}
                                         </a>
