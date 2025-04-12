@@ -682,6 +682,49 @@
                     showSuccessToast(error.message, false);
                 });
             }
+
+
+            function addChoiceToForm(text = '', isCorrect = false, choiceId = null, index = null) {
+                const container = document.getElementById('choicesContainer');
+                const newIndex = index !== null ? index : container.children.length;
+                
+                if (container.children.length >= 5) {
+                    showSuccessToast('Maximum 5 choix par question', false);
+                    return;
+                }
+                
+                const choiceDiv = document.createElement('div');
+                choiceDiv.className = 'choice-item p-3 border border-gray-200 rounded-lg bg-gray-50';
+                choiceDiv.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="radio" name="correct_choice" value="${newIndex}" 
+                               class="h-4 w-4 text-[#4D44B5] border-gray-300 focus:ring-[#4D44B5]"
+                               ${isCorrect ? 'checked' : ''}>
+                        <input type="text" name="choices[${newIndex}][text]" 
+                               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition" 
+                               placeholder="Texte du choix" 
+                               value="${text}" required>
+                        <button type="button" class="remove-choice-btn text-gray-400 hover:text-red-500 p-1 rounded-full"
+                                ${container.children.length < 2 ? 'disabled' : ''}>
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <input type="hidden" name="choices[${newIndex}][id]" value="${choiceId || ''}">
+                    </div>
+                `;
+                
+                container.appendChild(choiceDiv);
+                updateRemoveButtons();
+            }
+            
+            function updateRemoveButtons() {
+                const container = document.getElementById('choicesContainer');
+                const removeButtons = container.querySelectorAll('.remove-choice-btn');
+                
+                removeButtons.forEach(button => {
+                    button.disabled = container.children.length <= 2;
+                });
+            }
+            
             
   document.addEventListener("DOMContentLoaded", function () {
     function toggleSection(headerId, listId, arrowId) {
