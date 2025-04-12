@@ -285,8 +285,32 @@
 
         <div class="flex-1 overflow-auto">
 
+
+    
+<div class="bg-[#4D44B5] text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold">Questions pour: {{ $quiz->title }}</h1>
+            <p class="text-white opacity-80">{{ $quiz->description }}</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{{ route('admin.AjouterQuiz') }}" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                <i class="fas fa-arrow-left mr-2"></i>Retour aux Quiz
+            </a>
+            <button onclick="document.getElementById('questionModal').classList.remove('hidden')" 
+                    class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                <i class="fas fa-plus mr-2"></i>Nouvelle Question
+            </button>
+        </div>
+    </div>
+</div>
+
+
             <div> 
 <script> 
+
+
+
     toggleSection("candidats-header", "candidats-list", "candidats-arrow");
     toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
     toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
@@ -294,7 +318,6 @@
     toggleSection("examen-header", "examen-list", "examen-arrow");
     toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
-  });
 
   
 async function logout() {

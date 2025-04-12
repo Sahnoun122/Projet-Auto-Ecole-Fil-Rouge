@@ -125,7 +125,7 @@ class QuestionController extends Controller
 
         $question->choices()->whereNotIn('id', $existingChoiceIds)->delete();
 
-        return redirect()->route('quizzes.questions.index', $quiz)
+        return redirect()->route('quizzes.questions', $quiz)
             ->with('success', 'Question mise à jour avec succès!');
     }
 
@@ -137,7 +137,7 @@ class QuestionController extends Controller
 
         $question->delete();
 
-        return redirect()->route('quizzes.questions.index', $quiz)
+        return redirect()->route('quizzes.questions', $quiz)
             ->with('success', 'Question supprimée avec succès!');
     }
 
