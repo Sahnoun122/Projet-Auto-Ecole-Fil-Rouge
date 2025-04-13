@@ -9,9 +9,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/tailwindcss@3.0.23/dist/tailwind.min.js"></script>
-        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
 
@@ -46,7 +43,7 @@
             </div>
             <div class="flex-1 overflow-y-auto py-4">
                 <nav>
-                    <a href="#"
+                    <a href="{{ route('candidats.dashboard') }}"
                         class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -61,6 +58,9 @@
                         </svg>
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
                     </a>
+
+
+                  
 
                     <div>
                         <div id="cours-theorique-header"
@@ -104,7 +104,7 @@
                         </div>
                         <div id="cours-pratique-list"
                             class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="#"
+                            <a href="{{ route('candidats.quizzes') }}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
@@ -211,173 +211,87 @@
 
         </div>
     </div>
-            <div class="flex-1 overflow-auto">
-                <div class="min-h-screen py-8">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div class="text-center mb-8">
-                            <h1 class="text-3xl font-bold text-[#4D44B5]">Quiz Disponibles</h1>
-                            <p id="permis-message" class="mt-2 text-lg text-gray-600">
-                                Entraînez-vous pour votre permis
-                            </p>
-                        </div>
-        
-                        <div id="quizzes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            @foreach($quizzes as $quiz)
-                            <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                                <div class="p-6">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <h3 class="text-xl font-bold text-gray-800">{{ $quiz->title }}</h3>
-                                            <p class="text-sm text-gray-500 mt-1">{{ $quiz->type_permis }}</p>
-                                        </div>
-                                        <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
-                                            {{ $quiz->questions_count }} questions
-                                        </span>
-                                    </div>
-                                    
-                                    <p class="mt-3 text-gray-600">{{ $quiz->description }}</p>
-                                    
-                                    <div class="mt-4">
-                                        <div class="flex justify-between text-sm text-gray-500">
-                                            <span>Durée: {{ $quiz->duration }} min</span>
-                                            <span>Score min: {{ $quiz->passing_score }}/100</span>
-                                        </div>
-                                        
-                                        <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
-                                            <div class="bg-purple-600 h-2.5 rounded-full progress-bar" 
-                                                 style="width: {{ $quiz->average_score ?? 0 }}%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mt-6">
-                                        <a href="{{ route('candidat.quizzes.start', $quiz) }}" 
-                                        class="w-full block text-center bg-[#4D44B5] hover:bg-[#3a32a1] text-white font-medium py-2 px-4 rounded-lg transition">
-                                         Commencer le quiz
-                                     </a>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                            
-                            @if($quizzes->isEmpty())
-                            <div class="col-span-3 text-center py-10">
-                                <p class="text-gray-500">Aucun quiz disponible pour votre type de permis.</p>
-                            </div>
-                            @endif                        
-                            
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <script>
-                $(document).ready(function() {
-                    var typePermis = localStorage.getItem('type_permis');
-                    
-                    if (!typePermis && typeof authUser !== 'undefined' && authUser.type_permis) {
-                        typePermis = authUser.type_permis;
-                        localStorage.setItem('type_permis', typePermis);
-                    }
-        
-                    if (typePermis) {
-                        $('#permis-message').text("Entraînez-vous pour votre permis " + typePermis);
-                        
-                        loadQuizzes(typePermis);
-                    } else {
-                        console.error('Type de permis non trouvé');
-                    }
-        
-                    function loadQuizzes(typePermis) {
-                        $.ajax({
-                            url: '{{ route("candidats.quizzes") }}',
-                            type: 'GET',
-                            data: { type_permis: typePermis },
-                            success: function(data) {
-                                $('#quizzes-container').html(data);
-                                animateProgressBars();
-                            },
-                            error: function() {
-                                console.error('Erreur lors du chargement des quizzes');
-                            }
-                        });
-                    }
-        
-                    function animateProgressBars() {
-                        setTimeout(() => {
-                            const progressBars = document.querySelectorAll('.progress-bar');
-                            progressBars.forEach(bar => {
-                                const width = bar.style.width;
-                                bar.style.width = '0';
-                                setTimeout(() => {
-                                    bar.style.width = width;
-                                }, 300);
-                            });
-                        }, 500);
-                    }
-        
-                    animateProgressBars();
-                });
 
 
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                const progressBars = document.querySelectorAll('.progress-bar');
-                progressBars.forEach(bar => {
-                    const width = bar.style.width;
-                    bar.style.width = '0';
-                    setTimeout(() => {
-                        bar.style.width = width;
-                    }, 300);
-                });
-            }, 500);
-            
-            function toggleSection(headerId, listId, arrowId) {
-                const header = document.getElementById(headerId);
-                const list = document.getElementById(listId);
-                const arrow = document.getElementById(arrowId);
-            
-                let isOpen = list.style.maxHeight !== "0px";
-            
-                header.addEventListener("click", function() {
-                    if (isOpen) {
-                        list.style.maxHeight = "0";
-                        arrow.style.transform = "rotate(0deg)";
-                    } else {
-                        list.style.maxHeight = `${list.scrollHeight}px`;
-                        arrow.style.transform = "rotate(90deg)";
-                    }
-                    isOpen = !isOpen;
-                });
-            }
-            
-            toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-            toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-            toggleSection("examen-header", "examen-list", "examen-arrow");
-            toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-            toggleSection("caisse-header", "caisse-list", "caisse-arrow");
+    <script>
 
-            document.getElementById('logoutButton')?.addEventListener('click', async function() {
-                try {
-                    const response = await fetch('/logout', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                    });
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      const progressBars = document.querySelectorAll('.progress-bar');
+      progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => {
+          bar.style.width = width;
+        }, 300);
+      });
+    }, 500);
+    
+    const badge = document.querySelector('.pulse');
+    if (badge) {
+      setInterval(() => {
+        badge.classList.add('animate-pulse');
+        setTimeout(() => {
+          badge.classList.remove('animate-pulse');
+        }, 1000);
+      }, 2000);
+    }
+  });
+        
+  document.addEventListener("DOMContentLoaded", function () {
+    function toggleSection(headerId, listId, arrowId) {
+      const header = document.getElementById(headerId);
+      const list = document.getElementById(listId);
+      const arrow = document.getElementById(arrowId);
+  
+      let isOpen = list.style.maxHeight !== "0px";
+  
+      header.addEventListener("click", function () {
+        if (isOpen) {
+          list.style.maxHeight = "0";
+          arrow.style.transform = "rotate(0deg)";
+        } else {
+          list.style.maxHeight = `${list.scrollHeight}px`;
+          arrow.style.transform = "rotate(90deg)";
+        }
+        isOpen = !isOpen;
+      });
+    }
+  
+    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
+    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
+    toggleSection("examen-header", "examen-list", "examen-arrow");
+    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
+    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
+  });
 
-                    if (response.ok) {
-                        window.location.href = '/login';
-                    } else {
-                        alert('Échec de la déconnexion');
-                    }
-                } catch (error) {
-                    console.error('Erreur lors de la déconnexion:', error);
-                    alert('Une erreur est survenue');
-                }
-            });
+async function logout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+            },
         });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            alert(data.message);
+            window.location.href = '/connecter'; 
+        } else {
+            alert('Échec de la déconnexion : ' + data.message); 
+        }
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+        alert('Une erreur est survenue. Veuillez réessayer.');
+    }
+}
+
+document.getElementById('logoutButton').addEventListener('click', logout);
 
     </script>
 
