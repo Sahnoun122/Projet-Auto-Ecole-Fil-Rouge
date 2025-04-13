@@ -212,7 +212,65 @@
         </div>
     </div>
             <div class="flex-1 overflow-auto">
-               
+                <div class="min-h-screen py-8">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="text-center mb-8">
+                            <h1 class="text-3xl font-bold text-[#4D44B5]">Quiz Disponibles</h1>
+                            <p id="permis-message" class="mt-2 text-lg text-gray-600">
+                                Entraînez-vous pour votre permis
+                            </p>
+                        </div>
+        
+                        <div id="quizzes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach($quizzes as $quiz)
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-800">{{ $quiz->title }}</h3>
+                                            <p class="text-sm text-gray-500 mt-1">{{ $quiz->type_permis }}</p>
+                                        </div>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                                            {{ $quiz->questions_count }} questions
+                                        </span>
+                                    </div>
+                                    
+                                    <p class="mt-3 text-gray-600">{{ $quiz->description }}</p>
+                                    
+                                    <div class="mt-4">
+                                        <div class="flex justify-between text-sm text-gray-500">
+                                            <span>Durée: {{ $quiz->duration }} min</span>
+                                            <span>Score min: {{ $quiz->passing_score }}/100</span>
+                                        </div>
+                                        
+                                        <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                                            <div class="bg-purple-600 h-2.5 rounded-full progress-bar" 
+                                                 style="width: {{ $quiz->average_score ?? 0 }}%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-6">
+                                        <a href="{{ route('quizzes.show', $quiz->id) }}" 
+                                           class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                            Commencer le quiz
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                            
+                            @if($quizzes->isEmpty())
+                            <div class="col-span-3 text-center py-10">
+                                <p class="text-gray-500">Aucun quiz disponible pour votre type de permis.</p>
+                            </div>
+                            @endif                        
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
             <script>
                 $(document).ready(function() {
                     var typePermis = localStorage.getItem('type_permis');
@@ -260,7 +318,8 @@
         
                     animateProgressBars();
                 });
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 const progressBars = document.querySelectorAll('.progress-bar');
