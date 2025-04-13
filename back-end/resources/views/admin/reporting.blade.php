@@ -471,7 +471,149 @@
             </div>
     <script>
   
-
+  let successRateChart;
+                
+                function initChart(data) {
+                    const options = {
+                        series: [{
+                            name: 'Taux de réussite',
+                            data: data.map(item => parseFloat(item.taux_moyen.toFixed(2)))
+                        }],
+                        chart: {
+                            type: 'bar',
+                            height: '100%',
+                            toolbar: {
+                                show: false
+                            }
+                        },
+                        colors: ['#4D44B5'],
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 4,
+                                horizontal: false,
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        xaxis: {
+                            categories: data.map(item => item.type),
+                            labels: {
+                                style: {
+                                    colors: '#6B7280',
+                                    fontSize: '12px'
+                                }
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Taux de réussite (%)',
+                                style: {
+                                    color: '#6B7280',
+                                    fontSize: '12px'
+                                }
+                            },
+                            labels: {
+                                formatter: function(val) {
+                                    return val.toFixed(0) + '%';
+                                },
+                                style: {
+                                    colors: '#6B7280',
+                                    fontSize: '12px'
+                                }
+                            },
+                            min: 0,
+                            max: 100
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function(val) {
+                                    return val.toFixed(2) + '%';
+                                }
+                            }
+                        }
+                    };
+        
+                    successRateChart = new ApexCharts(document.querySelector("#successRateChart"), options);
+                    successRateChart.render();
+                }
+        
+                function toggleModal(modalId, show = true) {
+                    const modal = document.getElementById(modalId);
+                    if (show) {
+                        modal.classList.remove('hidden');
+                        document.body.classList.add('overflow-hidden');
+                    } else {
+                        modal.classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden');
+                    }
+                }
+        
+                function closeModal(modalId) {
+                    toggleModal(modalId, false);
+                }
+        
+                $(document).ready(function() {
+                    loadReportData();
+        
+                    $('#periode').change(function() {
+                        if ($(this).val() === 'custom') {
+                            $('#customDateRange').removeClass('hidden');
+                        } else {
+                            $('#customDateRange').addClass('hidden');
+                        }
+                    });
+        
+                    // PDF export form
+                    $('select[name="periode"]', '#pdfExportForm').change(function() {
+                        if ($(this).val() === 'custom') {
+                            $('#pdfCustomDateRange').removeClass('hidden');
+                        } else {
+                            $('#pdfCustomDateRange').addClass('hidden');
+                        }
+                    });
+        
+                    $('#pdfExportForm').submit(function(e) {
+                        e.preventDefault();
+                        const formData = $(this).serialize();
+                        
+                        const $submitBtn = $(this).find('button[type="submit"]');
+                        const originalBtnText = $submitBtn.html();
+                        $submitBtn.prop('disabled', true);
+                        $submitBtn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Génération...');
+        
+                        $.ajax({
+                            url: '{{ route("admin.reporting.generate-pdf") }}',
+                            method: 'POST',
+                            data: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            xhrFields: {
+                                responseType: 'blob'
+                            },
+                            success: function(blob) {
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'rapport-examens-' + new Date().toISOString().split('T')[0] + '.pdf';
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                window.URL.revokeObjectURL(url);
+                                closeModal('pdfExportModal');
+                                showToast('Rapport PDF généré avec succès');
+                            },
+                            error: function(xhr) {
+                                showToast('Erreur lors de la génération du PDF', false);
+                            },
+                            complete: function() {
+                                $submitBtn.prop('disabled', false);
+                                $submitBtn.html(originalBtnText);
+                            }
+                        });
+                    });
+                });
 
 
 
