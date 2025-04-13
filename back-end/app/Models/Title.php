@@ -8,7 +8,7 @@ class Title extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'admin_id']; 
+    protected $fillable = ['name', 'admin_id' , 'type_permis']; 
 
     public function admin()
     {

@@ -86,7 +86,7 @@ Route::prefix('admin')->group(function () {
         Route::put('/titles/{title}', [TitleController::class, 'update'])->name('admin.titles.update');
         Route::delete('/titles/{title}', [TitleController::class, 'destroy'])->name('admin.titles.destroy');
 
-        Route::get('/titles/{title}/courses', [CourseController::class, 'index'])->name('admin.courses.index');
+        Route::get('/titles/{title}/courses', [CourseController::class, 'index'])->name('admin.courses');
         Route::post('/titles/{title}/courses', [CourseController::class, 'store'])->name('admin.courses.store');
         Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
         Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');

@@ -259,10 +259,71 @@
             </div>
 
         </div>
+        
+<div class="flex-1 overflow-auto">
+    <header class="bg-[#4D44B5] text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Gestion des Titres de Cours</h1>
+            <button id="newTitleBtn"
+                class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                <i class="fas fa-plus mr-2"></i> Nouveau Titre
+            </button>
+        </div>
+    </header>
+
+  
+    <div id="titleModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white w-full max-w-md p-6 rounded-lg">
+            <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Titre</h2>
+            <form id="titleForm" method="POST">
+                @csrf
+                <input type="hidden" id="titleId" name="id">
+                <input type="hidden" id="_method" name="_method" value="POST">
+
+                <div class="mb-4">
+                    <label for="titleName" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                    <input type="text" id="titleName" name="name" maxlength="255"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Le nom est requis (max 255 caractères)</p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="titlePermisType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
+                    <select id="titlePermisType" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                        <option value="A">Permis A (Moto)</option>
+                        <option value="B">Permis B (Voiture)</option>
+                        <option value="C">Permis C (Poids lourd)</option>
+                        <option value="D">Permis D (Bus)</option>
+                        <option value="EB">Permis EB (Remorque)</option>
+                        <option value="A1">Permis A1 (Moto légère)</option>
+                        <option value="A2">Permis A2 (Moto intermédiaire)</option>
+                        <option value="B1">Permis B1 (Quadricycle lourd)</option>
+                        <option value="C1">Permis C1 (Poids lourd moyen)</option>
+                        <option value="D1">Permis D1 (Bus moyen)</option>
+                        <option value="BE">Permis BE (Remorque lourde)</option>
+                        <option value="C1E">Permis C1E (PL + remorque)</option>
+                        <option value="D1E">Permis D1E (Bus + remorque)</option>
+                    </select>
+                    <p id="permisError" class="text-red-500 text-xs mt-1 hidden">Veuillez sélectionner un type de permis</p>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelBtn"
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submitBtn"
+                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
+<script>
 
-    <script>
 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
