@@ -306,17 +306,7 @@
         </div>
 
         <div class="flex-1 overflow-auto">
-         
-            <!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Gestion des Quiz</title>
-                <script src="https://cdn.tailwindcss.com"></script>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-            </head>
-            <body class="bg-gray-50">
+
                 <div class="flex-1 overflow-auto">
                     <header class="bg-[#4D44B5] text-white shadow-md">
                         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -484,6 +474,88 @@
         });
     };
 });
-                </script>
+
+            
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      const progressBars = document.querySelectorAll('.progress-bar');
+      progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => {
+          bar.style.width = width;
+        }, 300);
+      });
+    }, 500);
+    
+    const badge = document.querySelector('.pulse');
+    if (badge) {
+      setInterval(() => {
+        badge.classList.add('animate-pulse');
+        setTimeout(() => {
+          badge.classList.remove('animate-pulse');
+        }, 1000);
+      }, 2000);
+    }
+  });
+        
+  document.addEventListener("DOMContentLoaded", function () {
+    function toggleSection(headerId, listId, arrowId) {
+      const header = document.getElementById(headerId);
+      const list = document.getElementById(listId);
+      const arrow = document.getElementById(arrowId);
+  
+      let isOpen = list.style.maxHeight !== "0px";
+  
+      header.addEventListener("click", function () {
+        if (isOpen) {
+          list.style.maxHeight = "0";
+          arrow.style.transform = "rotate(0deg)";
+        } else {
+          list.style.maxHeight = `${list.scrollHeight}px`;
+          arrow.style.transform = "rotate(90deg)";
+        }
+        isOpen = !isOpen;
+      });
+    }
+  
+    toggleSection("candidats-header", "candidats-list", "candidats-arrow");
+    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
+    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
+    toggleSection("vehicule-header", "vehicule-list", "vehicule-arrow");
+    toggleSection("examen-header", "examen-list", "examen-arrow");
+    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
+    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
+  });
+
+  
+async function logout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+            },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            alert(data.message);
+            window.location.href = '/connecter'; 
+        } else {
+            alert('Échec de la déconnexion : ' + data.message); 
+        }
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+        alert('Une erreur est survenue. Veuillez réessayer.');
+    }
+}
+
+document.getElementById('logoutButton').addEventListener('click', logout);
+      </script>
             </body>
             </html>
