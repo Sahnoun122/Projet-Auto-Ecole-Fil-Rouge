@@ -259,10 +259,65 @@
             </div>
 
         </div>
+ 
+<div class="flex-1 overflow-auto">
+    
+
+    <div id="courseModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white w-full max-w-md p-6 rounded-lg">
+            <h2 id="modalCourseTitle" class="text-lg font-bold mb-4">Nouveau Cours</h2>
+            <form id="courseForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" id="courseId" name="id">
+                <input type="hidden" id="titleId" name="title_id" value="{{ $title->id }}">
+                <input type="hidden" id="_methodCourse" name="_method" value="POST">
+
+                <div class="mb-4">
+                    <label for="courseTitle" class="block text-sm font-medium text-gray-700 mb-1">Titre *</label>
+                    <input type="text" id="courseTitle" name="title" maxlength="255"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="courseDescription" class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                    <textarea id="courseDescription" name="description" rows="3"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label for="courseImage" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                    <input type="file" id="courseImage" name="image" accept="image/*" class="w-full px-4 py-2 border rounded-lg">
+                    <div id="imagePreviewContainer" class="mt-2 hidden">
+                        <img id="imagePreview" class="h-32 object-cover rounded-lg">
+                        <button type="button" onclick="removeImagePreview()" class="mt-1 text-red-500 text-sm">
+                            <i class="fas fa-times mr-1"></i>Supprimer l'image
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="courseDuration" class="block text-sm font-medium text-gray-700 mb-1">Durée (minutes) *</label>
+                    <input type="number" id="courseDuration" name="duration" min="1"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelCourseBtn"
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submitCourseBtn"
+                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
+<script>
 
-    <script>
 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {

@@ -453,6 +453,7 @@ function loadTitles() {
     });
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       const progressBars = document.querySelectorAll('.progress-bar');
