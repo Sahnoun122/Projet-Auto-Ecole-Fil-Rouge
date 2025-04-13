@@ -261,6 +261,80 @@
         </div>
  
 <div class="flex-1 overflow-auto">
+    <header class="bg-[#4D44B5] text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Cours pour: {{ $title->name }}</h1>
+            <span class="inline-block px-3 py-1 bg-white text-[#4D44B5] rounded-full text-sm font-medium">
+                Permis {{ $title->type_permis }}
+            </span>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <a href="{{ route('admin.titles.index') }}"
+            class="bg-[#4D44B5] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#3a32a1] transition">
+            <i class="fas fa-arrow-left mr-2"></i> Retour aux Titres
+        </a>
+        <button id="newCourseBtn"
+            class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+            <i class="fas fa-plus mr-2"></i> Nouveau Cours
+        </button>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @if(session('success'))
+            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                <p>{{ session('success') }}</p>
+            </div>
+        @endif
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            @if ($courses->isEmpty())
+                <div class="text-center p-12">
+                    <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-book text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun cours disponible</h3>
+                    <p class="text-gray-500 mb-6">Commencez par créer votre premier cours pour ce titre.</p>
+                    <button id="emptyNewCourseBtn"
+                        class="bg-[#4D44B5] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#3a32a1] transition">
+                        <i class="fas fa-plus mr-2"></i> Créer un cours
+                    </button>
+                </div>
+            @else
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6" id="coursesContainer">
+                    @foreach ($courses as $course)
+                    <div class="border rounded-lg p-4 hover:shadow-md transition">
+                        <div class="mb-4 h-40 bg-gray-100 rounded-lg overflow-hidden">
+                            @if($course->image)
+                                <img src="{{ asset('storage/' . $course->image) }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                    <i class="fas fa-image text-4xl"></i>
+                                </div>
+                            @endif
+                        </div>
+                        <h3 class="text-lg font-semibold text-[#4D44B5] mb-2">{{ $course->title }}</h3>
+                        <p class="text-sm text-gray-600 mb-3">{{ Str::limit($course->description, 100) }}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">{{ $course->duration }} minutes</span>
+                            <div class="flex space-x-2">
+                                <button onclick="handleEditCourse('{{ $course->id }}', '{{ $course->title }}', `{{ $course->description }}`, '{{ $course->duration }}', '{{ $course->image ? asset('storage/' . $course->image) : '' }}')"
+                                    class="text-[#4D44B5] hover:text-[#3a32a1] p-1">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="handleDeleteCourse('{{ $course->id }}')"
+                                    class="text-red-500 hover:text-red-700 p-1">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </main>
 
     <div id="courseModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white w-full max-w-md p-6 rounded-lg">
