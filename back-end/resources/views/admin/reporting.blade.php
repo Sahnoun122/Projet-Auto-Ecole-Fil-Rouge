@@ -615,7 +615,122 @@
                     });
                 });
 
-
+     
+                function loadReportData() {
+                    const periode = $('#periode').val();
+                    let startDate, endDate;
+        
+                    if (periode === 'custom') {
+                        startDate = $('#date_debut').val();
+                        endDate = $('#date_fin').val();
+                        
+                        if (!startDate || !endDate) {
+                            showToast('Veuillez sélectionner une plage de dates', false);
+                            return;
+                        }
+                    } else {
+                        const days = parseInt(periode);
+                        endDate = new Date().toISOString().split('T')[0];
+                        const start = new Date();
+                        start.setDate(start.getDate() - days);
+                        startDate = start.toISOString().split('T')[0];
+                    }
+        
+                    $('#total_examens, #examens_termines, #taux_reussite_global, #candidats_inscrits').text('...');
+                    $('#moniteursTableBody, #examsTableBody').html('<tr><td colspan="5" class="text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i>Chargement...</td></tr>');
+        
+                    $.ajax({
+                        url: '{{ route("admin.reporting.data") }}',
+                        method: 'GET',
+                        data: {
+                            startDate: startDate,
+                            endDate: endDate
+                        },
+                        success: function(data) {
+                            $('#total_examens').text(data.stats.total_examens);
+                            $('#examens_termines').text(data.stats.examens_termines);
+                            $('#taux_reussite_global').text(data.stats.taux_reussite_global ? data.stats.taux_reussite_global.toFixed(2) + '%' : 'N/A');
+                            $('#candidats_inscrits').text(data.stats.candidats_inscrits);
+        
+                            if (successRateChart) {
+                                successRateChart.updateSeries([{
+                                    name: 'Taux de réussite',
+                                    data: data.successRates.map(item => parseFloat(item.taux_moyen.toFixed(2)))
+                                }]);
+                                successRateChart.updateOptions({
+                                    xaxis: {
+                                        categories: data.successRates.map(item => item.type)
+                                    }
+                                });
+                            } else {
+                                initChart(data.successRates);
+                            }
+        
+                            let moniteursHtml = '';
+                            if (data.moniteursStats.length > 0) {
+                                data.moniteursStats.forEach(moniteur => {
+                                    moniteursHtml += `
+                                        <tr>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${moniteur.name}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${moniteur.exams_termines}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-2 py-1 rounded-full ${moniteur.taux_reussite_moyen >= 70 ? 'bg-green-100 text-green-800' : moniteur.taux_reussite_moyen >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                                                    ${moniteur.taux_reussite_moyen ? moniteur.taux_reussite_moyen.toFixed(2) + '%' : 'N/A'}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    `;
+                                });
+                            } else {
+                                moniteursHtml = '<tr><td colspan="3" class="px-4 py-3 text-center text-sm text-gray-500">Aucun moniteur trouvé</td></tr>';
+                            }
+                            $('#moniteursTableBody').html(moniteursHtml);
+        
+                            let examsHtml = '';
+                            if (data.exams.length > 0) {
+                                data.exams.forEach(exam => {
+                                    examsHtml += `
+                                        <tr>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${new Date(exam.date_exam).toLocaleDateString()}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${exam.type}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-2 py-1 rounded-full ${exam.statut === 'termine' ? 'bg-green-100 text-green-800' : exam.statut === 'en_cours' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}">
+                                                    ${exam.statut === 'termine' ? 'Terminé' : exam.statut === 'en_cours' ? 'En cours' : 'Planifié'}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                ${exam.taux_reussite ? exam.taux_reussite.toFixed(2) + '%' : 'N/A'}
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${exam.nombre_presents || 0}/${exam.nombre_inscrits || 0}</td>
+                                        </tr>
+                                    `;
+                                });
+                            } else {
+                                examsHtml = '<tr><td colspan="5" class="px-4 py-3 text-center text-sm text-gray-500">Aucun examen trouvé</td></tr>';
+                            }
+                            $('#examsTableBody').html(examsHtml);
+                        },
+                        error: function(xhr) {
+                            showToast('Erreur lors du chargement des données', false);
+                        }
+                    });
+                }
+        
+                function generatePdfReport() {
+                    toggleModal('pdfExportModal');
+                }
+        
+                function showToast(message, isSuccess = true) {
+                    const toast = $('#successToast');
+                    const toastMessage = $('#successMessage');
+        
+                    toastMessage.text(message);
+                    toast.removeClass('hidden bg-red-500').addClass(isSuccess ? 'bg-green-500' : 'bg-red-500');
+        
+                    setTimeout(() => {
+                        toast.addClass('hidden');
+                    }, 3000);
+                }
 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
