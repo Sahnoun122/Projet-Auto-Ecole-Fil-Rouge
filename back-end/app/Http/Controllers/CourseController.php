@@ -16,7 +16,7 @@ class CourseController extends Controller
         Gate::authorize('viewAny', Course::class);
 
         $courses = $title->courses()->with('title')->get();
-        return response()->json($courses);
+        return view('courses.index', compact('title', 'courses'));
     }
 
     public function store(Request $request, Title $title)
@@ -44,19 +44,11 @@ class CourseController extends Controller
             'duration' => $request->duration,
         ]);
 
-        return response()->json($course, 201);
-    }
-
-    public function show(Course $course)
-    {
-        // Autoriser l'action view pour ce cours spécifique
-        Gate::authorize('view', $course);
-
-        $course->load(['title', 'progress' => function($q) {
-            $q->where('candidate_id', Auth::id());
-        }]);
-        
-        return response()->json($course);
+        return response()->json([
+            'success' => true,
+            'course' => $course,
+            'message' => 'Cours créé avec succès'
+        ]);
     }
 
     public function update(Request $request, Course $course)
@@ -83,7 +75,11 @@ class CourseController extends Controller
             'duration' => $request->duration,
         ]);
 
-        return response()->json($course);
+        return response()->json([
+            'success' => true,
+            'course' => $course,
+            'message' => 'Cours mis à jour avec succès'
+        ]);
     }
 
     public function destroy(Course $course)
@@ -93,6 +89,9 @@ class CourseController extends Controller
         if ($course->image) Storage::delete('public/'.$course->image);
         $course->delete();
 
-        return response()->json(['message' => 'Cours supprimé avec succès']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cours supprimé avec succès'
+        ]);
     }
 }
