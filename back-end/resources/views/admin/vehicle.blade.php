@@ -272,7 +272,63 @@
         </div>
     </header>
 
-  
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @if(session('success'))
+            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                <p>{{ session('success') }}</p>
+            </div>
+        @endif
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Liste des Véhicules</h2>
+                <button id="maintenanceAlertsBtn"
+                    class="bg-[#FF4550] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#E03E48] transition">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Alertes Maintenance
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6" id="vehiclesContainer">
+                @forelse ($vehicles as $vehicle)
+                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="inline-block px-2 py-1 
+                                @if($vehicle->statut === 'disponible') bg-green-100 text-green-800
+                                @elseif($vehicle->statut === 'en maintenance') bg-yellow-100 text-yellow-800
+                                @else bg-red-100 text-red-800 @endif
+                                text-xs rounded-full mb-2">
+                                {{ ucfirst($vehicle->statut) }}
+                            </span>
+                            <h3 class="text-lg font-semibold text-[#4D44B5]">{{ $vehicle->marque }} {{ $vehicle->modele }}</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ $vehicle->immatriculation }}</p>
+                            <p class="text-sm text-gray-600 mt-1">Kilométrage: {{ number_format($vehicle->kilometrage, 0, ',', ' ') }} km</p>
+                            <p class="text-sm text-gray-600 mt-1">Acheté le: {{ $vehicle->date_achat->format('d/m/Y') }}</p>
+                            <p class="text-sm mt-2 @if($vehicle->prochaine_maintenance <= now()->addDays(7)) text-red-500 font-medium @else text-gray-600 @endif">
+                                Prochaine maintenance: {{ $vehicle->prochaine_maintenance->format('d/m/Y') }}
+                            </p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="handleEditVehicle('{{ $vehicle->id }}', '{{ $vehicle->marque }}', '{{ $vehicle->modele }}', '{{ $vehicle->immatriculation }}', '{{ $vehicle->date_achat->format('Y-m-d') }}', '{{ $vehicle->kilometrage }}', '{{ $vehicle->prochaine_maintenance->format('Y-m-d') }}', '{{ $vehicle->statut }}')"
+                                class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="handleDeleteVehicle('{{ $vehicle->id }}')"
+                                class="text-red-500 hover:text-red-700 p-2">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500">Aucun véhicule disponible</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+    </main>
+
     <div id="vehicleModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white w-full max-w-md p-6 rounded-lg">
             <h2 id="modalVehicleTitle" class="text-lg font-bold mb-4">Nouveau Véhicule</h2>
