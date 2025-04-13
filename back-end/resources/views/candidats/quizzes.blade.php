@@ -217,7 +217,7 @@
                     <div class="text-center mb-8">
                         <h1 class="text-3xl font-bold text-[#4D44B5]">Quiz Disponibles</h1>
                         <p id="permis-message" class="mt-2 text-lg text-gray-600">
-                            Entraînez-vous pour votre permis {{ $typePermis }}
+                            Entraînez-vous pour votre permis
                         </p>
                     </div>
             
@@ -257,6 +257,7 @@
             </div>
             
        <script> 
+
             $(document).ready(function() {
                     function animateProgressBars() {
                         setTimeout(() => {

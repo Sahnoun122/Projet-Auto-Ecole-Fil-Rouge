@@ -84,3 +84,39 @@ Route::prefix('admin')->group(function () {
 // Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
 // Route::get('/quiz/{quiz}/results', [AnswerController::class, 'getResults'])->name('quiz.results');
 // Routes pour les candidats
+
+
+
+// Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    
+//     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
+//     Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
+//     Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+//     Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+
+//     Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
+//     Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
+//     Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
+//     Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
+
+//     Route::get('/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
+//     Route::post('/{quiz}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
+//     Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])->name('admin.questions.edit');
+//     Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
+//     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
+//     Route::get('/questions/{question}/details', [QuestionController::class, 'showDetails'])->name('admin.questions.details');
+
+//     Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
+//     Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
+//     Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
+// });
+
+
+// Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(function () {
+//     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
+//     Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
+//     Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])->name('candidats.quizzes.start');
+//     Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.quizzes.questions.show');
+//     Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.quizzes.questions.answer');
+//     Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.quizzes.results');
+// });
