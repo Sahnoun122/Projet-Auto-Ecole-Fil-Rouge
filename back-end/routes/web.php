@@ -33,7 +33,22 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('candidats')->group(function () {
     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-});
+
+    Route::get('/mes-quizzes', [QuizController::class, 'indexForCandidat'])
+    ->name('candidat.quizzes.index');
+
+        Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])
+            ->name('candidat.quizzes.start');
+
+        Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])
+            ->name('candidat.quizzes.questions.show');
+
+        Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
+            ->name('candidat.quizzes.questions.answer');
+
+        Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])
+            ->name('candidat.quizzes.results');
+        });
 
 Route::prefix('admin')->group(function () {
 
@@ -65,6 +80,7 @@ Route::prefix('admin')->group(function () {
     Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
 });
 
-Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
-Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
-Route::get('/quiz/{quiz}/results', [AnswerController::class, 'getResults'])->name('quiz.results');
+// Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
+// Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
+// Route::get('/quiz/{quiz}/results', [AnswerController::class, 'getResults'])->name('quiz.results');
+// Routes pour les candidats
