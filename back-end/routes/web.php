@@ -14,6 +14,8 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\QuizPlayController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\TitleController;
+use App\Http\Controllers\CourseController;
 
 Route::controller(PagesController::class)->group(function () {
     Route::get('/', 'index')->name('/');
@@ -78,6 +80,16 @@ Route::prefix('admin')->group(function () {
     Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
     Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
     Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
+
+        Route::get('/titles', [TitleController::class, 'index'])->name('admin.titles.index');
+        Route::post('/titles', [TitleController::class, 'store'])->name('admin.titles.store');
+        Route::put('/titles/{title}', [TitleController::class, 'update'])->name('admin.titles.update');
+        Route::delete('/titles/{title}', [TitleController::class, 'destroy'])->name('admin.titles.destroy');
+
+        Route::get('/titles/{title}/courses', [CourseController::class, 'index'])->name('admin.courses.index');
+        Route::post('/titles/{title}/courses', [CourseController::class, 'store'])->name('admin.courses.store');
+        Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
+        Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');
 });
 
 // Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');

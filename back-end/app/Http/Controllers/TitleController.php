@@ -21,7 +21,7 @@ class TitleController extends Controller
                           ->get();
         }
         
-        return view('titles.index', compact('titles'));
+        return view('admin.titles', compact('titles'));
     }
 
     public function store(Request $request)

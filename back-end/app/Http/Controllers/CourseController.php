@@ -16,7 +16,7 @@ class CourseController extends Controller
         Gate::authorize('viewAny', Course::class);
 
         $courses = $title->courses()->with('title')->get();
-        return view('courses.index', compact('title', 'courses'));
+        return view('admin.courses', compact('title', 'courses'));
     }
 
     public function store(Request $request, Title $title)
