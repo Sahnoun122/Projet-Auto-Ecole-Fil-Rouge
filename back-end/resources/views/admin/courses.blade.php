@@ -261,7 +261,6 @@
         </div>
  
 <div class="flex-1 overflow-auto">
-    
 
     <div id="courseModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white w-full max-w-md p-6 rounded-lg">
@@ -317,7 +316,131 @@
 </div>
 
 <script>
+const newCourseBtn = document.getElementById('newCourseBtn');
+const emptyNewCourseBtn = document.getElementById('emptyNewCourseBtn');
+const courseModal = document.getElementById('courseModal');
+const cancelCourseBtn = document.getElementById('cancelCourseBtn');
+const courseForm = document.getElementById('courseForm');
+const modalCourseTitle = document.getElementById('modalCourseTitle');
+const courseId = document.getElementById('courseId');
+const _methodCourse = document.getElementById('_methodCourse');
+const courseImage = document.getElementById('courseImage');
+const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+const imagePreview = document.getElementById('imagePreview');
 
+newCourseBtn.addEventListener('click', () => {
+    courseModal.classList.remove('hidden');
+    modalCourseTitle.textContent = 'Nouveau Cours';
+    courseForm.reset();
+    courseId.value = '';
+    _methodCourse.value = 'POST';
+    imagePreviewContainer.classList.add('hidden');
+});
+
+if (emptyNewCourseBtn) {
+    emptyNewCourseBtn.addEventListener('click', () => {
+        courseModal.classList.remove('hidden');
+        modalCourseTitle.textContent = 'Nouveau Cours';
+        courseForm.reset();
+        courseId.value = '';
+        _methodCourse.value = 'POST';
+        imagePreviewContainer.classList.add('hidden');
+    });
+}
+
+cancelCourseBtn.addEventListener('click', () => {
+    courseModal.classList.add('hidden');
+});
+
+function handleEditCourse(id, title, description, duration, imageUrl) {
+    courseModal.classList.remove('hidden');
+    modalCourseTitle.textContent = 'Modifier Cours';
+    courseId.value = id;
+    _methodCourse.value = 'PUT';
+    document.getElementById('courseTitle').value = title;
+    document.getElementById('courseDescription').value = description;
+    document.getElementById('courseDuration').value = duration;
+    
+    if (imageUrl) {
+        imagePreview.src = imageUrl;
+        imagePreviewContainer.classList.remove('hidden');
+    } else {
+        imagePreviewContainer.classList.add('hidden');
+    }
+}
+
+function handleDeleteCourse(id) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')) {
+        fetch(`/admin/courses/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadCourses();
+            }
+        });
+    }
+}
+
+// Prévisualisation de l'image
+courseImage.addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreviewContainer.classList.remove('hidden');
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+function removeImagePreview() {
+    courseImage.value = '';
+    imagePreviewContainer.classList.add('hidden');
+}
+
+// Gestion du formulaire cours
+courseForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const url = courseId.value ? `/admin/courses/${courseId.value}` : `/admin/titles/{{ $title->id }}/courses`;
+    const method = courseId.value ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            courseModal.classList.add('hidden');
+            loadCourses();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+function loadCourses() {
+    fetch(`/admin/titles/{{ $title->id }}/courses`)
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newContent = doc.getElementById('coursesContainer').innerHTML;
+        document.getElementById('coursesContainer').innerHTML = newContent;
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
