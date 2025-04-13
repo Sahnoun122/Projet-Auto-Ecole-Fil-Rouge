@@ -19,12 +19,18 @@ class QuizController extends Controller
         $quizzes = Quiz::withCount('questions')->get();
         return view('admin.quizzes', compact('quizzes'));
     }
-    public function indexForCandidat()
+    public function indexForCandidat(Request $request)
     {
-        $quizzes = Quiz::where('type_permis', Auth::user()->type_permis)
-                      ->withCount('questions')
-                      ->get();
-        
+        $typePermis = $request->input('type_permis');
+
+        $quizzes = Quiz::where('type_permis', $typePermis)
+                       ->withCount('questions') 
+                       ->get();
+
+        if ($request->ajax()) {
+            return view('candidats.quizzes', compact('quizzes'));
+        }
+
         return view('candidats.quizzes', compact('quizzes'));
     }
 

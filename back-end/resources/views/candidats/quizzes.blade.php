@@ -9,6 +9,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/tailwindcss@3.0.23/dist/tailwind.min.js"></script>
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
 
@@ -58,9 +61,6 @@
                         </svg>
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
                     </a>
-
-
-                  
 
                     <div>
                         <div id="cours-theorique-header"
@@ -211,87 +211,114 @@
 
         </div>
     </div>
-    <div class="flex-1 overflow-auto">
-       
-    <script>
-
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-      const progressBars = document.querySelectorAll('.progress-bar');
-      progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-          bar.style.width = width;
-        }, 300);
-      });
-    }, 500);
-    
-    const badge = document.querySelector('.pulse');
-    if (badge) {
-      setInterval(() => {
-        badge.classList.add('animate-pulse');
-        setTimeout(() => {
-          badge.classList.remove('animate-pulse');
-        }, 1000);
-      }, 2000);
-    }
-  });
+            <div class="flex-1 overflow-auto">
+               
+            <script>
+                $(document).ready(function() {
+                    var typePermis = localStorage.getItem('type_permis');
+                    
+                    if (!typePermis && typeof authUser !== 'undefined' && authUser.type_permis) {
+                        typePermis = authUser.type_permis;
+                        localStorage.setItem('type_permis', typePermis);
+                    }
         
-  document.addEventListener("DOMContentLoaded", function () {
-    function toggleSection(headerId, listId, arrowId) {
-      const header = document.getElementById(headerId);
-      const list = document.getElementById(listId);
-      const arrow = document.getElementById(arrowId);
-  
-      let isOpen = list.style.maxHeight !== "0px";
-  
-      header.addEventListener("click", function () {
-        if (isOpen) {
-          list.style.maxHeight = "0";
-          arrow.style.transform = "rotate(0deg)";
-        } else {
-          list.style.maxHeight = `${list.scrollHeight}px`;
-          arrow.style.transform = "rotate(90deg)";
-        }
-        isOpen = !isOpen;
-      });
-    }
-  
-    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-    toggleSection("examen-header", "examen-list", "examen-arrow");
-    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
-  });
+                    if (typePermis) {
+                        $('#permis-message').text("Entraînez-vous pour votre permis " + typePermis);
+                        
+                        loadQuizzes(typePermis);
+                    } else {
+                        console.error('Type de permis non trouvé');
+                    }
+        
+                    function loadQuizzes(typePermis) {
+                        $.ajax({
+                            url: '{{ route("candidats.quizzes") }}',
+                            type: 'GET',
+                            data: { type_permis: typePermis },
+                            success: function(data) {
+                                $('#quizzes-container').html(data);
+                                animateProgressBars();
+                            },
+                            error: function() {
+                                console.error('Erreur lors du chargement des quizzes');
+                            }
+                        });
+                    }
+        
+                    function animateProgressBars() {
+                        setTimeout(() => {
+                            const progressBars = document.querySelectorAll('.progress-bar');
+                            progressBars.forEach(bar => {
+                                const width = bar.style.width;
+                                bar.style.width = '0';
+                                setTimeout(() => {
+                                    bar.style.width = width;
+                                }, 300);
+                            });
+                        }, 500);
+                    }
+        
+                    animateProgressBars();
+                });
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const progressBars = document.querySelectorAll('.progress-bar');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 300);
+                });
+            }, 500);
+            
+            function toggleSection(headerId, listId, arrowId) {
+                const header = document.getElementById(headerId);
+                const list = document.getElementById(listId);
+                const arrow = document.getElementById(arrowId);
+            
+                let isOpen = list.style.maxHeight !== "0px";
+            
+                header.addEventListener("click", function() {
+                    if (isOpen) {
+                        list.style.maxHeight = "0";
+                        arrow.style.transform = "rotate(0deg)";
+                    } else {
+                        list.style.maxHeight = `${list.scrollHeight}px`;
+                        arrow.style.transform = "rotate(90deg)";
+                    }
+                    isOpen = !isOpen;
+                });
+            }
+            
+            toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
+            toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
+            toggleSection("examen-header", "examen-list", "examen-arrow");
+            toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
+            toggleSection("caisse-header", "caisse-list", "caisse-arrow");
 
-async function logout() {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
-            },
+            document.getElementById('logoutButton')?.addEventListener('click', async function() {
+                try {
+                    const response = await fetch('/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                    });
+
+                    if (response.ok) {
+                        window.location.href = '/login';
+                    } else {
+                        alert('Échec de la déconnexion');
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la déconnexion:', error);
+                    alert('Une erreur est survenue');
+                }
+            });
         });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            alert(data.message);
-            window.location.href = '/connecter'; 
-        } else {
-            alert('Échec de la déconnexion : ' + data.message); 
-        }
-    } catch (error) {
-        console.error('Erreur lors de la déconnexion:', error);
-        alert('Une erreur est survenue. Veuillez réessayer.');
-    }
-}
-
-document.getElementById('logoutButton').addEventListener('click', logout);
 
     </script>
 

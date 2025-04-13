@@ -35,7 +35,7 @@ Route::prefix('candidats')->group(function () {
 
     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
 
-    Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes.index');
+    Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
 
         Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])
             ->name('candidats.quizzes.start');
