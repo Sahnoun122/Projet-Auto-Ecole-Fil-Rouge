@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 </head>
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
@@ -469,9 +470,9 @@
                     <span id="successMessage"></span>
                 </div>
             </div>
-    <script>
-  
-  let successRateChart;
+        
+            <script>
+                let successRateChart;
                 
                 function initChart(data) {
                     const options = {
@@ -614,8 +615,7 @@
                         });
                     });
                 });
-
-     
+        
                 function loadReportData() {
                     const periode = $('#periode').val();
                     let startDate, endDate;
@@ -731,7 +731,7 @@
                         toast.addClass('hidden');
                     }, 3000);
                 }
-
+       
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       const progressBars = document.querySelectorAll('.progress-bar');
