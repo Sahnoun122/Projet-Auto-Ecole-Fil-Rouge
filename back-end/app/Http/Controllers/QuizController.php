@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Answer;
+use App\Models\Choice;
+use App\Models\Question;
+
+
 
 class QuizController extends Controller
 {
@@ -72,7 +77,7 @@ class QuizController extends Controller
        $user = Auth::user();
    
        if ($quiz->permis_type !== $user->permis_type) {
-           abort(403); // Accès interdit
+           abort(403); 
        }
    
        Answer::where('candidat_id', $user->id)
@@ -92,5 +97,63 @@ class QuizController extends Controller
            'question' => $firstQuestion->id
        ]);
    }
+
+   public function showQuestion(Quiz $quiz, Question $question)
+   {
+       if ($question->quiz_id !== $quiz->id || 
+           $quiz->permis_type !== Auth::user()->permis_type) {
+           abort(403);
+       }
+   
+       $totalQuestions = $quiz->questions()->count();
+       $currentPosition = $quiz->questions()->where('id', '<=', $question->id)->count();
+       
+       $choices = $question->choices()
+                   ->orderBy('is_correct', 'desc')
+                   ->orderBy(DB::raw('RAND()'))
+                   ->get();
+   
+       return view('candidat.quizzes.show', compact('quiz', 'question', 'choices', 'totalQuestions', 'currentPosition'));
+   }
+   
+   public function submitAnswer(Request $request, Quiz $quiz, Question $question)
+   {
+       if ($question->quiz_id !== $quiz->id || 
+           $quiz->permis_type !== Auth::user()->permis_type) {
+           abort(403);
+       }
+   
+       $validated = $request->validate([
+           'choice_id' => 'required|exists:choices,id,question_id,'.$question->id
+       ]);
+   
+       $choice = Choice::find($validated['choice_id']);
+       
+       Answer::updateOrCreate(
+           [
+               'candidat_id' => Auth::id(),
+               'question_id' => $question->id
+           ],
+           [
+               'choice_id' => $choice->id,
+               'is_correct' => $choice->is_correct
+           ]
+       );
+   
+       $nextQuestion = $quiz->questions()
+                       ->where('id', '>', $question->id)
+                       ->orderBy('id')
+                       ->first();
+   
+       if ($nextQuestion) {
+           return redirect()->route('candidat.quizzes.questions.show', [
+               'quiz' => $quiz,
+               'question' => $nextQuestion
+           ]);
+       }
+   
+       return redirect()->route('candidat.quizzes.results', $quiz);
+   }
+   
 
 }
