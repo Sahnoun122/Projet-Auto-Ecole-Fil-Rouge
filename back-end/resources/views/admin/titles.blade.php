@@ -271,7 +271,52 @@
         </div>
     </header>
 
-  
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @if(session('success'))
+            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                <p>{{ session('success') }}</p>
+            </div>
+        @endif
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Mes Titres</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6" id="titlesContainer">
+                @forelse ($titles as $title)
+                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="inline-block px-2 py-1 bg-[#4D44B5] text-white text-xs rounded-full mb-2">
+                                Permis {{ $title->type_permis }}
+                            </span>
+                            <h3 class="text-lg font-semibold text-[#4D44B5]">
+                                <a href="{{ route('admin.courses', $title->id) }}">{{ $title->name }}</a>
+                            </h3>
+                            <p class="text-sm text-gray-500 mt-2">{{ $title->courses_count }} cours</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="handleEditTitle('{{ $title->id }}', '{{ $title->type_permis }}', '{{ $title->name }}')"
+                                class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="handleDeleteTitle('{{ $title->id }}')"
+                                class="text-red-500 hover:text-red-700 p-2">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500">Aucun titre disponible</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+    </main>
+
     <div id="titleModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white w-full max-w-md p-6 rounded-lg">
             <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Titre</h2>
