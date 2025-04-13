@@ -323,7 +323,90 @@
 </div>
 
 <script>
+const newTitleBtn = document.getElementById('newTitleBtn');
+const titleModal = document.getElementById('titleModal');
+const cancelBtn = document.getElementById('cancelBtn');
+const titleForm = document.getElementById('titleForm');
+const modalTitle = document.getElementById('modalTitle');
+const titleId = document.getElementById('titleId');
+const _method = document.getElementById('_method');
 
+newTitleBtn.addEventListener('click', () => {
+    titleModal.classList.remove('hidden');
+    modalTitle.textContent = 'Nouveau Titre';
+    titleForm.reset();
+    titleId.value = '';
+    _method.value = 'POST';
+});
+
+cancelBtn.addEventListener('click', () => {
+    titleModal.classList.add('hidden');
+});
+
+function handleEditTitle(id, type_permis, name) {
+    titleModal.classList.remove('hidden');
+    modalTitle.textContent = 'Modifier Titre';
+    titleId.value = id;
+    _method.value = 'PUT';
+    document.getElementById('titleName').value = name;
+    document.getElementById('titlePermisType').value = type_permis;
+}
+
+function handleDeleteTitle(id) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce titre ?')) {
+        fetch(`/admin/titles/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`title-${id}`).remove();
+                loadTitles();
+            }
+        });
+    }
+}
+
+titleForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const url = titleId.value ? `/admin/titles/${titleId.value}` : '/admin/titles';
+    const method = titleId.value ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            titleModal.classList.add('hidden');
+            loadTitles();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+function loadTitles() {
+    fetch('/admin/titles')
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newContent = doc.getElementById('titlesContainer').innerHTML;
+        document.getElementById('titlesContainer').innerHTML = newContent;
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
