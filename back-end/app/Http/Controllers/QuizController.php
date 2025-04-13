@@ -122,7 +122,7 @@ class QuizController extends Controller
            $quiz->permis_type !== Auth::user()->permis_type) {
            abort(403);
        }
-   
+
        $validated = $request->validate([
            'choice_id' => 'required|exists:choices,id,question_id,'.$question->id
        ]);
@@ -153,6 +153,28 @@ class QuizController extends Controller
        }
    
        return redirect()->route('candidat.quizzes.results', $quiz);
+   }
+   
+   public function showResults(Quiz $quiz)
+   {
+       if ($quiz->permis_type !== Auth::user()->permis_type) {
+           abort(403);
+       }
+   
+       $answers = Answer::with(['question', 'choice'])
+           ->where('candidat_id', Auth::id())
+           ->whereHas('question', function($query) use ($quiz) {
+               $query->where('quiz_id', $quiz->id);
+           })
+           ->get();
+   
+       $totalQuestions = $quiz->questions()->count();
+       $correctAnswers = $answers->where('is_correct', true)->count();
+       $passed = $correctAnswers >= 32; 
+   
+       return view('candidat.quizzes.results', compact(
+           'quiz', 'answers', 'totalQuestions', 'correctAnswers', 'passed'
+       ));
    }
    
 
