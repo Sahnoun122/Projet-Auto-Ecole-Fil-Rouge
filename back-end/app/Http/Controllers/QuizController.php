@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Answer;
 
 class QuizController extends Controller
 {
@@ -22,6 +23,7 @@ class QuizController extends Controller
         
         return view('candidat.quizzes', compact('quizzes'));
     }
+
 
     public function store(Request $request)
     {
@@ -63,5 +65,32 @@ class QuizController extends Controller
     public function showForCandidat(Quiz $quiz)
     {
         return view('candidat.quizzes.show', compact('quiz'));
-    }
+ 
+   }
+   public function startQuiz(Quiz $quiz)
+   {
+       $user = Auth::user();
+   
+       if ($quiz->permis_type !== $user->permis_type) {
+           abort(403); // Accès interdit
+       }
+   
+       Answer::where('candidat_id', $user->id)
+           ->whereHas('question', function ($query) use ($quiz) {
+               $query->where('quiz_id', $quiz->id);
+           })
+           ->delete();
+   
+       $firstQuestion = $quiz->questions()->orderBy('id')->first();
+   
+       if (!$firstQuestion) {
+           return back()->with('error', 'Ce quiz ne contient aucune question');
+       }
+   
+       return redirect()->route('candidat.quizzes.questions.show', [
+           'quiz' => $quiz->id,
+           'question' => $firstQuestion->id
+       ]);
+   }
+
 }
