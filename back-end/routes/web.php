@@ -16,6 +16,7 @@ use App\Http\Controllers\QuizPlayController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\TitleController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\VehicleController;
 
 Route::controller(PagesController::class)->group(function () {
     Route::get('/', 'index')->name('/');
@@ -90,6 +91,27 @@ Route::prefix('admin')->group(function () {
         Route::post('/titles/{title}/courses', [CourseController::class, 'store'])->name('admin.courses.store');
         Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
         Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');
+
+
+    Route::get('/vehicles', [VehicleController::class, 'index'])
+         ->name('vehicles.index');
+    
+    Route::post('/vehicles', [VehicleController::class, 'store'])
+         ->name('admin.vehicles.store');
+    
+    Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])
+         ->name('admin.vehicles.update');
+    
+    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])
+         ->name('admin.vehicles.destroy');
+    
+    Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlerts'])
+         ->name('admin.vehicles.maintenance-alerts');
+
+Route::prefix('api')->group(function () {
+    Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
+         ->name('api.vehicles.maintenance-alerts');
+});
 });
 
 // Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
