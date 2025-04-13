@@ -13,7 +13,7 @@ class ReportingController extends Controller
 {
     public function index()
     {
-        return view('reporting.index');
+        return view('admin.reporting');
     }
 
     public function getReportData(Request $request)

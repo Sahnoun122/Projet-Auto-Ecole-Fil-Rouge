@@ -9,7 +9,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
@@ -259,12 +260,220 @@
             </div>
 
         </div>
-
+        <div class="flex-1 overflow-auto">
+            <div class="bg-[#4D44B5] text-white shadow-md">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold">Reporting des Examens</h1>
+                        <p class="text-white opacity-80 text-sm md:text-base">Statistiques et analyses des examens passés</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                        <button onclick="generatePdfReport()"
+                            class="bg-white text-[#4D44B5] px-3 py-1 md:px-4 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition text-center text-sm md:text-base">
+                            <i class="fas fa-file-pdf mr-2"></i>Exporter PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
         
-    </div>
-
-
+            @if (session('success'))
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm md:text-base">{{ session('success') }}</p>
+                            <button type="button" class="text-green-700"
+                                onclick="this.parentElement.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        
+            <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+                <div class="bg-white rounded-xl shadow p-4 md:p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Filtrer les données</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Période</label>
+                            <select id="periode" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm">
+                                <option value="7">7 derniers jours</option>
+                                <option value="30">30 derniers jours</option>
+                                <option value="90">3 derniers mois</option>
+                                <option value="365">12 derniers mois</option>
+                                <option value="custom">Personnalisée</option>
+                            </select>
+                        </div>
+                        <div id="customDateRange" class="hidden md:col-span-2">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
+                                    <input type="date" id="date_debut" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
+                                    <input type="date" id="date_fin" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:col-span-3 flex justify-end">
+                            <button onclick="loadReportData()"
+                                class="bg-[#4D44B5] text-white px-4 py-2 rounded-lg hover:bg-[#3a32a1] transition font-medium text-sm">
+                                <i class="fas fa-filter mr-2"></i>Filtrer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
+                    <div class="bg-white rounded-xl shadow p-4 md:p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Examens total</p>
+                                <h3 class="text-2xl font-bold text-[#4D44B5]" id="total_examens">0</h3>
+                            </div>
+                            <div class="bg-[#4D44B5] bg-opacity-10 p-3 rounded-full">
+                                <i class="fas fa-clipboard-list text-[#4D44B5] text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow p-4 md:p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Examens terminés</p>
+                                <h3 class="text-2xl font-bold text-[#4D44B5]" id="examens_termines">0</h3>
+                            </div>
+                            <div class="bg-[#4D44B5] bg-opacity-10 p-3 rounded-full">
+                                <i class="fas fa-check-circle text-[#4D44B5] text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow p-4 md:p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Taux de réussite</p>
+                                <h3 class="text-2xl font-bold text-[#4D44B5]" id="taux_reussite_global">0%</h3>
+                            </div>
+                            <div class="bg-[#4D44B5] bg-opacity-10 p-3 rounded-full">
+                                <i class="fas fa-chart-line text-[#4D44B5] text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow p-4 md:p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Candidats inscrits</p>
+                                <h3 class="text-2xl font-bold text-[#4D44B5]" id="candidats_inscrits">0</h3>
+                            </div>
+                            <div class="bg-[#4D44B5] bg-opacity-10 p-3 rounded-full">
+                                <i class="fas fa-users text-[#4D44B5] text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white rounded-xl shadow p-4 md:p-6">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Taux de réussite par type d'examen</h2>
+                        <div class="h-64" id="successRateChart"></div>
+                    </div>
+        
+                    <div class="bg-white rounded-xl shadow p-4 md:p-6">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Top moniteurs</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moniteur</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Examens</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Taux réussite</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="moniteursTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="bg-white rounded-xl shadow p-4 md:p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Détails des examens</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Taux réussite</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidats</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="examsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        
+            <div id="pdfExportModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-2 md:p-4">
+                <div class="bg-white w-full max-w-md rounded-lg overflow-hidden">
+                    <div class="bg-[#4D44B5] text-white px-4 py-3 md:px-6 md:py-4 flex justify-between items-center">
+                        <h2 class="text-lg md:text-xl font-bold">Exporter le rapport</h2>
+                        <button onclick="closeModal('pdfExportModal')" class="text-white hover:text-gray-200 text-lg">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <form id="pdfExportForm">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Période</label>
+                                    <select name="periode" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm">
+                                        <option value="7">7 derniers jours</option>
+                                        <option value="30">30 derniers jours</option>
+                                        <option value="90">3 derniers mois</option>
+                                        <option value="365">12 derniers mois</option>
+                                        <option value="custom">Personnalisée</option>
+                                    </select>
+                                </div>
+                                <div id="pdfCustomDateRange" class="hidden">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
+                                            <input type="date" name="date_debut" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
+                                            <input type="date" name="date_fin" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex justify-end space-x-3">
+                                <button type="button" onclick="closeModal('pdfExportModal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium text-sm">
+                                    Annuler
+                                </button>
+                                <button type="submit" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition font-medium text-sm">
+                                    <i class="fas fa-file-pdf mr-2"></i>Générer PDF
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        
+            <div id="successToast" class="hidden fixed top-4 right-4 z-50">
+                <div class="bg-green-500 text-white px-4 py-3 md:px-6 md:py-4 rounded-lg shadow-lg flex items-center text-sm md:text-base">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span id="successMessage"></span>
+                </div>
+            </div>
     <script>
+  
+
+
+
 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {

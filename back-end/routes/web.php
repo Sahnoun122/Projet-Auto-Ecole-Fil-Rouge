@@ -114,7 +114,7 @@ Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
          ->name('api.vehicles.maintenance-alerts');
 
-            Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting.index');
+            Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting');
             Route::get('/reporting/data', [ReportingController::class, 'getReportData'])->name('admin.reporting.data');
             Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
 });
