@@ -211,8 +211,89 @@
 
         </div>
     </div>
+    <div class="flex-1 overflow-auto">
 
-
+    <div class="bg-gray-50 min-h-screen py-8">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Barre de progression -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-700">
+                        Question <span class="font-bold">{{ $currentPosition }}</span> sur {{ $totalQuestions }}
+                    </span>
+                    <span class="text-sm font-medium text-gray-700">
+                        Temps restant: <span id="timer" class="font-bold">{{ $question->duration }}</span>s
+                    </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-[#4D44B5] h-2.5 rounded-full" 
+                         style="width: {{ ($currentPosition/$totalQuestions)*100 }}%"></div>
+                </div>
+            </div>
+    
+            <!-- Carte de question -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ $question->question_text }}</h2>
+                    
+                    @if($question->image_path)
+                    <div class="mb-6 rounded-lg overflow-hidden">
+                        <img src="{{ asset('storage/'.$question->image_path) }}" 
+                             class="w-full h-auto max-h-64 object-contain mx-auto"
+                             alt="Illustration de la question">
+                    </div>
+                    @endif
+    
+                    <form id="quizForm" action="{{ route('candidat.quizzes.questions.answer', ['quiz' => $quiz, 'question' => $question]) }}" method="POST">
+                        @csrf
+                        <div class="space-y-3">
+                            @foreach($choices as $choice)
+                            <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input id="choice-{{ $choice->id }}" name="choice_id" type="radio" value="{{ $choice->id }}" 
+                                       class="h-5 w-5 text-[#4D44B5] focus:ring-[#4D44B5] border-gray-300">
+                                <label for="choice-{{ $choice->id }}" class="ml-3 block text-gray-700 cursor-pointer">
+                                    {{ $choice->choice_text }}
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+    
+                        <div class="mt-6 flex justify-end">
+                            <button type="submit" id="submitBtn"
+                                    class="px-6 py-2 bg-[#4D44B5] hover:bg-[#3a32a1] text-white font-medium rounded-lg transition">
+                                {{ $currentPosition == $totalQuestions ? 'Terminer le quiz' : 'Question suivante' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const timer = document.getElementById('timer');
+        const form = document.getElementById('quizForm');
+        let timeLeft = {{ $question->duration }};
+        
+        // Timer countdown
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timer.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                form.submit(); // Soumettre automatiquement quand le temps est écoulé
+            }
+        }, 1000);
+        
+        // Empêcher le double clic
+        form.addEventListener('submit', function(e) {
+            document.getElementById('submitBtn').disabled = true;
+        });
+    });
+    </script>
+    @endsection
     <script>
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -19,20 +19,21 @@ class QuizController extends Controller
         $quizzes = Quiz::withCount('questions')->get();
         return view('admin.quizzes', compact('quizzes'));
     }
+
+
     public function indexForCandidat(Request $request)
     {
-        $typePermis = $request->input('type_permis');
-
+        
+        $user = Auth::user();
+        $typePermis = $user->type_permis;
+        
         $quizzes = Quiz::where('type_permis', $typePermis)
-                       ->withCount('questions') 
+                       ->withCount('questions')
                        ->get();
-
-        if ($request->ajax()) {
-            return view('candidats.quizzes', compact('quizzes'));
-        }
-
-        return view('candidats.quizzes', compact('quizzes'));
+        
+        return view('candidats.quizzes', compact('quizzes', 'typePermis'));
     }
+
 
     public function store(Request $request)
     {
@@ -117,7 +118,7 @@ class QuizController extends Controller
                    ->orderBy(DB::raw('RAND()'))
                    ->get();
    
-       return view('candidats.quizzes.show', compact('quiz', 'question', 'choices', 'totalQuestions', 'currentPosition'));
+       return view('candidats.questions', compact('quiz', 'question', 'choices', 'totalQuestions', 'currentPosition'));
    }
    
    public function submitAnswer(Request $request, Quiz $quiz, Question $question)
