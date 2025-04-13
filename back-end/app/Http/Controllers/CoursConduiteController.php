@@ -135,7 +135,7 @@ class CoursConduiteController extends Controller
 
         return response()->json(['message' => 'Cours supprimé avec succès!']);
     }
-
+//moniteur
     public function marquerPresence(Request $request, CoursConduite $cours)
     {
         Gate::authorize('manageAttendance', $cours);
