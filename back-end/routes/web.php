@@ -32,22 +32,22 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::prefix('candidats')->group(function () {
+
     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
 
-    Route::get('/mes-quizzes', [QuizController::class, 'indexForCandidat'])
-    ->name('candidat.quizzes.index');
+    Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes.index');
 
         Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])
-            ->name('candidat.quizzes.start');
+            ->name('candidats.quizzes.start');
 
         Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])
-            ->name('candidat.quizzes.questions.show');
+            ->name('candidats.quizzes.questions.show');
 
         Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
-            ->name('candidat.quizzes.questions.answer');
+            ->name('candidats.quizzes.questions.answer');
 
         Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])
-            ->name('candidat.quizzes.results');
+            ->name('candidats.quizzes.results');
         });
 
 Route::prefix('admin')->group(function () {

@@ -261,21 +261,20 @@
         const data = await response.json();
         console.log('Réponse de l\'API:', data);
 
-        // Check if the response is valid
-        if (!response.ok || !data.token || !data.role || !data.user) {
+        if (!response.ok || !data.token || !data.role || !data.user || !data.type_permis) {
             throw new Error(data.message || 'Erreur inconnue');
         }
 
-        // Store the user data, token, and role in localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role);
+        localStorage.setItem('type_permis', data.type_permis);
         localStorage.setItem('user', JSON.stringify(data.user));
 
         console.log('Token:', data.token); 
         console.log('Role:', data.role); 
+        console.log('User:', data.type_permis);
         console.log('User:', data.id);
-
-        // Redirect based on the role
+   
         switch (data.role) {
             case 'admin':
                 window.location.href = '/admin/dashboard';  

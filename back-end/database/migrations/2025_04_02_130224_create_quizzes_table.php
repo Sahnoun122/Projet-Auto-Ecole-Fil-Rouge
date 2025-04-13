@@ -16,7 +16,7 @@ public function up()
         $table->id();
         $table->unsignedBigInteger('admin_id');
         $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
-        $table->string('permis_type');
+        $table->string('type_permis');
         $table->string('title');
         $table->text('description')->nullable(); 
         $table->timestamps();

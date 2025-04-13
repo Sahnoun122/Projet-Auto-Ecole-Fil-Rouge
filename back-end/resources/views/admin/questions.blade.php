@@ -306,7 +306,7 @@
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Caisses</span>
                             </a>
                         </div>
-                        <div id="logout-button"
+                        <div id="logoutButton"
                             class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer"
                             id="logoutButton">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
@@ -885,31 +885,34 @@
             });
 
 
-            async function logout() {
-                try {
-                    const response = await fetch('/api/logout', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    });
+          
+async function logout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+            },
+        });
+ 
+        const data = await response.json();
 
-                    const data = await response.json();
+        if (response.ok) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            alert(data.message);
+            window.location.href = '/connecter'; 
+        } else {
+            alert('Échec de la déconnexion : ' + data.message); 
+        }
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+        alert('Une erreur est survenue. Veuillez réessayer.');
+    }
+}
 
-                    if (response.ok) {
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('role');
-                        alert(data.message);
-                        window.location.href = '/connecter';
-                    } else {
-                        alert('Échec de la déconnexion : ' + data.message);
-                    }
-                } catch (error) {
-                    console.error('Erreur lors de la déconnexion:', error);
-                    alert('Une erreur est survenue. Veuillez réessayer.');
-                }
-            }
+document.getElementById('logoutButton').addEventListener('click', logout);
         </script>
 </body>
 

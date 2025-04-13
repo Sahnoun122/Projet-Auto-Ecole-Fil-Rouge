@@ -336,7 +336,7 @@
                                     <div class="flex justify-between items-start">
                                         <div>
                                             <span class="inline-block px-2 py-1 bg-[#4D44B5] text-white text-xs rounded-full mb-2">
-                                                Permis {{ $quiz->permis_type }}
+                                                Permis {{ $quiz->type_permis }}
                                             </span>
                                             <h3 class="text-lg font-semibold text-[#4D44B5]">
                                                 <a href="{{ route('admin.questions.index', $quiz->id) }}">{{ $quiz->title }}</a>                                            </h3>
@@ -346,7 +346,7 @@
                                             <p class="text-sm text-gray-500 mt-2">{{ $quiz->questions_count }} questions</p>
                                         </div>
                                         <div class="flex space-x-2">
-                                            <button onclick="handleEditQuiz('{{ $quiz->id }}', '{{ $quiz->permis_type }}', '{{ $quiz->title }}', `{{ $quiz->description }}`)"
+                                            <button onclick="handleEditQuiz('{{ $quiz->id }}', '{{ $quiz->type_permis }}', '{{ $quiz->title }}', `{{ $quiz->description }}`)"
                                                 class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -366,7 +366,6 @@
                         </div>
                     </main>
             
-                    <!-- Modal -->
                     <div id="quizModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                         <div class="bg-white w-full max-w-md p-6 rounded-lg">
                             <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Quiz</h2>
@@ -377,7 +376,7 @@
             
                                 <div class="mb-4">
                                     <label for="quizPermisType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
-                                    <select id="quizPermisType" name="permis_type" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <select id="quizPermisType" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
                                         <option value="">Sélectionnez un type</option>
                                         <option value="A">Permis A (Moto)</option>
                                         <option value="B">Permis B (Voiture)</option>
@@ -528,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
   });
 
-  
+ 
 async function logout() {
     try {
         const response = await fetch('/api/logout', {
@@ -538,7 +537,7 @@ async function logout() {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`, 
             },
         });
-
+ 
         const data = await response.json();
 
         if (response.ok) {

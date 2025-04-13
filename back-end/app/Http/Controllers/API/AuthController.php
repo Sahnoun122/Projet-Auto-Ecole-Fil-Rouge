@@ -81,8 +81,6 @@ class AuthController extends Controller
 
         //     return response()->json(['message' => 'Unauthorized'], 401);
         // }
- 
-
         public function connecter(Request $request)
         {
             $request->validate([
@@ -98,9 +96,9 @@ class AuthController extends Controller
                 return response()->json([
                     'token' => $token,
                     'role' => $user->role,
+                    'type_permis' => $user->type_permis,
                     'user' => $user, 
                     'id' => $user->id
-
                 ]);
             }
          

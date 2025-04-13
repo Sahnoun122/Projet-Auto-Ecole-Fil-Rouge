@@ -211,8 +211,8 @@
 
         </div>
     </div>
-
-
+    <div class="flex-1 overflow-auto">
+       
     <script>
 
 document.addEventListener('DOMContentLoaded', function() {
