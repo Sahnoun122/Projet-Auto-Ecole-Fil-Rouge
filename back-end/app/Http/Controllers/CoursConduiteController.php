@@ -8,6 +8,8 @@ use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Notifications\NouveauCoursNotification;
+use Illuminate\Support\Facades\Notification;
 
 class CoursConduiteController extends Controller
 {
@@ -19,7 +21,7 @@ class CoursConduiteController extends Controller
             ->latest()
             ->paginate(10);
 
-        return response()->json($cours);
+        return view('cours.index', compact('cours'));
     }
 
     public function create()
@@ -27,16 +29,16 @@ class CoursConduiteController extends Controller
         Gate::authorize('create', CoursConduite::class);
 
         $moniteurs = User::whereHas('roles', function($query) {
-            $query->where('name', 'moniteur');
+            $query->where('nom', 'moniteur');
         })->get();
 
         $vehicules = Vehicle::where('statut', 'disponible')->get();
 
         $candidats = User::whereHas('roles', function($query) {
-            $query->where('name', 'candidat');
+            $query->where('nom', 'candidat');
         })->get();
 
-        return response()->json(compact('moniteurs', 'vehicules', 'candidats'));
+        return view('cours.create', compact('moniteurs', 'vehicules', 'candidats'));
     }
 
     public function store(Request $request)
@@ -47,7 +49,7 @@ class CoursConduiteController extends Controller
             'date_heure' => 'required|date',
             'duree_minutes' => 'required|integer|min:30|max:240',
             'moniteur_id' => 'required|exists:users,id',
-            'vehicule_id' => 'required|exists:vehicules,id',
+            'vehicule_id' => 'required|exists:vehicles,id',
             'candidat_ids' => 'required|array|min:1',
             'candidat_ids.*' => 'exists:users,id'
         ]);
@@ -66,7 +68,22 @@ class CoursConduiteController extends Controller
         Vehicle::where('id', $validated['vehicule_id'])
             ->update(['statut' => 'reserve']);
 
-        return response()->json($cours, 201);
+        // Envoyer les notifications
+        $this->envoyerNotifications($cours);
+
+        return redirect()->route('cours.index')
+            ->with('success', 'Cours créé avec succès et notifications envoyées.');
+    }
+
+    protected function envoyerNotifications($cours)
+    {
+        // Notification au moniteur
+        $moniteur = User::find($cours->moniteur_id);
+        $moniteur->notify(new NouveauCoursNotification($cours));
+
+        // Notifications aux candidats
+        $candidats = $cours->candidats;
+        Notification::send($candidats, new NouveauCoursNotification($cours));
     }
 
     public function show(CoursConduite $cours)
@@ -75,7 +92,28 @@ class CoursConduiteController extends Controller
 
         $cours->load(['moniteur', 'vehicule', 'candidats', 'admin']);
 
-        return response()->json($cours);
+        return view('cours.show', compact('cours'));
+    }
+
+    public function edit(CoursConduite $cours)
+    {
+        Gate::authorize('update', $cours);
+
+        $moniteurs = User::whereHas('roles', function($query) {
+            $query->where('name', 'moniteur');
+        })->get();
+
+        $vehicules = Vehicle::where('statut', 'disponible')
+            ->orWhere('id', $cours->vehicule_id)
+            ->get();
+
+        $candidats = User::whereHas('roles', function($query) {
+            $query->where('name', 'candidat');
+        })->get();
+
+        $selectedCandidats = $cours->candidats->pluck('id')->toArray();
+
+        return view('cours.edit', compact('cours', 'moniteurs', 'vehicules', 'candidats', 'selectedCandidats'));
     }
 
     public function update(Request $request, CoursConduite $cours)
@@ -86,7 +124,7 @@ class CoursConduiteController extends Controller
             'date_heure' => 'required|date',
             'duree_minutes' => 'required|integer|min:30|max:240',
             'moniteur_id' => 'required|exists:users,id',
-            'vehicule_id' => 'required|exists:vehicules,id',
+            'vehicule_id' => 'required|exists:vehicles,id',
             'statut' => 'required|in:planifie,termine,annule',
             'candidat_ids' => 'required|array|min:1',
             'candidat_ids.*' => 'exists:users,id'
@@ -117,7 +155,8 @@ class CoursConduiteController extends Controller
                 ->update(['statut' => 'disponible']);
         }
 
-        return response()->json($cours);
+        return redirect()->route('cours.index')
+            ->with('success', 'Cours mis à jour avec succès.');
     }
 
     public function destroy(CoursConduite $cours)
@@ -130,12 +169,12 @@ class CoursConduiteController extends Controller
         }
 
         $cours->candidats()->detach();
-
         $cours->delete();
 
-        return response()->json(['message' => 'Cours supprimé avec succès!']);
+        return redirect()->route('cours.index')
+            ->with('success', 'Cours supprimé avec succès.');
     }
-//moniteur
+
     public function marquerPresence(Request $request, CoursConduite $cours)
     {
         Gate::authorize('manageAttendance', $cours);
@@ -151,10 +190,16 @@ class CoursConduiteController extends Controller
             'notes' => $request->notes
         ]);
 
-        return response()->json(['message' => 'Présence enregistrée!']);
+        return back()->with('success', 'Présence enregistrée avec succès.');
     }
 
-    public function apiIndex(Request $request)
+    public function calendrier()
+    {
+        Gate::authorize('viewAny', CoursConduite::class);
+        return view('cours.calendrier');
+    }
+
+    public function apiCalendrier(Request $request)
     {
         Gate::authorize('viewAny', CoursConduite::class);
 
@@ -197,24 +242,22 @@ class CoursConduiteController extends Controller
         return $colors[$statut] ?? '#6c757d';
     }
 
-     // Candidats
+    // Espace candidat
+    public function mesCours()
+    {
+        $user = Auth::user();
+        
+        $cours = CoursConduite::with(['moniteur', 'vehicule'])
+            ->whereHas('candidats', function($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->orderBy('date_heure', 'desc')
+            ->paginate(10);
 
-     public function listeCours(Request $request)
-     {
-         $user = Auth::user();
-         
-         $cours = CoursConduite::with(['moniteur', 'vehicule'])
-             ->whereHas('candidats', function($q) use ($user) {
-                 $q->where('users.id', $user->id);
-             })
-             ->orderBy('date_heure', 'desc')
-             ->paginate(10);
- 
-         return response()->json($cours);
-     }
- 
+        return view('candidat.cours.index', compact('cours'));
+    }
 
-    public function DetailsCours($id)
+    public function detailsCours($id)
     {
         $user = Auth::user();
         $cours = CoursConduite::with(['moniteur', 'vehicule'])
@@ -223,9 +266,8 @@ class CoursConduiteController extends Controller
             })
             ->findOrFail($id);
 
-        return response()->json([
-            'cours' => $cours,
-            'presence' => $cours->candidats()->where('users.id', $user->id)->first()->pivot
-        ]);
+        $presence = $cours->candidats()->where('users.id', $user->id)->first()->pivot;
+
+        return view('candidat.cours.show', compact('cours', 'presence'));
     }
 }
