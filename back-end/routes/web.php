@@ -16,7 +16,9 @@ use App\Http\Controllers\QuizPlayController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\TitleController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\VehicleController;
+
 
 Route::controller(PagesController::class)->group(function () {
     Route::get('/', 'index')->name('/');
@@ -111,6 +113,10 @@ Route::prefix('admin')->group(function () {
 Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
          ->name('api.vehicles.maintenance-alerts');
+
+            Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting.index');
+            Route::get('/reporting/data', [ReportingController::class, 'getReportData'])->name('admin.reporting.data');
+            Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
 });
 });
 
