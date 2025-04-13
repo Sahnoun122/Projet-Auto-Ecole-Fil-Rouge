@@ -12,7 +12,7 @@ class VehicleController extends Controller
 {
     public function index()
     {
-        Gate::authorize('viewAny', Vehicle::class);
+        // Gate::authorize('viewAny', Vehicle::class);
         
         $vehicles = Vehicle::with('admin')
             ->when(Auth::user()->role !== 'admin', function($query) {
@@ -23,9 +23,10 @@ class VehicleController extends Controller
         return view('admin.vehicles.index', compact('vehicles'));
     }
 
+    
     public function store(Request $request)
     {
-        Gate::authorize('create', Vehicle::class);
+        // Gate::authorize('create', Vehicle::class);
         
         $request->validate([
             'marque' => 'required|string|max:50',
@@ -57,7 +58,7 @@ class VehicleController extends Controller
 
     public function update(Request $request, Vehicle $vehicle)
     {
-        Gate::authorize('update', $vehicle);
+        // Gate::authorize('update', $vehicle);
         
         $request->validate([
             'marque' => 'required|string|max:50',
@@ -88,7 +89,7 @@ class VehicleController extends Controller
 
     public function destroy(Vehicle $vehicle)
     {
-        Gate::authorize('delete', $vehicle);
+        // Gate::authorize('delete', $vehicle);
 
         $vehicle->delete();
         return response()->json([
@@ -99,7 +100,7 @@ class VehicleController extends Controller
 
     public function maintenanceAlerts()
     {
-        Gate::authorize('manageMaintenance', Vehicle::class);
+        // Gate::authorize('manageMaintenance', Vehicle::class);
         
         $alerts = Vehicle::where('prochaine_maintenance', '<=', now()->addDays(7))
             ->orderBy('prochaine_maintenance')
