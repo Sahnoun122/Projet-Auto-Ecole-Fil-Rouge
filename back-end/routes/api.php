@@ -26,6 +26,9 @@ Route::post('connecter', [AuthController::class, 'connecter']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::post('refresh', [AuthController::class, 'refresh']);
 
+
+
+
 // Route::middleware('jwt')->group(function () {
     
 //     Route::post('logout', [AuthController::class, 'logout']);

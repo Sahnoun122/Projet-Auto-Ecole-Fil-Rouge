@@ -44,7 +44,7 @@ class QuizController extends Controller
         ]);
 
         Quiz::create([
-            'admin_id' => 1,
+            'admin_id' => Auth::id(),
             'type_permis' => $validated['type_permis'],
             'title' => $validated['title'],
             'description' => $validated['description'],

@@ -55,72 +55,72 @@ Route::prefix('candidats')->group(function () {
             ->name('candidats.quizzes.results');
         });
 
-Route::prefix('admin')->group(function () {
+// Route::prefix('admin')->group(function () {
 
-        Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
-        Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
-        Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
-        Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
+//         Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
+//         Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
+//         Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
+//         Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
    
-            Route::get('/{quiz}/questions', [QuestionController::class, 'index'])
-                 ->name('admin.questions.index');
+//             Route::get('/{quiz}/questions', [QuestionController::class, 'index'])
+//                  ->name('admin.questions.index');
 
-                        Route::post('/{quiz}/questions', [QuestionController::class, 'store'])
-                 ->name('admin.questions.store');
+//                         Route::post('/{quiz}/questions', [QuestionController::class, 'store'])
+//                  ->name('admin.questions.store');
 
-                        Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])
-                 ->name('admin.questions.edit');
+//                         Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])
+//                  ->name('admin.questions.edit');
                  
-                        Route::put('/questions/{question}', [QuestionController::class, 'update'])
-                 ->name('admin.questions.update');
+//                         Route::put('/questions/{question}', [QuestionController::class, 'update'])
+//                  ->name('admin.questions.update');
             
-            Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])
-                 ->name('admin.questions.destroy');
+//             Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])
+//                  ->name('admin.questions.destroy');
             
-            Route::get('/questions/{question}/details', [QuestionController::class, 'showDetails'])
-                 ->name('admin.questions.details');
+//             Route::get('/questions/{question}/details', [QuestionController::class, 'showDetails'])
+//                  ->name('admin.questions.details');
         
-    Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
-    Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
-    Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
+//     Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
+//     Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
+//     Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
 
-        Route::get('/titles', [TitleController::class, 'index'])->name('admin.titles.index');
-        Route::post('/titles', [TitleController::class, 'store'])->name('admin.titles.store');
-        Route::put('/titles/{title}', [TitleController::class, 'update'])->name('admin.titles.update');
-        Route::delete('/titles/{title}', [TitleController::class, 'destroy'])->name('admin.titles.destroy');
+//         Route::get('/titles', [TitleController::class, 'index'])->name('admin.titles.index');
+//         Route::post('/titles', [TitleController::class, 'store'])->name('admin.titles.store');
+//         Route::put('/titles/{title}', [TitleController::class, 'update'])->name('admin.titles.update');
+//         Route::delete('/titles/{title}', [TitleController::class, 'destroy'])->name('admin.titles.destroy');
 
-        Route::get('/titles/{title}/courses', [CourseController::class, 'index'])->name('admin.courses');
-        Route::post('/titles/{title}/courses', [CourseController::class, 'store'])->name('admin.courses.store');
-        Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
-        Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');
+//         Route::get('/titles/{title}/courses', [CourseController::class, 'index'])->name('admin.courses');
+//         Route::post('/titles/{title}/courses', [CourseController::class, 'store'])->name('admin.courses.store');
+//         Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
+//         Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');
 
 
-    Route::get('/vehicles', [VehicleController::class, 'index'])
-         ->name('vehicles.index');
+//     Route::get('/vehicles', [VehicleController::class, 'index'])
+//          ->name('vehicles.index');
     
-    Route::post('/vehicles', [VehicleController::class, 'store'])
-         ->name('admin.vehicles.store');
+//     Route::post('/vehicles', [VehicleController::class, 'store'])
+//          ->name('admin.vehicles.store');
     
-    Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])
-         ->name('admin.vehicles.update');
+//     Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])
+//          ->name('admin.vehicles.update');
     
-    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])
-         ->name('admin.vehicles.destroy');
+//     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])
+//          ->name('admin.vehicles.destroy');
     
-    Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlerts'])
-         ->name('admin.vehicles.maintenance-alerts');
+//     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlerts'])
+//          ->name('admin.vehicles.maintenance-alerts');
 
-Route::prefix('api')->group(function () {
-    Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
-         ->name('api.vehicles.maintenance-alerts');
+// Route::prefix('api')->group(function () {
+//     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
+//          ->name('api.vehicles.maintenance-alerts');
 
-            Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting');
-            Route::get('/reporting/data', [ReportingController::class, 'getReportData'])->name('admin.reporting.data');
-            Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
+//             Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting');
+//             Route::get('/reporting/data', [ReportingController::class, 'getReportData'])->name('admin.reporting.data');
+//             Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
 
             
-});
-});
+// });
+// });
 
 // Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
 // Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
@@ -129,36 +129,37 @@ Route::prefix('api')->group(function () {
 
 
 
-// Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     
-//     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
-//     Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
-//     Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
-//     Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+    Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
+    Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+    Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
 
-//     Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
-//     Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
-//     Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
-//     Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
+    Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
+    Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
+    Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
+    Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
 
-//     Route::get('/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
-//     Route::post('/{quiz}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
-//     Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])->name('admin.questions.edit');
-//     Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
-//     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
-//     Route::get('/questions/{question}/details', [QuestionController::class, 'showDetails'])->name('admin.questions.details');
+    Route::get('/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
+    Route::post('/{quiz}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
+    Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])->name('admin.questions.edit');
+    Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
+    Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
+    Route::get('/questions/{question}/details', [QuestionController::class, 'showDetails'])->name('admin.questions.details');
 
-//     Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
-//     Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
-//     Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
-// });
+    Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
+    Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
+    Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
+    
+});
 
 
-// Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(function () {
-//     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-//     Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
-//     Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])->name('candidats.quizzes.start');
-//     Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.quizzes.questions.show');
-//     Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.quizzes.questions.answer');
-//     Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.quizzes.results');
-// });
+Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(function () {
+    Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
+    Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
+    Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])->name('candidats.quizzes.start');
+    Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.quizzes.questions.show');
+    Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.quizzes.questions.answer');
+    Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.quizzes.results');
+});
