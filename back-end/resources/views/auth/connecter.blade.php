@@ -252,7 +252,8 @@
         const response = await fetch('/api/connecter', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(requestBody),
             credentials: 'include'
@@ -269,11 +270,12 @@
         localStorage.setItem('role', data.role);
         localStorage.setItem('type_permis', data.type_permis);
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('id_user', JSON.stringify(data.user.id));
 
         console.log('Token:', data.token); 
         console.log('Role:', data.role); 
         console.log('User:', data.type_permis);
-        console.log('User:', data.id);
+        console.log('User_id:', data.user.id);
    
         switch (data.role) {
             case 'admin':

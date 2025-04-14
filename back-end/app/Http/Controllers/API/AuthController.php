@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
+    public function showCandidatRegisterForm()
+    {
+        return view('auth.register-candidat');
+    }
+
     public function register(Request $request)
     {
         $rules = [
@@ -20,29 +24,31 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'adresse' => 'required|string|max:255',
             'telephone' => 'required|string|max:20',
-            'photo_profile' => 'required|image|mimes:jpeg,png,jpg',
-            'photo_identite' => 'required|image|mimes:jpeg,png,jpg',
+            'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'type_permis' => 'required|string|max:255',
-            'role' => 'required|in:admin,moniteur,candidat',
             'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
-            'certifications' => 'nullable|string', 
-            'qualifications' => 'nullable|string',
+            'role' => 'required|in:admin,moniteur,candidat',
         ];
-    
-        if ($request->role == 'moniteur') {
+
+        if ($request->role === 'moniteur') {
             $rules['certifications'] = 'required|string|max:255';
             $rules['qualifications'] = 'required|string|max:255';
         }
-    
+
         $validator = Validator::make($request->all(), $rules);
-        
+
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-    
+
+
+
         $profilePhotoPath = $request->file('photo_profile')->store('profile', 'public');
         $identityPhotoPath = $request->file('photo_identite')->store('identite', 'public');
-        
+
         $userData = [
             'nom' => $request->nom,
             'prenom' => $request->prenom,
@@ -53,204 +59,67 @@ class AuthController extends Controller
             'photo_identite' => $identityPhotoPath,
             'type_permis' => $request->type_permis,
             'role' => $request->role,
-            'password' => bcrypt($request->password),
+            'password' => Hash::make($request->password),
         ];
-    
-        if ($request->role == 'moniteur') {
-            $userData['certifications'] = $request->certifications;
-            $userData['qualifications'] = $request->qualifications;
+
+        if ($request->role === 'moniteur') {
+            $certificationsPath = $request->file('certifications')->store('certifications', 'public');
+            $qualificationsPath = $request->file('qualifications')->store('qualifications', 'public');
+            
+            $userData['certifications'] = $certificationsPath;
+            $userData['qualifications'] = $qualificationsPath;
         }
-    
+
         $user = User::create($userData);
-        
-        return response()->json(['user' => $user], 201);
-    }
-    
-        // public function connecter(Request $request)
-        // {
-        //     $request->validate([
-        //         'email' => 'required|string|email',
-        //         'password' => 'required|string',
-        //     ]);
-    
-        //     $credentials = $request->only('email', 'password');
-            
-        //     if ($token = JWTAuth::attempt($credentials)) {
-        //         return response()->json(['token' => $token,]);
-        //     }
 
-        //     return response()->json(['message' => 'Unauthorized'], 401);
-        // }
-        public function connecter(Request $request)
-        {
-            $request->validate([
-                'email' => 'required|string|email',
-                'password' => 'required|string',
-            ]);
-        
-            $credentials = $request->only('email', 'password');
-            
-            if ($token = JWTAuth::attempt($credentials)) {
-                $user = JWTAuth::user();
-        
-                return response()->json([
-                    'token' => $token,
-                    'role' => $user->role,
-                    'type_permis' => $user->type_permis,
-                    'user' => $user, 
-                    'id' => $user->id
-                ]);
-            }
-         
-            return response()->json(['message' => 'Unauthorized'], 401);
+        Auth::login($user);
+
+        switch ($user->role) {
+            case 'admin':
+                return redirect('/admin/dashboard')->with('success', 'Inscription réussie!');
+            case 'moniteur':
+                return redirect('/moniteur/dashboard')->with('success', 'Inscription réussie!');
+            default:
+                return redirect('/candidat/dashboard')->with('success', 'Inscription réussie!');
         }
-        
+    }
 
-
-
-    public function resetPassword(Request $request)
+    public function showLoginForm()
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
+        return view('auth.login');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
-    
-        $user = User::where('email', $request->email)->first();
-    
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            switch (Auth::user()->role) {
+                case 'admin':
+                    return redirect()->intended('/admin/dashboard');
+                case 'moniteur':
+                    return redirect()->intended('/moniteur/dashboard');
+                default:
+                    return redirect()->intended('/candidat/dashboard');
+            }
         }
-    
-        $user->password = bcrypt($request->password);
-        $user->save();
-    
-        return response()->json(['message' => 'Password reset successfully']);
-    }
-    
-    public function refresh(Request $request)
-    {
-        try {
-            $token = JWTAuth::refresh(JWTAuth::getToken());
-            return response()->json(['token' => $token]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Token refresh failed'], 401);
-        }
+
+        return back()->withErrors([
+            'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)
     {
-        try {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return response()->json(['message' => 'Successfully logged out']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to logout, please try again.'], 500);
-        }
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
-    public function getCandidats()
-    {
-        return User::where('role', 'candidat')
-                  ->orderBy('created_at', 'desc')
-                  ->get([ 'nom', 'prenom', 'email', 'telephone', 'photo_profile', 'created_at']);
-    }
-
-    public function getMoniteurs()
-    {
-        return User::where('role', 'moniteur')
-                  ->orderBy('created_at', 'desc')
-                  ->get([ 'nom', 'prenom', 'email', 'certifications', 'photo_profile', 'created_at']);
-    }
-
-    
-    public function updateUser(Request $request, $id)
-    {
-        $user = User::find($id);
-        
-        if (!$user) {
-            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
-        }
-    
-        $validator = Validator::make($request->all(), [
-            'nom' => 'nullable|string|max:255', 
-            'prenom' => 'nullable|string|max:255',
-            'email' => 'nullable|string|email|max:255|unique:users,email,' . $id,
-            'adresse' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:20',
-            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg',
-            'photo_identite' => 'nullable|image|mimes:jpeg,png,jpg',
-            'type_permis' => 'nullable|string|max:255',
-            'role' => 'nullable|in:admin,moniteur,candidat',
-            'password' => 'nullable|string|min:8',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
-    
-        $user->nom = $request->nom;  
-        $user->prenom = $request->prenom;
-        $user->email = $request->email;
-        $user->adresse = $request->adresse;
-        $user->telephone = $request->telephone;
-        $user->role = $request->role;
-    
-        if ($request->password) {
-            $user->password = bcrypt($request->password);
-        }
-    
-        if ($request->hasFile('photo_profile')) {
-            $user->photo_profile = $request->file('photo_profile')->store('profile', 'public');
-        }
-    
-        if ($request->hasFile('photo_identite')) {
-            $user->photo_identite = $request->file('photo_identite')->store('identite', 'public');
-        }
-    
-        $user->save();
-    
-        return response()->json(['message' => 'Utilisateur mis à jour avec succès']);
-    }
-    
-
-
-    public function deleteUser($id)
-{
-    $user = User::find($id);
-    
-    if (!$user) {
-        return response()->json(['message' => 'Utilisateur non trouvé'], 404);
-    }
-
-    Storage::disk('public')->delete($user->photo_profile);
-    Storage::disk('public')->delete($user->photo_identite);
-
-    $user->delete();
-
-    return response()->json(['message' => 'Utilisateur supprimé avec succès']);
 }
-
-
-public function searchUsers(Request $request)
-{
-    $request->validate([
-        'role' => 'required|in:candidat,moniteur',
-        'search' => 'nullable|string|max:255',
-        'per_page' => 'nullable|integer|min:1|max:100'
-    ]);
-
-    $perPage = $request->per_page ?? 15;
-
-    return User::query()
-        ->where('role', $request->role)
-        ->when($request->search, function ($query) use ($request) {
-            $searchTerm = "%{$request->search}%";
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nom', 'like', $searchTerm)
-                  ->orWhere('prenom', 'like', $searchTerm)
-                  ->orWhere('email', 'like', $searchTerm);
-              
-            });
-        })
-        ->paginate($perPage);
-}
-}
-
