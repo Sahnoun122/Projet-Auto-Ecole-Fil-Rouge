@@ -13,7 +13,7 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\QuizPlayController;
-use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TitleController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ReportingController;
@@ -26,8 +26,11 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('/propos', 'propos')->name('propos');
 });
 
-Route::get('/register', [AuthViews::class, 'VuRegister'])->name('register');
-Route::get('connecter', [AuthViews::class, 'VuConnecter'])->name('login');
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::prefix('admin')->middleware(['role:admin'])->group(function () {
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');

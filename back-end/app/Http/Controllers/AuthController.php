@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
-    public function showCandidatRegisterForm()
+    public function showRegisterForm()
     {
-        return view('auth.register-candidat');
+        return view('auth.register');
     }
 
     public function register(Request $request)

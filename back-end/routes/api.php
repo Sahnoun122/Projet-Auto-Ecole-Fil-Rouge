@@ -21,10 +21,10 @@ use App\Http\Controllers\CoursConduiteController;
 use App\Http\Controllers\CandidatsController;
 use App\Http\Controllers\MoniteurController;
 
-Route::post('register', [AuthController::class, 'register']);
-Route::post('connecter', [AuthController::class, 'connecter']);
-Route::post('reset-password', [AuthController::class, 'resetPassword']);
-Route::post('refresh', [AuthController::class, 'refresh']);
+// Route::post('register', [AuthController::class, 'register']);
+// Route::post('connecter', [AuthController::class, 'connecter']);
+// Route::post('reset-password', [AuthController::class, 'resetPassword']);
+// Route::post('refresh', [AuthController::class, 'refresh']);
 
 
 
@@ -59,11 +59,7 @@ Route::post('refresh', [AuthController::class, 'refresh']);
 //             Route::get('/quizzes/{quizId}/quiz-results', [AnswerController::class, 'getQuizResults']);
    
 //     });
-    
-    Route::middleware(['jwt'])->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::post('refresh', [AuthController::class, 'refresh']);
-        Route::get('me', [AuthController::class, 'me']);
+
     
         // Routes admin
         // Route::middleware(['role:admin'])->group(function () {
@@ -85,7 +81,6 @@ Route::post('refresh', [AuthController::class, 'refresh']);
             // Route::post('quizzes/{quiz}/answers', [AnswerController::class, 'store']);
             // Route::get('quizzes/{quiz}/results', [AnswerController::class, 'getResults']);
             // Route::get('quizzes/{quiz}/quiz-results', [AnswerController::class, 'getQuizResults']);
-        });
     
         // Routes candidat
         // Route::middleware(['role:candidat'])->prefix('candidat')->group(function () {
