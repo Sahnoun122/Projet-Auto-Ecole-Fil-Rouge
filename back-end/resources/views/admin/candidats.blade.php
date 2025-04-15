@@ -272,6 +272,91 @@
                     </a>
                 </div>
             </header>
+            
+            <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                @if(session('success'))
+                <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                    <p>{{ session('success') }}</p>
+                </div>
+                @endif
+        
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Liste des Candidats</h2>
+                        <div class="relative w-full md:w-64">
+                            <input type="text" id="searchInput" placeholder="Rechercher par nom/prénom..." 
+                                   class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+        
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom & Prénom</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="candidatesTableBody">
+                                @forelse ($candidats as $candidat)
+                                <tr class="hover:bg-gray-50 candidate-row" data-name="{{ strtolower($candidat->nom.' '.$candidat->prenom) }}">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('storage/'.$candidat->photo_profile) }}" alt="Photo profil">
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-500">{{ $candidat->email }}</div>
+                                        <div class="text-sm text-gray-500">{{ $candidat->telephone }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#4D44B5] text-white">
+                                            {{ $candidat->type_permis }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Actif
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <button onclick="handleEditCandidate('{{ $candidat->id }}')" class="text-[#4D44B5] hover:text-[#3a32a1] p-1">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button onclick="handleDeleteCandidate('{{ $candidat->id }}')" class="text-red-500 hover:text-red-700 p-1">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            <button onclick="handleBanCandidate('{{ $candidat->id }}')" class="text-yellow-500 hover:text-yellow-700 p-1">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                            <a href="{{ route('admin.candidats.show', $candidat->id) }}" class="text-gray-600 hover:text-gray-900 p-1">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        Aucun candidat disponible
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        
             <div id="candidateModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                 <div class="bg-white w-full max-w-4xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
                     <h2 id="modalTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Ajouter un Candidat</h2>
