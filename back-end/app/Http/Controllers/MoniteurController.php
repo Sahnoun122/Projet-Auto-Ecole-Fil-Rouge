@@ -16,13 +16,16 @@ class MoniteurController  extends Controller
     
     public function index()
     {
-        $moniteurs = User::where('role', 'moniteur')->get();
-        return view('admin.moniteurs.index', compact('moniteurs'));
+        // $moniteurs = User::where('role', 'moniteur')->get();
+    
+        // return view('admin.moniteurs.index', compact('moniteurs'));
+                return view('admin.moniteurs');
+
     }
 
     public function create()
     {
-        return view('admin.moniteurs.create');
+        return view('admin.moniteurs');
     }
 
     public function store(Request $request)
@@ -50,13 +53,13 @@ class MoniteurController  extends Controller
 
         User::create($validated);
 
-        return redirect()->route('moniteurs.index')->with('success', 'Moniteur ajouté avec succès');
+        return redirect()->route('admin.moniteurs')->with('success', 'Moniteur ajouté avec succès');
     }
 
     public function edit($id)
     {
         $moniteur = User::findOrFail($id);
-        return view('admin.moniteurs.edit', compact('moniteur'));
+        return view('admin.moniteurs', compact('moniteur'));
     }
 
     public function update(Request $request, $id)
@@ -104,7 +107,7 @@ class MoniteurController  extends Controller
 
         $moniteur->update($data);
 
-        return redirect()->route('moniteurs.index')->with('success', 'Moniteur mis à jour avec succès');
+        return redirect()->route('admin.moniteurs')->with('success', 'Moniteur mis à jour avec succès');
     }
 
     public function destroy($id)
@@ -112,6 +115,6 @@ class MoniteurController  extends Controller
         $moniteur = User::findOrFail($id);
         $moniteur->delete();
 
-        return redirect()->route('moniteurs.index')->with('success', 'Moniteur supprimé avec succès');
+        return redirect()->route('admin.moniteurs')->with('success', 'Moniteur supprimé avec succès');
     }
 }

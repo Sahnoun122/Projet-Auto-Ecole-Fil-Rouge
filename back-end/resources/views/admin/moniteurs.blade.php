@@ -261,7 +261,156 @@
             </div>
           
         </div>
-                <script>  
+
+
+<div class="flex-1 overflow-auto">
+  <div id="monitorModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white w-full max-w-4xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
+        <h2 id="modalTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Ajouter un Moniteur</h2>
+        <form id="monitorForm" method="POST"  action="{{ route('admin.moniteurs') }}" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            <input type="hidden" name="role" value="moniteur">
+
+            {{-- <input type="hidden" id="monitorId" name="id">
+            <input type="hidden" id="_method" name="_method" value="POST"> --}}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <!-- Colonne 1 -->
+                <div class="space-y-4">
+                    <div>
+                        <label for="monitorNom" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                        <input type="text" id="monitorNom" name="nom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+
+                    <div>
+                        <label for="monitorPrenom" class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                        <input type="text" id="monitorPrenom" name="prenom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+
+                    <div>
+                        <label for="monitorEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                        <input type="email" id="monitorEmail" name="email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+
+                    <div>
+                        <label for="monitorAdresse" class="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
+                        <input type="text" id="monitorAdresse" name="adresse" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+                </div>
+
+                <!-- Colonne 2 -->
+                <div class="space-y-4">
+                    <div>
+                        <label for="monitorTelephone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                        <input type="text" id="monitorTelephone" name="telephone" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+
+                    <div>
+                        <label for="monitorPermis" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
+                        <select id="monitorPermis" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            <option value="">Sélectionnez un type</option>
+                            <option value="A">Permis A</option>
+                            <option value="B">Permis B</option>
+                            <option value="C">Permis C</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="monitorPassword" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+                        <input type="password" id="monitorPassword" name="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                        <p class="text-xs text-gray-500 mt-1">Minimum 8 caractères avec majuscule, minuscule et chiffre</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fichiers uploads avec prévisualisation -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="monitorCertifications" class="block text-sm font-medium text-gray-700 mb-1">Certifications *</label>
+                    <input type="file" id="monitorCertifications" name="certifications" class="hidden" accept=".pdf,.doc,.docx">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="document.getElementById('monitorCertifications').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                            <i class="fas fa-upload mr-1"></i> Choisir fichier
+                        </button>
+                        <span id="certificationsFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucun fichier sélectionné</span>
+                    </div>
+                    <div id="certificationsPreview" class="mt-2 hidden">
+                        <embed id="certificationsPreviewContent" class="w-full h-40 border rounded-lg" type="application/pdf">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="monitorQualifications" class="block text-sm font-medium text-gray-700 mb-1">Qualifications *</label>
+                    <input type="file" id="monitorQualifications" name="qualifications" class="hidden" accept=".pdf,.doc,.docx">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="document.getElementById('monitorQualifications').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                            <i class="fas fa-upload mr-1"></i> Choisir fichier
+                        </button>
+                        <span id="qualificationsFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucun fichier sélectionné</span>
+                    </div>
+                    <div id="qualificationsPreview" class="mt-2 hidden">
+                        <embed id="qualificationsPreviewContent" class="w-full h-40 border rounded-lg" type="application/pdf">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="monitorProfilePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo de profil *</label>
+                    <input type="file" id="monitorProfilePhoto" name="photo_profile" class="hidden" accept="image/*">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="document.getElementById('monitorProfilePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                            <i class="fas fa-upload mr-1"></i> Choisir image
+                        </button>
+                        <span id="profilePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
+                    </div>
+                    <div id="previewProfileContainer" class="mt-2 hidden">
+                        <img id="profileImagePreview" class="h-32 w-32 rounded-full object-cover border-2 border-gray-200">
+                        <button type="button" onclick="removeImage('monitorProfilePhoto', 'previewProfileContainer', 'profilePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
+                            <i class="fas fa-trash mr-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="monitorIdentitePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo d'identité *</label>
+                    <input type="file" id="monitorIdentitePhoto" name="photo_identite" class="hidden" accept="image/*">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="document.getElementById('monitorIdentitePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                            <i class="fas fa-upload mr-1"></i> Choisir image
+                        </button>
+                        <span id="identitePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
+                    </div>
+                    <div id="previewIdentiteContainer" class="mt-2 hidden">
+                        <img id="identiteImagePreview" class="h-32 w-48 object-cover border-2 border-gray-200">
+                        <button type="button" onclick="removeImage('monitorIdentitePhoto', 'previewIdentiteContainer', 'identitePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
+                            <i class="fas fa-trash mr-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-4 border-t">
+                <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                    Annuler
+                </button>
+                <button type="submit" id="submitBtn" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center">
+                    <i class="fas fa-save mr-2"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+   
+</div> 
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script> 
+    
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       const progressBars = document.querySelectorAll('.progress-bar');
