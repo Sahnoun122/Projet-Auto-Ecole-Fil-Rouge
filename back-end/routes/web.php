@@ -62,11 +62,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
 
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/register', [AuthController::class, 'register']);
     Route::get('/moniteurs', [AuthController::class, 'showMoniteur'])->name('admin.moniteurs');
+
     Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
     Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
 
-
+    
         Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
         Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
         Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');

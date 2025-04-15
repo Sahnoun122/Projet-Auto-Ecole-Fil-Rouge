@@ -47,9 +47,10 @@ class AuthController extends Controller
         ];
 
         if ($request->role === 'moniteur') {
-            $rules['certifications'] = 'required|string|max:255';
-            $rules['qualifications'] = 'required|string|max:255';
+            $rules['certifications'] = 'required|file|mimes:pdf,doc,docx|max:2048';
+            $rules['qualifications'] = 'required|file|mimes:pdf,doc,docx|max:2048';
         }
+        
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -196,11 +197,8 @@ class AuthController extends Controller
 
     public function showMoniteur()
     {
-        // $moniteurs = User::where('role', 'moniteur')->get();
-        // return view('admin.moniteurs', compact('moniteurs'));
-
-                return view('admin.moniteurs');
-
+        $moniteurs = User::where('role', 'moniteur')->get();
+        return view('admin.moniteurs', compact('moniteurs'));
     }
 
     public function addMoniteur(Request $request)

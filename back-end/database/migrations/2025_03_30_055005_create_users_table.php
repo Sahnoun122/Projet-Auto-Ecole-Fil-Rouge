@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->string('photo_identite');
                 $table->string('type_permis');
                 $table->string('certifications')->nullable();
-                $table->string('Qualifications')->nullable();
+                $table->string('qualifications')->nullable();
                 $table->enum('role',['admin','moniteur' , 'candidat']);
                 $table->timestamp('email_verified_at')->nullable();
                 $table->string('password');

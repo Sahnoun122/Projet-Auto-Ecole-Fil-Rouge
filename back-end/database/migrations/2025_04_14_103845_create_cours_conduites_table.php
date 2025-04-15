@@ -20,7 +20,6 @@ return new class extends Migration
             $table->foreignId('admin_id')->constrained('users', 'id')->onDelete('cascade'); 
  
 
-            admin_id
         });
     }
 
