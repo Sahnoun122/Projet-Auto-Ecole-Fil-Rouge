@@ -12,10 +12,20 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
+use App\Notifications\CustomResetPassword;
+use Illuminate\Notifications\Notifiable;
+
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+//     use Notifiable;
+
+// public function sendPasswordResetNotification($token)
+// {
+//     $this->notify(new CustomResetPassword($token, $this->email));
+// }
+
     public function showRegisterForm()
     {
         return view('auth.register');
@@ -150,8 +160,10 @@ class AuthController extends Controller
 
     public function showResetPasswordForm($token)
     {
-        return view('auth.reset-password', ['token' => $token]);
+        $email = request()->query('email'); 
+        return view('auth.reset-password', ['token' => $token, 'email' => request()->email]);
     }
+    
 
     public function resetPassword(Request $request)
     {
