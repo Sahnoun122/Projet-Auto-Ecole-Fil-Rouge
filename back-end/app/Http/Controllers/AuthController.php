@@ -114,6 +114,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+
             switch (Auth::user()->role) {
                 case 'admin':
                     return redirect()->intended('/admin/dashboard');
@@ -122,6 +123,7 @@ class AuthController extends Controller
                 default:
                     return redirect()->intended('/candidats/dashboard');
             }
+
         }
 
         return back()->withErrors([
@@ -259,7 +261,7 @@ class AuthController extends Controller
         $moniteur = User::findOrFail($id);
         return view('admin.moniteurs.edit', compact('moniteur'));
     }
-    
+
     public function updateMoniteur(Request $request, $id)
     {
         $rules = $this->getMoniteurValidationRules();

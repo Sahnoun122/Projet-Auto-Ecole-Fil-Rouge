@@ -20,7 +20,7 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, $role)
     {
         if (!Auth::check() || Auth::user()->role !== $role) {
-            return redirect('/connecter');
+            return redirect('/login');
         }
 
         return $next($request);

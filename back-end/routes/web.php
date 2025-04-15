@@ -33,22 +33,13 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 
-     
-Route::prefix('admin')->middleware(['role:admin'])->group(function () {
-    Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
-    Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
-    Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
-});
-
-Route::prefix('candidats')->group(function () {
+Route::prefix('candidats')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
 
@@ -67,7 +58,14 @@ Route::prefix('candidats')->group(function () {
             ->name('candidats.quizzes.results');
         });
 
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+
+
+    Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/moniteurs', [AdmindController::class, 'AjouterMoniteur'])->name('admin.moniteurs');
+    Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
+    Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
+
 
         Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
         Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
