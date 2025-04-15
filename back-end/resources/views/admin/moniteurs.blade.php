@@ -266,145 +266,236 @@
           
         </div>
 
-
-<div class="flex-1 overflow-auto">
-  <div id="monitorModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-    <div class="bg-white w-full max-w-4xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
-        <h2 id="modalTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Ajouter un Moniteur</h2>
-        <form id="monitorForm" method="POST"  action="{{ route('admin.moniteurs') }}" enctype="multipart/form-data" class="space-y-6">
-            @csrf
-            <input type="hidden" name="role" value="moniteur">
-
-            {{-- <input type="hidden" id="monitorId" name="id">
-            <input type="hidden" id="_method" name="_method" value="POST"> --}}
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <!-- Colonne 1 -->
-                <div class="space-y-4">
-                    <div>
-                        <label for="monitorNom" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
-                        <input type="text" id="monitorNom" name="nom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                    </div>
-
-                    <div>
-                        <label for="monitorPrenom" class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
-                        <input type="text" id="monitorPrenom" name="prenom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                    </div>
-
-                    <div>
-                        <label for="monitorEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                        <input type="email" id="monitorEmail" name="email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                    </div>
-
-                    <div>
-                        <label for="monitorAdresse" class="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
-                        <input type="text" id="monitorAdresse" name="adresse" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                    </div>
-                </div>
-
-                <!-- Colonne 2 -->
-                <div class="space-y-4">
-                    <div>
-                        <label for="monitorTelephone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
-                        <input type="text" id="monitorTelephone" name="telephone" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                    </div>
-
-                    <div>
-                        <label for="monitorPermis" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
-                        <select id="monitorPermis" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                            <option value="">Sélectionnez un type</option>
-                            <option value="A">Permis A</option>
-                            <option value="B">Permis B</option>
-                            <option value="C">Permis C</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="monitorPassword" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
-                        <input type="password" id="monitorPassword" name="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                        <p class="text-xs text-gray-500 mt-1">Minimum 8 caractères avec majuscule, minuscule et chiffre</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fichiers uploads avec prévisualisation -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                    <label for="monitorCertifications" class="block text-sm font-medium text-gray-700 mb-1">Certifications *</label>
-                    <input type="file" id="monitorCertifications" name="certifications" class="hidden" accept=".pdf,.doc,.docx">
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="document.getElementById('monitorCertifications').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
-                            <i class="fas fa-upload mr-1"></i> Choisir fichier
-                        </button>
-                        <span id="certificationsFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucun fichier sélectionné</span>
-                    </div>
-                    <div id="certificationsPreview" class="mt-2 hidden">
-                        <embed id="certificationsPreviewContent" class="w-full h-40 border rounded-lg" type="application/pdf">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="monitorQualifications" class="block text-sm font-medium text-gray-700 mb-1">Qualifications *</label>
-                    <input type="file" id="monitorQualifications" name="qualifications" class="hidden" accept=".pdf,.doc,.docx">
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="document.getElementById('monitorQualifications').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
-                            <i class="fas fa-upload mr-1"></i> Choisir fichier
-                        </button>
-                        <span id="qualificationsFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucun fichier sélectionné</span>
-                    </div>
-                    <div id="qualificationsPreview" class="mt-2 hidden">
-                        <embed id="qualificationsPreviewContent" class="w-full h-40 border rounded-lg" type="application/pdf">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="monitorProfilePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo de profil *</label>
-                    <input type="file" id="monitorProfilePhoto" name="photo_profile" class="hidden" accept="image/*">
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="document.getElementById('monitorProfilePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
-                            <i class="fas fa-upload mr-1"></i> Choisir image
-                        </button>
-                        <span id="profilePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
-                    </div>
-                    <div id="previewProfileContainer" class="mt-2 hidden">
-                        <img id="profileImagePreview" class="h-32 w-32 rounded-full object-cover border-2 border-gray-200">
-                        <button type="button" onclick="removeImage('monitorProfilePhoto', 'previewProfileContainer', 'profilePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
-                            <i class="fas fa-trash mr-1"></i> Supprimer
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="monitorIdentitePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo d'identité *</label>
-                    <input type="file" id="monitorIdentitePhoto" name="photo_identite" class="hidden" accept="image/*">
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="document.getElementById('monitorIdentitePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
-                            <i class="fas fa-upload mr-1"></i> Choisir image
-                        </button>
-                        <span id="identitePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
-                    </div>
-                    <div id="previewIdentiteContainer" class="mt-2 hidden">
-                        <img id="identiteImagePreview" class="h-32 w-48 object-cover border-2 border-gray-200">
-                        <button type="button" onclick="removeImage('monitorIdentitePhoto', 'previewIdentiteContainer', 'identitePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
-                            <i class="fas fa-trash mr-1"></i> Supprimer
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-end space-x-2 pt-4 border-t">
-                <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
-                    Annuler
-                </button>
-                <button type="submit" id="submitBtn" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center">
-                    <i class="fas fa-save mr-2"></i> Enregistrer
+        div class="flex-1 overflow-auto">
+        <header class="bg-[#4D44B5] text-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold">Gestion des Moniteurs</h1>
+                <button id="newMonitorBtn" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                    <i class="fas fa-plus mr-2"></i> Ajouter un Moniteur
                 </button>
             </div>
-        </form>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            @if(session('success'))
+            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                <p>{{ session('success') }}</p>
+            </div>
+            @endif
+
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Liste des Moniteurs</h2>
+                    <div class="relative w-full md:w-64">
+                        <input type="text" placeholder="Rechercher..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom & Prénom</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($moniteurs as $monitor)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex-shrink-0 h-10 w-10">
+                                        <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('storage/'.$monitor->photo_profile) }}" alt="Photo profil">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ $monitor->nom }} {{ $monitor->prenom }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">{{ $monitor->email }}</div>
+                                    <div class="text-sm text-gray-500">{{ $monitor->telephone }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#4D44B5] text-white">
+                                        {{ $monitor->type_permis }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Actif
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-2">
+                                        <button onclick="handleEditMonitor('{{ $monitor->id }}')" class="text-[#4D44B5] hover:text-[#3a32a1] p-1">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="handleDeleteMonitor('{{ $monitor->id }}')" class="text-red-500 hover:text-red-700 p-1">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <button onclick="handleBanMonitor('{{ $monitor->id }}')" class="text-yellow-500 hover:text-yellow-700 p-1">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                        <a href="{{ route('moniteurs.show', $monitor->id) }}" class="text-gray-600 hover:text-gray-900 p-1">
+                                          <i class="fas fa-eye"></i>
+                                      </a>
+                                      
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    Aucun moniteur disponible
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+             
+            </div>
+        </main>
+
+        <!-- Modal -->
+        <div id="monitorModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+            <div class="bg-white w-full max-w-4xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
+                <h2 id="modalTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Ajouter un Moniteur</h2>
+                <form id="monitorForm" method="POST"  action="{{ route('admin.moniteurs') }}" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    <input type="hidden" name="role" value="moniteur">
+
+                    {{-- <input type="hidden" id="monitorId" name="id">
+                    <input type="hidden" id="_method" name="_method" value="POST"> --}}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="monitorNom" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                                <input type="text" id="monitorNom" name="nom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+
+                            <div>
+                                <label for="monitorPrenom" class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                                <input type="text" id="monitorPrenom" name="prenom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+
+                            <div>
+                                <label for="monitorEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                <input type="email" id="monitorEmail" name="email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+
+                            <div>
+                                <label for="monitorAdresse" class="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
+                                <input type="text" id="monitorAdresse" name="adresse" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label for="monitorTelephone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                                <input type="text" id="monitorTelephone" name="telephone" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+
+                            <div>
+                                <label for="monitorPermis" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
+                                <select id="monitorPermis" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="">Sélectionnez un type</option>
+                                    <option value="A">Permis A</option>
+                                    <option value="B">Permis B</option>
+                                    <option value="C">Permis C</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="monitorPassword" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+                                <input type="password" id="monitorPassword" name="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                <p class="text-xs text-gray-500 mt-1">Minimum 8 caractères avec majuscule, minuscule et chiffre</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="monitorCertifications" class="block text-sm font-medium text-gray-700 mb-1">Certifications *</label>
+                            <input type="file" id="monitorCertifications" name="certifications" class="hidden" accept=".pdf,.doc,.docx">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="document.getElementById('monitorCertifications').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                                    <i class="fas fa-upload mr-1"></i> Choisir fichier
+                                </button>
+                                <span id="certificationsFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucun fichier sélectionné</span>
+                            </div>
+                            <div id="certificationsPreview" class="mt-2 hidden">
+                                <embed id="certificationsPreviewContent" class="w-full h-40 border rounded-lg" type="application/pdf">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="monitorQualifications" class="block text-sm font-medium text-gray-700 mb-1">Qualifications *</label>
+                            <input type="file" id="monitorQualifications" name="qualifications" class="hidden" accept=".pdf,.doc,.docx">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="document.getElementById('monitorQualifications').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                                    <i class="fas fa-upload mr-1"></i> Choisir fichier
+                                </button>
+                                <span id="qualificationsFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucun fichier sélectionné</span>
+                            </div>
+                            <div id="qualificationsPreview" class="mt-2 hidden">
+                                <embed id="qualificationsPreviewContent" class="w-full h-40 border rounded-lg" type="application/pdf">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="monitorProfilePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo de profil *</label>
+                            <input type="file" id="monitorProfilePhoto" name="photo_profile" class="hidden" accept="image/*">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="document.getElementById('monitorProfilePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                                    <i class="fas fa-upload mr-1"></i> Choisir image
+                                </button>
+                                <span id="profilePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
+                            </div>
+                            <div id="previewProfileContainer" class="mt-2 hidden">
+                                <img id="profileImagePreview" class="h-32 w-32 rounded-full object-cover border-2 border-gray-200">
+                                <button type="button" onclick="removeImage('monitorProfilePhoto', 'previewProfileContainer', 'profilePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
+                                    <i class="fas fa-trash mr-1"></i> Supprimer
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="monitorIdentitePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo d'identité *</label>
+                            <input type="file" id="monitorIdentitePhoto" name="photo_identite" class="hidden" accept="image/*">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="document.getElementById('monitorIdentitePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                                    <i class="fas fa-upload mr-1"></i> Choisir image
+                                </button>
+                                <span id="identitePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
+                            </div>
+                            <div id="previewIdentiteContainer" class="mt-2 hidden">
+                                <img id="identiteImagePreview" class="h-32 w-48 object-cover border-2 border-gray-200">
+                                <button type="button" onclick="removeImage('monitorIdentitePhoto', 'previewIdentiteContainer', 'identitePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
+                                    <i class="fas fa-trash mr-1"></i> Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-2 pt-4 border-t">
+                        <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                            Annuler
+                        </button>
+                        <button type="submit" id="submitBtn" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center">
+                            <i class="fas fa-save mr-2"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-   
-</div> 
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -414,161 +505,6 @@
     
 
    
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-      const progressBars = document.querySelectorAll('.progress-bar');
-      progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-          bar.style.width = width;
-        }, 300);
-      });
-    }, 500);
-    
-    const badge = document.querySelector('.pulse');
-    if (badge) {
-      setInterval(() => {
-        badge.classList.add('animate-pulse');
-        setTimeout(() => {
-          badge.classList.remove('animate-pulse');
-        }, 1000);
-      }, 2000);
-    }
-  });
-        
-  document.addEventListener("DOMContentLoaded", function () {
-    function toggleSection(headerId, listId, arrowId) {
-      const header = document.getElementById(headerId);
-      const list = document.getElementById(listId);
-      const arrow = document.getElementById(arrowId);
-  
-      let isOpen = list.style.maxHeight !== "0px";
-  
-      header.addEventListener("click", function () {
-        if (isOpen) {
-          list.style.maxHeight = "0";
-          arrow.style.transform = "rotate(0deg)";
-        } else {
-          list.style.maxHeight = `${list.scrollHeight}px`;
-          arrow.style.transform = "rotate(90deg)";
-        }
-        isOpen = !isOpen;
-      });
-    }
-  
-    toggleSection("candidats-header", "candidats-list", "candidats-arrow");
-    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-    toggleSection("vehicule-header", "vehicule-list", "vehicule-arrow");
-    toggleSection("examen-header", "examen-list", "examen-arrow");
-    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
-  });
-
-  function previewProfilePhoto(event) {
-              const file = event.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                  const preview = document.getElementById('profileImagePreview');
-                  preview.src = reader.result;
-                  document.getElementById('previewProfileContainer').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-              }
-            }
-          
-            function previewIdentityPhoto(event) {
-              const file = event.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                  const preview = document.getElementById('identityImagePreview');
-                  preview.src = reader.result;
-                  document.getElementById('previewIdentityContainer').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-              }
-            }
-          
-            document.getElementById('removeProfileImage').addEventListener('click', function() {
-              document.getElementById('photo-profile').value = '';
-              document.getElementById('previewProfileContainer').classList.add('hidden');
-            });
-          
-            document.getElementById('removeIdentityImage').addEventListener('click', function() {
-              document.getElementById('photo_identite').value = '';
-              document.getElementById('previewIdentityContainer').classList.add('hidden');
-            });
-          
-    document.addEventListener('DOMContentLoaded', function() {
-      AOS.init();
-            const animateForm = () => {
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach((input, index) => {
-          setTimeout(() => {
-            input.classList.add('focus-within:ring-2');
-          }, 100 * index);
-        });
-      };
-      
-      setTimeout(animateForm, 500);
-      
-      const inputs = document.querySelectorAll('input');
-      inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-          input.style.transition = 'all 0.3s ease';
-        });
-      });
-      
-      const logo = document.querySelector('.logo-spin');
-      if (logo) {
-        logo.addEventListener('mouseover', () => {
-          logo.style.animation = 'logoRotate 1.5s ease';
-        });
-        
-        logo.addEventListener('animationend', () => {
-          logo.style.animation = '';
-        });
-      }
-    });
-
-    //fetch 
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Inscription en cours...';
-
-    const formData = new FormData(this);
-
-    try {
-        const response = await fetch('/api/register', {
-            method: 'POST',
-            body: formData,
-            credentials: 'include'
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw data;
-        }
-
-        window.location.href = '/connecter'; 
-    } catch (error) {
-        console.error('Erreur:', error);
-        alert(error.error || 'Une erreur est survenue');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'S\'inscrire';
-    }
-});
-
 
     </script>
 </body>
