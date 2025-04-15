@@ -322,7 +322,6 @@
                 </div>
             </div>
         
-            <!-- Modal pour gérer les candidats -->
             <div id="candidatesModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                 <div class="bg-white w-full max-w-4xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
                     <h2 id="modalCandidatesTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Gérer les candidats</h2>
@@ -335,7 +334,6 @@
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                             </div>
                             <div class="border rounded-lg p-2 h-64 overflow-y-auto" id="availableCandidatesList">
-                                <!-- Liste des candidats disponibles -->
                             </div>
                         </div>
                         <div class="w-full md:w-1/2">
@@ -346,7 +344,6 @@
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                             </div>
                             <div class="border rounded-lg p-2 h-64 overflow-y-auto" id="registeredCandidatesList">
-                                <!-- Liste des candidats inscrits -->
                             </div>
                         </div>
                     </div>
