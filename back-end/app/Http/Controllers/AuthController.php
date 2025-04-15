@@ -190,4 +190,67 @@ class AuthController extends Controller
             ? redirect()->route('login')->with('status', __($status))
             : back()->withErrors(['email' => [__($status)]]);
     }
+
+
+    public function showMoniteur()
+    {
+        $moniteurs = User::where('role', 'moniteur')->get();
+        return view('admin.moniteurs', compact('moniteurs'));
+    }
+
+    public function addMoniteur(Request $request)
+    {
+        $rules = $this->getMoniteurValidationRules();
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = $this->saveMoniteurData($request);
+
+        return redirect()->route('admin.moniteurs.index')->with('success', 'Moniteur ajouté avec succès.');
+    }
+
+    private function getMoniteurValidationRules()
+    {
+        return [
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'adresse' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'type_permis' => 'required|string|max:255',
+            'certifications' => 'required|string|max:255',
+            'qualifications' => 'required|string|max:255',
+            'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'],
+        ];
+    }
+
+    private function saveMoniteurData(Request $request)
+    {
+        $profilePhotoPath = $request->file('photo_profile')->store('profile', 'public');
+        $identityPhotoPath = $request->file('photo_identite')->store('identite', 'public');
+        $certificationsPath = $request->file('certifications')->store('certifications', 'public');
+        $qualificationsPath = $request->file('qualifications')->store('qualifications', 'public');
+
+        $userData = [
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'email' => $request->email,
+            'adresse' => $request->adresse,
+            'telephone' => $request->telephone,
+            'photo_profile' => $profilePhotoPath,
+            'photo_identite' => $identityPhotoPath,
+            'type_permis' => $request->type_permis,
+            'role' => 'moniteur',
+            'password' => Hash::make($request->password),
+            'certifications' => $certificationsPath,
+            'qualifications' => $qualificationsPath,
+        ];
+
+        return User::create($userData);
+    }
+
 }

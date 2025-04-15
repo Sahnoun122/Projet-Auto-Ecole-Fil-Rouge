@@ -442,7 +442,6 @@
         modal.removeClass('hidden');
     });
 
-    // Édition de quiz
     window.handleEditQuiz = function(id, permisType, title, description) {
         $('#modalTitle').text('Modifier Quiz');
         form.attr('action', "{{ route('admin.quizzes.update', '') }}/" + id);
