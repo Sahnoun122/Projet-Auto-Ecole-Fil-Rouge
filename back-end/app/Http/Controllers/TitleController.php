@@ -43,7 +43,7 @@ class TitleController extends Controller
         $title = Title::create([
             'name' => $request->name,
             'type_permis' => $request->type_permis,
-            'admin_id' => 1,
+            'admin_id' => Auth::id(),
         ]);
 
         return response()->json([

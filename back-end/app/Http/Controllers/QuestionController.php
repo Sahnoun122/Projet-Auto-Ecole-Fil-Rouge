@@ -39,7 +39,7 @@ class QuestionController extends Controller
         }
 
         $question = $quiz->questions()->create([
-            'admin_id' => 1,
+            'admin_id' =>  Auth::id(),
             'question_text' => $validated['question_text'],
             'image_path' => $imagePath,
             'duration' => $validated['duration'],
@@ -47,7 +47,7 @@ class QuestionController extends Controller
 
         foreach ($validated['choices'] as $index => $choiceData) {
             $question->choices()->create([
-                'admin_id' => 1,
+                'admin_id' =>  Auth::id() ,
                 'choice_text' => $choiceData['text'],
                 'is_correct' => $index == $validated['correct_choice']
             ]);

@@ -37,7 +37,7 @@ class CourseController extends Controller
 
         $course = Course::create([
             'title_id' => $title->id,
-            'admin_id' => 1,
+            'admin_id' => Auth::id(),
             'title' => $request->title,
             'description' => $request->description,
             'image' => $imagePath,

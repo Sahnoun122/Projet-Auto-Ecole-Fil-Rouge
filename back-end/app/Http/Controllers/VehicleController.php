@@ -20,7 +20,7 @@ class VehicleController extends Controller
             })
             ->get();
             
-        return view('admin.vehicles.index', compact('vehicles'));
+        return view('admin.vehicles', compact('vehicles'));
     }
 
     

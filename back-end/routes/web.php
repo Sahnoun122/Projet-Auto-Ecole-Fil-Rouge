@@ -106,7 +106,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
 
     Route::get('/vehicles', [VehicleController::class, 'index'])
-         ->name('vehicles.index');
+         ->name('admin.vehicles');
     
     Route::post('/vehicles', [VehicleController::class, 'store'])
          ->name('admin.vehicles.store');

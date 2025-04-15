@@ -263,94 +263,8 @@
 
 
     <script>
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     setTimeout(() => {
-//       const progressBars = document.querySelectorAll('.progress-bar');
-//       progressBars.forEach(bar => {
-//         const width = bar.style.width;
-//         bar.style.width = '0';
-//         setTimeout(() => {
-//           bar.style.width = width;
-//         }, 300);
-//       });
-//     }, 500);
-    
-//     const badge = document.querySelector('.pulse');
-//     if (badge) {
-//       setInterval(() => {
-//         badge.classList.add('animate-pulse');
-//         setTimeout(() => {
-//           badge.classList.remove('animate-pulse');
-//         }, 1000);
-//       }, 2000);
-//     }
-//   });
-
-
-        
-//   document.addEventListener("DOMContentLoaded", function () {
-//     function toggleSection(headerId, listId, arrowId) {
-//       const header = document.getElementById(headerId);
-//       const list = document.getElementById(listId);
-//       const arrow = document.getElementById(arrowId);
-  
-//       let isOpen = list.style.maxHeight !== "0px";
-  
-//       header.addEventListener("click", function () {
-//         if (isOpen) {
-//           list.style.maxHeight = "0";
-//           arrow.style.transform = "rotate(0deg)";
-//         } else {
-//           list.style.maxHeight = `${list.scrollHeight}px`;
-//           arrow.style.transform = "rotate(90deg)";
-//         }
-//         isOpen = !isOpen;
-//       });
-//     }
-  
-//     toggleSection("candidats-header", "candidats-list", "candidats-arrow");
-//     toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-//     toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-//     toggleSection("vehicule-header", "vehicule-list", "vehicule-arrow");
-//     toggleSection("examen-header", "examen-list", "examen-arrow");
-//     toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-//     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
-
-//     const token = localStorage.getItem('token');
-
-//     if (!token) {
-//         alert('Veuillez vous reconnecter.');
-//         window.location.href = '/connecter';
-//         return;
-//     }
-
-//     fetch('/admin/dashboard', {
-//         headers: {
-//             'Authorization': `Bearer ${token}`
-//         }
-//     })
-//         .then(res => {
-//             if (!res.ok) throw new Error('Accès non autorisé');
-//             return res.json();
-//         })
-//         .then(data => {
-//             console.log('Dashboard admin :', data);
-//             // 🔽 Affiche les données dans ton dashboard ici
-//             // Exemple :
-//             // document.getElementById('adminName').textContent = data.user.name;
-//         })
-//         .catch(err => {
-//             console.error('Erreur d\'accès :', err);
-//             alert('Accès refusé. Vous n\'êtes pas connecté ou n\'avez pas le bon rôle.');
-//             window.location.href = '/connecter';
-//         });
-//   });
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    // --- Animation progress bar ---
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des progress bars
     setTimeout(() => {
         const progressBars = document.querySelectorAll('.progress-bar');
         progressBars.forEach(bar => {
@@ -361,8 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 300);
         });
     }, 500);
-
-    // --- Badge animation ---
+    
     const badge = document.querySelector('.pulse');
     if (badge) {
         setInterval(() => {
@@ -373,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 2000);
     }
 
-    // --- Toggle menus ---
     function toggleSection(headerId, listId, arrowId) {
         const header = document.getElementById(headerId);
         const list = document.getElementById(listId);
@@ -381,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let isOpen = list.style.maxHeight !== "0px";
 
-        header.addEventListener("click", function () {
+        header.addEventListener("click", function() {
             if (isOpen) {
                 list.style.maxHeight = "0";
                 arrow.style.transform = "rotate(0deg)";
@@ -401,66 +313,28 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
 
-    // --- 🔐 Appel API sécurisé vers /api/admin/dashboard ---
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        alert('Veuillez vous reconnecter.');
-        window.location.href = '/connecter';
-        return;
-    }
-
-    fetch('/admin/dashboard', {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(res => {
-            if (!res.ok) throw new Error('Accès non autorisé');
-            return res.json();
-        })
-        .then(data => {
-            console.log('Dashboard admin :', data);
-            // 🔽 Affiche les données dans ton dashboard ici
-            // Exemple :
-            // document.getElementById('adminName').textContent = data.user.name;
-        })
-        .catch(err => {
-            console.error('Erreur d\'accès :', err);
-            alert('Accès refusé. Vous n\'êtes pas connecté ou n\'avez pas le bon rôle.');
-            window.location.href = '/connecter';
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la déconnexion:', error);
+            });
         });
+    }
 });
-
- 
-async function logout() {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
-            },
-        });
- 
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            alert(data.message);
-            window.location.href = '/connecter'; 
-        } else {
-            alert('Échec de la déconnexion : ' + data.message); 
-        }
-    } catch (error) {
-        console.error('Erreur lors de la déconnexion:', error);
-        alert('Une erreur est survenue. Veuillez réessayer.');
-    }
-}
-
-document.getElementById('logoutButton').addEventListener('click', logout);
-    </script>
+</script>
 </body>
 
 </html>
