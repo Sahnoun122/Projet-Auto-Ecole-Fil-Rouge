@@ -261,7 +261,108 @@
         </div>
         
         <div class="flex-1 overflow-auto">
-
+            <div id="examModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-white w-full max-w-2xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
+                    <h2 id="modalExamTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Nouvel Examen</h2>
+                    <form id="examForm" method="POST" action="{{ route('admin.exams.store') }}" class="space-y-6">
+                        @csrf
+                        <input type="hidden" id="examId" name="id">
+                        <input type="hidden" id="_method" name="_method" value="POST">
+        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="examType" class="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                                <select id="examType" name="type" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="">Sélectionnez un type</option>
+                                    <option value="theorique">Théorique</option>
+                                    <option value="pratique">Pratique</option>
+                                </select>
+                            </div>
+        
+                            <div>
+                                <label for="examDate" class="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+                                <input type="datetime-local" id="examDate" name="date_exam" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+        
+                            <div class="md:col-span-2">
+                                <label for="examLieu" class="block text-sm font-medium text-gray-700 mb-1">Lieu *</label>
+                                <input type="text" id="examLieu" name="lieu" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+        
+                            <div>
+                                <label for="examPlaces" class="block text-sm font-medium text-gray-700 mb-1">Places max *</label>
+                                <input type="number" id="examPlaces" name="places_max" min="1" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+        
+                            <div>
+                                <label for="examMoniteur" class="block text-sm font-medium text-gray-700 mb-1">Moniteur</label>
+                                <select id="examMoniteur" name="moniteur_id" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                                    <option value="">Non assigné</option>
+                                    @foreach($moniteurs as $moniteur)
+                                    <option value="{{ $moniteur->id }}">{{ $moniteur->nom }} {{ $moniteur->prenom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+        
+                            <div class="md:col-span-2">
+                                <label for="examInstructions" class="block text-sm font-medium text-gray-700 mb-1">Instructions</label>
+                                <textarea id="examInstructions" name="instructions" rows="3" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]"></textarea>
+                            </div>
+                        </div>
+        
+                        <div class="flex justify-end space-x-2 pt-4 border-t">
+                            <button type="button" id="cancelExamBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                Annuler
+                            </button>
+                            <button type="submit" id="submitExamBtn" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center">
+                                <i class="fas fa-save mr-2"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        
+            <!-- Modal pour gérer les candidats -->
+            <div id="candidatesModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-white w-full max-w-4xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
+                    <h2 id="modalCandidatesTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Gérer les candidats</h2>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="w-full md:w-1/2">
+                            <h3 class="font-medium mb-2">Candidats disponibles</h3>
+                            <div class="relative mb-4">
+                                <input type="text" id="searchAvailableCandidates" placeholder="Rechercher..." 
+                                       class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                            <div class="border rounded-lg p-2 h-64 overflow-y-auto" id="availableCandidatesList">
+                                <!-- Liste des candidats disponibles -->
+                            </div>
+                        </div>
+                        <div class="w-full md:w-1/2">
+                            <h3 class="font-medium mb-2">Candidats inscrits</h3>
+                            <div class="relative mb-4">
+                                <input type="text" id="searchRegisteredCandidates" placeholder="Rechercher..." 
+                                       class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                            <div class="border rounded-lg p-2 h-64 overflow-y-auto" id="registeredCandidatesList">
+                                <!-- Liste des candidats inscrits -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2 pt-4 border-t mt-4">
+                        <button type="button" id="cancelCandidatesBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                            Fermer
+                        </button>
+                        <button type="button" id="saveCandidatesBtn" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                            Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <div> 
     </div>
 
 
