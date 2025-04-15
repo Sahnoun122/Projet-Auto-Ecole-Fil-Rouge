@@ -155,7 +155,7 @@
               value="{{ old('nom') }}"
               placeholder="Votre nom"
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-              required
+              
             >
             <p id="nom-error" class="error-message"></p>
           </div>
@@ -169,7 +169,7 @@
               value="{{ old('prenom') }}"
               placeholder="Votre prénom"
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-              required
+              
             >
             <p id="prenom-error" class="error-message"></p>
           </div>
@@ -185,7 +185,7 @@
             value="{{ old('email') }}"
             placeholder="exemple@email.com"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            required
+            
           >
           <p id="email-error" class="error-message"></p>
         </div>
@@ -198,7 +198,7 @@
             name="password"
             placeholder="••••••••"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            required
+            
           >
           <p id="password-error" class="error-message"></p>
           <p class="mt-1 text-xs text-gray-500">
@@ -216,7 +216,7 @@
               value="{{ old('adresse') }}"
               placeholder="Votre adresse"
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-              required
+              
             >
             <p id="adresse-error" class="error-message"></p>
           </div>
@@ -230,7 +230,7 @@
               value="{{ old('telephone') }}"
               placeholder="0612345678"
               class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-              required
+              
             >
             <p id="telephone-error" class="error-message"></p>
           </div>
@@ -242,7 +242,7 @@
             id="type_permis" 
             name="type_permis"
             class="w-full px-4 py-3 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            required
+            
           >
             <option value="">Sélectionnez un type</option>
             <option value="A" {{ old('type_permis') == 'A' ? 'selected' : '' }}>Permis A (Moto)</option>
@@ -273,7 +273,7 @@
                 accept="image/*"
                 class="hidden"
                 onchange="previewProfilePhoto(event)"
-                required
+              
               >
               <label for="photo_profile" class="block text-center cursor-pointer">
                 <svg class="mx-auto h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -305,7 +305,7 @@
                 accept="image/*"
                 class="hidden"
                 onchange="previewIdentityPhoto(event)"
-                required
+                
               >
               <label for="photo_identite" class="block text-center cursor-pointer">
                 <svg class="mx-auto h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -459,6 +459,178 @@
         });
       }
     });
+
+    const patterns = {
+      name: /^[a-zA-ZÀ-ÿ\s'-]{2,50}$/,
+      email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+      password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      phone: /^[0-9]{10,15}$/
+    };
+
+    function validateName(input) {
+      const errorElement = document.getElementById(`${input.id}-error`);
+      if (!patterns.name.test(input.value)) {
+        showError(input, errorElement, "Veuillez entrer un nom valide (2-50 caractères)");
+        return false;
+      } else {
+        clearError(input, errorElement);
+        return true;
+      }
+    }
+
+    function validateEmail(input) {
+      const errorElement = document.getElementById(`${input.id}-error`);
+      if (!patterns.email.test(input.value)) {
+        showError(input, errorElement, "Veuillez entrer une adresse email valide");
+        return false;
+      } else {
+        clearError(input, errorElement);
+        return true;
+      }
+    }
+
+    function validatePassword(input) {
+      const errorElement = document.getElementById(`${input.id}-error`);
+      if (!patterns.password.test(input.value)) {
+        showError(input, errorElement, "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial");
+        return false;
+      } else {
+        clearError(input, errorElement);
+        return true;
+      }
+    }
+
+    function validatePhone(input) {
+      const errorElement = document.getElementById(`${input.id}-error`);
+      if (!patterns.phone.test(input.value)) {
+        showError(input, errorElement, "Veuillez entrer un numéro de téléphone valide (10-15 chiffres)");
+        return false;
+      } else {
+        clearError(input, errorElement);
+        return true;
+      }
+    }
+
+    function validateFile(input, errorId, allowedExtensions) {
+      const errorElement = document.getElementById(errorId);
+      if (input.files.length > 0) {
+        const file = input.files[0];
+        const extension = file.name.split('.').pop().toLowerCase();
+        const isValid = allowedExtensions.includes(extension);
+        
+        if (!isValid) {
+          showError(input, errorElement, `Format non supporté. Utilisez: ${allowedExtensions.join(', ')}`);
+          return false;
+        } else if (file.size > 2 * 1024 * 1024) { // 2MB
+          showError(input, errorElement, "La taille du fichier ne doit pas dépasser 2MB");
+          return false;
+        } else {
+          clearError(input, errorElement);
+          return true;
+        }
+      } else {
+        showError(input, errorElement, "Ce champ est obligatoire");
+        return false;
+      }
+    }
+
+    function validateTerms() {
+      const checkbox = document.getElementById('terms');
+      const errorElement = document.getElementById('terms-error');
+      if (!checkbox.checked) {
+        showError(checkbox, errorElement, "Vous devez accepter les conditions");
+        return false;
+      } else {
+        clearError(checkbox, errorElement);
+        return true;
+      }
+    }
+
+    function showError(input, errorElement, message) {
+      input.classList.add('input-error');
+      errorElement.textContent = message;
+    }
+
+    function clearError(input, errorElement) {
+      input.classList.remove('input-error');
+      errorElement.textContent = '';
+    }
+
+    function previewProfilePhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          const preview = document.getElementById('profileImagePreview');
+          preview.src = reader.result;
+          document.getElementById('previewProfileContainer').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function previewIdentityPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          const preview = document.getElementById('identityImagePreview');
+          preview.src = reader.result;
+          document.getElementById('previewIdentityContainer').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    document.getElementById('removeProfileImage').addEventListener('click', function() {
+      document.getElementById('photo_profile').value = '';
+      document.getElementById('previewProfileContainer').classList.add('hidden');
+      clearError(document.getElementById('photo_profile'), document.getElementById('photo_profile-error'));
+    });
+
+    document.getElementById('removeIdentityImage').addEventListener('click', function() {
+      document.getElementById('photo_identite').value = '';
+      document.getElementById('previewIdentityContainer').classList.add('hidden');
+      clearError(document.getElementById('photo_identite'), document.getElementById('photo_identite-error'));
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      let isValid = true;
+      
+      isValid &= validateName(document.getElementById('nom'));
+      isValid &= validateName(document.getElementById('prenom'));
+      isValid &= validateEmail(document.getElementById('email'));
+      isValid &= validatePassword(document.getElementById('password'));
+      isValid &= validatePhone(document.getElementById('telephone'));
+      isValid &= validateFile(document.getElementById('photo_profile'), 'photo_profile-error', ['jpg', 'jpeg', 'png']);
+      isValid &= validateFile(document.getElementById('photo_identite'), 'photo_identite-error', ['jpg', 'jpeg', 'png']);
+      isValid &= validateTerms();
+      
+      // Check select field
+      const typePermis = document.getElementById('type_permis');
+      const typePermisError = document.getElementById('type_permis-error');
+      if (typePermis.value === '') {
+        showError(typePermis, typePermisError, "Veuillez sélectionner un type de permis");
+        isValid = false;
+      } else {
+        clearError(typePermis, typePermisError);
+      }
+      
+      const adresse = document.getElementById('adresse');
+      const adresseError = document.getElementById('adresse-error');
+      if (adresse.value.trim() === '') {
+        showError(adresse, adresseError, "Veuillez entrer une adresse");
+        isValid = false;
+      } else {
+        clearError(adresse, adresseError);
+      }
+      
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+
+    
   </script>
 </body>
 </html>
