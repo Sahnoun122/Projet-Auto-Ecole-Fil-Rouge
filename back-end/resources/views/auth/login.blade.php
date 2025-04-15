@@ -169,7 +169,6 @@
             name="email"
             placeholder="exemple@email.com"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            required
           >
           <p id="email-error" class="error-message"></p>
         </div>
@@ -182,22 +181,13 @@
             name="password"
             placeholder="••••••••"
             class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            required
           >
           <p id="password-error" class="error-message"></p>
         </div>
         
         <div class="flex items-center justify-between fade-in-up" style="animation-delay: 0.3s;">
           <div class="flex items-center">
-            <input
-              id="remember"
-              name="remember"
-              type="checkbox"
-              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-            >
-            <label for="remember" class="ml-2 block text-sm text-gray-700">
-              Se souvenir de moi
-            </label>
+          
           </div>
           
           <div class="text-sm">
