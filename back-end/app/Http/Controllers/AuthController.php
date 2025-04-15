@@ -253,4 +253,49 @@ class AuthController extends Controller
         return User::create($userData);
     }
 
+
+    public function editMoniteur($id)
+    {
+        $moniteur = User::findOrFail($id);
+        return view('admin.moniteurs.edit', compact('moniteur'));
+    }
+    
+    public function updateMoniteur(Request $request, $id)
+    {
+        $rules = $this->getMoniteurValidationRules();
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $moniteur = User::findOrFail($id);
+        $this->updateMoniteurData($request, $moniteur);
+
+        return redirect()->route('admin.moniteurs.index')->with('success', 'Moniteur modifié avec succès.');
+    }
+
+    private function updateMoniteurData(Request $request, User $moniteur)
+    {
+        $moniteur->update([
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'email' => $request->email,
+            'adresse' => $request->adresse,
+            'telephone' => $request->telephone,
+            'type_permis' => $request->type_permis,
+            'password' => Hash::make($request->password),
+            'certifications' => $request->certifications,
+            'qualifications' => $request->qualifications,
+        ]);
+    }
+
+
+    public function deleteMoniteur($id)
+    {
+        $moniteur = User::findOrFail($id);
+        $moniteur->delete();
+        return redirect()->route('admin.moniteurs.index')->with('success', 'Moniteur supprimé avec succès.');
+    }
+
+
 }
