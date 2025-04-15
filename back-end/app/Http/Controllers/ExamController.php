@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,24 +10,27 @@ use Illuminate\Support\Facades\Auth;
 
 class ExamController extends Controller
 {
-
+    // ADMIN PART
     public function index()
     {
         Gate::authorize('viewAny', Exam::class);
-    
-        $query = Exam::with(['admin', 'moniteur', 'candidats']);
-        $user = Auth::user();
-    
-        if ($user->roles->contains('name', 'moniteur')) {
-            $query->where('moniteur_id', $user->id);
-        } 
-        elseif ($user->roles->contains('name', 'candidat')) {
-            $query->whereHas('candidats', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            });
-        }
-    
-        return $query->latest()->paginate(10);
+        
+        $exams = Exam::with(['admin', 'moniteur', 'candidats'])
+            ->withCount('candidats')
+            ->latest()
+            ->paginate(10);
+            
+        $moniteurs = User::where('role', 'moniteur')->get();
+        
+        return view('admin.exams.index', compact('exams', 'moniteurs'));
+    }
+
+    public function create()
+    {
+        Gate::authorize('create', Exam::class);
+        
+        $moniteurs = User::where('role', 'moniteur')->get();
+        return view('admin.exams.create', compact('moniteurs'));
     }
 
     public function store(Request $request)
@@ -50,13 +52,24 @@ class ExamController extends Controller
             'statut' => 'planifie'
         ]);
 
-        return response()->json($exam->load(['admin', 'moniteur']), 201);
+        return redirect()->route('admin.exams.index')
+            ->with('success', 'Examen créé avec succès');
     }
 
     public function show(Exam $exam)
     {
         Gate::authorize('view', $exam);
-        return $exam->load(['admin', 'moniteur', 'candidats']);
+        
+        $exam->load(['admin', 'moniteur', 'candidats']);
+        return view('admin.exams.show', compact('exam'));
+    }
+
+    public function edit(Exam $exam)
+    {
+        Gate::authorize('update', $exam);
+        
+        $moniteurs = User::where('role', 'moniteur')->get();
+        return view('admin.exams.edit', compact('exam', 'moniteurs'));
     }
 
     public function update(Request $request, Exam $exam)
@@ -79,17 +92,35 @@ class ExamController extends Controller
             $exam->updateStats();
         }
 
-        return $exam->load(['admin', 'moniteur']);
+        return redirect()->route('admin.exams.index')
+            ->with('success', 'Examen mis à jour avec succès');
     }
 
     public function destroy(Exam $exam)
     {
         Gate::authorize('delete', $exam);
+        
         $exam->delete();
-        return response()->noContent();
+        return redirect()->route('admin.exams.index')
+            ->with('success', 'Examen supprimé avec succès');
     }
 
-    public function addCandidat(Request $request, Exam $exam)
+    public function manageCandidates(Exam $exam)
+    {
+        Gate::authorize('manageCandidats', $exam);
+        
+        $availableCandidates = User::where('role', 'candidat')
+            ->whereDoesntHave('exams', function($q) use ($exam) {
+                $q->where('exam_id', $exam->id);
+            })
+            ->get();
+            
+        $registeredCandidates = $exam->candidats;
+        
+        return view('admin.exams.candidates', compact('exam', 'availableCandidates', 'registeredCandidates'));
+    }
+
+    public function addCandidate(Request $request, Exam $exam)
     {
         Gate::authorize('manageCandidats', $exam);
 
@@ -98,74 +129,62 @@ class ExamController extends Controller
         ]);
 
         if ($exam->candidats()->count() >= $exam->places_max) {
-            return response()->json(['message' => 'Nombre maximum de candidats atteint'], 422);
+            return back()->with('error', 'Nombre maximum de candidats atteint');
         }
 
         $exam->candidats()->syncWithoutDetaching([$request->candidat_id]);
 
-        return response()->json($exam->load('candidats'));
+        return back()->with('success', 'Candidat ajouté avec succès');
     }
 
-    public function recordResult(Request $request, Exam $exam, User $candidat)
+    public function removeCandidate(Request $request, Exam $exam)
     {
-        Gate::authorize('recordResults', $exam);
+        Gate::authorize('manageCandidats', $exam);
 
         $request->validate([
-            'present' => 'required|boolean',
-            'resultat' => 'required_if:present,true|in:excellent,tres_bien,bien,moyen,insuffisant',
-            'score' => 'required_if:present,true|integer|between:0,100',
-            'observations' => 'nullable|string',
-            'feedbacks' => 'nullable|string'
+            'candidat_id' => 'required|exists:users,id'
         ]);
 
-        $exam->candidats()->updateExistingPivot($candidat->id, [
-            'present' => $request->present,
-            'resultat' => $request->present ? $request->resultat : null,
-            'score' => $request->present ? $request->score : null,
-            'observations' => $request->observations,
-            'feedbacks' => $request->feedbacks
-        ]);
+        $exam->candidats()->detach($request->candidat_id);
 
-        $exam->updateStats();
-
-        return response()->json($exam->load('candidats'));
+        return back()->with('success', 'Candidat retiré avec succès');
     }
 
-//candidats
-    public function VuDatesExam(Request $request)
+    // CANDIDAT PART
+    public function candidateExams(Request $request)
     {
         $user = Auth::user();
         
-        $query = Exam::with(['moniteur'])
-            ->whereHas('candidat', function($q) use ($user) {
-                $q->where('users.id', $user->id);
-            })
-            ->orderBy('date_exam', 'desc');
-
-        if ($request->has('type')) {
-            $query->where('type', $request->type);
-        }
-
-        if ($request->has('statut')) {
-            $query->where('statut', $request->statut);
-        }
-
-        return $query->paginate(10);
-    }
-
-    public function RsultatsEXma($id)
-    {
-        $user = Auth::user();
-        $exam = Exam::with(['moniteur'])
+        $exams = Exam::with(['moniteur'])
             ->whereHas('candidats', function($q) use ($user) {
                 $q->where('users.id', $user->id);
             })
-            ->findOrFail($id);
+            ->orderBy('date_exam', 'desc');
+            
+        if ($request->has('type')) {
+            $exams->where('type', $request->type);
+        }
 
-        $exam->load(['candidat' => function($query) use ($user) {
-            $query->where('users.id', $user->id);
-        }]);
+        if ($request->has('statut')) {
+            $exams->where('statut', $request->statut);
+        }
 
-        return response()->json($exam);
+        return view('candidat.exams.index', [
+            'exams' => $exams->paginate(10),
+            'filters' => $request->only(['type', 'statut'])
+        ]);
+    }
+
+    public function examResults(Exam $exam)
+    {
+        $user = Auth::user();
+        
+        if (!$exam->candidats()->where('users.id', $user->id)->exists()) {
+            abort(403);
+        }
+
+        $result = $exam->candidats()->where('users.id', $user->id)->first()->pivot;
+        
+        return view('candidat.exams.results', compact('exam', 'result'));
     }
 }

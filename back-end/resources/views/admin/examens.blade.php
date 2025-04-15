@@ -259,12 +259,14 @@
             </div>
 
         </div>
+        
+        <div class="flex-1 overflow-auto">
+
     </div>
 
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation des progress bars
     setTimeout(() => {
         const progressBars = document.querySelectorAll('.progress-bar');
         progressBars.forEach(bar => {
