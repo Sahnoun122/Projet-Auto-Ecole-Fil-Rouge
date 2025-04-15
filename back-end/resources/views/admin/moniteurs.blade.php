@@ -9,6 +9,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
+ 
+    @vite([
+      'resources/js/moniteurs.js'  ])
+
 
 </head>
 
@@ -409,6 +413,7 @@
     <script> 
     
 
+   
 
 
 document.addEventListener('DOMContentLoaded', function() {
