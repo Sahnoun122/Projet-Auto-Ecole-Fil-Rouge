@@ -60,10 +60,14 @@ Route::prefix('candidats')->middleware(['auth', 'role:admin'])->group(function (
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
+    Route::get('/moniteurs', [MoniteurController::class, 'index'])->name('admin.moniteurs');
+    Route::get('/moniteurs/create', [MoniteurController::class, 'create'])->name('admin.moniteurs');
+    Route::post('/moniteurs', [MoniteurController::class, 'store'])->name('admin.moniteurs');
+    Route::get('/moniteurs/{id}/edit', [MoniteurController::class, 'edit'])->name('admin.moniteurs');
+    Route::put('/moniteurs/{id}', [MoniteurController::class, 'update'])->name('admin.moniteurs');
+    Route::delete('/moniteurs/{id}', [MoniteurController::class, 'destroy'])->name('admin.moniteurs');
 
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::get('/moniteurs', [AuthController::class, 'showMoniteur'])->name('admin.moniteurs');
 
     Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
     Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
