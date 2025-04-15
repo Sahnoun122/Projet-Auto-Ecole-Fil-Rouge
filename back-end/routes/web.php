@@ -18,6 +18,8 @@ use App\Http\Controllers\TitleController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\ExamController;
+
 
 
 Route::controller(PagesController::class)->group(function () {
@@ -144,10 +146,23 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
          ->name('api.vehicles.maintenance-alerts');
-          
+
+                Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams.index');
+                Route::get('/exams/create', [ExamController::class, 'create'])->name('admin.exams.create');
+                Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
+                Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('admin.exams.show');
+                Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
+                Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
+                Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
+                
+                Route::get('/admin/{exam}/candidates', [ExamController::class, 'manageCandidates'])->name('admin.exams.candidates');
+                Route::post('/admin/{exam}/add-candidate', [ExamController::class, 'addCandidate'])->name('admin.exams.add-candidate');
+                Route::post('/admin/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
+            });
+        
+         
+        });
             
-});
-});
 
 // Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
 // Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
