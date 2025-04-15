@@ -27,7 +27,7 @@ class AuthController extends Controller
             'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'type_permis' => 'required|string|max:255',
-            'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
+            'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'],
             'role' => 'required|in:admin,moniteur,candidat',
         ];
 
@@ -80,7 +80,7 @@ class AuthController extends Controller
             case 'moniteur':
                 return redirect('/moniteur/dashboard')->with('success', 'Inscription réussie!');
             default:
-                return redirect('/candidat/dashboard')->with('success', 'Inscription réussie!');
+                return redirect('/candidats/dashboard')->with('success', 'Inscription réussie!');
         }
     }
 
@@ -105,7 +105,7 @@ class AuthController extends Controller
                 case 'moniteur':
                     return redirect()->intended('/moniteur/dashboard');
                 default:
-                    return redirect()->intended('/candidat/dashboard');
+                    return redirect()->intended('/candidats/dashboard');
             }
         }
 
