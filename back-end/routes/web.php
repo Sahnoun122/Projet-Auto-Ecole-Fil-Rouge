@@ -26,12 +26,30 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('/propos', 'propos')->name('propos');
 });
 
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])
+     ->middleware('guest')
+     ->name('password.request');
+
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])
+     ->middleware('guest')
+     ->name('password.email');
+
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])
+     ->middleware('guest')
+     ->name('password.reset');
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+     ->middleware('guest')
+     ->name('password.update');
+
+     
 Route::prefix('admin')->middleware(['role:admin'])->group(function () {
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
