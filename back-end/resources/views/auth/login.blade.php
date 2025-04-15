@@ -229,7 +229,49 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-   
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      let isValid = true;
+      const requiredFields = ['email', 'password'];
+
+      requiredFields.forEach(field => {
+        const element = document.getElementById(field);
+        const errorElement = document.getElementById(`${field}-error`);
+        
+        if (!element.value.trim()) {
+          showError(element, errorElement, "Ce champ est obligatoire");
+          isValid = false;
+        } else {
+          clearError(element, errorElement);
+        }
+      });
+
+      const email = document.getElementById('email');
+      const emailError = document.getElementById('email-error');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (email.value.trim() && !emailRegex.test(email.value)) {
+        showError(email, emailError, "Veuillez entrer une adresse email valide");
+        isValid = false;
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+
+    function showError(input, errorElement, message) {
+      input.classList.add('input-error');
+      if (errorElement) {
+        errorElement.textContent = message;
+      }
+    }
+
+    function clearError(input, errorElement) {
+      input.classList.remove('input-error');
+      if (errorElement) {
+        errorElement.textContent = '';
+      }
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
       AOS.init();
