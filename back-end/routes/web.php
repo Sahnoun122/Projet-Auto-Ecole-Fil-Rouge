@@ -68,6 +68,17 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/moniteurs/{id}', [MoniteurController::class, 'destroy'])->name('admin.moniteurs');
     Route::get('/moniteurs/{id}', [MoniteurController::class, 'show'])->name('admin.moniteurs');
 
+
+
+Route::prefix('admin')->group(function () {
+    Route::get('/candidats', [CandidatController::class, 'index'])->name('admin.candidats.index');
+    Route::get('/candidats/create', [CandidatController::class, 'create'])->name('admin.candidats.create');
+    Route::post('/candidats/store', [CandidatController::class, 'store'])->name('admin.candidats.store');
+    Route::get('/candidats/edit/{id}', [CandidatController::class, 'edit'])->name('admin.candidats.edit');
+    Route::put('/candidats/update/{id}', [CandidatController::class, 'update'])->name('admin.candidats.update');
+    Route::delete('/candidats/destroy/{id}', [CandidatController::class, 'destroy'])->name('admin.candidats.destroy');
+});
+
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
