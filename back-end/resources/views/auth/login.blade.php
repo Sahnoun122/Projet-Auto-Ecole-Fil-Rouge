@@ -64,6 +64,12 @@
       background: linear-gradient(-45deg, #4f46e5, #6366f1, #818cf8, #4f46e5);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
+      position: fixed;
+      height: 100vh;
+      width: 40%;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
     }
     
     @keyframes logoRotate {
@@ -78,10 +84,39 @@
     .logo-spin:hover {
       animation: logoRotate 1.5s ease;
     }
+    
+    /* Validation styles */
+    .error-message {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    
+    .input-error {
+      border-color: #ef4444 !important;
+    }
+    
+    /* Right side adjustments */
+    .right-side {
+      margin-left: 40%;
+      width: 60%;
+    }
+    
+    @media (max-width: 767px) {
+      .animated-bg {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+      .right-side {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
   </style>
 </head>
-<body class="flex flex-col md:flex-row h-screen w-full">
-  <div class="hidden md:flex animated-bg text-white w-full md:w-2/5 p-8 flex-col items-center justify-center relative">
+<body class="flex flex-col md:flex-row min-h-screen w-full">
+  <div class="hidden md:flex animated-bg text-white p-8 flex-col items-center justify-center">
     <div class="mb-8 animate__animated animate__fadeIn">
       <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="w-64 logo-spin animate-float">
     </div>
@@ -90,7 +125,8 @@
       <h1 class="text-4xl font-bold mb-2">Bon retour parmi nous !</h1>
       <p class="text-lg text-indigo-100 mt-4">Chez Sahnoun, nous simplifions chaque étape pour vous.</p>
     </div>
-        <div class="absolute bottom-10 left-10 animate-float" style="animation-delay: 1s;">
+    
+    <div class="absolute bottom-10 left-10 animate-float" style="animation-delay: 1s;">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="rgba(255,255,255,0.3)"/>
       </svg>
@@ -107,10 +143,10 @@
     </div>
   </div>
 
-  <div class="bg-white w-full md:w-3/5 p-8 flex flex-col justify-center">
+  <div class="right-side bg-white p-8 flex flex-col justify-center">
     <div class="max-w-lg mx-auto w-full">
-      <h2 class="text-4xl font-bold text-indigo-900 mb-12 animate__animated animate__fadeInDown">Se connecter</h2>
-
+      <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Se connecter</h2>
+      
       @if ($errors->any())
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           <ul class="list-disc pl-5">
@@ -119,51 +155,47 @@
               @endforeach
           </ul>
       </div>
-  @endif
+      @endif
 
-        <form method="POST" action="/api/connecter" id="loginForm" class="space-y-6"> 
-          @csrf 
+      <form method="POST" action="{{ route('login') }}" id="loginForm" class="space-y-6">
+        @csrf
 
         <div class="fade-in-up" style="animation-delay: 0.1s;">
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-          <div class="relative">
-            <input
-              type="email"
-              id="email"
-              value="{{ old('email') }}"
-              name="email"
-              placeholder="Email"
-              class="w-full px-4 py-3 bg-gray-100 rounded-md pr-12 input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            >
-       
-          </div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+          <input
+            type="email"
+            id="email"
+            value="{{ old('email') }}"
+            name="email"
+            placeholder="exemple@email.com"
+            class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            required
+          >
+          <p id="email-error" class="error-message"></p>
         </div>
         
         <div class="fade-in-up" style="animation-delay: 0.2s;">
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
-          <div class="relative">
-            <input
-              type="password"
-              id="password"
-              value=""
-              name="password"
-              placeholder="••••••••••••••"
-              class="w-full px-4 py-3 bg-gray-100 rounded-md pr-12 input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
-            >
-         
-            </span>
-          </div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            class="w-full px-4 py-2 bg-gray-100 rounded-md input-hover-effect focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            required
+          >
+          <p id="password-error" class="error-message"></p>
         </div>
         
         <div class="flex items-center justify-between fade-in-up" style="animation-delay: 0.3s;">
           <div class="flex items-center">
             <input
-              id="remember-me"
-              name="remember-me"
+              id="remember"
+              name="remember"
               type="checkbox"
               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
             >
-            <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+            <label for="remember" class="ml-2 block text-sm text-gray-700">
               Se souvenir de moi
             </label>
           </div>
@@ -180,25 +212,24 @@
             type="submit"
             class="w-full py-3 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-all duration-300 transform hover:scale-102 pulse"
             id="submitBtn"
-            >
+          >
             Se connecter
           </button>
         </div>
       </form>
       
-      <div class="text-center mt-6 animate__animated animate__fadeIn" style="animation-delay: 0.8s;">
+      <div class="text-center mt-6 animate__animated animate__fadeIn" style="animation-delay: 0.5s;">
         <p class="text-gray-600">
           Vous n'avez pas de compte ?
-          <a href="{{ route ('register')}}" class="text-indigo-600 font-medium hover:underline transition-all duration-300">S'inscrire</a>
-                </p>
+          <a href="{{ route('register') }}" class="text-indigo-600 font-medium hover:underline transition-all duration-200">S'inscrire</a>
+        </p>
       </div>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-
-
+   
 
     document.addEventListener('DOMContentLoaded', function() {
       AOS.init();
@@ -214,13 +245,6 @@
       
       setTimeout(animateForm, 500);
       
-      const inputs = document.querySelectorAll('input');
-      inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-          input.style.transition = 'all 0.3s ease';
-        });
-      });
-      
       const logo = document.querySelector('.logo-spin');
       if (logo) {
         logo.addEventListener('mouseover', () => {
@@ -232,74 +256,6 @@
         });
       }
     });
-
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Connexion en cours...';
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    const requestBody = {
-        email: email,
-        password: password
-    };
-
-    try {
-        const response = await fetch('/api/connecter', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(requestBody),
-            credentials: 'include'
-        });
-
-        const data = await response.json();
-        console.log('Réponse de l\'API:', data);
-
-        if (!response.ok || !data.token || !data.role || !data.user || !data.type_permis) {
-            throw new Error(data.message || 'Erreur inconnue');
-        }
-
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('role', data.role);
-        localStorage.setItem('type_permis', data.type_permis);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('id_user', JSON.stringify(data.user.id));
-
-        console.log('Token:', data.token); 
-        console.log('Role:', data.role); 
-        console.log('User:', data.type_permis);
-        console.log('User_id:', data.user.id);
-   
-        switch (data.role) {
-            case 'admin':
-                window.location.href = '/admin/dashboard';  
-                break;
-            case 'moniteur':
-                window.location.href = '/moniteur/dashboard'; 
-                break;
-            case 'candidat':
-                window.location.href = '/candidats/dashboard';  
-                break;
-            default:
-                window.location.href = '/';  
-        }
-    } catch (error) {
-        console.error('Erreur de connexion:', error);
-        alert(error.message || 'Une erreur est survenue lors de la connexion');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Se connecter';
-    }
-});
-
-
   </script>
 </body>
 </html>
