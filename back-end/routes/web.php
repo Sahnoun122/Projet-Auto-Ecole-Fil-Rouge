@@ -62,7 +62,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
 
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/moniteurs', [AdmindController::class, 'AjouterMoniteur'])->name('admin.moniteurs');
+    Route::get('/moniteurs', [AuthController::class, 'showMoniteur'])->name('admin.moniteurs');
     Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
     Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
 
@@ -120,13 +120,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlerts'])
          ->name('admin.vehicles.maintenance-alerts');
 
+         Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting');
+         Route::get('/reporting/data', [ReportingController::class, 'getReportData'])->name('admin.reporting.data');
+         Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
+
+
 Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
          ->name('api.vehicles.maintenance-alerts');
-            Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting');
-            Route::get('/reporting/data', [ReportingController::class, 'getReportData'])->name('admin.reporting.data');
-            Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
-
+          
             
 });
 });

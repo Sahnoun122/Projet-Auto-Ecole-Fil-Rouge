@@ -13,10 +13,10 @@ class AdmindController extends Controller
     {
         return view('admin.dashboard'); 
     }
-    public function AjouterMoniteur()
-    {
-        return view('admin.AjouterMoniteur'); 
-    }
+    // public function AjouterMoniteur()
+    // {
+    //     return view('admin.AjouterMoniteur'); 
+    // }
 
     public function gestionMoniteur()
     {

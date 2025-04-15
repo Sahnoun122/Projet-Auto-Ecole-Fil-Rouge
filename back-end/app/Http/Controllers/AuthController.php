@@ -196,8 +196,11 @@ class AuthController extends Controller
 
     public function showMoniteur()
     {
-        $moniteurs = User::where('role', 'moniteur')->get();
-        return view('admin.moniteurs', compact('moniteurs'));
+        // $moniteurs = User::where('role', 'moniteur')->get();
+        // return view('admin.moniteurs', compact('moniteurs'));
+
+                return view('admin.moniteurs');
+
     }
 
     public function addMoniteur(Request $request)
