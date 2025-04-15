@@ -60,7 +60,7 @@ Route::prefix('candidats')->middleware(['auth', 'role:admin'])->group(function (
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::get('/moniteurs', [MoniteurController::class, 'index'])->name('moniteurs.index');
+    Route::get('/moniteurs', [MoniteurController::class, 'index'])->name('admin.moniteurs.index');
     Route::get('/moniteurs', [MoniteurController::class, 'create'])->name('admin.moniteurs');
     Route::post('/moniteurs', [MoniteurController::class, 'store'])->name('admin.moniteurs');
     Route::get('/moniteurs/{id}/edit', [MoniteurController::class, 'edit'])->name('admin.moniteurs');
@@ -70,14 +70,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
 
 
-Route::prefix('admin')->group(function () {
-    Route::get('/candidats', [CandidatController::class, 'index'])->name('admin.candidats.index');
-    Route::get('/candidats/create', [CandidatController::class, 'create'])->name('admin.candidats.create');
-    Route::post('/candidats/store', [CandidatController::class, 'store'])->name('admin.candidats.store');
-    Route::get('/candidats/edit/{id}', [CandidatController::class, 'edit'])->name('admin.candidats.edit');
-    Route::put('/candidats/update/{id}', [CandidatController::class, 'update'])->name('admin.candidats.update');
-    Route::delete('/candidats/destroy/{id}', [CandidatController::class, 'destroy'])->name('admin.candidats.destroy');
-});
+    Route::get('/candidats', [CandidatsController::class, 'index'])->name('admin.candidats');
+    Route::get('/candidats/create', [CandidatsController::class, 'create'])->name('admin.candidats.create');
+    Route::post('/candidats/store', [CandidatsController::class, 'store'])->name('admin.candidats.store');
+    Route::get('/candidats/edit/{id}', [CandidatsController::class, 'edit'])->name('admin.candidats.edit');
+    Route::put('/candidats/update/{id}', [CandidatsController::class, 'update'])->name('admin.candidats.update');
+    Route::delete('/candidats/destroy/{id}', [CandidatsController::class, 'destroy'])->name('admin.candidats.destroy');
 
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
 

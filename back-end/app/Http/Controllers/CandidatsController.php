@@ -12,15 +12,17 @@ class CandidatsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function dashboard()
-    {
-        return view('candidats.dashboard'); 
-    }
+    // public function dashboard()
+    // {
+    //     return view('candidats.dashboard'); 
+    // }
 
   public function index()
   {
-      $candidats = User::where('role', 'candidat')->get();
-      return view('admin.candidats.index', compact('candidats'));
+    //   $candidats = User::where('role', 'candidat')->get();
+    //   return view('admin.candidats', compact('candidats'));
+      return view('admin.candidats');
+
   }
 
   public function create()

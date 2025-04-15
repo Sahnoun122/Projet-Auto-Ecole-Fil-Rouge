@@ -43,7 +43,7 @@
             </div>
             <div class="flex-1 overflow-y-auto py-4">
                 <nav>
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('admin.dashboard') }}"
                         class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -80,7 +80,7 @@
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Candidats</span>
                             </a>
-                            <a href="" {{ route('gestionCandidats') }}""
+                            <a href=" {{ route('admin.candidats') }}"
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Candidats</span>
                             </a>
@@ -129,7 +129,7 @@
                         </div>
                         <div id="cours-pratique-list"
                             class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href= "{{ route('AjouterQuiz')}} "
+                            <a href= "{{ route('admin.quizzes')}} "
                                 class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
                             </a>
@@ -260,12 +260,119 @@
             </div>
 
         </div>
-
-    </div>
-
-
-    <script>
-
+        <div class="flex-1 overflow-auto">
+            <header class="bg-[#4D44B5] text-white shadow-md">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold">Gestion des Candidats</h1>
+                    <a href="{{ route('admin.candidats.create') }}" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                        <i class="fas fa-plus mr-2"></i> Ajouter un Candidat
+                    </a>
+                </div>
+            </header>
+            <div id="candidateModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-white w-full max-w-4xl p-6 rounded-lg overflow-y-auto" style="max-height: 90vh;">
+                    <h2 id="modalTitle" class="text-lg font-bold mb-4 text-[#4D44B5]">Ajouter un Candidat</h2>
+                    <form id="candidateForm" method="POST" action="{{ route('admin.candidats.store') }}" enctype="multipart/form-data" class="space-y-6">
+                        @csrf
+                        <input type="hidden" name="role" value="candidat">
+                        <input type="hidden" id="candidateId" name="id">
+                        <input type="hidden" id="_method" name="_method" value="POST">
+        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="candidateNom" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                                    <input type="text" id="candidateNom" name="nom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                </div>
+        
+                                <div>
+                                    <label for="candidatePrenom" class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                                    <input type="text" id="candidatePrenom" name="prenom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                </div>
+        
+                                <div>
+                                    <label for="candidateEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                    <input type="email" id="candidateEmail" name="email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                </div>
+        
+                                <div>
+                                    <label for="candidateAdresse" class="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
+                                    <input type="text" id="candidateAdresse" name="adresse" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                </div>
+                            </div>
+        
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="candidateTelephone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                                    <input type="text" id="candidateTelephone" name="telephone" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                </div>
+        
+                                <div>
+                                    <label for="candidatePermis" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
+                                    <select id="candidatePermis" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                        <option value="">Sélectionnez un type</option>
+                                        <option value="A">Permis A</option>
+                                        <option value="B">Permis B</option>
+                                        <option value="C">Permis C</option>
+                                    </select>
+                                </div>
+        
+                                <div>
+                                    <label for="candidatePassword" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+                                    <input type="password" id="candidatePassword" name="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <p class="text-xs text-gray-500 mt-1">Minimum 8 caractères avec majuscule, minuscule et chiffre</p>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label for="candidateProfilePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo de profil *</label>
+                                <input type="file" id="candidateProfilePhoto" name="photo_profile" class="hidden" accept="image/*">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="document.getElementById('candidateProfilePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                                        <i class="fas fa-upload mr-1"></i> Choisir image
+                                    </button>
+                                    <span id="profilePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
+                                </div>
+                                <div id="previewProfileContainer" class="mt-2 hidden">
+                                    <img id="profileImagePreview" class="h-32 w-32 rounded-full object-cover border-2 border-gray-200">
+                                    <button type="button" onclick="removeImage('candidateProfilePhoto', 'previewProfileContainer', 'profilePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
+                                        <i class="fas fa-trash mr-1"></i> Supprimer
+                                    </button>
+                                </div>
+                            </div>
+        
+                            <div>
+                                <label for="candidateIdentitePhoto" class="block text-sm font-medium text-gray-700 mb-1">Photo d'identité *</label>
+                                <input type="file" id="candidateIdentitePhoto" name="photo_identite" class="hidden" accept="image/*">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="document.getElementById('candidateIdentitePhoto').click()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                                        <i class="fas fa-upload mr-1"></i> Choisir image
+                                    </button>
+                                    <span id="identitePhotoFileName" class="text-sm text-gray-500 truncate max-w-xs">Aucune image sélectionnée</span>
+                                </div>
+                                <div id="previewIdentiteContainer" class="mt-2 hidden">
+                                    <img id="identiteImagePreview" class="h-32 w-48 object-cover border-2 border-gray-200">
+                                    <button type="button" onclick="removeImage('candidateIdentitePhoto', 'previewIdentiteContainer', 'identitePhotoFileName')" class="mt-2 text-red-500 text-sm flex items-center">
+                                        <i class="fas fa-trash mr-1"></i> Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="flex justify-end space-x-2 pt-4 border-t">
+                            <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                Annuler
+                            </button>
+                            <button type="submit" id="submitBtn" class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center">
+                                <i class="fas fa-save mr-2"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        <script> 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       const progressBars = document.querySelectorAll('.progress-bar');
