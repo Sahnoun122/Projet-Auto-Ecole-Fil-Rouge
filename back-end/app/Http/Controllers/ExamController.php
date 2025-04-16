@@ -13,16 +13,16 @@ class ExamController extends Controller
     // ADMIN PART
     public function index()
     {
-        Gate::authorize('viewAny', Exam::class);
+        // Gate::authorize('viewAny', Exam::class);
         
-        $exams = Exam::with(['admin', 'moniteur', 'candidats'])
-            ->withCount('candidats')
+        $exams = Exam::with(['admin', 'moniteur', 'candidat'])
+            ->withCount('candidat')
             ->latest()
             ->paginate(10);
             
         $moniteurs = User::where('role', 'moniteur')->get();
         
-        return view('admin.exams.index', compact('exams', 'moniteurs'));
+        return view('admin.exams', compact('exams', 'moniteurs'));
     }
 
     public function create()

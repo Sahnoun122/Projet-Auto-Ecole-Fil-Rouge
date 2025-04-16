@@ -38,6 +38,12 @@ class Exam extends Model
         return $this->belongsTo(User::class, 'moniteur_id');
     }
 
+    public function candidat()
+{
+    return $this->belongsToMany(User::class, 'exam_user', 'exam_id', 'user_id');
+}
+
+
     public function candidats(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'exam_candidat')
