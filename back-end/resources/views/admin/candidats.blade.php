@@ -389,7 +389,6 @@
                     </div>
                 </div>
             
-                <!-- Modal pour afficher les détails -->
                 <div id="detailModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                     <div class="bg-white w-full max-w-2xl p-6 rounded-lg">
                         <div class="flex justify-between items-center mb-4">
@@ -493,7 +492,6 @@
                                 $('#detailPhotoIdentite').attr('src', "{{ asset('storage') }}/" + data.photo_identite);
                             }
                             
-                            // Afficher la modal
                             document.getElementById('detailModal').classList.remove('hidden');
                         },
                         error: function(xhr) {

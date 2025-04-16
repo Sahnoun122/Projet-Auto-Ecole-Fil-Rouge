@@ -97,7 +97,6 @@ class CandidatsController extends Controller
     {
         $candidat = User::findOrFail($id);
         
-        // Supprimer les fichiers associés
         Storage::disk('public')->delete([
             $candidat->photo_profile,
             $candidat->photo_identite

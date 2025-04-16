@@ -78,6 +78,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/candidats/edit/{id}', [CandidatsController::class, 'edit'])->name('admin.candidats.edit');
     Route::put('/candidats/update/{id}', [CandidatsController::class, 'update'])->name('admin.candidats.update');
     Route::delete('/candidats/destroy/{id}', [CandidatsController::class, 'destroy'])->name('admin.candidats.destroy');
+    Route::get('/candidats/{id}', [CandidatsController::class, 'show'])->name('admin.candidats.show');
 
     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
 
