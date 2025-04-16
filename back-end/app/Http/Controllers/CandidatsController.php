@@ -19,9 +19,9 @@ class CandidatsController extends Controller
 
   public function index()
   {
-    //   $candidats = User::where('role', 'candidat')->get();
-    //   return view('admin.candidats', compact('candidats'));
-      return view('admin.candidats');
+      $candidats = User::where('role', 'candidat')->get();
+      return view('admin.candidats', compact('candidats'));
+    //   return view('admin.candidats');
 
   }
 

@@ -307,7 +307,6 @@
 
         <div class="flex-1 overflow-auto">
 
-                <div class="flex-1 overflow-auto">
                     <header class="bg-[#4D44B5] text-white shadow-md">
                         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                             <h1 class="text-2xl font-bold">QuizMaster Pro</h1>
@@ -425,12 +424,13 @@
             
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
+
+
                  $(document).ready(function() {
     const modal = $('#quizModal');
     const form = $('#quizForm');
     const submitBtn = $('#submitBtn');
 
-    // Nouveau quiz
     $('#newQuizBtn').click(function() {
         $('#modalTitle').text('Nouveau Quiz');
         form.attr('action', "{{ route('admin.quizzes.store') }}");
