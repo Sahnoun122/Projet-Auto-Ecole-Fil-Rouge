@@ -70,6 +70,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/monitors', [MoniteurController::class, 'store'])->name('admin.monitors.store');
     Route::put('/monitors/{monitor}', [MoniteurController::class, 'update'])->name('admin.monitors.update');
     Route::delete('/monitors/{monitor}', [MoniteurController::class, 'destroy'])->name('admin.monitors.destroy');
+    Route::get('/monitors/{id}', [MoniteurController::class, 'show'])->name('admin.monitors.show');
 
 
     Route::get('/candidats', [CandidatsController::class, 'index'])->name('admin.candidats');

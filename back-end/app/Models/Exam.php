@@ -28,26 +28,20 @@ class Exam extends Model
         'date_exam' => 'datetime',
     ];
 
-    public function admin(): BelongsTo
+    public function admin()
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function moniteur(): BelongsTo
+    public function moniteur()
     {
         return $this->belongsTo(User::class, 'moniteur_id');
     }
 
-    public function candidat()
-{
-    return $this->belongsToMany(User::class, 'exam_user', 'exam_id', 'user_id');
-}
-
-
-    public function candidats(): BelongsToMany
+    public function candidats()
     {
-        return $this->belongsToMany(User::class, 'exam_candidat')
-                    ->withPivot(['present', 'resultat', 'score', 'observations', 'feedbacks'])
+        return $this->belongsToMany(User::class, 'exam_user')
+                    ->withPivot(['present', 'resultat', 'score', 'observations'])
                     ->withTimestamps();
     }
 
@@ -55,9 +49,7 @@ class Exam extends Model
     {
         $total = $this->candidats()->count();
         $presents = $this->candidats()->wherePivot('present', true)->count();
-        $reussis = $this->candidats()->whereNotNull('pivot.resultat')
-                     ->where('pivot.resultat', '!=', 'insuffisant')
-                     ->count();
+        $reussis = $this->candidats()->wherePivot('resultat', 'réussi')->count();
 
         $this->update([
             'nombre_presents' => $presents,
