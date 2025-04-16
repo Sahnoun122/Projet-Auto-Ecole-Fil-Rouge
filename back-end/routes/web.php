@@ -60,16 +60,16 @@ Route::prefix('candidats')->middleware(['auth', 'role:admin'])->group(function (
             ->name('candidats.quizzes.results');
         });
 
+
+
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::get('/moniteurs', [MoniteurController::class, 'index'])->name('admin.moniteurs.index');
-    Route::get('/moniteurs', [MoniteurController::class, 'create'])->name('admin.moniteurs');
-    Route::post('/moniteurs', [MoniteurController::class, 'store'])->name('admin.moniteurs');
-    Route::get('/moniteurs/{id}/edit', [MoniteurController::class, 'edit'])->name('admin.moniteurs');
-    Route::put('/moniteurs/{id}', [MoniteurController::class, 'update'])->name('admin.moniteurs');
-    Route::delete('/moniteurs/{id}', [MoniteurController::class, 'destroy'])->name('admin.moniteurs');
-    Route::get('/moniteurs/{id}', [MoniteurController::class, 'show'])->name('admin.moniteurs');
+    // Route::get('/list-moniteur', [MoniteurController::class, 'index']);
 
+    Route::get('/monitors', [MoniteurController::class, 'index'])->name('admin.monitors.index');
+    Route::post('/monitors', [MoniteurController::class, 'store'])->name('admin.monitors.store');
+    Route::put('/monitors/{monitor}', [MoniteurController::class, 'update'])->name('admin.monitors.update');
+    Route::delete('/monitors/{monitor}', [MoniteurController::class, 'destroy'])->name('admin.monitors.destroy');
 
 
     Route::get('/candidats', [CandidatsController::class, 'index'])->name('admin.candidats');
