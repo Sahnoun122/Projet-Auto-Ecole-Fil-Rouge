@@ -267,9 +267,119 @@
             </div>
           
         </div>
-      
+        <div class="flex-1 overflow-auto">
+            <header class="bg-[#4D44B5] text-white shadow-md">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold">Gestion des Moniteurs</h1>
+                    <button id="newMonitorBtn" class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                        <i class="fas fa-plus mr-2"></i> Ajouter un Moniteur
+                    </button>
+                </div>
+            </header>
+        
+          
+        
+            <div id="monitorModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-white w-full max-w-2xl p-6 rounded-lg">
+                    <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Moniteur</h2>
+                    <form id="monitorForm" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" id="monitorId" name="id">
+                        <input type="hidden" id="_method" name="_method" value="POST">
+        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="monitorNom" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                                <input type="text" id="monitorNom" name="nom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+                            <div>
+                                <label for="monitorPrenom" class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                                <input type="text" id="monitorPrenom" name="prenom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+                        </div>
+        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="monitorEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                <input type="email" id="monitorEmail" name="email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+                            <div>
+                                <label for="monitorTelephone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                                <input type="text" id="monitorTelephone" name="telephone" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+                        </div>
+        
+                        <div class="mb-4">
+                            <label for="monitorAdresse" class="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
+                            <input type="text" id="monitorAdresse" name="adresse" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                        </div>
+        
+                        <div class="mb-4">
+                            <label for="monitorPermisType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
+                            <select id="monitorPermisType" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                <option value="">Sélectionnez un type</option>
+                                <option value="A">Permis A (Moto)</option>
+                                <option value="B">Permis B (Voiture)</option>
+                                <option value="C">Permis C (Poids lourd)</option>
+                                <option value="D">Permis D (Bus)</option>
+                                <option value="EB">Permis EB (Remorque)</option>
+                            </select>
+                        </div>
+        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="monitorPhotoProfile" class="block text-sm font-medium text-gray-700 mb-1">Photo de profil *</label>
+                                <input type="file" id="monitorPhotoProfile" name="photo_profile" accept="image/jpeg,image/png,image/jpg" class="w-full">
+                                <p class="text-xs text-gray-500 mt-1">Formats acceptés: jpeg, png, jpg. Max: 2MB</p>
+                            </div>
+                            <div>
+                                <label for="monitorPhotoIdentite" class="block text-sm font-medium text-gray-700 mb-1">Photo d'identité *</label>
+                                <input type="file" id="monitorPhotoIdentite" name="photo_identite" accept="image/jpeg,image/png,image/jpg" class="w-full">
+                                <p class="text-xs text-gray-500 mt-1">Formats acceptés: jpeg, png, jpg. Max: 2MB</p>
+                            </div>
+                        </div>
+        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="monitorCertifications" class="block text-sm font-medium text-gray-700 mb-1">Certifications *</label>
+                                <input type="file" id="monitorCertifications" name="certifications" accept=".pdf,.doc,.docx" class="w-full">
+                                <p class="text-xs text-gray-500 mt-1">Formats acceptés: pdf, doc, docx. Max: 2MB</p>
+                            </div>
+                            <div>
+                                <label for="monitorQualifications" class="block text-sm font-medium text-gray-700 mb-1">Qualifications *</label>
+                                <input type="file" id="monitorQualifications" name="qualifications" accept=".pdf,.doc,.docx" class="w-full">
+                                <p class="text-xs text-gray-500 mt-1">Formats acceptés: pdf, doc, docx. Max: 2MB</p>
+                            </div>
+                        </div>
+        
+                        <div class="mb-4">
+                            <label for="monitorPassword" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+                            <input type="password" id="monitorPassword" name="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            <p class="text-xs text-gray-500 mt-1">Minimum 8 caractères, avec majuscule, minuscule et chiffre</p>
+                        </div>
+        
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" id="cancelBtn"
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                Annuler
+                            </button>
+                            <button type="submit" id="submitBtn"
+                                class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    </div>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </body>
 
 </html>
