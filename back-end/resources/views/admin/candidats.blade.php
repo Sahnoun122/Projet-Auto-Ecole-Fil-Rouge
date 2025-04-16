@@ -307,7 +307,64 @@
                         </form>
                     </div>
                 </div>
-          
+            
+                <div id="detailModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                    <div class="bg-white w-full max-w-2xl p-6 rounded-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold">Détails du Candidat</h2>
+                            <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Photo de profil</h3>
+                                    <img id="detailPhotoProfile" class="h-24 w-24 rounded-full object-cover mt-2">
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Photo d'identité</h3>
+                                    <img id="detailPhotoIdentite" class="h-24 w-24 rounded-full object-cover mt-2">
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Nom complet</h3>
+                                    <p id="detailNomComplet" class="mt-1 text-sm text-gray-900"></p>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Email</h3>
+                                    <p id="detailEmail" class="mt-1 text-sm text-gray-900"></p>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Téléphone</h3>
+                                    <p id="detailTelephone" class="mt-1 text-sm text-gray-900"></p>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Adresse</h3>
+                                    <p id="detailAdresse" class="mt-1 text-sm text-gray-900"></p>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Type de permis</h3>
+                                    <p id="detailPermisType" class="mt-1 text-sm text-gray-900"></p>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">Date d'inscription</h3>
+                                    <p id="detailDateInscription" class="mt-1 text-sm text-gray-900"></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end">
+                            <button onclick="document.getElementById('detailModal').classList.add('hidden')" 
+                                class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                                Fermer
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
