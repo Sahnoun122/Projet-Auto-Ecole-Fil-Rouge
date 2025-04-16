@@ -55,6 +55,12 @@ class MoniteurController extends Controller
         return redirect()->route('admin.monitors.index')->with('success', 'Moniteur ajouté avec succès');
     }
 
+    public function show($id)
+    {
+        $monitor = User::findOrFail($id);
+        return response()->json($monitor);
+    }
+
     public function edit($id)
     {
         $monitor = User::findOrFail($id);
