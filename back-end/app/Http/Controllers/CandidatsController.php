@@ -24,7 +24,7 @@ class CandidatsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
     
-        return view('admin.candidats.index', compact('candidats'));
+        return view('admin.candidats', compact('candidats'));
     }
 
     public function store(Request $request)
@@ -48,7 +48,7 @@ class CandidatsController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('admin.candidats.index')->with('success', 'Candidat ajouté avec succès');
+        return redirect()->route('admin.candidats')->with('success', 'Candidat ajouté avec succès');
     }
 
     public function show($id)
@@ -90,7 +90,7 @@ class CandidatsController extends Controller
 
         $candidat->update($data);
 
-        return redirect()->route('admin.candidats.index')->with('success', 'Candidat mis à jour avec succès');
+        return redirect()->route('admin.candidats')->with('success', 'Candidat mis à jour avec succès');
     }
 
     public function destroy($id)
@@ -105,6 +105,6 @@ class CandidatsController extends Controller
         
         $candidat->delete();
 
-        return redirect()->route('admin.candidats.index')->with('success', 'Candidat supprimé avec succès');
+        return redirect()->route('admin.candidats')->with('success', 'Candidat supprimé avec succès');
     }
 }
