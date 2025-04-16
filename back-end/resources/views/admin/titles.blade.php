@@ -58,171 +58,123 @@
                         </svg>
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
                     </a>
-
-
-                    <div>
-                        <div id="candidats-header"
-                            class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
-                            <svg id="candidats-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <div id="candidats-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Candidats</span>
+                       
+                        <div>
+                            <a href=" {{route('admin.candidats')}}">
+                              <div id="cours-theorique-header"
+                              class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                  stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                              </svg>
+      
+                              <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
+                              <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                </svg>                            
+                              
+                              </div>
                             </a>
-                            <a href=" {{ route('admin.gestionCandidats') }} "
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Candidats</span>
-                            </a>
-                        </div>
-                    </div>
-
+                            
+                          </div>
                     <div>
+                      <a href=" {{route('admin.titles.index')}}">
                         <div id="cours-theorique-header"
-                            class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
 
-                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
-                            <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>                            </div>
-                        <div id="cours-theorique-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Théorique</span>
-                            </a>
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Cours Théorique</span>
-                            </a>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
+                        <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>                            
+                        
                         </div>
+                      </a>
+                      
                     </div>
 
                     <div>
+                      <a href="{{ route ('admin.quizzes')}}">
                         <div id="cours-pratique-header"
-                            class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
-                            <svg id="cours-pratique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
-                        </div>
-                        <div id="cours-pratique-list"
-                            class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="{{ route('admin.quizzes') }} "
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Cours Pratique</span>
-                            </a>
-                            <a href="{{ route('admin.quizzes')}}"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Cours Pratique</span>
-                            </a>
-                        </div>
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
+                        <svg id="cours-pratique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
+                    </div>
+                      </a>
+                    
                     </div>
 
                     <div>
+                    <a href=" {{ route('admin.vehicles')}}">
                         <div id="vehicule-header"
-                            class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
 
-                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
-                            <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
-                        </div>
-                        <div id="vehicule-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Véhicule</span>
-                            </a>
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Véhicules</span>
-                            </a>
-                        </div>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
+                        <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
+                    </div>
+                    </a>
+                    
                     </div>
 
                     <div>
+                    <a href=" {{ route('admin.exams')}}">
                         <div id="examen-header"
-                            class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
 
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
 
-                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
-                            <svg id="examen-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
-                        </div>
-                        <div id="examen-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Examen</span>
-                            </a>
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Examens</span>
-                            </a>
-                        </div>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
+                        <svg id="examen-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
+                    </div>
+                    </a>
+                
 
 
                     </div>
 
                     <div>
+                    <a href=" {{ route('admin.monitors.index') }}">
                         <div id="moniteurs-header"
-                            class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
 
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
-                            <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
+                        <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
 
-                        </div>
-                        <div id="moniteurs-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Moniteurs</span>
-                            </a>
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Moniteurs</span>
-                            </a>
-                        </div>
+                    </div>
+                    </a>
+                   
 
                     </div>
 
+                   <a href="">
                     <div>
                         <div id="caisse-header"
                             class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
@@ -233,142 +185,135 @@
                             </svg>
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
                             <svg id="caisse-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                              </svg>
+                             
                         </div>
+                   </a>
 
-                        <div id="caisse-list" class="pl-8 overflow-hidden transition-all duration-300 max-h-0">
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Ajouter Caisse</span>
-                            </a>
-                            <a href="#"
-                                class="sidebar-item flex items-center px-4 py-2 text-gray-600 hover:text-primary transition-colors">
-                                <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Liste des Caisses</span>
-                            </a>
-                        </div>
+                       
+                        <a href="{{ route('logout') }} "
                         <div id="logout-button" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer" id="logoutButton">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
                             </svg>
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
                         </div>
+                     </a>
                         
                     </div>
                 </nav>
             </div>
-
-        </div>
-        
-<div class="flex-1 overflow-auto">
-    <header class="bg-[#4D44B5] text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Gestion des Titres de Cours</h1>
-            <button id="newTitleBtn"
-                class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
-                <i class="fas fa-plus mr-2"></i> Nouveau Titre
-            </button>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        @if(session('success'))
-            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
-                <p>{{ session('success') }}</p>
-            </div>
-        @endif
-
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-800">Mes Titres</h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6" id="titlesContainer">
-                @forelse ($titles as $title)
-                <div class="border rounded-lg p-4 hover:shadow-md transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="inline-block px-2 py-1 bg-[#4D44B5] text-white text-xs rounded-full mb-2">
-                                Permis {{ $title->type_permis }}
-                            </span>
-                            <h3 class="text-lg font-semibold text-[#4D44B5]">
-                                <a href="{{ route('admin.courses', $title->id) }}">{{ $title->name }}</a>
-                            </h3>
-                            <p class="text-sm text-gray-500 mt-2">{{ $title->courses_count }} cours</p>
+            <div class="flex-1 overflow-auto">
+                <header class="bg-[#4D44B5] text-white shadow-md">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold">Gestion des Titres de Cours</h1>
+                        <button id="newTitleBtn"
+                            class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                            <i class="fas fa-plus mr-2"></i> Nouveau Titre
+                        </button>
+                    </div>
+                </header>
+            
+                <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    @if(session('success'))
+                        <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                            <p>{{ session('success') }}</p>
                         </div>
-                        <div class="flex space-x-2">
-                            <button onclick="handleEditTitle('{{ $title->id }}', '{{ $title->type_permis }}', '{{ $title->name }}')"
-                                class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="handleDeleteTitle('{{ $title->id }}')"
-                                class="text-red-500 hover:text-red-700 p-2">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                    @endif
+            
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <h2 class="text-xl font-semibold text-gray-800">Mes Titres</h2>
+                        </div>
+            
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6" id="titlesContainer">
+                            @forelse ($titles as $title)
+                            <div class="border rounded-lg p-4 hover:shadow-md transition">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="inline-block px-2 py-1 bg-[#4D44B5] text-white text-xs rounded-full mb-2">
+                                            Permis {{ $title->type_permis }}
+                                        </span>
+                                        <h3 class="text-lg font-semibold text-[#4D44B5]">
+                                            <a href="{{ route('admin.courses', $title->id) }}">{{ $title->name }}</a>
+                                        </h3>
+                                        <p class="text-sm text-gray-500 mt-2">{{ $title->courses_count }} cours</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button onclick="handleEditTitle('{{ $title->id }}', '{{ $title->type_permis }}', '{{ $title->name }}')"
+                                            class="text-[#4D44B5] hover:text-[#3a32a1] p-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="handleDeleteTitle('{{ $title->id }}')"
+                                            class="text-red-500 hover:text-red-700 p-2">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="col-span-3 text-center py-8">
+                                <p class="text-gray-500">Aucun titre disponible</p>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
+                </main>
+            
+                <div id="titleModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                    <div class="bg-white w-full max-w-md p-6 rounded-lg">
+                        <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Titre</h2>
+                        <form id="titleForm" method="POST">
+                            @csrf
+                            <input type="hidden" id="titleId" name="id">
+                            <input type="hidden" id="_method" name="_method" value="POST">
+            
+                            <div class="mb-4">
+                                <label for="titleName" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                                <input type="text" id="titleName" name="name" maxlength="255"
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Le nom est requis (max 255 caractères)</p>
+                            </div>
+            
+                            <div class="mb-4">
+                                <label for="titlePermisType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
+                                <select id="titlePermisType" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="A">Permis A (Moto)</option>
+                                    <option value="B">Permis B (Voiture)</option>
+                                    <option value="C">Permis C (Poids lourd)</option>
+                                    <option value="D">Permis D (Bus)</option>
+                                    <option value="EB">Permis EB (Remorque)</option>
+                                    <option value="A1">Permis A1 (Moto légère)</option>
+                                    <option value="A2">Permis A2 (Moto intermédiaire)</option>
+                                    <option value="B1">Permis B1 (Quadricycle lourd)</option>
+                                    <option value="C1">Permis C1 (Poids lourd moyen)</option>
+                                    <option value="D1">Permis D1 (Bus moyen)</option>
+                                    <option value="BE">Permis BE (Remorque lourde)</option>
+                                    <option value="C1E">Permis C1E (PL + remorque)</option>
+                                    <option value="D1E">Permis D1E (Bus + remorque)</option>
+                                </select>
+                                <p id="permisError" class="text-red-500 text-xs mt-1 hidden">Veuillez sélectionner un type de permis</p>
+                            </div>
+                            
+                            <div class="flex justify-end space-x-2">
+                                <button type="button" id="cancelBtn"
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                    Annuler
+                                </button>
+                                <button type="submit" id="submitBtn"
+                                    class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                                    Enregistrer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                @empty
-                <div class="col-span-3 text-center py-8">
-                    <p class="text-gray-500">Aucun titre disponible</p>
-                </div>
-                @endforelse
             </div>
         </div>
-    </main>
+        
 
-    <div id="titleModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-white w-full max-w-md p-6 rounded-lg">
-            <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Titre</h2>
-            <form id="titleForm" method="POST">
-                @csrf
-                <input type="hidden" id="titleId" name="id">
-                <input type="hidden" id="_method" name="_method" value="POST">
 
-                <div class="mb-4">
-                    <label for="titleName" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
-                    <input type="text" id="titleName" name="name" maxlength="255"
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                    <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Le nom est requis (max 255 caractères)</p>
-                </div>
-
-                <div class="mb-4">
-                    <label for="titlePermisType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
-                    <select id="titlePermisType" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
-                        <option value="A">Permis A (Moto)</option>
-                        <option value="B">Permis B (Voiture)</option>
-                        <option value="C">Permis C (Poids lourd)</option>
-                        <option value="D">Permis D (Bus)</option>
-                        <option value="EB">Permis EB (Remorque)</option>
-                        <option value="A1">Permis A1 (Moto légère)</option>
-                        <option value="A2">Permis A2 (Moto intermédiaire)</option>
-                        <option value="B1">Permis B1 (Quadricycle lourd)</option>
-                        <option value="C1">Permis C1 (Poids lourd moyen)</option>
-                        <option value="D1">Permis D1 (Bus moyen)</option>
-                        <option value="BE">Permis BE (Remorque lourde)</option>
-                        <option value="C1E">Permis C1E (PL + remorque)</option>
-                        <option value="D1E">Permis D1E (Bus + remorque)</option>
-                    </select>
-                    <p id="permisError" class="text-red-500 text-xs mt-1 hidden">Veuillez sélectionner un type de permis</p>
-                </div>
-                
-                <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancelBtn"
-                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
-                        Annuler
-                    </button>
-                    <button type="submit" id="submitBtn"
-                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
-                        Enregistrer
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script>
-const newTitleBtn = document.getElementById('newTitleBtn');
+ <script> 
+        const newTitleBtn = document.getElementById('newTitleBtn');
 const titleModal = document.getElementById('titleModal');
 const cancelBtn = document.getElementById('cancelBtn');
 const titleForm = document.getElementById('titleForm');
@@ -507,33 +452,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   
-async function logout() {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
-            },
-        });
 
-        const data = await response.json();
 
-        if (response.ok) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            alert(data.message);
-            window.location.href = '/connecter'; 
-        } else {
-            alert('Échec de la déconnexion : ' + data.message); 
-        }
-    } catch (error) {
-        console.error('Erreur lors de la déconnexion:', error);
-        alert('Une erreur est survenue. Veuillez réessayer.');
-    }
-}
-
-document.getElementById('logoutButton').addEventListener('click', logout);
     </script>
 </body>
 

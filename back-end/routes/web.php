@@ -30,7 +30,7 @@ Route::controller(PagesController::class)->group(function () {
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
@@ -151,9 +151,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
          Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
          Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
          
-         Route::get('/admin/{exam}/candidates', [ExamController::class, 'manageCandidates'])->name('admin.exams.candidates');
-         Route::post('/admin/{exam}/add-candidate', [ExamController::class, 'addCandidate'])->name('admin.exams.add-candidate');
-         Route::post('/admin/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
+         Route::get('/{exam}/candidates', [ExamController::class, 'manageCandidates'])->name('admin.exams.candidates');
+         Route::post('/{exam}/add-candidate', [ExamController::class, 'addCandidate'])->name('admin.exams.add-candidate');
+         Route::post('/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
 
 Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
