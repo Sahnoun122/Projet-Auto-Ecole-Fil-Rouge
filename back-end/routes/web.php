@@ -146,7 +146,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
 
          Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
-         Route::get('/exams/create', [ExamController::class, 'create'])->name('admin.exams.create');
+         Route::get('/exams/datatable', [ExamController::class, 'datatable'])->name('admin.exams.datatable');
          Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
          Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('admin.exams.show');
          Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
