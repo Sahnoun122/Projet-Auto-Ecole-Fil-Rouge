@@ -13,10 +13,8 @@ class ExamController extends Controller
     // ADMIN PART
     public function index()
     {
-        // Gate::authorize('viewAny', Exam::class);
-        
-        $exams = Exam::with(['admin', 'moniteur', 'candidat'])
-            ->withCount('candidat')
+        $exams = Exam::with(['admin', 'moniteur'])
+            ->withCount(['candidats as candidats_count'])
             ->latest()
             ->paginate(10);
             
@@ -35,15 +33,12 @@ class ExamController extends Controller
 
     public function store(Request $request)
     {
-        Gate::authorize('create', Exam::class);
-
         $validated = $request->validate([
             'type' => 'required|in:theorique,pratique',
             'date_exam' => 'required|date|after:now',
             'lieu' => 'required|string|max:100',
             'places_max' => 'required|integer|min:1',
-            'moniteur_id' => 'nullable|exists:users,id',
-            'instructions' => 'nullable|string'
+            'moniteur_id' => 'nullable|exists:users,id'
         ]);
 
         $exam = Exam::create([
@@ -52,8 +47,11 @@ class ExamController extends Controller
             'statut' => 'planifie'
         ]);
 
-        return redirect()->route('admin.exams.index')
-            ->with('success', 'Examen créé avec succès');
+        return response()->json([
+            'success' => true,
+            'exam' => $exam,
+            'message' => 'Examen créé avec succès'
+        ]);
     }
 
     public function show(Exam $exam)
@@ -105,10 +103,8 @@ class ExamController extends Controller
             ->with('success', 'Examen supprimé avec succès');
     }
 
-    public function manageCandidates(Exam $exam)
+  public function manageCandidates(Exam $exam)
     {
-        Gate::authorize('manageCandidats', $exam);
-        
         $availableCandidates = User::where('role', 'candidat')
             ->whereDoesntHave('exams', function($q) use ($exam) {
                 $q->where('exam_id', $exam->id);
@@ -117,40 +113,48 @@ class ExamController extends Controller
             
         $registeredCandidates = $exam->candidats;
         
-        return view('admin.exams.candidates', compact('exam', 'availableCandidates', 'registeredCandidates'));
+        return response()->json([
+            'available' => $availableCandidates,
+            'registered' => $registeredCandidates
+        ]);
     }
 
     public function addCandidate(Request $request, Exam $exam)
     {
-        Gate::authorize('manageCandidats', $exam);
-
         $request->validate([
-            'candidat_id' => 'required|exists:users,id'
+            'candidat_id' => 'required|exists:users,id',
+            'present' => 'boolean',
+            'resultat' => 'nullable|in:excellent,tres_bien,bien,moyen,insuffisant',
+            'score' => 'nullable|integer'
         ]);
 
         if ($exam->candidats()->count() >= $exam->places_max) {
-            return back()->with('error', 'Nombre maximum de candidats atteint');
+            return response()->json([
+                'success' => false,
+                'message' => 'Nombre maximum de candidats atteint'
+            ], 422);
         }
 
-        $exam->candidats()->syncWithoutDetaching([$request->candidat_id]);
+        $exam->candidats()->attach($request->candidat_id, [
+            'present' => $request->present ?? false,
+            'resultat' => $request->resultat,
+            'score' => $request->score
+        ]);
 
-        return back()->with('success', 'Candidat ajouté avec succès');
+        return response()->json(['success' => true]);
     }
 
     public function removeCandidate(Request $request, Exam $exam)
     {
-        Gate::authorize('manageCandidats', $exam);
-
         $request->validate([
             'candidat_id' => 'required|exists:users,id'
         ]);
 
         $exam->candidats()->detach($request->candidat_id);
 
-        return back()->with('success', 'Candidat retiré avec succès');
+        return response()->json(['success' => true]);
     }
 
-    // CANDIDAT PART
     public function candidateExams(Request $request)
     {
         $user = Auth::user();

@@ -42,21 +42,26 @@ class User extends Authenticatable implements JWTSubject
             : asset('images/default-profile.png');
     }
 
-    public function isAdmin()
+
+    public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    public function isMoniteur()
+    public function isMoniteur(): bool
     {
         return $this->role === 'moniteur';
     }
 
-    public function isCandidat()
+    public function isCandidat(): bool
     {
         return $this->role === 'candidat';
     }
 
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
     /**
      * Retourne l'identifiant unique de l'utilisateur pour le JWT
      *
