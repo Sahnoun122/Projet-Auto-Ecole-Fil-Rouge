@@ -10,23 +10,27 @@ use Illuminate\Support\Facades\Auth;
 
 class CoursConduiteController extends Controller
 {
-    public function index()
-    {
-        $cours = CoursConduite::with(['moniteur', 'vehicule', 'candidats'])->latest()->paginate(10);
-        $moniteurs = User::where('role', 'moniteur')->get();
-        $vehicules = Vehicle::all();
-        $candidats = User::where('role', 'candidat')->get();
-        
-        $vehiculesDisponibles = Vehicle::where('statut', 'disponible')->get();
-        
-        return view('admin.cours-conduite', compact(
-            'cours', 
-            'moniteurs', 
-            'vehicules',
-            'vehiculesDisponibles',
-            'candidats'
-        ));
-    }
+   
+        public function index()
+        {
+            $cours = CoursConduite::with(['moniteur', 'vehicule', 'candidats'])
+                                 ->latest() 
+                                 ->paginate(10); 
+    dd($cours);
+            $moniteurs = User::where('role', 'moniteur')->get();
+    
+            $vehiculesDisponibles = Vehicle::where('statut', 'disponible')->get();
+    
+            $candidats = User::where('role', 'candidat')->get();
+    
+            return view('admin.cours-conduite', compact(
+                'cours', 
+                'moniteurs', 
+                'vehiculesDisponibles',
+                'candidats'
+            ));
+        }
+    
 
     public function store(Request $request)
     {

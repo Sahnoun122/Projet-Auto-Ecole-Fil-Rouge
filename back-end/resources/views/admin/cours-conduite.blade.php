@@ -12,7 +12,22 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+ <style>
+            .select2-container--default .select2-selection--multiple {
+                border: 1px solid #d1d5db;
+                border-radius: 0.5rem;
+                padding: 0.25rem;
+                min-height: 42px;
+            }
+            .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                background-color: #4D44B5;
+                border: none;
+                border-radius: 0.25rem;
+                color: white;
+                padding: 0 0.5rem;
+            }
+            </style>
+             
 </head>
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
@@ -205,8 +220,106 @@
                     </div>
                 </nav>
             </div>
-    
-                  
+
+            <div class="container mx-auto p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-semibold">Gestion des Cours de Conduite</h1>
+                    <button id="openModalBtn" class="bg-[#4D44B5] text-white px-4 py-2 rounded-lg hover:bg-[#3a32a1] transition">
+                        <i class="fas fa-plus mr-2"></i> Ajouter un Cours
+                    </button>
+                </div>
+            
+                @if(session('success'))
+                    <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
+                        <p>{{ session('success') }}</p>
+                    </div>
+                @endif
+            
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="overflow-x-auto">
+                        
+            </div>
+            
+            <!-- Modal -->
+            <div id="coursModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg">
+                    <h2 id="modalTitle" class="text-xl font-bold mb-4">Ajouter un Cours</h2>
+                    <form id="coursForm" method="POST">
+                        @csrf
+                        <input type="hidden" name="_method" id="_method" value="POST">
+                        <input type="hidden" name="cours_id" id="cours_id">
+            
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="mb-4">
+                                <label for="date_heure" class="block text-sm font-medium text-gray-700 mb-1">Date & Heure *</label>
+                                <input type="datetime-local" name="date_heure" id="date_heure" 
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="duree_minutes" class="block text-sm font-medium text-gray-700 mb-1">Durée (min) *</label>
+                                <input type="number" name="duree_minutes" id="duree_minutes" min="30" max="240"
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="moniteur_id" class="block text-sm font-medium text-gray-700 mb-1">Moniteur *</label>
+                                <select name="moniteur_id" id="moniteur_id" 
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="">Sélectionnez un moniteur</option>
+                                    @foreach($moniteurs as $moniteur)
+                                        <option value="{{ $moniteur->id }}">{{ $moniteur->nom }} {{ $moniteur->prenom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="vehicule_id" class="block text-sm font-medium text-gray-700 mb-1">Véhicule *</label>
+                                <select name="vehicule_id" id="vehicule_id" 
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="">Sélectionnez un véhicule</option>
+                                    @foreach($vehiculesDisponibles as $vehicule)
+                                        <option value="{{ $vehicule->id }}">{{ $vehicule->marque }} - {{ $vehicule->immatriculation }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-2 mb-4">
+                                <label for="candidat_ids" class="block text-sm font-medium text-gray-700 mb-1">Candidats *</label>
+                                <select name="candidat_ids[]" id="candidat_ids" multiple
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    @foreach($candidats as $candidat)
+                                        <option value="{{ $candidat->id }}">{{ $candidat->nom }} {{ $candidat->prenom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-2 mb-4">
+                                <label for="statut" class="block text-sm font-medium text-gray-700 mb-1">Statut *</label>
+                                <select name="statut" id="statut" 
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="planifie">Planifié</option>
+                                    <option value="termine">Terminé</option>
+                                    <option value="annule">Annulé</option>
+                                </select>
+                            </div>
+                        </div>
+            
+                        <div class="flex justify-end space-x-2 mt-6">
+                            <button type="button" id="cancelBtn" 
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                Annuler
+                            </button>
+                            <button type="submit" 
+                                class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+         
+            </script>
+            
+           
             
 </body>
 
