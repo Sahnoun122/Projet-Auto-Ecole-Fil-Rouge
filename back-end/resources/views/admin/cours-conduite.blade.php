@@ -12,22 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
- <style>
-            .select2-container--default .select2-selection--multiple {
-                border: 1px solid #d1d5db;
-                border-radius: 0.5rem;
-                padding: 0.25rem;
-                min-height: 42px;
-            }
-            .select2-container--default .select2-selection--multiple .select2-selection__choice {
-                background-color: #4D44B5;
-                border: none;
-                border-radius: 0.25rem;
-                color: white;
-                padding: 0 0.5rem;
-            }
-            </style>
-             
+
 </head>
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
@@ -316,10 +301,84 @@
             
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
-         
+            $(document).ready(function() {
+                const modal = $('#coursModal');
+                const form = $('#coursForm');
+            
+                // Initialiser le select multiple
+                $('#candidat_ids').select2({
+                    placeholder: "Sélectionnez les candidats",
+                    width: '100%'
+                });
+            
+                // Ouvrir la modal pour ajouter un cours
+                $('#openModalBtn').click(function() {
+                    $('#modalTitle').text('Ajouter un Cours');
+                    form.attr('action', "{{ route('admin.cours-conduite.store') }}");
+                    $('#_method').val('POST');
+                    $('#cours_id').val('');
+                    form.trigger('reset');
+                    $('#vehicule_id').html('<option value="">Sélectionnez un véhicule</option>' + 
+                        @json($vehiculesDisponibles->map(function($vehicule) {
+                            return '<option value="' + $vehicule->id + '">' + 
+                                   $vehicule->marque + ' - ' + $vehicule->immatriculation + '</option>';
+                        })->implode(''))
+                    );
+                    $('#candidat_ids').val(null).trigger('change');
+                    modal.removeClass('hidden');
+                });
+            
+                // Fermer la modal
+                $('#cancelBtn').click(function() {
+                    modal.addClass('hidden');
+                });
+            
+                // Ouvrir la modal pour éditer un cours
+                window.openEditModal = function(id, dateHeure, duree, moniteurId, vehiculeId, candidatsIds, statut) {
+                    $('#modalTitle').text('Modifier un Cours');
+                    form.attr('action', "{{ route('admin.cours-conduite.update', '') }}/" + id);
+                    $('#_method').val('PUT');
+                    $('#cours_id').val(id);
+                    $('#date_heure').val(dateHeure);
+                    $('#duree_minutes').val(duree);
+                    $('#moniteur_id').val(moniteurId);
+                    
+                    // Pour l'édition, afficher tous les véhicules
+                    $('#vehicule_id').html('<option value="">Sélectionnez un véhicule</option>' + 
+                        @json($vehicules->map(function($vehicule) {
+                            return '<option value="' + $vehicule->id + '">' + 
+                                   $vehicule->marque + ' - ' + $vehicule->immatriculation + '</option>';
+                        })->implode(''))
+                    );
+                    
+                    $('#vehicule_id').val(vehiculeId);
+                    $('#statut').val(statut);
+                    
+                    // Sélectionner les candidats
+                    const candidatsArray = JSON.parse(candidatsIds.replace(/&quot;/g, '"'));
+                    $('#candidat_ids').val(candidatsArray).trigger('change');
+                    
+                    modal.removeClass('hidden');
+                };
+            });
             </script>
             
-           
+            <style>
+            .select2-container--default .select2-selection--multiple {
+                border: 1px solid #d1d5db;
+                border-radius: 0.5rem;
+                padding: 0.25rem;
+                min-height: 42px;
+            }
+            .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                background-color: #4D44B5;
+                border: none;
+                border-radius: 0.25rem;
+                color: white;
+                padding: 0 0.5rem;
+            }
+            </style>
+             
             
 </body>
 
