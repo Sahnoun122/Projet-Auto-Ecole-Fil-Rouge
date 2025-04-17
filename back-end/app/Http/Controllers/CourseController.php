@@ -56,10 +56,10 @@ class CourseController extends Controller
         // Gate::authorize('update', $course);
 
         $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
-            'duration' => 'required|integer|min:1'
+            'duration' => 'nullable|integer|min:1'
         ]);
 
         $imagePath = $course->image;
