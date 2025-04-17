@@ -15,7 +15,7 @@ class CoursConduiteController extends Controller
 {
     public function index(Request $request)
     {
-        Gate::authorize('viewAny', CoursConduite::class);
+        // Gate::authorize('viewAny', CoursConduite::class);
 
         $search = $request->input('search');
         
@@ -40,7 +40,7 @@ class CoursConduiteController extends Controller
 
     public function store(Request $request)
     {
-        Gate::authorize('create', CoursConduite::class);
+        // Gate::authorize('create', CoursConduite::class);
 
         $validated = $request->validate([
             'date_heure' => 'required|date',
@@ -91,7 +91,7 @@ class CoursConduiteController extends Controller
     public function update(Request $request, $id)
     {
         $cours = CoursConduite::findOrFail($id);
-        Gate::authorize('update', $cours);
+        // Gate::authorize('update', $cours);
 
         $validated = $request->validate([
             'date_heure' => 'required|date',
@@ -136,7 +136,7 @@ class CoursConduiteController extends Controller
     public function destroy($id)
     {
         $cours = CoursConduite::findOrFail($id);
-        Gate::authorize('delete', $cours);
+        // Gate::authorize('delete', $cours);
 
         if ($cours->statut === 'planifie') {
             Vehicle::where('id', $cours->vehicule_id)
@@ -155,7 +155,7 @@ class CoursConduiteController extends Controller
     public function marquerPresence(Request $request, $id)
     {
         $cours = CoursConduite::findOrFail($id);
-        Gate::authorize('manageAttendance', $cours);
+        // Gate::authorize('manageAttendance', $cours);
 
         $request->validate([
             'candidat_id' => 'required|exists:users,id',
@@ -176,16 +176,13 @@ class CoursConduiteController extends Controller
 
     public function getResources()
     {
-        Gate::authorize('viewAny', CoursConduite::class);
+        // Gate::authorize('viewAny', CoursConduite::class);
 
         $moniteurs = User::where('role', 'moniteur')->get();
         $vehicules = Vehicle::where('statut', 'disponible')->get();
         $candidats = User::where('role', 'candidat')->get();
 
-        return response()->json([
-            'moniteurs' => $moniteurs,
-            'vehicules' => $vehicules,
-            'candidats' => $candidats
-        ]);
+        return view('admin.cours-conduite', compact('moniteurs' , 'vehicules' , 'candidats'));
+
     }
 }

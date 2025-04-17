@@ -19,6 +19,8 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\CoursConduiteController;
+
 
 
 
@@ -156,6 +158,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
          Route::get('/{exam}/candidates', [ExamController::class, 'manageCandidates'])->name('admin.exams.candidates');
          Route::post('/{exam}/add-candidate', [ExamController::class, 'addCandidate'])->name('admin.exams.add-candidate');
          Route::post('/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
+
+
+            Route::get('/cours-conduite', [CoursConduiteController::class, 'index'])->name('admin.cours-conduite');
+            Route::post('/cours-conduite', [CoursConduiteController::class, 'store'])->name('admin.cours-conduite.store');
+            Route::get('/cours-conduite/{id}', [CoursConduiteController::class, 'show'])->name('admin.cours-conduite.show');
+            Route::put('/cours-conduite/{id}', [CoursConduiteController::class, 'update'])->name('admin.cours-conduite.update');
+            Route::delete('/cours-conduite/{id}', [CoursConduiteController::class, 'destroy'])->name('admin.cours-conduite.destroy');
+            Route::get('/cours-conduite', [CoursConduiteController::class, 'getResources'])->name('admin.cours-conduite');
+            Route::post('/cours-conduite/{id}/presence', [CoursConduiteController::class, 'marquerPresence'])->name('admin.cours-conduite.presence');
 
 Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])

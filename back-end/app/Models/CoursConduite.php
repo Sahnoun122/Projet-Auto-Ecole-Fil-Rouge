@@ -25,22 +25,22 @@ class CoursConduite extends Model
         'date_heure' => 'datetime',
     ];
 
-    public function moniteur(): BelongsTo
+    public function moniteur()
     {
         return $this->belongsTo(User::class, 'moniteur_id');
     }
 
-    public function vehicule(): BelongsTo
+    public function vehicule()
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function admin(): BelongsTo
+    public function admin()
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function candidats(): BelongsToMany
+    public function candidats()
     {
         return $this->belongsToMany(User::class, 'presences_cours', 'cours_conduite_id', 'candidat_id')
                     ->withPivot(['present', 'notes'])
