@@ -14,7 +14,7 @@ class VehicleController extends Controller
             return $query->where('admin_id', Auth::id());
         })->latest()->get();
         
-        return view('admin.vehicles.index', compact('vehicles'));
+        return view('admin.vehicles', compact('vehicles'));
     }
 
     public function store(Request $request)
@@ -40,7 +40,7 @@ class VehicleController extends Controller
             'admin_id' => Auth::id(),
         ]);
 
-        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule créé avec succès');
+        return redirect()->route('admin.vehicles')->with('success', 'Véhicule créé avec succès');
     }
 
     public function update(Request $request, Vehicle $vehicle)
@@ -57,13 +57,13 @@ class VehicleController extends Controller
 
         $vehicle->update($request->all());
 
-        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule mis à jour avec succès');
+        return redirect()->route('admin.vehicles')->with('success', 'Véhicule mis à jour avec succès');
     }
 
     public function destroy(Vehicle $vehicle)
     {
         $vehicle->delete();
-        return redirect()->route('admin.vehicles.index')->with('success', 'Véhicule supprimé avec succès');
+        return redirect()->route('admin.vehicles')->with('success', 'Véhicule supprimé avec succès');
     }
 
     public function maintenanceAlerts()
