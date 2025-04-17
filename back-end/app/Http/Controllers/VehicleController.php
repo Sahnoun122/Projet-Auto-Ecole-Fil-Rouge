@@ -72,6 +72,6 @@ class VehicleController extends Controller
             ->orderBy('prochaine_maintenance')
             ->get(['id', 'marque', 'modele', 'immatriculation', 'prochaine_maintenance']);
 
-        return view('admin.vehicles.alerts', compact('alerts'));
+        return view('admin.alerts', compact('alerts'));
     }
 }

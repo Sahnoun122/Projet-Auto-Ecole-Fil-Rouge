@@ -139,8 +139,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])
          ->name('admin.vehicles.destroy');
     
-    Route::get('/vehicles/alerts', [VehicleController::class, 'maintenanceAlerts'])
-         ->name('admin.vehicles.alerts');
+    Route::get('/alerts', [VehicleController::class, 'maintenanceAlerts'])
+         ->name('admin.alerts');
 
          Route::get('/reporting', [ReportingController::class, 'index'])->name('admin.reporting');
          Route::get('/reporting/data', [ReportingController::class, 'getReportData'])->name('admin.reporting.data');
