@@ -5,80 +5,59 @@ namespace App\Http\Controllers;
 use App\Models\Title;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class TitleController extends Controller
 {
     public function index()
     {
-        // Gate::authorize('viewAny', Title::class);
-
-        // if (Auth::user()->role === 'admin' && Auth::user()->type_permis === 'moniteur') {
-        //     $titles = Title::withCount('courses')->get();
-        // } else {
-        //     $titles = Title::where('type_permis', Auth::user()->type_permis)
-        //                   ->withCount('courses')
-        //                   ->get();
-        // }
-        
-        // return view('admin.titles', compact('titles'));
-
-        $titles = Title::
-                          withCount('courses')
-                          ->get();
-
+        $titles = Title::withCount('courses')->get();
         return view('admin.titles', compact('titles'));
+    }
 
+    public function create()
+    {
+        return view('admin.titles.create');
     }
 
     public function store(Request $request)
     {
-        // Gate::authorize('create', Title::class);
-
         $request->validate([
             'name' => 'required|string|max:255|unique:titles',
-            'type_permis' => 'required'
+            'type_permis' => 'required|string|max:10'
         ]);
 
-        $title = Title::create([
+        Title::create([
             'name' => $request->name,
             'type_permis' => $request->type_permis,
             'admin_id' => Auth::id(),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'title' => $title,
-            'message' => 'Titre créé avec succès'
-        ]);
+        return redirect()->route('admin.titles')
+            ->with('success', 'Titre créé avec succès');
+    }
+
+    public function edit(Title $title)
+    {
+        return view('admin.titles.edit', compact('title'));
     }
 
     public function update(Request $request, Title $title)
     {
-        // Gate::authorize('update', $title);
-
         $request->validate([
             'name' => 'required|string|max:255|unique:titles,name,'.$title->id,
-            'type_permis' => 'required'
+            'type_permis' => 'required|string|max:10'
         ]);
 
-        $title->update($request->all());
+        $title->update($request->only(['name', 'type_permis']));
 
-        return response()->json([
-            'success' => true,
-            'title' => $title,
-            'message' => 'Titre mis à jour avec succès'
-        ]);
+        return redirect()->route('admin.titles')
+            ->with('success', 'Titre mis à jour avec succès');
     }
 
     public function destroy(Title $title)
     {
-        // Gate::authorize('delete', $title);
-
         $title->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Titre supprimé avec succès'
-        ]);
+        return redirect()->route('admin.titles')
+            ->with('success', 'Titre supprimé avec succès');
     }
 }

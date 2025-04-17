@@ -116,7 +116,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
     Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
 
-        Route::get('/titles', [TitleController::class, 'index'])->name('admin.titles.index');
+        Route::get('/titles', [TitleController::class, 'index'])->name('admin.titles');
         Route::post('/titles', [TitleController::class, 'store'])->name('admin.titles.store');
         Route::put('/titles/{title}', [TitleController::class, 'update'])->name('admin.titles.update');
         Route::delete('/titles/{title}', [TitleController::class, 'destroy'])->name('admin.titles.destroy');

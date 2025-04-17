@@ -80,7 +80,7 @@
                             
                           </div>
                     <div>
-                      <a href=" {{route('admin.titles.index')}}">
+                      <a href=" {{route('admin.titles')}}">
                         <div id="cours-theorique-header"
                         class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -204,6 +204,7 @@
                     </div>
                 </nav>
             </div>
+        
             <div class="flex-1 overflow-auto">
                 <header class="bg-[#4D44B5] text-white shadow-md">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -227,7 +228,7 @@
                             <h2 class="text-xl font-semibold text-gray-800">Mes Titres</h2>
                         </div>
             
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6" id="titlesContainer">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
                             @forelse ($titles as $title)
                             <div class="border rounded-lg p-4 hover:shadow-md transition">
                                 <div class="flex justify-between items-start">
@@ -261,6 +262,7 @@
                     </div>
                 </main>
             
+                <!-- Modal -->
                 <div id="titleModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                     <div class="bg-white w-full max-w-md p-6 rounded-lg">
                         <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Titre</h2>
@@ -279,6 +281,7 @@
                             <div class="mb-4">
                                 <label for="titlePermisType" class="block text-sm font-medium text-gray-700 mb-1">Type de permis *</label>
                                 <select id="titlePermisType" name="type_permis" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="">Sélectionnez un type</option>
                                     <option value="A">Permis A (Moto)</option>
                                     <option value="B">Permis B (Voiture)</option>
                                     <option value="C">Permis C (Poids lourd)</option>
@@ -293,7 +296,7 @@
                                     <option value="C1E">Permis C1E (PL + remorque)</option>
                                     <option value="D1E">Permis D1E (Bus + remorque)</option>
                                 </select>
-                                <p id="permisError" class="text-red-500 text-xs mt-1 hidden">Veuillez sélectionner un type de permis</p>
+                                <p id="type_permisError" class="text-red-500 text-xs mt-1 hidden">Veuillez sélectionner un type de permis</p>
                             </div>
                             
                             <div class="flex justify-end space-x-2">
@@ -310,97 +313,11 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
-
-
- <script> 
-const newTitleBtn = document.getElementById('newTitleBtn');
-const titleModal = document.getElementById('titleModal');
-const cancelBtn = document.getElementById('cancelBtn');
-const titleForm = document.getElementById('titleForm');
-const modalTitle = document.getElementById('modalTitle');
-const titleId = document.getElementById('titleId');
-const _method = document.getElementById('_method');
-
-newTitleBtn.addEventListener('click', () => {
-    titleModal.classList.remove('hidden');
-    modalTitle.textContent = 'Nouveau Titre';
-    titleForm.reset();
-    titleId.value = '';
-    _method.value = 'POST';
-});
-
-cancelBtn.addEventListener('click', () => {
-    titleModal.classList.add('hidden');
-});
-
-function handleEditTitle(id, type_permis, name) {
-    titleModal.classList.remove('hidden');
-    modalTitle.textContent = 'Modifier Titre';
-    titleId.value = id;
-    _method.value = 'PUT';
-    document.getElementById('titleName').value = name;
-    document.getElementById('titlePermisType').value = type_permis;
-}
-
-function handleDeleteTitle(id) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce titre ?')) {
-        fetch(`/admin/titles/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById(`title-${id}`).remove();
-                loadTitles();
-            }
-        });
-    }
-}
-
-titleForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const url = titleId.value ? `/admin/titles/${titleId.value}` : '/admin/titles';
-    const method = titleId.value ? 'PUT' : 'POST';
-
-    fetch(url, {
-        method: method,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json',
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            titleModal.classList.add('hidden');
-            loadTitles();
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-function loadTitles() {
-    fetch('/admin/titles')
-    .then(response => response.text())
-    .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newContent = doc.getElementById('titlesContainer').innerHTML;
-        document.getElementById('titlesContainer').innerHTML = newContent;
-    });
-}
-
-
+            
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+           
+            
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       const progressBars = document.querySelectorAll('.progress-bar');
