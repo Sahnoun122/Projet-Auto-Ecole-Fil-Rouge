@@ -13,7 +13,7 @@ class ExamController extends Controller
     // ADMIN PART
     public function index()
     {
-        $exams = Exam::with(['admin', 'moniteur'])
+        $exams = Exam::with(['admin', 'moniteur' ])
             ->withCount(['candidats as candidats_count'])
             ->latest()
             ->paginate(10);
