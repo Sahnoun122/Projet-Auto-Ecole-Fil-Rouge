@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 class CoursConduite extends Model
 {
     use SoftDeletes;
@@ -25,22 +26,22 @@ class CoursConduite extends Model
         'date_heure' => 'datetime',
     ];
 
-    public function moniteur()
+    public function moniteur(): BelongsTo
     {
         return $this->belongsTo(User::class, 'moniteur_id');
     }
 
-    public function vehicule()
+    public function vehicule(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function admin()
+    public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function candidats()
+    public function candidats(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'presences_cours', 'cours_conduite_id', 'candidat_id')
                     ->withPivot(['present', 'notes'])

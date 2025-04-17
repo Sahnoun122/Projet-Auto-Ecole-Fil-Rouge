@@ -409,11 +409,10 @@
                                 Fermer
                             </button>
                         </div>
-                    </div> --}}
-                </div>
+                    </div>
+                </div> --}}
             </div>
             
-            <!-- jQuery pour gérer les modales -->
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
             $(document).ready(function() {
