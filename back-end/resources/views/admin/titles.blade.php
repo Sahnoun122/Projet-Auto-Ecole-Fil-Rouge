@@ -316,7 +316,106 @@
             
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
-           
+            $(document).ready(function() {
+                const modal = $('#titleModal');
+                const form = $('#titleForm');
+                const submitBtn = $('#submitBtn');
+            
+                // Nouveau titre
+                $('#newTitleBtn').click(function() {
+                    $('#modalTitle').text('Nouveau Titre');
+                    form.attr('action', "{{ route('admin.titles.store') }}");
+                    $('#_method').val('POST');
+                    $('#titleId').val('');
+                    $('#titlePermisType').val('');
+                    $('#titleName').val('');
+                    modal.removeClass('hidden');
+                });
+            
+                // Édition d'un titre
+                window.handleEditTitle = function(id, permisType, name) {
+                    $('#modalTitle').text('Modifier Titre');
+                    form.attr('action', "{{ route('admin.titles.update', '') }}/" + id);
+                    $('#_method').val('PUT');
+                    $('#titleId').val(id);
+                    $('#titlePermisType').val(permisType);
+                    $('#titleName').val(name);
+                    modal.removeClass('hidden');
+                };
+            
+                // Suppression d'un titre
+                window.handleDeleteTitle = function(id) {
+                    if (!confirm('Voulez-vous vraiment supprimer ce titre ?')) return;
+                    
+                    $.ajax({
+                        url: "{{ route('admin.titles.destroy', '') }}/" + id,
+                        method: 'POST',
+                        data: { 
+                            _method: 'DELETE', 
+                            _token: "{{ csrf_token() }}" 
+                        },
+                        success: function() {
+                            window.location.reload();
+                        },
+                        error: function(xhr) {
+                            alert('Erreur lors de la suppression: ' + xhr.responseJSON?.message);
+                        }
+                    });
+                };
+            
+                // Annulation
+                $('#cancelBtn').click(function() {
+                    modal.addClass('hidden');
+                });
+            
+                // Soumission du formulaire
+                form.on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Réinitialiser les erreurs
+                    $('.text-red-500').addClass('hidden');
+                    
+                    const formData = $(this).serialize();
+                    const url = $(this).attr('action');
+                    const method = $('#_method').val();
+                    
+                    submitBtn.prop('disabled', true);
+                    submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Enregistrement...');
+            
+                    $.ajax({
+                        url: url,
+                        method: method === 'PUT' ? 'POST' : 'POST',
+                        data: formData,
+                        success: function(response) {
+                            if (response.success) {
+                                // Fermer le modal avant de recharger la page
+                                modal.addClass('hidden');
+                                window.location.reload();
+                            }
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 422) {
+                                const errors = xhr.responseJSON.errors;
+                                for (const field in errors) {
+                                    const errorElement = $(`#${field}Error`);
+                                    if (errorElement.length) {
+                                        errorElement.text(errors[field][0]);
+                                        errorElement.removeClass('hidden');
+                                    }
+                                }
+                            } else {
+                                alert('Une erreur est survenue: ' + xhr.responseJSON?.message);
+                            }
+                        },
+                        complete: function() {
+                            submitBtn.prop('disabled', false);
+                            submitBtn.html('Enregistrer');
+                        }
+                    });
+                });
+            });
+            
+
             
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
