@@ -416,7 +416,57 @@
             <!-- jQuery pour gérer les modales -->
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
-          
+            $(document).ready(function() {
+                // Gestion de la modale de création
+                $('#newVehicleBtn').click(function() {
+                    $('#modalVehicleTitle').text('Nouveau Véhicule');
+                    $('#vehicleForm').attr('action', "{{ route('admin.vehicles.store') }}");
+                    $('#_method').val('POST');
+                    $('#vehicleId').val('');
+                    $('#vehicleForm')[0].reset();
+                    $('#vehicleProchaineMaintenance').attr('min', new Date().toISOString().split('T')[0]);
+                    $('#vehicleModal').removeClass('hidden');
+                });
+            
+                // Gestion de la modale d'édition
+                window.openEditModal = function(id, marque, modele, immatriculation, dateAchat, kilometrage, prochaineMaintenance, statut) {
+                    $('#modalVehicleTitle').text('Modifier Véhicule');
+                    $('#vehicleForm').attr('action', "{{ route('admin.vehicles.update', '') }}/" + id);
+                    $('#_method').val('PUT');
+                    $('#vehicleId').val(id);
+                    $('#vehicleMarque').val(marque);
+                    $('#vehicleModele').val(modele);
+                    $('#vehicleImmatriculation').val(immatriculation);
+                    $('#vehicleDateAchat').val(dateAchat);
+                    $('#vehicleKilometrage').val(kilometrage);
+                    $('#vehicleProchaineMaintenance').val(prochaineMaintenance);
+                    $('#vehicleStatut').val(statut);
+                    $('#vehicleModal').removeClass('hidden');
+                };
+            
+                // Fermer les modales
+                $('#cancelBtn, #closeAlertsBtn').click(function() {
+                    $('#vehicleModal, #maintenanceAlertsModal').addClass('hidden');
+                });
+            
+                // Ouvrir la modale des alertes
+                $('#maintenanceAlertsBtn').click(function() {
+                    $('#maintenanceAlertsModal').removeClass('hidden');
+                });
+            
+                // Validation avant soumission
+                $('#vehicleForm').submit(function(e) {
+                    const today = new Date().toISOString().split('T')[0];
+                    const maintenanceDate = $('#vehicleProchaineMaintenance').val();
+                    
+                    if (maintenanceDate < today) {
+                        alert('La date de maintenance doit être aujourd\'hui ou ultérieure');
+                        e.preventDefault();
+                        return false;
+                    }
+                    return true;
+                });
+            });
       
 
         </script>
