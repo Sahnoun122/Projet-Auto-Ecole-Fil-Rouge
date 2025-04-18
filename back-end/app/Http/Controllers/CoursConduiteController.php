@@ -9,7 +9,6 @@ use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class CoursConduiteController extends Controller
 {
     public function index()
@@ -17,20 +16,16 @@ class CoursConduiteController extends Controller
         $cours = CoursConduite::with(['moniteur', 'vehicule', 'candidat', 'candidats'])
                     ->latest()
                     ->paginate(10);
-             dd($cours);
+
         $moniteurs = User::where('role', 'moniteur')->get();
         $candidats = User::where('role', 'candidat')->get();
-        $vehicules = Vehicle::all();
-        $vehiculesDisponibles = Vehicle::whereDoesntHave('coursConduites', function($query) {
-            $query->where('statut', 'planifie');
-        })->get();
+        $vehicules = Vehicle::where('statut', 'disponible')->get();
 
         return view('admin.conduite', compact(
             'cours',
             'moniteurs',
             'candidats',
-            'vehicules',
-            'vehiculesDisponibles'
+            'vehicules'
         ));
     }
 
@@ -41,7 +36,7 @@ class CoursConduiteController extends Controller
             'duree_minutes' => 'required|integer|min:30|max:240',
             'moniteur_id' => 'required|exists:users,id',
             'vehicule_id' => 'required|exists:vehicles,id',
-            'candidat_ids' => 'required|array',
+            'candidat_ids' => 'required|array|min:1',
             'candidat_ids.*' => 'exists:users,id',
             'statut' => 'required|in:planifie,termine,annule',
         ]);
@@ -53,12 +48,10 @@ class CoursConduiteController extends Controller
             'vehicule_id' => $validated['vehicule_id'],
             'admin_id' => Auth::id(),
             'statut' => $validated['statut'],
-            'candidat_id' => $validated['candidat_ids'][0] 
+            'candidat_id' => $validated['candidat_ids'][0]
         ]);
 
-        if (count($validated['candidat_ids']) ){
-            $cours->candidats()->sync($validated['candidat_ids']);
-        }
+        $cours->candidats()->sync($validated['candidat_ids']);
 
         return redirect()->route('admin.conduite')
             ->with('success', 'Cours de conduite créé avec succès');
@@ -71,7 +64,7 @@ class CoursConduiteController extends Controller
             'duree_minutes' => 'required|integer|min:30|max:240',
             'moniteur_id' => 'required|exists:users,id',
             'vehicule_id' => 'required|exists:vehicles,id',
-            'candidat_ids' => 'required|array',
+            'candidat_ids' => 'required|array|min:1',
             'candidat_ids.*' => 'exists:users,id',
             'statut' => 'required|in:planifie,termine,annule',
         ]);
@@ -85,7 +78,6 @@ class CoursConduiteController extends Controller
             'candidat_id' => $validated['candidat_ids'][0]
         ]);
 
-        // Mettre à jour les candidats supplémentaires
         $coursConduite->candidats()->sync($validated['candidat_ids']);
 
         return redirect()->route('admin.conduite')
@@ -99,37 +91,33 @@ class CoursConduiteController extends Controller
             ->with('success', 'Cours de conduite supprimé avec succès');
     }
 
-    public function marquerPresence(Request $request, $id)
+    // public function marquerPresence($id)
+    // {
+    //     $cours = CoursConduite::with(['candidats'])->findOrFail($id);
+    //     return view('admin.conduite.marquer-presence', compact('cours'));
+    // }
+
+    public function savePresence(Request $request, $id)
     {
         $cours = CoursConduite::findOrFail($id);
-        // Gate::authorize('manageAttendance', $cours);
-
+        
         $request->validate([
-            'candidat_id' => 'required|exists:users,id',
-            'present' => 'required|boolean',
-            'notes' => 'nullable|string|max:500'
+            'present' => 'required|array',
+            'present.*' => 'boolean',
+            'notes' => 'nullable|array',
+            'notes.*' => 'nullable|string|max:500'
         ]);
 
-        $cours->candidats()->updateExistingPivot($request->candidat_id, [
-            'present' => $request->present,
-            'notes' => $request->notes
-        ]);
+        foreach ($request->present as $candidat_id => $present) {
+            $cours->candidats()->updateExistingPivot($candidat_id, [
+                'present' => $present,
+                'notes' => $request->notes[$candidat_id] ?? null
+            ]);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Présence enregistrée avec succès.'
+            'message' => 'Présences enregistrées avec succès'
         ]);
-    }
-
-    public function getResources()
-    {
-        // Gate::authorize('viewAny', CoursConduite::class);
-
-        $moniteurs = User::where('role', 'moniteur')->get();
-        $vehicules = Vehicle::where('statut', 'disponible')->get();
-        $candidats = User::where('role', 'candidat')->get();
-
-        return view('admin.conduite', compact('moniteurs' , 'vehicules' , 'candidats'));
-
     }
 }

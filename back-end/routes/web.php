@@ -160,14 +160,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
          Route::post('/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
 
 
-            Route::get('/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
-            Route::post('/conduite', [CoursConduiteController::class, 'store'])->name('admin.conduite');
-            Route::get('/conduite/{id}', [CoursConduiteController::class, 'show'])->name('admin.conduite');
-            Route::put('/conduite/{id}', [CoursConduiteController::class, 'update'])->name('admin.conduite');
-            Route::delete('/conduite/{id}', [CoursConduiteController::class, 'destroy'])->name('admin.conduite');
-            Route::get('/conduite', [CoursConduiteController::class, 'getResources'])->name('admin.conduite');
-            Route::post('/cours-conduite/{id}/presence', [CoursConduiteController::class, 'marquerPresence'])->name('admin.cours-conduite.presence');
+            // Route::get('/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
+               
+    Route::get('/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
+    Route::post('/conduite', [CoursConduiteController::class, 'store'])->name('admin.conduite.store');
+    Route::put('/conduite/{coursConduite}', [CoursConduiteController::class, 'update'])->name('admin.conduite.update');
+    Route::delete('/conduite/{coursConduite}', [CoursConduiteController::class, 'destroy'])->name('admin.conduite.destroy');
+    Route::post('/conduite/marquer-presence/{id}', [CoursConduiteController::class, 'marquerPresence'])->name('admin.conduite.presence');
 
+    
 Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
          ->name('api.vehicles.maintenance-alerts');
@@ -179,6 +180,7 @@ Route::prefix('api')->group(function () {
         });
             
         Route::get('/chck', [CoursConduiteController::class, 'index']);
+        // Route::get('/admin/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
 
 
 // Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
