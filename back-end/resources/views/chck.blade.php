@@ -1,0 +1,465 @@
+{{-- <!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-école Sahnoun - Dashboard</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+</head>
+
+<body class="bg-gray-100" x-data="{ sidebarOpen: true }">
+    <div class="flex h-screen">
+        <div :class="sidebarOpen ? 'w-64' : 'w-20'" class="bg-white shadow-lg transition-all duration-300 flex flex-col">
+            <div class="p-4 flex justify-between items-center border-b">
+
+                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-4 border-b flex justify-center">
+                <div class="relative group">
+                    <div
+                        class="absolute inset-0 bg-primary rounded-full opacity-10 group-hover:opacity-20 transition-opacity">
+                    </div>
+                    <img src="/api/placeholder/60/60" alt="Auto-école"
+                        class="h-16 w-16 object-contain rounded-full border-2 border-gray-200" />
+                    <div class="absolute bottom-0 right-0 h-4 w-4 bg-green-500 rounded-full border-2 border-white">
+                    </div>
+                </div>
+            </div>
+
+            <div :class="sidebarOpen ? 'block' : 'hidden'" class="text-center py-2 text-sm font-medium text-gray-600">
+                Auto-école S A H N O U N
+            </div>
+            <div class="flex-1 overflow-y-auto py-4">
+                <nav>
+                    <a href=" {{ route('admin.dashboard') }}"
+                        class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
+                    </a>
+                       
+                        <div>
+                            <a href=" {{route('admin.candidats')}}">
+                              <div id="cours-theorique-header"
+                              class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                  stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                              </svg>
+      
+                              <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
+                              <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                </svg>                            
+                              
+                              </div>
+                            </a>
+                            
+                          </div>
+                    <div>
+                      <a href=" {{route('admin.titles')}}">
+                        <div id="cours-theorique-header"
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
+                        <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>                            
+                        
+                        </div>
+                      </a>
+                      
+                    </div>
+
+                    <div>
+                      <a href="{{ route ('admin.quizzes')}}">
+                        <div id="cours-pratique-header"
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
+                        <svg id="cours-pratique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
+                    </div>
+                      </a>
+                    
+                    </div>
+
+                    <div>
+                    <a href=" {{ route('admin.vehicles')}}">
+                        <div id="vehicule-header"
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
+                        <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
+                    </div>
+                    </a>
+                    
+                    </div>
+
+                    <div>
+                    <a href=" {{ route('admin.exams')}}">
+                        <div id="examen-header"
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
+                        <svg id="examen-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
+                    </div>
+                    </a>
+                
+
+
+                    </div>
+
+                    <div>
+                    <a href=" {{ route('admin.monitors.index') }}">
+                        <div id="moniteurs-header"
+                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
+                        <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          </svg>
+
+                    </div>
+                    </a>
+                   
+
+                    </div>
+
+                   <a href="">
+                    <div>
+                        <div id="caisse-header"
+                            class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
+                            <svg id="caisse-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             
+                        </div>
+                   </a>
+
+                       
+                        <a href="{{ route('logout') }} "
+                        <div id="logout-button" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer" id="logoutButton">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
+                            </svg>
+                            <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
+                        </div>
+                     </a>
+                        
+                    </div>
+                </nav>
+            </div>
+
+            
+        
+                <div class="flex-1 overflow-auto">
+                    <div class="container mx-auto p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h1 class="text-2xl font-semibold">Gestion des Cours de Conduite</h1>
+                            <button id="openModalBtn" class="bg-[#4D44B5] text-white px-4 py-2 rounded-lg hover:bg-[#3a32a1] transition">
+                                <i class="fas fa-plus mr-2"></i> Ajouter un Cours
+                            </button>
+                        </div>
+                    
+                        @if(session('success'))
+                            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
+                                <p>{{ session('success') }}</p>
+                            </div>
+                        @endif
+                    
+                        <div class="bg-white rounded-xl shadow overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Heure</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moniteur</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Véhicule</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidats</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach ($cours as $item)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ $item->date_heure->format('d/m/Y H:i') }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ $item->moniteur->nom }} {{ $item->moniteur->prenom }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ $item->vehicule->marque }} - {{ $item->vehicule->immatriculation }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm mb-1">
+                                                    {{ $item->candidat->nom }} {{ $item->candidat->prenom }}
+                                                </span>
+                                                @foreach($item->candidats as $candidat)
+                                                    @if($candidat->id != $item->candidat_id)
+                                                        <span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm mb-1">
+                                                            {{ $candidat->nom }} {{ $candidat->prenom }}
+                                                        </span>
+                                                    @endif
+                                                @endforeach
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 text-xs rounded-full 
+                                                    @if($item->statut === 'planifie') bg-blue-100 text-blue-800
+                                                    @elseif($item->statut === 'termine') bg-green-100 text-green-800
+                                                    @else bg-red-100 text-red-800 @endif">
+                                                    {{ ucfirst($item->statut) }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button onclick="openEditModal(
+                                                    '{{ $item->id }}',
+                                                    '{{ $item->date_heure->format('Y-m-d\TH:i') }}',
+                                                    '{{ $item->duree_minutes }}',
+                                                    '{{ $item->moniteur_id }}',
+                                                    '{{ $item->vehicule_id }}',
+                                                    '{{ json_encode($item->candidats->pluck('id')) }}',
+                                                    '{{ $item->statut }}'
+                                                )" class="text-[#4D44B5] hover:text-[#3a32a1] mr-3">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <form action="{{ route('admin.cours-conduite.destroy', $item->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" onclick="return confirm('Supprimer ce cours ?')" 
+                                                        class="text-red-500 hover:text-red-700">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="px-6 py-4">
+                                {{ $cours->links() }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal -->
+                    <div id="coursModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                        <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg">
+                            <h2 id="modalTitle" class="text-xl font-bold mb-4">Ajouter un Cours</h2>
+                            <form id="coursForm" method="POST">
+                                @csrf
+                                <input type="hidden" name="_method" id="_method" value="POST">
+                                <input type="hidden" name="cours_id" id="cours_id">
+                    
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="mb-4">
+                                        <label for="date_heure" class="block text-sm font-medium text-gray-700 mb-1">Date & Heure *</label>
+                                        <input type="datetime-local" name="date_heure" id="date_heure" 
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="duree_minutes" class="block text-sm font-medium text-gray-700 mb-1">Durée (min) *</label>
+                                        <input type="number" name="duree_minutes" id="duree_minutes" min="30" max="240"
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="moniteur_id" class="block text-sm font-medium text-gray-700 mb-1">Moniteur *</label>
+                                        <select name="moniteur_id" id="moniteur_id" 
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                            <option value="">Sélectionnez un moniteur</option>
+                                            @foreach($moniteurs as $moniteur)
+                                                <option value="{{ $moniteur->id }}">{{ $moniteur->nom }} {{ $moniteur->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="vehicule_id" class="block text-sm font-medium text-gray-700 mb-1">Véhicule *</label>
+                                        <select name="vehicule_id" id="vehicule_id" 
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                            <option value="">Sélectionnez un véhicule</option>
+                                            @foreach($vehiculesDisponibles as $vehicule)
+                                                <option value="{{ $vehicule->id }}">{{ $vehicule->marque }} - {{ $vehicule->immatriculation }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="md:col-span-2 mb-4">
+                                        <label for="candidat_ids" class="block text-sm font-medium text-gray-700 mb-1">Candidats *</label>
+                                        <select name="candidat_ids[]" id="candidat_ids" multiple
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                            @foreach($candidats as $candidat)
+                                                <option value="{{ $candidat->id }}">{{ $candidat->nom }} {{ $candidat->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="md:col-span-2 mb-4">
+                                        <label for="statut" class="block text-sm font-medium text-gray-700 mb-1">Statut *</label>
+                                        <select name="statut" id="statut" 
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                            <option value="planifie">Planifié</option>
+                                            <option value="termine">Terminé</option>
+                                            <option value="annule">Annulé</option>
+                                        </select>
+                                    </div>
+                                </div>
+                    
+                                <div class="flex justify-end space-x-2 mt-6">
+                                    <button type="button" id="cancelBtn" 
+                                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                        Annuler
+                                    </button>
+                                    <button type="submit" 
+                                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                                        Enregistrer
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                @section('scripts')
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                
+                <script>
+                $(document).ready(function() {
+                    const modal = $('#coursModal');
+                    const form = $('#coursForm');
+                
+                    // Initialiser le select multiple
+                    $('#candidat_ids').select2({
+                        placeholder: "Sélectionnez les candidats",
+                        width: '100%'
+                    });
+                
+                    // Ouvrir la modal pour ajouter un cours
+                    $('#openModalBtn').click(function() {
+                        $('#modalTitle').text('Ajouter un Cours');
+                        form.attr('action', "{{ route('admin.cours-conduite.store') }}");
+                        $('#_method').val('POST');
+                        $('#cours_id').val('');
+                        form.trigger('reset');
+                        $('#vehicule_id').html('<option value="">Sélectionnez un véhicule</option>' + 
+                            @json($vehiculesDisponibles->map(function($vehicule) {
+                                return '<option value="' + $vehicule->id + '">' + 
+                                       $vehicule->marque + ' - ' + $vehicule->immatriculation + '</option>';
+                            })->implode(''))
+                        );
+                        $('#candidat_ids').val(null).trigger('change');
+                        modal.removeClass('hidden');
+                    });
+                
+                    // Fermer la modal
+                    $('#cancelBtn').click(function() {
+                        modal.addClass('hidden');
+                    });
+                
+                    // Ouvrir la modal pour éditer un cours
+                    window.openEditModal = function(id, dateHeure, duree, moniteurId, vehiculeId, candidatsIds, statut) {
+                        $('#modalTitle').text('Modifier un Cours');
+                        form.attr('action', "{{ route('admin.cours-conduite.update', '') }}/" + id);
+                        $('#_method').val('PUT');
+                        $('#cours_id').val(id);
+                        $('#date_heure').val(dateHeure);
+                        $('#duree_minutes').val(duree);
+                        $('#moniteur_id').val(moniteurId);
+                        
+                        // Pour l'édition, afficher tous les véhicules
+                        $('#vehicule_id').html('<option value="">Sélectionnez un véhicule</option>' + 
+                            @json($vehicules->map(function($vehicule) {
+                                return '<option value="' + $vehicule->id + '">' + 
+                                       $vehicule->marque + ' - ' + $vehicule->immatriculation + '</option>';
+                            })->implode(''))
+                        );
+                        
+                        $('#vehicule_id').val(vehiculeId);
+                        $('#statut').val(statut);
+                        
+                        // Sélectionner les candidats
+                        const candidatsArray = JSON.parse(candidatsIds.replace(/&quot;/g, '"'));
+                        $('#candidat_ids').val(candidatsArray).trigger('change');
+                        
+                        modal.removeClass('hidden');
+                    };
+                });
+                </script>
+                
+                <style>
+                .select2-container--default .select2-selection--multiple {
+                    border: 1px solid #d1d5db;
+                    border-radius: 0.5rem;
+                    padding: 0.25rem;
+                    min-height: 42px;
+                }
+                .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                    background-color: #4D44B5;
+                    border: none;
+                    border-radius: 0.25rem;
+                    color: white;
+                    padding: 0 0.5rem;
+                }
+                </style>
+            
+</body>
+
+</html> --}}

@@ -160,12 +160,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
          Route::post('/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
 
 
-            Route::get('/cours-conduite', [CoursConduiteController::class, 'index'])->name('admin.cours-conduite');
-            Route::post('/cours-conduite', [CoursConduiteController::class, 'store'])->name('admin.cours-conduite.store');
-            Route::get('/cours-conduite/{id}', [CoursConduiteController::class, 'show'])->name('admin.cours-conduite.show');
-            Route::put('/cours-conduite/{id}', [CoursConduiteController::class, 'update'])->name('admin.cours-conduite.update');
-            Route::delete('/cours-conduite/{id}', [CoursConduiteController::class, 'destroy'])->name('admin.cours-conduite.destroy');
-            Route::get('/cours-conduite', [CoursConduiteController::class, 'getResources'])->name('admin.cours-conduite');
+            Route::get('/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
+            Route::post('/conduite', [CoursConduiteController::class, 'store'])->name('admin.conduite');
+            Route::get('/conduite/{id}', [CoursConduiteController::class, 'show'])->name('admin.conduite');
+            Route::put('/conduite/{id}', [CoursConduiteController::class, 'update'])->name('admin.conduite');
+            Route::delete('/conduite/{id}', [CoursConduiteController::class, 'destroy'])->name('admin.conduite');
+            Route::get('/conduite', [CoursConduiteController::class, 'getResources'])->name('admin.conduite');
             Route::post('/cours-conduite/{id}/presence', [CoursConduiteController::class, 'marquerPresence'])->name('admin.cours-conduite.presence');
 
 Route::prefix('api')->group(function () {
@@ -178,6 +178,8 @@ Route::prefix('api')->group(function () {
          
         });
             
+        Route::get('/chck', [CoursConduiteController::class, 'index']);
+
 
 // Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
 // Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');

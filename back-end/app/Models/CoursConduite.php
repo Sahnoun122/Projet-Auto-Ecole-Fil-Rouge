@@ -19,7 +19,8 @@ class CoursConduite extends Model
         'statut',
         'moniteur_id',
         'vehicule_id',
-        'admin_id'
+        'admin_id',
+        'candidat_id'
     ];
 
     protected $casts = [
@@ -39,6 +40,11 @@ class CoursConduite extends Model
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    public function candidat(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'candidat_id');
     }
 
     public function candidats(): BelongsToMany

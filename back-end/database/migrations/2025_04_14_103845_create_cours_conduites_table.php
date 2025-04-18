@@ -18,8 +18,7 @@ return new class extends Migration
             $table->foreignId('moniteur_id')->constrained('users', 'id')->onDelete('cascade'); 
             $table->foreignId('vehicule_id')->constrained('vehicles', 'id')->onDelete('cascade');
             $table->foreignId('admin_id')->constrained('users', 'id')->onDelete('cascade'); 
- 
-
+            $table->foreignId('candidat')->constrained('users', 'id')->onDelete('cascade'); 
         });
     }
 
