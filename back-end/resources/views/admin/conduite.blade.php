@@ -223,7 +223,84 @@
                             </div>
                         @endif
                     
-             
+                        <div class="bg-white rounded-xl shadow overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Heure</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moniteur</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Véhicule</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidats</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach ($cours as $item)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ $item->date_heure->format('d/m/Y H:i') }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ $item->moniteur->nom }} {{ $item->moniteur->prenom }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ $item->vehicule->marque }} - {{ $item->vehicule->immatriculation }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm mb-1">
+                                                    {{ $item->candidat->nom }} {{ $item->candidat->prenom }}
+                                                </span>
+                                                @foreach($item->candidats as $candidat)
+                                                    @if($candidat->id != $item->candidat_id)
+                                                        <span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm mb-1">
+                                                            {{ $candidat->nom }} {{ $candidat->prenom }}
+                                                        </span>
+                                                    @endif
+                                                @endforeach
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 text-xs rounded-full 
+                                                    @if($item->statut === 'planifie') bg-blue-100 text-blue-800
+                                                    @elseif($item->statut === 'termine') bg-green-100 text-green-800
+                                                    @else bg-red-100 text-red-800 @endif">
+                                                    {{ ucfirst($item->statut) }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button onclick="openEditModal(
+                                                    '{{ $item->id }}',
+                                                    '{{ $item->date_heure->format('Y-m-d\TH:i') }}',
+                                                    '{{ $item->duree_minutes }}',
+                                                    '{{ $item->moniteur_id }}',
+                                                    '{{ $item->vehicule_id }}',
+                                                    '{{ json_encode($item->candidats->pluck('id')) }}',
+                                                    '{{ $item->statut }}'
+                                                )" class="text-[#4D44B5] hover:text-[#3a32a1] mr-3">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <form action="{{ route('admin.conduite', $item->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" onclick="return confirm('Supprimer ce cours ?')" 
+                                                        class="text-red-500 hover:text-red-700">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="px-6 py-4">
+                                {{ $cours->links() }}
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Modal -->
                     <div id="coursModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                         <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg">
