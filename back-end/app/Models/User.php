@@ -69,6 +69,26 @@ class User extends Authenticatable implements JWTSubject
                     ->withPivot(['present', 'resultat', 'score', 'observations', 'feedbacks'])
                     ->withTimestamps();
     }
+
+public function coursCommeMoniteur()
+{
+    return $this->hasMany(CoursConduite::class, 'moniteur_id');
+}
+
+public function coursCommeCandidat()
+{
+    return $this->hasMany(CoursConduite::class, 'candidat_id');
+}
+
+public function coursSupplementaires()
+{
+    return $this->belongsToMany(
+        CoursConduite::class, 
+        'presences_cours', 
+        'candidat_id', 
+        'cours_conduite_id'
+    );
+}
     /**
      * Retourne l'identifiant unique de l'utilisateur pour le JWT
      *

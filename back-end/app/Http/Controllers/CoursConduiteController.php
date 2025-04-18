@@ -11,23 +11,61 @@ use Illuminate\Support\Facades\Auth;
 
 class CoursConduiteController extends Controller
 {
+    // public function index()
+    // {
+    //     $cours = CoursConduite::with(['moniteur', 'vehicule', 'candidat', 'candidats'])
+    //                 ->latest()
+    //                 ->paginate(10);
+
+    //     $moniteurs = User::where('role', 'moniteur')->get();
+    //     $candidats = User::where('role', 'candidat')->get();
+    //     $vehicules = Vehicle::where('statut', 'disponible')->get();
+
+    //     return view('admin.conduite', compact(
+    //         'cours',
+    //         'moniteurs',
+    //         'candidats',
+    //         'vehicules'
+    //     ));
+    // }
+
     public function index()
-    {
-        $cours = CoursConduite::with(['moniteur', 'vehicule', 'candidat', 'candidats'])
-                    ->latest()
-                    ->paginate(10);
+{
+    // Charge TOUTES les relations nécessaires en une seule requête
+    $cours = CoursConduite::with([
+        'moniteur:id,nom,prenom',
+        'vehicule:id,marque,immatriculation',
+        'candidat:id,nom,prenom',
+        'candidats:id,nom,prenom'
+    ])->latest()->paginate(10);
 
-        $moniteurs = User::where('role', 'moniteur')->get();
-        $candidats = User::where('role', 'candidat')->get();
-        $vehicules = Vehicle::where('statut', 'disponible')->get();
+    // Pour debug : vérifiez les données récupérées
+    // dd($cours->first());
 
-        return view('admin.conduite', compact(
-            'cours',
-            'moniteurs',
-            'candidats',
-            'vehicules'
-        ));
-    }
+    // Récupération des listes pour les formulaires
+    $moniteurs = User::where('role', 'moniteur')
+                 ->select('id', 'nom', 'prenom')
+                 ->get();
+
+    $candidats = User::where('role', 'candidat')
+                 ->select('id', 'nom', 'prenom')
+                 ->get();
+
+    $vehicules = Vehicle::select('id', 'marque', 'immatriculation')->get();
+
+    // Véhicules non utilisés dans des cours planifiés
+    $vehiculesDisponibles = Vehicle::whereDoesntHave('coursConduites', function($query) {
+        $query->where('statut', 'planifie');
+    })->get();
+
+    return view('admin.conduite', compact(
+        'cours',
+        'moniteurs',
+        'candidats',
+        'vehicules',
+        'vehiculesDisponibles'
+    ));
+}
 
     public function store(Request $request)
     {

@@ -24,4 +24,8 @@ class Vehicle extends Model
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
+    public function coursConduites()
+{
+    return $this->hasMany(CoursConduite::class, 'vehicule_id');
+}
 }

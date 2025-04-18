@@ -206,16 +206,17 @@
                 </nav>
             </div>
 
-            <div class="flex-1 overflow-auto">
-                <header class="bg-[#4D44B5] text-white shadow-md">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                        <h1 class="text-2xl font-bold">Planification des Cours de Conduite</h1>
+            <div class="overflow-x-auto w-full">
+                            <header class="bg-[#4D44B5] text-white shadow-md">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+                        <h1 class="text-2xl font-bold">Cours de Conduite</h1>
                         <button id="newCourseBtn"
                             class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
                             <i class="fas fa-plus mr-2"></i> Nouveau Cours
                         </button>
                     </div>
                 </header>
+            
             
                 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     @if(session('success'))
@@ -230,14 +231,14 @@
                         </div>
             
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm sm:text-base">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Heure</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Véhicule</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durée</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moniteur</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Véhicule</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidat Principal</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidats</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
@@ -246,22 +247,40 @@
                                     @forelse ($cours as $cour)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ $cour->date_heure->format('d/m/Y H:i') }}
+                                            {{ $cour->date_heure}}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             {{ $cour->duree_minutes }} minutes
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ optional($cour->moniteur)->name ?? 'Non assigné' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ optional($cour->vehicule)->marque ?? 'N/A' }} 
-                                            @if($cour->vehicule)
-                                            ({{ $cour->vehicule->immatriculation }})
+                                            @if($cour->moniteur)
+                                                {{ $cour->moniteur->nom }} {{ $cour->moniteur->prenom }}
+                                            @else
+                                                <span class="text-red-500">Non assigné</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ optional($cour->candidat)->name ?? 'Non assigné' }}
+                                            @if($cour->vehicule)
+                                                {{ $cour->vehicule->marque }} ({{ $cour->vehicule->immatriculation }})
+                                            @else
+                                                <span class="text-red-500">Non assigné</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex flex-wrap gap-1">
+                                                @if($cour->candidat)
+                                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                                                        {{-- {{ $cour->candidat->nom }} {{ $cour->candidat->prenom }} (Principal) --}}
+                                                    </span>
+                                                @endif
+                                                @foreach($cour->candidats as $candidat)
+                                                    @if(!$cour->candidat || $candidat->id != $cour->candidat_id)
+                                                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
+                                                            {{ $candidat->nom }} {{ $candidat->prenom }}
+                                                        </span>
+                                                    @endif
+                                                @endforeach
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 py-1 text-xs rounded-full 
@@ -274,7 +293,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <button onclick="openEditModal(
                                                 '{{ $cour->id }}',
-                                                '{{ $cour->date_heure->format('Y-m-d\TH:i') }}',
+                                                '{{ $cour->date_heure}}',
                                                 '{{ $cour->duree_minutes }}',
                                                 '{{ $cour->moniteur_id }}',
                                                 '{{ $cour->vehicule_id }}',
@@ -343,7 +362,7 @@
                                     <select id="courseMoniteur" name="moniteur_id" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
                                         <option value="">Sélectionner un moniteur</option>
                                         @foreach($moniteurs as $moniteur)
-                                            <option value="{{ $moniteur->id }}">{{ $moniteur->name }}</option>
+                                            <option value="{{ $moniteur->id }}">{{ $cour->moniteur->nom }} {{ $cour->moniteur->prenom }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -361,10 +380,10 @@
             
                             <div class="mb-4">
                                 <label for="courseCandidatPrincipal" class="block text-sm font-medium text-gray-700 mb-1">Candidat Principal *</label>
-                                <select id="courseCandidatPrincipal" name="candidat_ids[]" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                <select id="courseCandidatPrincipal" name="candidat_id" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
                                     <option value="">Sélectionner un candidat</option>
                                     @foreach($candidats as $candidat)
-                                        <option value="{{ $candidat->id }}">{{ $candidat->name }}</option>
+                                        <option value="{{ $candidat->id }}">{{ $candidat->nom }} {{ $candidat->prenom }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -374,7 +393,7 @@
                                 <select id="courseCandidatsSupplementaires" name="candidat_ids[]" multiple
                                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
                                     @foreach($candidats as $candidat)
-                                        <option value="{{ $candidat->id }}">{{ $candidat->name }}</option>
+                                        <option value="{{ $candidat->id }}">{{ $candidat->nom }} {{ $candidat->prenom }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -434,7 +453,7 @@
                 // New course button
                 $('#newCourseBtn').click(function() {
                     $('#modalCourseTitle').text('Nouveau Cours de Conduite');
-                    $('#courseForm').attr('action', "{{ route('admin.conduite') }}");
+                    $('#courseForm').attr('action', "{{ route('admin.conduite.store') }}");
                     $('#_method').val('POST');
                     $('#courseId').val('');
                     $('#courseForm')[0].reset();
@@ -445,7 +464,7 @@
                 // Edit course modal
                 window.openEditModal = function(id, dateHeure, duree, moniteurId, vehiculeId, candidatId, candidatIds, statut) {
                     $('#modalCourseTitle').text('Modifier Cours de Conduite');
-                    $('#courseForm').attr('action', "{{ route('admin.conduite', '') }}/" + id);
+                    $('#courseForm').attr('action', "{{ route('admin.conduite.update', '') }}/" + id);
                     $('#_method').val('PUT');
                     $('#courseId').val(id);
                     $('#courseDateHeure').val(dateHeure);
@@ -457,7 +476,7 @@
                     
                     // Parse JSON array of candidat_ids
                     try {
-                        const ids = JSON.parse(candidatIds);
+                        const ids = JSON.parse(candidatIds.replace(/&quot;/g, '"'));
                         $('#courseCandidatsSupplementaires').val(ids).trigger('change');
                     } catch (e) {
                         console.error('Error parsing candidat_ids:', e);
@@ -472,9 +491,9 @@
                 });
             
                 // Open presence modal
-                {{-- window.openPresenceModal = function(courseId) {
+                window.openPresenceModal = function(courseId) {
                     $.ajax({
-                        url: "{{ route('admin.conduite.marquer-presence', '') }}/" + courseId,
+                        url: "{{ route('admin.conduite.presence', '') }}/" + courseId,
                         type: 'GET',
                         success: function(response) {
                             $('#presenceContent').html(response);
@@ -484,7 +503,7 @@
                             alert('Erreur lors du chargement des présences');
                         }
                     });
-                }; --}}
+                };
             
                 // Handle presence form submission
                 $(document).on('submit', '#presenceForm', function(e) {
@@ -500,6 +519,7 @@
                             if(response.success) {
                                 alert('Présences enregistrées avec succès');
                                 $('#presenceModal').addClass('hidden');
+                                location.reload();
                             }
                         },
                         error: function(xhr) {
@@ -509,6 +529,21 @@
                 });
             });
             </script>
+            <style>
+            .select2-container--default .select2-selection--multiple {
+                border: 1px solid #d1d5db;
+                border-radius: 0.5rem;
+                padding: 0.25rem;
+                min-height: 42px;
+            }
+            .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                background-color: #4D44B5;
+                border: none;
+                border-radius: 0.25rem;
+                color: white;
+                padding: 0 0.5rem;
+            }
+            </style>
        
 </body>
 
