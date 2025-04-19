@@ -22,23 +22,23 @@ class QuizController extends Controller
     }
 
 
-    public function indexForCandidat(Request $request)
-    {
-        $user = Auth::user();
-        $typePermis = $user->type_permis;
-        
-        $search = $request->input('search');
-        
-        $quizzes = Quiz::where('type_permis', $typePermis)
-                       ->when($search, function($query) use ($search) {
-                           return $query->where('title', 'like', '%'.$search.'%')
-                                       ->orWhere('description', 'like', '%'.$search.'%');
-                       })
-                       ->withCount('questions')
-                       ->get();
-        
-        return view('candidats.quizzes', compact('quizzes', 'typePermis'));
-    }
+public function indexForCandidat(Request $request)
+{
+    $user = Auth::user();
+    $typePermis = $user->type_permis;
+    
+    $search = $request->input('search');
+    
+    $quizzes = Quiz::where('type_permis', $typePermis)
+                   ->when($search, function($query) use ($search) {
+                       return $query->where('title', 'like', '%'.$search.'%')
+                                   ->orWhere('description', 'like', '%'.$search.'%');
+                   })
+                   ->withCount('questions')
+                   ->get();
+    
+    return view('candidats.quizzes', compact('quizzes', 'typePermis'));
+}
 
 
     public function store(Request $request)
@@ -104,7 +104,7 @@ class QuizController extends Controller
            return back()->with('error', 'Ce quiz ne contient aucune question');
        }
    
-       return redirect()->route('candidats.quizzes.questions.show', [
+       return redirect()->route('candidats.questions', [
            'quiz' => $quiz->id,
            'question' => $firstQuestion->id
        ]);
@@ -158,7 +158,7 @@ class QuizController extends Controller
                        ->first();
    
        if ($nextQuestion) {
-           return redirect()->route('candidats.quizzes.questions.show', [
+           return redirect()->route('candidats.questions', [
                'quiz' => $quiz,
                'question' => $nextQuestion
            ]);
