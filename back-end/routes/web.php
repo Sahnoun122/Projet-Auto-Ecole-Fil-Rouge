@@ -219,10 +219,34 @@ Route::prefix('api')->group(function () {
 Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(function () {
 
     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-    Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
-    Route::get('/quizzes/{quiz}', [QuizController::class, 'startQuiz'])->name('candidats.quizzes');
-    Route::get('/questions/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.questions');
-    Route::post('/questions/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.questions');
-    Route::get('/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.results');
+    // Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
+    // Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])->name('candidats.quizzes');
+    // Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.questions');
+    // Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.questions');
+    // Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.results');
 
 });
+
+
+Route::prefix('candidats')
+    ->middleware(['auth', 'role:candidat'])
+    ->group(function () {
+        
+        Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])
+            ->name('candidats.quizzes');
+            
+        Route::get('/{quiz}/prepare', [QuizController::class, 'prepareQuiz'])
+            ->name('candidats.prepare');
+            
+        Route::get('/{quiz}/start', [QuizController::class, 'startQuiz'])
+            ->name('candidats.start');
+            
+        Route::get('/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])
+            ->name('candidats.questions');
+            
+        Route::post('/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
+            ->name('candidats.questions.answer');
+            
+        Route::get('/{quiz}/results', [QuizController::class, 'showResults'])
+            ->name('candidats.results');
+    });

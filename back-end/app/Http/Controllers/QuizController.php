@@ -79,11 +79,63 @@ public function indexForCandidat(Request $request)
         return redirect()->route('admin.quizzes')->with('success', 'Quiz supprimé avec succès');
     }
 
+
+
+//     public function indexForCandidat(Request $request)
+// {
+//     $user = Auth::user();
+//     $typePermis = $user->type_permis;
+    
+//     $quizzes = Quiz::where('type_permis', $typePermis)
+//         ->when($request->search, function($query, $search) {
+//             return $query->where('title', 'like', "%$search%")
+//                          ->orWhere('description', 'like', "%$search%");
+//         })
+//         ->withCount('questions')
+//         ->get();
+    
+//     return view('candidats.quizzes', compact('quizzes', 'typePermis'));
+// }
+
+public function prepareQuiz(Quiz $quiz)
+{
+    $user = Auth::user();
+    
+    if ($quiz->type_permis !== $user->type_permis) {
+        abort(403);
+    }
+
+    return view('candidats.prepare', compact('quiz'));
+}
+
+// public function startQuiz(Quiz $quiz)
+// {
+//     $user = Auth::user();
+    
+//     Answer::where('candidat_id', $user->id)
+//         ->whereHas('question', fn($q) => $q->where('quiz_id', $quiz->id))
+//         ->delete();
+
+//     $firstQuestion = $quiz->questions()->orderBy('id')->first();
+
+//     if (!$firstQuestion) {
+//         return redirect()->route('candidats.index')
+//             ->with('error', 'Ce quiz ne contient aucune question');
+//     }
+
+//     return redirect()->route('candidats.questions', [
+//         'quiz' => $quiz,
+//         'question' => $firstQuestion
+//     ]);
+// }
+
+
     public function showForCandidat(Quiz $quiz)
     {
         return view('candidats.quizzes.show', compact('quiz'));
  
    }
+
    public function startQuiz(Quiz $quiz)
    {
        $user = Auth::user();
@@ -109,6 +161,7 @@ public function indexForCandidat(Request $request)
            'question' => $firstQuestion->id
        ]);
    }
+
 
    public function showQuestion(Quiz $quiz, Question $question)
    {
@@ -158,7 +211,7 @@ public function indexForCandidat(Request $request)
                        ->first();
    
        if ($nextQuestion) {
-           return redirect()->route('candidats.questions', [
+           return redirect()->route('candidats.quizzes.questions.show', [
                'quiz' => $quiz,
                'question' => $nextQuestion
            ]);

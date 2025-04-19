@@ -266,12 +266,10 @@
                                     <p class="mt-3 text-gray-600 text-sm">{{ $quiz->description }}</p>
                                     
                                     <div class="mt-6">
-                                        <a 
-                                            href=" {{ route('candidats.quizzes', $quiz->id) }} " 
-                                            class="w-full block text-center bg-[#4D44B5] hover:bg-[#3a32a1] text-white font-medium py-2 px-4 rounded-lg transition"
-                                        >
-                                            Commencer le quiz
-                                        </a>
+                                        <a href="{{ route('candidats.prepare', $quiz) }}" 
+                                        class="w-full block text-center bg-[#4D44B5] hover:bg-[#3a32a1] text-white font-medium py-2 px-4 rounded-lg transition">
+                                         Commencer le quiz
+                                     </a>
                                     </div>
                                 </div>
                             </div>
