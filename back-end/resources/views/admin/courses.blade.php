@@ -338,6 +338,4 @@ async function logout() {
 
 document.getElementById('logoutButton').addEventListener('click', logout);
     </script>
-</body>
-
-</html>
+@endsection
