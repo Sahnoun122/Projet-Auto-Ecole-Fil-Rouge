@@ -60,7 +60,6 @@ class TitleController extends Controller
         return redirect()->route('admin.titles')
             ->with('success', 'Titre supprimé avec succès');
     }
-
     public function indexForCandidat(Request $request)
     {
         $user = Auth::user();
@@ -73,11 +72,11 @@ class TitleController extends Controller
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+                  ;
             });
         }
     
-        $titles = $query->get();
+        $titles = $query->paginate(10); 
     
         return view('candidats.titres', [
             'titles' => $titles,
@@ -85,8 +84,6 @@ class TitleController extends Controller
             'searchTerm' => $request->search ?? null
         ]);
     }
-
-  
     public function showForCandidat(Title $title)
     {
         $user = Auth::user();
@@ -94,14 +91,13 @@ class TitleController extends Controller
         if ($title->type_permis !== $user->type_permis) {
             abort(403, "Accès non autorisé à ces cours");
         }
-
+    
         $courses = $title->courses()->get();
-
-        return view('candidats.titres', [
+    
+        return view('candidats.titres.show', [  
             'title' => $title,
             'courses' => $courses,
             'typePermis' => $user->type_permis
         ]);
-    
-}
+    }
 }
