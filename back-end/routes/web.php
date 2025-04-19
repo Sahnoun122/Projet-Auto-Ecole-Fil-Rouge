@@ -236,17 +236,25 @@ Route::prefix('candidats')
             ->name('candidats.quizzes');
             
         Route::get('/{quiz}/prepare', [QuizController::class, 'prepareQuiz'])
+
             ->name('candidats.prepare');
             
         Route::get('/{quiz}/start', [QuizController::class, 'startQuiz'])
+
             ->name('candidats.start');
             
         Route::get('/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])
+
             ->name('candidats.questions');
             
-        Route::post('/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
-            ->name('candidats.questions.answer');
+        // Route::post('/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
+        //     ->name('candidats.questions');
+
+            Route::post('/{quiz}/questions/{question}', [QuizController::class, 'submitAnswer'])
+
+     ->name('candidats.questions');
             
         Route::get('/{quiz}/results', [QuizController::class, 'showResults'])
+
             ->name('candidats.results');
     });

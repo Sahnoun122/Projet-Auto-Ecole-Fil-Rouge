@@ -211,13 +211,13 @@ public function prepareQuiz(Quiz $quiz)
                        ->first();
    
        if ($nextQuestion) {
-           return redirect()->route('candidats.quizzes.questions.show', [
+           return redirect()->route('candidats.questions', [
                'quiz' => $quiz,
                'question' => $nextQuestion
            ]);
        }
    
-       return redirect()->route('candidats.quizzes.results', $quiz);
+       return redirect()->route('candidats.results', $quiz);
    }
    
    public function showResults(Quiz $quiz)
@@ -237,7 +237,7 @@ public function prepareQuiz(Quiz $quiz)
        $correctAnswers = $answers->where('is_correct', true)->count();
        $passed = $correctAnswers >= 32; 
    
-       return view('candidats.quizzes.results', compact(
+       return view('candidats.results', compact(
            'quiz', 'answers', 'totalQuestions', 'correctAnswers', 'passed'
        ));
    }
