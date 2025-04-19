@@ -259,5 +259,8 @@ Route::prefix('candidats')
             ->name('candidats.results');
 Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candidats.titres');
 
-Route::get('/titres/{title}', [TitleController::class, 'showForCandidat'])->name('candidats.titres.show');
+// Route::get('/titres/{title}', [TitleController::class, 'showForCandidat'])->name('candidats.titres.show');
+
+Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitle'])
+     ->name('candidats.titres.cours');
     });

@@ -47,7 +47,8 @@
                                     <span class="inline-block px-3 py-1 bg-purple-100 text-[#4D44B5] text-xs font-medium rounded-full mb-3">
                                         {{ $title->type_permis }}
                                     </span>
-                                    <h3 class="text-xl font-bold text-gray-800">{{ $title->name }}</h3>
+                                  <a href="{{ route('candidats.titres.cours', $title) }}" class="block">
+                                    <h3 class="text-xl font-bold text-gray-800">{{ $title->name }}</h3>                                     </a>
                                 </div>
                                 <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
                                     {{ $title->courses_count }} {{ Str::plural('cours', $title->courses_count) }}
@@ -60,7 +61,7 @@
                         </div>
                         
                         <div class="mt-6">
-                            <a href="{{ route('candidats.titres.show', $title) }}" 
+                            <a href="{{ route('candidats.titres.cours', $title) }}" 
                                class="w-full block text-center bg-[#4D44B5] hover:bg-[#3a32a1] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300">
                                Voir les cours <i class="fas fa-arrow-right ml-2"></i>
                             </a>

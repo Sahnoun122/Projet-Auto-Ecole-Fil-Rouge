@@ -97,18 +97,36 @@ class CourseController extends Controller
 
 
 
-    public function showForCandidat(Course $course)
-    {
-        $user = Auth::user();
+    // public function showForCandidat(Course $course)
+    // {
+    //     $user = Auth::user();
         
-        if ($course->title->type_permis !== $user->type_permis) {
-            abort(403, "Accès non autorisé à ce cours");
-        }
+    //     if ($course->title->type_permis !== $user->type_permis) {
+    //         abort(403, "Accès non autorisé à ce cours");
+    //     }
 
-        return view('candidats.cours', [
-            'course' => $course,
-            'typePermis' => $user->type_permis
-        ]);
+    //     return view('candidats.cours', [
+    //         'course' => $course,
+    //         'typePermis' => $user->type_permis
+    //     ]);
+    // }
+
+
+    public function showCoursesByTitle(Title $title)
+{
+    $user = Auth::user();
+    
+    if ($title->type_permis !== $user->type_permis) {
+        abort(403, "Accès non autorisé à ces cours");
     }
+
+    $courses = $title->courses()->get();
+
+    return view('candidats.cours', [
+        'title' => $title,
+        'courses' => $courses,
+        'typePermis' => $user->type_permis
+    ]);
+}
 
 }

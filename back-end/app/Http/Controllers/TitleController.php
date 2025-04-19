@@ -94,7 +94,7 @@ class TitleController extends Controller
     
         $courses = $title->courses()->get();
     
-        return view('candidats.titres.show', [  
+        return view('candidats.titres', [  
             'title' => $title,
             'courses' => $courses,
             'typePermis' => $user->type_permis
