@@ -24,11 +24,16 @@ class QuizController extends Controller
 
     public function indexForCandidat(Request $request)
     {
-        
         $user = Auth::user();
         $typePermis = $user->type_permis;
         
+        $search = $request->input('search');
+        
         $quizzes = Quiz::where('type_permis', $typePermis)
+                       ->when($search, function($query) use ($search) {
+                           return $query->where('title', 'like', '%'.$search.'%')
+                                       ->orWhere('description', 'like', '%'.$search.'%');
+                       })
                        ->withCount('questions')
                        ->get();
         

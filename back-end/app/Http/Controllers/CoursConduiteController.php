@@ -67,33 +67,36 @@ class CoursConduiteController extends Controller
     ));
 }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'date_heure' => 'required|date',
-            'duree_minutes' => 'required|integer|min:30|max:240',
-            'moniteur_id' => 'required|exists:users,id',
-            'vehicule_id' => 'required|exists:vehicles,id',
-            'candidat_ids' => 'required|array|min:1',
-            'candidat_ids.*' => 'exists:users,id',
-            'statut' => 'required|in:planifie,termine,annule',
-        ]);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'date_heure' => 'required|date',
+        'duree_minutes' => 'required|integer|min:30|max:240',
+        'moniteur_id' => 'required|exists:users,id',
+        'vehicule_id' => 'required|exists:vehicles,id',
+        'candidat_id' => 'required|exists:users,id', 
+        'candidat_ids' => 'sometimes|array',
+        'candidat_ids.*' => 'exists:users,id',
+        'statut' => 'required|in:planifie,termine,annule',
+    ]);
 
-        $cours = CoursConduite::create([
-            'date_heure' => $validated['date_heure'],
-            'duree_minutes' => $validated['duree_minutes'],
-            'moniteur_id' => $validated['moniteur_id'],
-            'vehicule_id' => $validated['vehicule_id'],
-            'admin_id' => Auth::id(),
-            'statut' => $validated['statut'],
-            'candidat_id' => $validated['candidat_ids'][0]
-        ]);
+    $cours = CoursConduite::create([
+        'date_heure' => $validated['date_heure'],
+        'duree_minutes' => $validated['duree_minutes'],
+        'moniteur_id' => $validated['moniteur_id'],
+        'vehicule_id' => $validated['vehicule_id'],
+        'admin_id' => Auth::id(),
+        'candidat_id' => $validated['candidat_id'], 
+        'statut' => $validated['statut'],
+    ]);
 
+    if (!empty($validated['candidat_ids'])) {
         $cours->candidats()->sync($validated['candidat_ids']);
-
-        return redirect()->route('admin.conduite')
-            ->with('success', 'Cours de conduite créé avec succès');
     }
+
+    return redirect()->route('admin.conduite.index')
+        ->with('success', 'Cours créé avec succès');
+}
 
     public function update(Request $request, CoursConduite $coursConduite)
     {

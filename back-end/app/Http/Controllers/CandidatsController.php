@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Storage;
 
 class CandidatsController extends Controller
 {
+
+    public function dashboard()
+    {
+        return view('candidats.dashboard'); 
+    }
+    
     public function index(Request $request)
     {
         $search = $request->input('search');

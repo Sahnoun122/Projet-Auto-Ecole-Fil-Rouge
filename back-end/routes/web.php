@@ -43,24 +43,24 @@ Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 
-Route::prefix('candidats')->middleware(['auth', 'role:admin'])->group(function () {
+// Route::prefix('candidats')->middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
+//     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
 
-    Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
+//     Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
 
-        Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])
-            ->name('candidats.quizzes.start');
+//         Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])
+//             ->name('candidats.quizzes.start');
 
-        Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])
-            ->name('candidats.quizzes.questions.show');
+//         Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])
+//             ->name('candidats.quizzes.questions.show');
 
-        Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
-            ->name('candidats.quizzes.questions.answer');
+//         Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
+//             ->name('candidats.quizzes.questions.answer');
 
-        Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])
-            ->name('candidats.quizzes.results');
-        });
+//         Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])
+//             ->name('candidats.quizzes.results');
+//         });
 
 
 
@@ -168,7 +168,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/conduite/{coursConduite}', [CoursConduiteController::class, 'destroy'])->name('admin.conduite.destroy');
     Route::post('/conduite/marquer-presence/{id}', [CoursConduiteController::class, 'marquerPresence'])->name('admin.conduite.presence');
 
-    
+
 Route::prefix('api')->group(function () {
     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
          ->name('api.vehicles.maintenance-alerts');
@@ -216,11 +216,11 @@ Route::prefix('api')->group(function () {
 // });
 
 
-// Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(function () {
-//     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-//     Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
-//     Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])->name('candidats.quizzes.start');
-//     Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.quizzes.questions.show');
-//     Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.quizzes.questions.answer');
-//     Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.quizzes.results');
-// });
+Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(function () {
+    Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
+    Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
+    Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])->name('candidats.quizzes.start');
+    Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.quizzes.questions.show');
+    Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.quizzes.questions.answer');
+    Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.quizzes.results');
+});

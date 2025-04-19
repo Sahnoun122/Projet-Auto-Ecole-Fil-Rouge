@@ -270,9 +270,12 @@
                                             <div class="flex flex-wrap gap-1">
                                                 @if($cour->candidat)
                                                     <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                                                        {{-- {{ $cour->candidat->nom }} {{ $cour->candidat->prenom }} (Principal) --}}
+                                                        {{ $cour->candidat->nom }} {{ $cour->candidat->prenom }} (Principal)
                                                     </span>
+                                                @else
+                                                    <span class="text-red-500 text-xs">Aucun candidat principal</span>
                                                 @endif
+                                        
                                                 @foreach($cour->candidats as $candidat)
                                                     @if(!$cour->candidat || $candidat->id != $cour->candidat_id)
                                                         <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
@@ -389,11 +392,21 @@
                             </div>
             
                             <div class="mb-4">
+                                <label for="courseCandidatPrincipal" class="block text-sm font-medium text-gray-700 mb-1">Candidat Principal *</label>
+                                <select id="courseCandidatPrincipal" name="candidat_id" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                                    <option value="">Sélectionner un candidat</option>
+                                    @foreach($candidats as $candidat)
+                                        <option value="{{ $candidat->id }}">{{ $cour->candidat->nom }} {{ $cour->candidat->prenom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
                                 <label for="courseCandidatsSupplementaires" class="block text-sm font-medium text-gray-700 mb-1">Candidats Supplémentaires</label>
                                 <select id="courseCandidatsSupplementaires" name="candidat_ids[]" multiple
                                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
                                     @foreach($candidats as $candidat)
-                                        <option value="{{ $candidat->id }}">{{ $candidat->nom }} {{ $candidat->prenom }}</option>
+                                        <option value="{{ $candidat->id }}">{{ $cour->candidat->nom }} {{ $cour->candidat->prenom }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -464,19 +477,18 @@
                 // Edit course modal
                 window.openEditModal = function(id, dateHeure, duree, moniteurId, vehiculeId, candidatId, candidatIds, statut) {
                     $('#modalCourseTitle').text('Modifier Cours de Conduite');
-                    $('#courseForm').attr('action', "{{ route('admin.conduite.update', '') }}/" + id);
+                    $('#courseForm').attr('action', "/admin/conduite/" + id);
                     $('#_method').val('PUT');
                     $('#courseId').val(id);
                     $('#courseDateHeure').val(dateHeure);
                     $('#courseDuree').val(duree);
                     $('#courseMoniteur').val(moniteurId);
                     $('#courseVehicule').val(vehiculeId);
-                    $('#courseCandidatPrincipal').val(candidatId);
+                    $('#courseCandidatPrincipal').val(candidatId); // Champ unique pour le candidat principal
                     $('#courseStatut').val(statut);
                     
-                    // Parse JSON array of candidat_ids
                     try {
-                        const ids = JSON.parse(candidatIds.replace(/&quot;/g, '"'));
+                        const ids = Array.isArray(candidatIds) ? candidatIds : JSON.parse(candidatIds.replace(/&quot;/g, '"'));
                         $('#courseCandidatsSupplementaires').val(ids).trigger('change');
                     } catch (e) {
                         console.error('Error parsing candidat_ids:', e);

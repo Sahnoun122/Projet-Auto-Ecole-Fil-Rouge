@@ -16,6 +16,7 @@ class CoursConduite extends Model
         'vehicule_id',
         'admin_id',
         'candidat_id'
+
     ];
 
     // Relation avec le moniteur (User)
