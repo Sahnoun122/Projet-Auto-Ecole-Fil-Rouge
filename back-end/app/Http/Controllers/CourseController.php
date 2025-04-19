@@ -94,4 +94,21 @@ class CourseController extends Controller
             'message' => 'Cours supprimé avec succès'
         ]);
     }
+
+
+
+    public function showForCandidat(Course $course)
+    {
+        $user = Auth::user();
+        
+        if ($course->title->type_permis !== $user->type_permis) {
+            abort(403, "Accès non autorisé à ce cours");
+        }
+
+        return view('candidats.cours', [
+            'course' => $course,
+            'typePermis' => $user->type_permis
+        ]);
+    }
+
 }

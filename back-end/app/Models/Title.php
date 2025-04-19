@@ -20,6 +20,11 @@ class Title extends Model
         return $this->hasMany(Course::class);
     }
 
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
     public function getCandidateProgress($candidateId)
     {
         $totalCourses = $this->courses()->count();
@@ -41,3 +46,4 @@ class Title extends Model
         ];
     }
 }
+

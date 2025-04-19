@@ -60,4 +60,38 @@ class TitleController extends Controller
         return redirect()->route('admin.titles')
             ->with('success', 'Titre supprimé avec succès');
     }
+
+    public function indexForCandidat()
+    {
+        $user = Auth::user();
+        $typePermis = $user->type_permis;
+        
+        $titles = Title::where('type_permis', $typePermis)
+                    ->withCount('courses')
+                    ->get();
+
+        return view('candidats.titres', [
+            'titles' => $titles,
+            'typePermis' => $typePermis
+        ]);
+    }
+
+  
+    public function showForCandidat(Title $title)
+    {
+        $user = Auth::user();
+        
+        if ($title->type_permis !== $user->type_permis) {
+            abort(403, "Accès non autorisé à ces cours");
+        }
+
+        $courses = $title->courses()->get();
+
+        return view('candidats.titres', [
+            'title' => $title,
+            'courses' => $courses,
+            'typePermis' => $user->type_permis
+        ]);
+    
+}
 }
