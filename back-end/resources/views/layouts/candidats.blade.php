@@ -43,7 +43,7 @@
             </div>
             <div class="flex-1 overflow-y-auto py-4">
                 <nav>
-                    <a href=" {{ route('admin.dashboard') }}"
+                    <a href=" {{ route('candidats.dashboard') }}"
                         class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -59,26 +59,9 @@
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
                     </a>
                        
-                        <div>
-                            <a href=" {{route('admin.candidats')}}">
-                              <div id="cours-theorique-header"
-                              class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                  stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                              </svg>
-      
-                              <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
-                              <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                </svg>                            
-                              
-                              </div>
-                            </a>
-                            
-                          </div>
+                  
                     <div>
-                      <a href=" {{route('admin.titles')}}">
+                      <a href=" {{route('candidats.titles')}}">
                         <div id="cours-theorique-header"
                         class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -97,7 +80,7 @@
                     </div>
 
                     <div>
-                      <a href="{{ route ('admin.quizzes')}}">
+                      <a href="{{ route ('candidats.quizzes')}}">
                         <div id="cours-pratique-header"
                         class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -115,25 +98,9 @@
                     
                     </div>
 
+              
                     <div>
-                    <a href=" {{ route('admin.vehicles')}}">
-                        <div id="vehicule-header"
-                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
-
-                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
-                        <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          </svg>
-                    </div>
-                    </a>
-                    
-                    </div>
-                    <div>
-                        <a href="{{ route('admin.conduite') }}">
+                        <a href="{{ route('candidats.conduite') }}">
                             <div id="cours-conduite-header"
                                 class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
                                 
@@ -155,7 +122,7 @@
                     
 
                     <div>
-                    <a href=" {{ route('admin.exams')}}">
+                    <a href=" {{ route('candidats.exams')}}">
                         <div id="examen-header"
                         class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
 
@@ -175,26 +142,7 @@
 
                     </div>
 
-                    <div>
-                    <a href=" {{ route('admin.monitors.index') }}">
-                        <div id="moniteurs-header"
-                        class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
-                        <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          </svg>
-
-                    </div>
-                    </a>
-                   
-
-                    </div>
-
+           
                    <a href="">
                     <div>
                         <div id="caisse-header"
