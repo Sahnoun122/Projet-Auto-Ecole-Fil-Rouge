@@ -220,27 +220,46 @@ public function prepareQuiz(Quiz $quiz)
        return redirect()->route('candidats.results', $quiz);
    }
    
-   public function showResults(Quiz $quiz)
-   {
-       if ($quiz->type_permis !== Auth::user()->type_permis) {
-           abort(403);
-       }
+//    public function showResults(Quiz $quiz)
+//    {
+//        if ($quiz->type_permis !== Auth::user()->type_permis) {
+//            abort(403);
+//        }
    
-       $answers = Answer::with(['question', 'choice'])
-           ->where('candidat_id', Auth::id())
-           ->whereHas('question', function($query) use ($quiz) {
-               $query->where('quiz_id', $quiz->id);
-           })
-           ->get();
+//        $answers = Answer::with(['question', 'choice'])
+//            ->where('candidat_id', Auth::id())
+//            ->whereHas('question', function($query) use ($quiz) {
+//                $query->where('quiz_id', $quiz->id);
+//            })
+//            ->get();
    
-       $totalQuestions = $quiz->questions()->count();
-       $correctAnswers = $answers->where('is_correct', true)->count();
-       $passed = $correctAnswers >= 32; 
+//        $totalQuestions = $quiz->questions()->count();
+//        $correctAnswers = $answers->where('is_correct', true)->count();
+//        $passed = $correctAnswers >= 32; 
    
-       return view('candidats.results', compact(
-           'quiz', 'answers', 'totalQuestions', 'correctAnswers', 'passed'
-       ));
-   }
+//        return view('candidats.results', compact(
+//            'quiz', 'answers', 'totalQuestions', 'correctAnswers', 'passed'
+//        ));
+//    }
+
+public function showResults(Quiz $quiz)
+{
+    $user = Auth::user();
+    
+    if ($quiz->type_permis !== $user->type_permis) {
+        abort(403);
+    }
+
+    $results = $quiz->getResults($user->id);
+
+    return view('candidats.results', [
+        'quiz' => $quiz,
+        'totalQuestions' => 40, 
+        'correctAnswers' => $results['correct'],
+        'passed' => $results['passed'],
+        'wrongAnswers' => $results['wrong_answers']
+    ]);
+}
    
 
 }
