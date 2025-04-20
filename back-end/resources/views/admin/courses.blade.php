@@ -203,7 +203,6 @@ function handleDeleteCourse(id) {
     }
 }
 
-// Prévisualisation de l'image
 courseImage.addEventListener('change', function(e) {
     if (this.files && this.files[0]) {
         const reader = new FileReader();
@@ -220,7 +219,6 @@ function removeImagePreview() {
     imagePreviewContainer.classList.add('hidden');
 }
 
-// Gestion du formulaire cours
 courseForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
