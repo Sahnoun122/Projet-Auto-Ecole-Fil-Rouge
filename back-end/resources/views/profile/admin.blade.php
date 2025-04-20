@@ -12,6 +12,159 @@
 </head>
 <body>
     
+<div class="flex-1 overflow-auto">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Profile Card -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <!-- Header avec photo -->
+            <div class="bg-gradient-to-r from-[#4D44B5] to-[#3a32a1] p-6 flex flex-col md:flex-row items-center">
+                <div class="relative mr-6 mb-4 md:mb-0">
+                    <img class="h-32 w-32 rounded-full border-4 border-white shadow-lg" 
+                         src="{{ $user->profile_photo_url }}" 
+                         alt="Photo de profil">
+                    <span class="absolute bottom-2 right-2 block h-4 w-4 rounded-full bg-green-400 ring-2 ring-white"></span>
+                </div>
+                
+                <div class="text-white">
+                    <h1 class="text-2xl font-bold">{{ $user->prenom }} {{ $user->nom }}</h1>
+                    <p class="text-indigo-200">
+                        @if($user->isAdmin())
+                            Administrateur
+                        @elseif($user->isMoniteur())
+                            Moniteur
+                        @else
+                            Candidat
+                        @endif
+                    </p>
+                    
+                    <div class="flex flex-wrap items-center mt-2 gap-4">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            {{ $user->email }}
+                        </span>
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            {{ $user->telephone }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="px-6 py-4 border-b flex justify-end">
+                <button onclick="openEditModal()" 
+                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Modifier le profil
+                </button>
+            </div>
+
+            <!-- Informations -->
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Colonne 1 -->
+                <div class="space-y-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Informations personnelles</h2>
+                        <div class="space-y-3">
+                            <p>
+                                <span class="font-medium text-gray-700">Adresse:</span> 
+                                <span class="block mt-1">{{ $user->adresse ?? 'Non renseignée' }}</span>
+                            </p>
+                            <p>
+                                <span class="font-medium text-gray-700">Date d'inscription:</span> 
+                                <span class="block mt-1">{{ $user->created_at->format('d/m/Y') }}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    @if($user->isMoniteur())
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Disponibilités</h2>
+                        <div class="space-y-2">
+                            <p class="text-gray-600">Aucune disponibilité configurée</p>
+                            <button class="text-[#4D44B5] hover:text-[#3a32a1] text-sm font-medium">
+                                + Ajouter des disponibilités
+                            </button>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Colonne 2 -->
+                <div class="space-y-6">
+                    @if($user->isCandidat())
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Progression</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Cours théoriques</span>
+                                    <span class="text-sm">75%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Heures de conduite</span>
+                                    <span class="text-sm">32/40h</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                            @if($user->isCandidat())
+                                Permis visé
+                            @elseif($user->isMoniteur())
+                                Spécialisations
+                            @else
+                                Accès
+                            @endif
+                        </h2>
+                        <div class="space-y-3">
+                            @if($user->isCandidat())
+                                <p>
+                                    <span class="font-medium text-gray-700">Type de permis:</span> 
+                                    <span class="inline-block px-2 py-1 bg-[#4D44B5] text-white text-xs font-medium rounded ml-2">
+                                        {{ $user->type_permis ?? 'Non spécifié' }}
+                                    </span>
+                                </p>
+                                <p>
+                                    <span class="font-medium text-gray-700">Moniteur attitré:</span> 
+                                    <span class="text-gray-600">Jean Dupont</span>
+                                </p>
+                            @elseif($user->isMoniteur())
+                                <p>
+                                    <span class="font-medium text-gray-700">Certifications:</span> 
+                                    <span class="block mt-1">{{ $user->certifications ?? 'Non renseignées' }}</span>
+                                </p>
+                                <p>
+                                    <span class="font-medium text-gray-700">Qualifications:</span> 
+                                    <span class="block mt-1">{{ $user->qualifications ?? 'Non renseignées' }}</span>
+                                </p>
+                            @else
+                                <p class="text-gray-600">Accès complet à toutes les fonctionnalités du système</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="editProfileModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
     <div class="bg-white w-full max-w-2xl rounded-xl shadow-lg overflow-hidden">
