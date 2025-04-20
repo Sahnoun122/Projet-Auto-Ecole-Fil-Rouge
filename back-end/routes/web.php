@@ -267,14 +267,12 @@ Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitl
      ->name('candidats.titres.cours');
     });
 
-    Route::prefix('profile')->middleware(['auth'])->group(function () {
-        Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
-        Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('/', [ProfileController::class, 'update'])->name('profile.update');
-        
-        // Pour les admins qui gèrent d'autres profils
-        Route::get('/user/{id}', [ProfileController::class, 'show'])->name('profile.user.show');
-        Route::get('/user/{id}/edit', [ProfileController::class, 'edit'])->name('profile.user.edit');
-        Route::put('/user/{id}', [ProfileController::class, 'update'])->name('profile.user.update');
-        Route::delete('/user/{id}', [ProfileController::class, 'destroy'])->name('profile.user.destroy');
+    Route::middleware(['auth'])->group(function () {
+        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile/{id}', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
+
+
+Route::middleware(['auth'])->get('/profile', [ProfileController::class, 'index'])->name('profile.profile');
+
+    

@@ -30,7 +30,7 @@
                 <div class="relative group">
                     <div class="absolute inset-0 bg-[#4D44B5] rounded-full opacity-10 group-hover:opacity-20 transition-opacity"></div>
                     
-                    <a href="{{ route('profile.show') }}" class="block">
+                    <a href="{{ route('profile.admin') }}" class="block">
                         <img 
                             src="{{ Auth::user()->profile_photo_url }}" 
                             alt="Photo de profil" 
@@ -40,11 +40,11 @@
             </div>
             
             <div class="text-center py-2 text-sm font-medium text-gray-700">
-                <a href="{{ route('profile.show') }}" class="hover:text-[#4D44B5] transition">
+                <a href="{{ route('profile.admin') }}" class="hover:text-[#4D44B5] transition">
                     {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
                 </a>
             </div>
-            
+
             <div class="flex-1 overflow-y-auto py-4">
                 <nav>
                     <a href=" {{ route('admin.dashboard') }}"

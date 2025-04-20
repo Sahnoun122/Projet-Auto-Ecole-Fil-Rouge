@@ -10,21 +10,27 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    public function show($id = null)
-    {
-        $user = $id ? User::findOrFail($id) : Auth::user();
-        
-        // Autorisations
-        if (!(Auth::isAdmin() || Auth::id() === $user->id)) {
-            abort(403, 'Accès non autorisé');
-        }
 
-        return view('profile.show', [
-            'user' => $user,
-            'isCurrentUser' => Auth::id() === $user->id
-        ]);
-    }
+     public function index()
+     {
+         /** @var \App\Models\User $user */
 
+         $user = Auth::user();
+ 
+         if ($user->isAdmin()) {
+             return view('profile.admin', compact('user'));
+         }
+ 
+         if ($user->isMoniteur()) {
+             return view('profile.moniteur', compact('user'));
+         }
+ 
+         if ($user->isCandidat()) {
+             return view('profile.candidat', compact('user'));
+         }
+ 
+         abort(403, 'Rôle inconnu');
+     }
     public function edit($id = null)
     {
         $user = $id ? User::findOrFail($id) : Auth::user();
@@ -81,7 +87,7 @@ class ProfileController extends Controller
     
         $user->update($validated);
     
-        return redirect()->route('profile.show')->with('success', 'Profil mis à jour avec succès');
+        return redirect()->route('profile')->with('success', 'Profil mis à jour avec succès');
     }
 
     

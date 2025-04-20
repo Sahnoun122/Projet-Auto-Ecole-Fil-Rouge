@@ -35,27 +35,28 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function getProfilePhotoUrlAttribute()
-    {
-        return $this->photo_profile 
-            ? asset('storage/'.$this->photo_profile)
-            : asset('images/default-profile.png');
-    }
-
-    public function isAdmin(): bool
+    public function isAdmin()
     {
         return $this->role === 'admin';
     }
-
-    public function isMoniteur(): bool
+    
+    public function isMoniteur()
     {
         return $this->role === 'moniteur';
     }
-
-    public function isCandidat(): bool
+    
+    public function isCandidat()
     {
         return $this->role === 'candidat';
     }
+    
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->photo_profile 
+            ? asset('storage/' . $this->photo_profile)
+            : 'https://ui-avatars.com/api/?name=' . urlencode($this->prenom . ' ' . $this->nom);
+    }
+    
 
     public function hasRole(string $role): bool
     {
