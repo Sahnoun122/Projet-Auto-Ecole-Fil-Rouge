@@ -20,7 +20,7 @@ class Exam extends Model
         'nombre_presents',
         'taux_reussite',
         'admin_id',
-        'moniteur_id',
+        'candidat_id',
         'instructions'
     ];
 
@@ -33,13 +33,12 @@ class Exam extends Model
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function moniteur(): BelongsTo
+    public function candidat(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'moniteur_id');
+        return $this->belongsTo(User::class, 'candidat_id');
     }
 
-    
-    public function candidats(): BelongsToMany
+    public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'exam_candidat', 'exam_id', 'candidat_id')
                     ->withPivot(['present', 'resultat', 'score', 'observations', 'feedbacks'])
@@ -48,9 +47,9 @@ class Exam extends Model
 
     public function updateStats(): void
     {
-        $total = $this->candidats()->count();
-        $presents = $this->candidats()->wherePivot('present', true)->count();
-        $reussis = $this->candidats()->wherePivot('resultat', '!=', 'insuffisant')->count();
+        $total = $this->participants()->count();
+        $presents = $this->participants()->wherePivot('present', true)->count();
+        $reussis = $this->participants()->wherePivot('resultat', '!=', 'insuffisant')->count();
 
         $this->update([
             'nombre_presents' => $presents,
