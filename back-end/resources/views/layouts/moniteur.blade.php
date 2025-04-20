@@ -25,32 +25,23 @@
                     </svg>
                 </button>
             </div>
-<!-- Dans la sidebar -->
 <div class="p-4 border-b flex justify-center">
     <div class="relative group">
         <div class="absolute inset-0 bg-[#4D44B5] rounded-full opacity-10 group-hover:opacity-20 transition-opacity"></div>
+        
         <a href="{{ route('profile.show') }}" class="block">
-            <img src="{{ Auth::user()->profile_photo_url }}" 
-                 alt="Photo profil" 
-                 class="h-16 w-16 object-cover rounded-full border-2 border-gray-200">
-            <div class="absolute bottom-0 right-0 h-4 w-4 bg-green-500 rounded-full border-2 border-white"></div>
+            <img 
+                src="{{ Auth::user()->profile_photo_url }}" 
+                alt="Photo de profil" 
+                class="h-20 w-20 object-cover rounded-full border-2 border-gray-300 shadow-sm transition-transform duration-300 group-hover:scale-105">
         </a>
     </div>
 </div>
 
-<div class="text-center py-2 text-sm font-medium text-gray-600">
+<div class="text-center py-2 text-sm font-medium text-gray-700">
     <a href="{{ route('profile.show') }}" class="hover:text-[#4D44B5] transition">
         {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
     </a>
-    <div class="text-xs mt-1">
-        @if(Auth::user()->isAdmin())
-            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">Admin</span>
-        @elseif(Auth::user()->isMoniteur())
-            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Moniteur</span>
-        @else
-            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full">Candidat</span>
-        @endif
-    </div>
 </div>
 
             <div :class="sidebarOpen ? 'block' : 'hidden'" class="text-center py-2 text-sm font-medium text-gray-600">
