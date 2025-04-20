@@ -29,20 +29,25 @@ class ExamResultPublished extends Notification implements ShouldQueue
         $result = $this->exam->participants()->where('user_id', $notifiable->id)->first()->pivot;
 
         return (new MailMessage)
-            ->subject('Résultat de votre examen')
-            ->line('Les résultats de votre examen sont disponibles.')
+            ->subject('Résultats de votre examen')
+            ->greeting('Bonjour ' . $notifiable->prenom . ',')
+            ->line('Les résultats de votre examen sont disponibles:')
+            ->line('Type: ' . ucfirst($this->exam->type))
+            ->line('Date: ' . $this->exam->date_exam->format('d/m/Y'))
             ->line('Résultat: ' . ucfirst(str_replace('_', ' ', $result->resultat)))
             ->line('Score: ' . $result->score . '/100')
-            ->line('Commentaires: ' . $result->feedbacks)
-            ->action('Voir les détails', url('/exams/' . $this->exam->id))
+            ->action('Voir les détails', url('/my-exams/' . $this->exam->id . '/results'))
             ->line('Merci de votre confiance!');
     }
 
     public function toArray($notifiable)
     {
+        $result = $this->exam->participants()->where('user_id', $notifiable->id)->first()->pivot;
+
         return [
-            'message' => 'Les résultats de votre examen du ' . $this->exam->date_exam->format('d/m/Y') . ' sont disponibles',
-            'url' => '/exams/' . $this->exam->id,
+            'message' => 'Résultats disponibles pour votre examen du ' . $this->exam->date_exam->format('d/m/Y'),
+            'url' => '/my-exams/' . $this->exam->id . '/results',
+            'icon' => 'clipboard-check',
             'exam_id' => $this->exam->id
         ];
     }

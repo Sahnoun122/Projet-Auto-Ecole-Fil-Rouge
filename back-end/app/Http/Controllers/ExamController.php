@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\ExamScheduled;
 use App\Notifications\ExamResultPublished;
-use Illuminate\Support\Facades\Notification;
 
 class ExamController extends Controller
 {
@@ -20,14 +19,9 @@ class ExamController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('admin.exams.index', compact('exams'));
-    }
-
-    public function create()
-    {
-        Gate::authorize('create', Exam::class);
-        $candidats = User::where('role', 'candidat')->get();
-        return view('admin.exams.create', compact('candidats'));
+        $candidats = User::where('role', 'candidat')->get(['id', 'nom', 'prenom']);
+        
+        return view('admin.exams', compact('exams', 'candidats'));
     }
 
     public function store(Request $request)
@@ -47,27 +41,16 @@ class ExamController extends Controller
             'statut' => 'planifie'
         ]);
 
-        // Envoyer notification au candidat
+        // Notification et email
         if ($exam->candidat) {
             $exam->candidat->notify(new ExamScheduled($exam));
         }
 
-        return redirect()->route('admin.exams.index')
-            ->with('success', 'Examen créé avec succès');
-    }
-
-    public function show(Exam $exam)
-    {
-        Gate::authorize('view', $exam);
-        $exam->load(['admin', 'candidat', 'participants']);
-        return view('admin.exams.show', compact('exam'));
-    }
-
-    public function edit(Exam $exam)
-    {
-        Gate::authorize('update', $exam);
-        $candidats = User::where('role', 'candidat')->get();
-        return view('admin.exams.edit', compact('exam', 'candidats'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Examen créé avec succès',
+            'exam' => $exam
+        ]);
     }
 
     public function update(Request $request, Exam $exam)
@@ -75,31 +58,31 @@ class ExamController extends Controller
         Gate::authorize('update', $exam);
 
         $validated = $request->validate([
-            'type' => 'sometimes|in:theorique,pratique',
-            'date_exam' => 'sometimes|date|after:now',
-            'lieu' => 'sometimes|string|max:100',
-            'places_max' => 'sometimes|integer|min:1',
-            'statut' => 'sometimes|in:planifie,en_cours,termine,annule',
+            'type' => 'required|in:theorique,pratique',
+            'date_exam' => 'required|date|after:now',
+            'lieu' => 'required|string|max:100',
+            'places_max' => 'required|integer|min:1',
             'candidat_id' => 'nullable|exists:users,id',
             'instructions' => 'nullable|string'
         ]);
 
         $exam->update($validated);
 
-        if ($exam->statut === 'termine') {
-            $exam->updateStats();
-        }
-
-        return redirect()->route('admin.exams.index')
-            ->with('success', 'Examen mis à jour avec succès');
+        return response()->json([
+            'success' => true,
+            'message' => 'Examen mis à jour avec succès'
+        ]);
     }
 
     public function destroy(Exam $exam)
     {
         Gate::authorize('delete', $exam);
         $exam->delete();
-        return redirect()->route('admin.exams.index')
-            ->with('success', 'Examen supprimé avec succès');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Examen supprimé avec succès'
+        ]);
     }
 
     public function addResult(Request $request, Exam $exam)
@@ -109,25 +92,36 @@ class ExamController extends Controller
             'present' => 'required|boolean',
             'resultat' => 'required|in:excellent,tres_bien,bien,moyen,insuffisant',
             'score' => 'required|integer|min:0|max:100',
-            'observations' => 'nullable|string',
             'feedbacks' => 'nullable|string'
         ]);
 
         $exam->participants()->syncWithoutDetaching([
-            $request->candidat_id => [
-                'present' => $request->present,
-                'resultat' => $request->resultat,
-                'score' => $request->score,
-                'observations' => $request->observations,
-                'feedbacks' => $request->feedbacks
-            ]
+            $request->candidat_id => $request->only(['present', 'resultat', 'score', 'feedbacks'])
         ]);
 
-        // Envoyer notification du résultat
         $candidat = User::find($request->candidat_id);
         $candidat->notify(new ExamResultPublished($exam));
 
-        return redirect()->back()
-            ->with('success', 'Résultat enregistré avec succès');
+        return response()->json(['success' => true]);
+    }
+
+    // public function candidateExams(Request $request)
+    // {
+    //     $exams = Auth::user()->exams()
+    //         ->with('admin')
+    //         ->latest('date_exam')
+    //         ->paginate(10);
+
+    //     return view('candidate.exams', compact('exams'));
+    // }
+
+    public function examResults(Exam $exam)
+    {
+        $result = $exam->participants()
+            ->where('user_id', Auth::id())
+            ->first()
+            ->pivot;
+
+        return view('candidate.results', compact('exam', 'result'));
     }
 }

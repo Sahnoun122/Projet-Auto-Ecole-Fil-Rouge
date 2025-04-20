@@ -1,7 +1,8 @@
 <?php
 
 // namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\AdmindController;
 use App\Http\Controllers\CandidatsController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\CoursConduiteController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotificationController;
 
 
 
@@ -171,17 +173,49 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/conduite/marquer-presence/{id}', [CoursConduiteController::class, 'marquerPresence'])->name('admin.conduite.presence');
 
 
-Route::prefix('api')->group(function () {
-    Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
-         ->name('api.vehicles.maintenance-alerts');
+// Route::prefix('api')->group(function () {
+//     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
+//          ->name('api.vehicles.maintenance-alerts');});
 
 
-        });
+    Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
+    Route::get('/exams/create', [ExamController::class, 'create'])->name('admin.exams.create');
+    Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
+    Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
+    Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
+    Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
+    
+    Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('exams.show'); // Détails d'un examen
+    Route::post('/exams/{exam}/add-result', [ExamController::class, 'addResult'])->name('exams.add-result'); // Ajouter un résultat
+    Route::get('/exams/{exam}/manage-candidates', [ExamController::class, 'manageCandidates'])->name('exams.manage-candidates'); // Gérer les candidats
+    
+    Route::get('/my-exams', [ExamController::class, 'candidateExams'])->name('candidate.exams'); // Liste des examens du candidat
+    Route::get('/my-exams/{exam}/results', [ExamController::class, 'examResults'])->name('candidate.exam-results'); // Résultats d'un examen
+    
+    Route::get('/notifications', function(Request $request) {
+        return [
+            'unread' => $request->user()->unreadNotifications->count(),
+            'notifications' => $request->user()->notifications->take(5)
+        ];
+    })->name('notifications.fetch');
+    
+    Route::post('/notifications/mark-as-read', function(Request $request) {
+        $request->user()->unreadNotifications->markAsRead();
+        return response()->json(['success' => true]);
+    })->name('notifications.mark-read');
 
-         
-        });
+
+    Route::get('/notifications', [NotificationController::class, 'fetch'])->name('notifications.fetch');
+    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+
+});
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/', function() {
+//     return redirect()->route('exams.index');
+// });
+
             
-        Route::get('/chck', [CoursConduiteController::class, 'index']);
         // Route::get('/admin/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
 
 
@@ -265,6 +299,7 @@ Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candi
 
 Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitle'])
      ->name('candidats.titres.cours');
+     
     });
 
 //     Route::middleware(['auth'])->group(function () {
