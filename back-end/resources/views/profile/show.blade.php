@@ -17,9 +17,7 @@
 <body class="bg-gray-50">
     <div class="min-h-screen py-8">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Carte de profil -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <!-- Section photo de profil -->
                 <div class="relative bg-gradient-to-r from-[#4D44B5] to-[#3a32a1] p-8 flex justify-center">
                     <div class="absolute -bottom-16">
                         <img class="h-32 w-32 rounded-full border-4 border-white shadow-xl object-cover" 
@@ -28,7 +26,6 @@
                     </div>
                 </div>
 
-                <!-- Section informations principales -->
                 <div class="pt-20 pb-6 px-6 text-center">
                     <h1 class="text-2xl font-bold text-gray-800">{{ $user->prenom }} {{ $user->nom }}</h1>
                     <div class="inline-block mt-2 bg-indigo-100 text-[#4D44B5] px-3 py-1 rounded-full text-sm font-medium">
@@ -47,11 +44,8 @@
                     </div>
                 </div>
 
-                <!-- Section informations détaillées -->
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Colonne gauche -->
                     <div class="space-y-6">
-                        <!-- Infos personnelles -->
                         <div class="bg-gray-50 p-5 rounded-lg border border-gray-100">
                             <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                 <i class="fas fa-id-card mr-2 text-[#4D44B5]"></i>
@@ -86,9 +80,7 @@
                         @endif
                     </div>
 
-                    <!-- Colonne droite -->
                     <div class="space-y-6">
-                        <!-- Retrait de la section de progression des heures de conduite -->
 
                         <div class="bg-gray-50 p-5 rounded-lg border border-gray-100">
                             <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -133,7 +125,6 @@
                     </div>
                 </div>
 
-                <!-- Bouton d'édition -->
                 <div class="px-6 pb-6">
                     <button onclick="openEditModal()" 
                             class="w-full md:w-auto px-6 py-3 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center justify-center gap-2">
@@ -144,7 +135,6 @@
         </div>
     </div>
 
-    <!-- Modal d'édition -->
     <div id="editProfileModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
         <div class="bg-white w-full max-w-2xl rounded-xl shadow-lg overflow-hidden max-h-[90vh] overflow-y-auto">
             <div class="sticky top-0 bg-gradient-to-r from-[#4D44B5] to-[#3a32a1] p-4 text-white flex justify-between items-center">
@@ -154,13 +144,11 @@
                 </button>
             </div>
             
-            <!-- Correction de la route vers "profile.update" -->
             <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="p-6">
                 @csrf
                 @method('PUT')
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- Photo de profil -->
                     <div class="flex flex-col items-center">
                         <div class="relative mb-4">
                             <img id="profileImagePreview" class="h-32 w-32 rounded-full border-4 border-white shadow-lg object-cover" 
@@ -174,7 +162,6 @@
                         <p class="text-xs text-gray-500">Formats: jpeg, png, jpg. Max: 2MB</p>
                     </div>
 
-                    <!-- Nom et prénom -->
                     <div class="space-y-4">
                         <div>
                             <label for="prenom" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
@@ -193,7 +180,6 @@
                     </div>
                 </div>
 
-                <!-- Email et téléphone -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
@@ -211,7 +197,6 @@
                     </div>
                 </div>
 
-                <!-- Adresse -->
                 <div class="mb-6">
                     <label for="adresse" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                         <i class="fas fa-map-marker-alt mr-2 text-[#4D44B5]"></i> Adresse *
@@ -220,7 +205,6 @@
                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent">{{ old('adresse', $user->adresse) }}</textarea>
                 </div>
 
-                <!-- Type de permis caché pour les candidats -->
                 @if($user->isCandidat())
                 <input type="hidden" name="type_permis" value="{{ $user->type_permis }}">
                 @endif
@@ -244,7 +228,6 @@
                 </div>
                 @endif
 
-                <!-- Mot de passe -->
                 <div class="mb-6">
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                         <i class="fas fa-lock mr-2 text-[#4D44B5]"></i> Nouveau mot de passe
@@ -255,7 +238,6 @@
                     <p class="text-xs text-gray-500 mt-1 pl-7">Minimum 8 caractères, avec majuscule, minuscule et chiffre</p>
                 </div>
 
-                <!-- Actions -->
                 <div class="flex justify-end space-x-3 pt-4 border-t">
                     <button type="button" onclick="closeEditModal()"
                             class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition flex items-center gap-2">
@@ -271,7 +253,6 @@
     </div>
 
     <script>
-        // Gestion de la modale
         function openEditModal() {
             document.getElementById('editProfileModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -282,7 +263,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Prévisualisation de l'image
         document.getElementById('photo_profile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -299,14 +279,12 @@
             }
         });
 
-        // Fermer la modale avec ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeEditModal();
             }
         });
 
-        // Gestion des erreurs de validation
         @if($errors->any())
             document.addEventListener('DOMContentLoaded', function() {
                 openEditModal();

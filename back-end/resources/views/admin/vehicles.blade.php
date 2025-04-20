@@ -102,7 +102,6 @@
                     </div>
                 </main>
             
-                <!-- Vehicle Modal (Create/Edit) -->
                 <div id="vehicleModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                     <div class="bg-white w-full max-w-md p-6 rounded-lg">
                         <h2 id="modalVehicleTitle" class="text-lg font-bold mb-4">Nouveau Véhicule</h2>
