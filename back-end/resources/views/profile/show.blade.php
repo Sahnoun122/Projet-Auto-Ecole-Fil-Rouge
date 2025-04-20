@@ -154,7 +154,119 @@
                 </button>
             </div>
             
+            <!-- Correction de la route vers "profile.update" -->
+            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="p-6">
+                @csrf
+                @method('PUT')
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Photo de profil -->
+                    <div class="flex flex-col items-center">
+                        <div class="relative mb-4">
+                            <img id="profileImagePreview" class="h-32 w-32 rounded-full border-4 border-white shadow-lg object-cover" 
+                                 src="{{ $user->profile_photo_url }}" 
+                                 alt="Photo de profil">
+                            <label for="photo_profile" class="absolute bottom-0 right-0 bg-[#4D44B5] text-white rounded-full p-2 cursor-pointer hover:bg-[#3a32a1] transition">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="photo_profile" name="photo_profile" class="hidden" accept="image/*">
+                        </div>
+                        <p class="text-xs text-gray-500">Formats: jpeg, png, jpg. Max: 2MB</p>
+                    </div>
+
+                    <!-- Nom et prénom -->
+                    <div class="space-y-4">
+                        <div>
+                            <label for="prenom" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-user mr-2 text-[#4D44B5]"></i> Prénom *
+                            </label>
+                            <input type="text" id="prenom" name="prenom" value="{{ old('prenom', $user->prenom) }}"
+                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                        </div>
+                        <div>
+                            <label for="nom" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                <i class="fas fa-user mr-2 text-[#4D44B5]"></i> Nom *
+                            </label>
+                            <input type="text" id="nom" name="nom" value="{{ old('nom', $user->nom) }}"
+                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email et téléphone -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="fas fa-envelope mr-2 text-[#4D44B5]"></i> Email *
+                        </label>
+                        <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                    </div>
+                    <div>
+                        <label for="telephone" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="fas fa-phone mr-2 text-[#4D44B5]"></i> Téléphone *
+                        </label>
+                        <input type="text" id="telephone" name="telephone" value="{{ old('telephone', $user->telephone) }}"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                    </div>
+                </div>
+
+                <!-- Adresse -->
+                <div class="mb-6">
+                    <label for="adresse" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2 text-[#4D44B5]"></i> Adresse *
+                    </label>
+                    <textarea id="adresse" name="adresse" rows="2"
+                              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent">{{ old('adresse', $user->adresse) }}</textarea>
+                </div>
+
+                <!-- Type de permis caché pour les candidats -->
+                @if($user->isCandidat())
+                <input type="hidden" name="type_permis" value="{{ $user->type_permis }}">
+                @endif
+
+                @if($user->isMoniteur())
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="certifications" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="fas fa-certificate mr-2 text-[#4D44B5]"></i> Certifications *
+                        </label>
+                        <input type="text" id="certifications" name="certifications" value="{{ old('certifications', $user->certifications) }}"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                    </div>
+                    <div>
+                        <label for="qualifications" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="fas fa-award mr-2 text-[#4D44B5]"></i> Qualifications *
+                        </label>
+                        <input type="text" id="qualifications" name="qualifications" value="{{ old('qualifications', $user->qualifications) }}"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Mot de passe -->
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <i class="fas fa-lock mr-2 text-[#4D44B5]"></i> Nouveau mot de passe
+                    </label>
+                    <input type="password" id="password" name="password"
+                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent"
+                           placeholder="Laisser vide pour ne pas changer">
+                    <p class="text-xs text-gray-500 mt-1 pl-7">Minimum 8 caractères, avec majuscule, minuscule et chiffre</p>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeEditModal()"
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition flex items-center gap-2">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center gap-2">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
