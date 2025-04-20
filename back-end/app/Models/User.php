@@ -42,7 +42,6 @@ class User extends Authenticatable implements JWTSubject
             : asset('images/default-profile.png');
     }
 
-
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -62,7 +61,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->role === $role;
     }
-
+    
     public function exams()
     {
         return $this->belongsToMany(Exam::class, 'exam_candidat')

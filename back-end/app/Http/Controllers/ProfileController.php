@@ -1,61 +1,106 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
-    public function show()
+    public function show($id = null)
     {
-        $user = Auth::user();
-        return response()->json([
+        $user = $id ? User::findOrFail($id) : Auth::user();
+        
+        // Autorisations
+        if (!(Auth::isAdmin() || Auth::id() === $user->id)) {
+            abort(403, 'Accès non autorisé');
+        }
+
+        return view('profile.show', [
             'user' => $user,
-            'photo_profile_url' => $user->profile_photo_url,
+            'isCurrentUser' => Auth::id() === $user->id
         ]);
     }
 
-    public function update(Request $request)
+    public function edit($id = null)
     {
-        $user = Auth::class()->user();
+        $user = $id ? User::findOrFail($id) : Auth::user();
+        
+        // Autorisations
+        if (!(Auth::isAdmin() || Auth::id() === $user->id)) {
+            abort(403, 'Accès non autorisé');
+        }
 
-        $validator = Validator::make($request->all(), [
+        return view('profile.edit', [
+            'user' => $user,
+            'isCurrentUser' => Auth::id() === $user->id
+        ]);
+    }
+
+    public function update(Request $request, $id = null)
+    {
+        $user = $id ? User::findOrFail($id) : Auth::user();
+        
+        if (!(Auth::isAdmin() || Auth::id() === $user->id)) {
+            abort(403, 'Accès non autorisé');
+        }
+
+        $rules = [
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'telephone' => 'required|string|max:20',
             'adresse' => 'required|string|max:255',
             'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'type_permis' => $user->isCandidat() ? 'required|string' : 'nullable',
-            'certifications' => $user->isMoniteur() ? 'required|string' : 'nullable',
-            'Qualifications' => $user->isMoniteur() ? 'required|string' : 'nullable',
-        ]);
+        ];
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if ($user->isCandidat()) {
+            $rules['type_permis'] = 'required|string';
         }
 
-        $data = $request->except('photo_profile');
+        if ($user->isMoniteur()) {
+            $rules['certifications'] = 'required|string';
+            $rules['qualifications'] = 'required|string';
+        }
+
+        $validated = $request->validate($rules);
 
         if ($request->hasFile('photo_profile')) {
             if ($user->photo_profile) {
                 Storage::delete($user->photo_profile);
             }
-            $path = $request->file('photo_profile')->store('profile-photos');
-            $data['photo_profile'] = $path;
+            $path = $request->file('photo_profile')->store('profile-photos', 'public');
+            $validated['photo_profile'] = $path;
         }
 
-        $user->update($data);
+        $user->update($validated);
 
-        return response()->json([
-            'message' => 'Profil mis à jour avec succès',
-            'user' => $user,
-            'photo_profile_url' => $user->profile_photo_url,
-        ]);
+        return redirect()->route('profile.show', $user->id)
+                         ->with('success', 'Profil mis à jour avec succès');
+    }
+
+    public function destroy($id)
+    {
+        if (!Auth::isAdmin()) {
+            abort(403, 'Seuls les administrateurs peuvent supprimer des comptes');
+        }
+
+        $user = User::findOrFail($id);
+        
+        if (Auth::id() === $user->id) {
+            return redirect()->back()
+                             ->with('error', 'Vous ne pouvez pas supprimer votre propre compte');
+        }
+
+        if ($user->photo_profile) {
+            Storage::delete($user->photo_profile);
+        }
+
+        $user->delete();
+
+        return redirect()->route('dashboard')
+                         ->with('success', 'Utilisateur supprimé avec succès');
     }
 }

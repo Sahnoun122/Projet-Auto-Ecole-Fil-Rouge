@@ -61,7 +61,7 @@
                        
                   
                     <div>
-                      {{-- <a href=" {{route('candidats.titles')}}"> --}}
+                      <a href=" {{route('candidats.titres')}}">
                         <div id="cours-theorique-header"
                         class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
