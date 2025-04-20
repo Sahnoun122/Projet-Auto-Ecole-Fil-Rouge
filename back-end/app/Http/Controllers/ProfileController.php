@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -38,35 +39,32 @@ class ProfileController extends Controller
             'isCurrentUser' => Auth::id() === $user->id
         ]);
     }
-
-    public function update(Request $request, $id = null)
+    public function update(Request $request)
     {
-        $user = $id ? User::findOrFail($id) : Auth::user();
-        
-        if (!(Auth::isAdmin() || Auth::id() === $user->id)) {
-            abort(403, 'Accès non autorisé');
-        }
-
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+    
         $rules = [
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'telephone' => 'required|string|max:20',
             'adresse' => 'required|string|max:255',
-            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'password' => 'nullable|string|min:8|confirmed',
         ];
-
+    
         if ($user->isCandidat()) {
             $rules['type_permis'] = 'required|string';
         }
-
+    
         if ($user->isMoniteur()) {
             $rules['certifications'] = 'required|string';
             $rules['qualifications'] = 'required|string';
         }
-
+    
         $validated = $request->validate($rules);
-
+    
         if ($request->hasFile('photo_profile')) {
             if ($user->photo_profile) {
                 Storage::delete($user->photo_profile);
@@ -74,13 +72,19 @@ class ProfileController extends Controller
             $path = $request->file('photo_profile')->store('profile-photos', 'public');
             $validated['photo_profile'] = $path;
         }
-
+    
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->password);
+        } else {
+            unset($validated['password']);
+        }
+    
         $user->update($validated);
-
-        return redirect()->route('profile.show', $user->id)
-                         ->with('success', 'Profil mis à jour avec succès');
+    
+        return redirect()->route('profile.show')->with('success', 'Profil mis à jour avec succès');
     }
 
+    
     public function destroy($id)
     {
         if (!Auth::isAdmin()) {
