@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ExamController extends Controller
 {
-    // ADMIN PART
     public function index()
     {
         $exams = Exam::with(['admin', 'moniteur' ])
