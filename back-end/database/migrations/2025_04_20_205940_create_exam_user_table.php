@@ -4,14 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up()
     {
-        Schema::create('exam_candidat', function (Blueprint $table) {
+        Schema::create('exam_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('exam_id')->constrained()->onDelete('cascade');
-            $table->foreignId('candidat_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('present')->default(false);
             $table->enum('resultat', ['excellent', 'tres_bien', 'bien', 'moyen', 'insuffisant'])->nullable();
             $table->integer('score')->nullable();
@@ -19,12 +18,12 @@ return new class extends Migration
             $table->text('feedbacks')->nullable();
             $table->timestamps();
 
-            $table->unique(['exam_id', 'candidat_id']);
+            $table->unique(['exam_id', 'user_id']);
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('exam_candidat');
+        Schema::dropIfExists('exam_user');
     }
 };

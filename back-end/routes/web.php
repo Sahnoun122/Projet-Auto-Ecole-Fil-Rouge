@@ -207,7 +207,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'fetch'])->name('notifications.fetch');
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+ 
+Route::get('/resultats', [ExamController::class, 'showCandidateResults'])
+    ->name('admin.resultats');
 
+Route::post('/candidats/{candidat}/exams/{exam}/store-result', [ExamController::class, 'storeResult'])
+    ->name('admin.exam-results');
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

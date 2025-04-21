@@ -63,12 +63,19 @@ class User extends Authenticatable implements JWTSubject
         return $this->role === $role;
     }
     
+    // public function exams()
+    // {
+    //     return $this->belongsToMany(Exam::class, 'exam_candidat')
+    //                 ->withPivot(['present', 'resultat', 'score', 'observations', 'feedbacks'])
+    //                 ->withTimestamps();
+    // }
+
     public function exams()
-    {
-        return $this->belongsToMany(Exam::class, 'exam_candidat')
-                    ->withPivot(['present', 'resultat', 'score', 'observations', 'feedbacks'])
-                    ->withTimestamps();
-    }
+{
+    return $this->belongsToMany(Exam::class, 'exam_user') 
+        ->withPivot(['present', 'resultat', 'score', 'feedbacks', 'observations'])
+        ->withTimestamps();
+}
 
 public function coursCommeMoniteur()
 {

@@ -38,12 +38,19 @@ class Exam extends Model
         return $this->belongsTo(User::class, 'candidat_id');
     }
 
-    public function participants(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'exam_candidat', 'exam_id', 'candidat_id')
-                    ->withPivot(['present', 'resultat', 'score', 'observations', 'feedbacks'])
-                    ->withTimestamps();
-    }
+    // public function participants(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(User::class, 'exam_candidat', 'exam_id', 'candidat_id')
+    //                 ->withPivot(['present', 'resultat', 'score', 'observations', 'feedbacks'])
+    //                 ->withTimestamps();
+    // }
+
+    public function participants() // Ou candidats() selon votre nomenclature
+{
+    return $this->belongsToMany(User::class, 'exam_user') // Spécifiez le nom de la table pivot si différent
+        ->withPivot(['present', 'resultat', 'score', 'feedbacks', 'observations'])
+        ->withTimestamps();
+}
 
     public function updateStats(): void
     {

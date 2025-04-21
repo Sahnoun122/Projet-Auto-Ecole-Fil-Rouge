@@ -85,25 +85,25 @@ class ExamController extends Controller
         ]);
     }
 
-    public function addResult(Request $request, Exam $exam)
-    {
-        $request->validate([
-            'candidat_id' => 'required|exists:users,id',
-            'present' => 'required|boolean',
-            'resultat' => 'required|in:excellent,tres_bien,bien,moyen,insuffisant',
-            'score' => 'required|integer|min:0|max:100',
-            'feedbacks' => 'nullable|string'
-        ]);
+    // public function addResult(Request $request, Exam $exam)
+    // {
+    //     $request->validate([
+    //         'candidat_id' => 'required|exists:users,id',
+    //         'present' => 'required|boolean',
+    //         'resultat' => 'required|in:excellent,tres_bien,bien,moyen,insuffisant',
+    //         'score' => 'required|integer|min:0|max:100',
+    //         'feedbacks' => 'nullable|string'
+    //     ]);
 
-        $exam->participants()->syncWithoutDetaching([
-            $request->candidat_id => $request->only(['present', 'resultat', 'score', 'feedbacks'])
-        ]);
+    //     $exam->participants()->syncWithoutDetaching([
+    //         $request->candidat_id => $request->only(['present', 'resultat', 'score', 'feedbacks'])
+    //     ]);
 
-        $candidat = User::find($request->candidat_id);
-        $candidat->notify(new ExamResultPublished($exam));
+    //     $candidat = User::find($request->candidat_id);
+    //     $candidat->notify(new ExamResultPublished($exam));
 
-        return response()->json(['success' => true]);
-    }
+    //     return response()->json(['success' => true]);
+    // }
 
     // public function candidateExams(Request $request)
     // {
@@ -115,13 +115,68 @@ class ExamController extends Controller
     //     return view('candidate.exams', compact('exams'));
     // }
 
-    public function examResults(Exam $exam)
-    {
-        $result = $exam->participants()
-            ->where('user_id', Auth::id())
-            ->first()
-            ->pivot;
+    // public function examResults(Exam $exam)
+    // {
+    //     $result = $exam->participants()
+    //         ->where('user_id', Auth::id())
+    //         ->first()
+    //         ->pivot;
 
-        return view('candidate.results', compact('exam', 'result'));
+    //     return view('candidate.results', compact('exam', 'result'));
+    // }
+
+    // public function showCandidateResults(User $candidat)
+    // {
+    //     $candidat->load(['exams' => function($query) {
+    //         $query->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+    //               ->orderBy('date_exam', 'desc');
+    //     }]);
+    
+    //     return view('admin.resultats', compact('candidat'));
+    // }
+    
+    public function showCandidateResults(User $candidat)
+    {
+        $candidat->load(['exams' => function($query) {
+            $query->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+                  ->orderBy('date_exam', 'desc');
+        }]);
+    
+        // Préparer les données pour les graphiques
+        $chartData = [
+            'labels' => [],
+            'scores' => [],
+            'resultats' => []
+        ];
+    
+        foreach ($candidat->exams as $exam) {
+            if ($exam->pivot->score !== null) {
+                $chartData['labels'][] = $exam->type . ' - ' . $exam->date_exam->format('d/m');
+                $chartData['scores'][] = $exam->pivot->score;
+                $chartData['resultats'][] = $exam->pivot->resultat;
+            }
+        }
+    
+        $availableExams = Exam::whereDoesntHave('participants', function($query) use ($candidat) {
+            $query->where('user_id', $candidat->id);
+        })->get();
+    
+        return view('admin.resultats', compact('candidat', 'chartData', 'availableExams'));
+    }
+    
+    public function storeResult(Request $request, User $candidat, Exam $exam)
+    {
+        $request->validate([
+            'present' => 'required|boolean',
+            'resultat' => 'required|in:excellent,tres_bien,bien,moyen,insuffisant',
+            'score' => 'required|integer|min:0|max:100',
+            'feedbacks' => 'nullable|string'
+        ]);
+    
+        $exam->participants()->syncWithoutDetaching([
+            $candidat->id => $request->only(['present', 'resultat', 'score', 'feedbacks'])
+        ]);
+    
+        return response()->json(['success' => true]);
     }
 }
