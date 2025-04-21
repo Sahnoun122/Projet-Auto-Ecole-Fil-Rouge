@@ -11,7 +11,105 @@
         </div>
     </header>
 
- 
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @if(session('success'))
+            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
+                <p>{{ session('success') }}</p>
+            </div>
+        @endif
+
+        @if($errors->any()))
+            <div class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Liste des Examens</h2>
+                <form method="GET" action="{{ route('admin.exams') }}" class="relative">
+                    <input type="text" name="search" placeholder="Rechercher..." value="{{ request('search') }}" 
+                        class="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </form>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidat</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($exams as $exam)
+                        <tr data-exam-id="{{ $exam->id }}" class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-sm rounded-full 
+                                    {{ $exam->type === 'theorique' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
+                                    {{ ucfirst($exam->type) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ $exam->date_exam->format('d/m/Y H:i') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ $exam->lieu }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($exam->candidat)
+                                    {{ $exam->candidat->prenom }} {{ $exam->candidat->nom }}
+                                @else
+                                    <span class="text-gray-500">Non assigné</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-sm rounded-full 
+                                    {{ $exam->statut === 'planifie' ? 'bg-yellow-100 text-yellow-800' : 
+                                       ($exam->statut === 'en_cours' ? 'bg-blue-100 text-blue-800' : 
+                                       ($exam->statut === 'termine' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')) }}">
+                                    {{ ucfirst(str_replace('_', ' ', $exam->statut)) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <button onclick="openModal('{{ $exam->id }}')"
+                                        class="text-blue-600 hover:text-blue-900 action-btn" 
+                                        title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet examen ?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="text-red-600 hover:text-red-900 action-btn" 
+                                            title="Supprimer">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-200">
+                {{ $exams->appends(request()->query())->links() }}
+            </div>
+        </div>
+    </main>
+
     <!-- Exam Modal (Create/Edit) -->
     <div id="examModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
         <div class="bg-white w-full max-w-2xl rounded-lg shadow-xl overflow-hidden">
