@@ -65,9 +65,10 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 {{ $exam->lieu }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4 whitespace-nowrap"> admin.resultats.show
                                 @if($exam->candidat)
-                                    {{ $exam->candidat->prenom }} {{ $exam->candidat->nom }}
+                                <a href=""> {{ $exam->candidat->prenom }} {{ $exam->candidat->nom }}
+                                </a>
                                 @else
                                     <span class="text-gray-500">Non assigné</span>
                                 @endif

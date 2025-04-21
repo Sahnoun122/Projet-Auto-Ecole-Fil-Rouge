@@ -151,17 +151,17 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
          Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
 
 
-         Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
-         Route::get('/exams/datatable', [ExamController::class, 'datatable'])->name('admin.exams.datatable');
-         Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
-         Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('admin.exams.show');
-         Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
-         Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
-         Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
+        //  Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
+        //  Route::get('/exams/datatable', [ExamController::class, 'datatable'])->name('admin.exams.datatable');
+        //  Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
+        //  Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('admin.exams.show');
+        //  Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
+        //  Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
+        //  Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
          
-         Route::get('/{exam}/candidates', [ExamController::class, 'manageCandidates'])->name('admin.exams.candidates');
-         Route::post('/{exam}/add-candidate', [ExamController::class, 'addCandidate'])->name('admin.exams.add-candidate');
-         Route::post('/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
+        //  Route::get('/{exam}/candidates', [ExamController::class, 'manageCandidates'])->name('admin.exams.candidates');
+        //  Route::post('/{exam}/add-candidate', [ExamController::class, 'addCandidate'])->name('admin.exams.add-candidate');
+        //  Route::post('/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
 
 
             // Route::get('/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
@@ -184,35 +184,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
     Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
     Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
-    
-    Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('exams.show'); // Détails d'un examen
-    Route::post('/exams/{exam}/add-result', [ExamController::class, 'addResult'])->name('exams.add-result'); // Ajouter un résultat
-    Route::get('/exams/{exam}/manage-candidates', [ExamController::class, 'manageCandidates'])->name('exams.manage-candidates'); // Gérer les candidats
-    
-    Route::get('/my-exams', [ExamController::class, 'candidateExams'])->name('candidate.exams'); // Liste des examens du candidat
-    Route::get('/my-exams/{exam}/results', [ExamController::class, 'examResults'])->name('candidate.exam-results'); // Résultats d'un examen
-    
-    Route::get('/notifications', function(Request $request) {
-        return [
-            'unread' => $request->user()->unreadNotifications->count(),
-            'notifications' => $request->user()->notifications->take(5)
-        ];
-    })->name('notifications.fetch');
-    
-    Route::post('/notifications/mark-as-read', function(Request $request) {
-        $request->user()->unreadNotifications->markAsRead();
-        return response()->json(['success' => true]);
-    })->name('notifications.mark-read');
 
-
-    Route::get('/notifications', [NotificationController::class, 'fetch'])->name('notifications.fetch');
-    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
- 
-Route::get('/resultats', [ExamController::class, 'showCandidateResults'])
-    ->name('admin.resultats');
-
-Route::post('/candidats/{candidat}/exams/{exam}/store-result', [ExamController::class, 'storeResult'])
-    ->name('admin.exam-results');
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
