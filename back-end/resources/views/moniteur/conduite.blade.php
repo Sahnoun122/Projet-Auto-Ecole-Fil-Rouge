@@ -141,5 +141,175 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+$(document).ready(function() {
+    // Store all courses data in a variable
+    const coursesData = {
+        @foreach($cours as $cour)
+        "{{ $cour->id }}": {
+            id: {{ $cour->id }},
+            date_heure: "{{ $cour->date_heure }}",
+            candidat: @json($cour->candidat),
+            candidats: @json($cour->candidats),
+            presenceData: @json($cour->candidats->mapWithKeys(function ($candidat) {
+                return [
+                    $candidat->id => [
+                        'present' => $candidat->pivot->present ?? false,
+                        'notes' => $candidat->pivot->notes ?? ''
+                    ]
+                ];
+            }))
+        },
+        @endforeach
+    };
 
+    // Show presence modal
+    $(document).on('click', '.show-presence-btn', function() {
+        const courseId = $(this).data('course-id');
+        const course = coursesData[courseId];
+        
+        // Clone the modal template
+        const $modal = $('<div>').addClass('fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4')
+            .append($('#presenceModalTemplate').html());
+        
+        // Set modal content
+        $modal.find('.course-date').text('Cours du ' + course.date_heure);
+        $modal.find('.presence-form').attr('action', '/moniteur/conduite/' + courseId + '/presence');
+        
+        if (course.candidat) {
+            const principalPresent = course.presenceData[course.candidat.id]?.present || false;
+            const principalNotes = course.presenceData[course.candidat.id]?.notes || '';
+            
+            $modal.find('.candidate-name').text(course.candidat.nom + ' ' + course.candidat.prenom);
+            $modal.find('.candidate-presence input').val(course.candidat.id);
+            $modal.find('.candidate-presence input').prop('checked', principalPresent);
+            $modal.find('.candidate-presence textarea').val(principalNotes);
+        } else {
+            $modal.find('.candidate-presence').closest('div').hide();
+        }
+        
+        // Set other candidates
+        const $otherCandidates = $modal.find('.other-candidates');
+        $otherCandidates.empty();
+        
+        course.candidats.forEach(candidat => {
+            if (!course.candidat || candidat.id !== course.candidat.id) {
+                const present = course.presenceData[candidat.id]?.present || false;
+                const notes = course.presenceData[candidat.id]?.notes || '';
+                
+                const $candidateDiv = $(`
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span>${candidat.nom} ${candidat.prenom}</span>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="present[]" value="${candidat.id}" 
+                                    class="rounded border-gray-300 text-[#4D44B5] focus:ring-[#4D44B5]"
+                                    ${present ? 'checked' : ''}>
+                                <span class="ml-2">Présent</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                            <textarea name="notes[]" rows="2" 
+                                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">${notes}</textarea>
+                        </div>
+                    </div>
+                `);
+                
+                $otherCandidates.append($candidateDiv);
+            }
+        });
+        
+        // Hide other candidates section if no other candidates
+        if (course.candidats.length <= 1 || (course.candidats.length === 1 && course.candidat)) {
+            $modal.find('.other-candidates-container').hide();
+        }
+        
+        // Add close handler
+        $modal.on('click', '.cancel-presence-btn', function() {
+            $modal.remove();
+            $('body').removeClass('overflow-hidden');
+        });
+        
+        // Close when clicking outside
+        $modal.on('click', function(e) {
+            if (e.target === this) {
+                $modal.remove();
+                $('body').removeClass('overflow-hidden');
+            }
+        });
+        
+        // Add to DOM
+        $('body').addClass('overflow-hidden').append($modal);
+    });
+});
+</script>
+
+<style>
+/* Responsive table */
+@media (max-width: 640px) {
+    table {
+        display: block;
+        width: 100%;
+    }
+    
+    thead {
+        display: none;
+    }
+    
+    tbody {
+        display: block;
+    }
+    
+    tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+    }
+    
+    td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    td:last-child {
+        border-bottom: none;
+    }
+    
+    td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+    
+    /* Add data labels for mobile */
+    td:nth-of-type(1):before { content: "Date/Heure"; }
+    td:nth-of-type(2):before { content: "Durée"; }
+    td:nth-of-type(3):before { content: "Véhicule"; }
+    td:nth-of-type(4):before { content: "Candidats"; }
+    td:nth-of-type(5):before { content: "Actions"; }
+}
+
+/* Custom scrollbar for modal */
+.presence-form > div::-webkit-scrollbar {
+    width: 6px;
+}
+
+.presence-form > div::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.presence-form > div::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.presence-form > div::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+</style>
 @endsection
