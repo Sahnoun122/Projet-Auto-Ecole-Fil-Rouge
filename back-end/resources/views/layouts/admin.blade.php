@@ -6,22 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto-école Sahnoun </title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/v4-shims.min.js" integrity="sha512-Ny27nj/CA4kOUa/2b2bhjr8YiJ+OfttH2314Wg8drWh4z9JqGO1PVEqPvo/kM+PjN5UEY4gFxo+ADkhXoGiaSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 </head>
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
     <div class="flex h-screen">
-        <div :class="sidebarOpen ? 'w-64' : 'w-20'" class="bg-white shadow-lg transition-all duration-300 flex flex-col">
+        <!-- Sidebar -->
+        <div :class="sidebarOpen ? 'w-64' : 'w-20'" class="bg-white shadow-lg transition-all duration-300 flex flex-col overflow-hidden">
             <div class="p-4 flex justify-between items-center border-b">
-
                 <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -31,10 +30,9 @@
                 </button>
             </div>
 
-            <div class="p-4 border-b flex justify-center">
+            <div x-show="sidebarOpen" x-transition class="p-4 border-b flex justify-center">
                 <div class="relative group">
                     <div class="absolute inset-0 bg-[#4D44B5] rounded-full opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                    
                     <a href="{{ route('profile.show') }}" class="block">
                         <img 
                             src="{{ Auth::user()->profile_photo_url }}" 
@@ -44,13 +42,13 @@
                 </div>
             </div>
             
-            <div class="text-center py-2 text-sm font-medium text-gray-700">
+            <div x-show="sidebarOpen" x-transition class="text-center py-2 text-sm font-medium text-gray-700">
                 <a href="{{ route('profile.show') }}" class="hover:text-[#4D44B5] transition">
                     {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
                 </a>
             </div>
 
-            <div class="flex-1 overflow-y-auto py-4">
+            <div class="flex-1 py-4 overflow-hidden hover:overflow-y-auto">
                 <nav>
                     <a href=" {{ route('admin.dashboard') }}"
                         class="sidebar-item flex items-center px-4 py-3 text-primary bg-indigo-50 border-l-4 border-primary">
@@ -68,24 +66,24 @@
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
                     </a>
                        
-                        <div>
-                            <a href=" {{route('admin.candidats')}}">
-                              <div id="cours-theorique-header"
-                              class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                  stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                              </svg>
-      
-                              <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
-                              <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                </svg>                            
-                              
-                              </div>
-                            </a>
-                            
+                    <div>
+                        <a href=" {{route('admin.candidats')}}">
+                          <div id="cours-theorique-header"
+                          class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                              stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+  
+                          <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
+                          <svg id="cours-theorique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            </svg>                            
+                          
                           </div>
+                        </a>
+                    </div>
+                    
                     <div>
                       <a href=" {{route('admin.titles')}}">
                         <div id="cours-theorique-header"
@@ -102,7 +100,6 @@
                         
                         </div>
                       </a>
-                      
                     </div>
 
                     <div>
@@ -119,9 +116,8 @@
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
                         <svg id="cours-pratique-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           </svg>
-                    </div>
+                        </div>
                       </a>
-                    
                     </div>
 
                     <div>
@@ -137,10 +133,10 @@
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
                         <svg id="vehicule-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           </svg>
-                    </div>
+                        </div>
                     </a>
-                    
                     </div>
+                    
                     <div>
                         <a href="{{ route('admin.conduite') }}">
                             <div id="cours-conduite-header"
@@ -152,7 +148,6 @@
                                     d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 016 6h-2a4 4 0 00-8 0H6a6 6 0 016-6zm0 16a8 8 0 01-6.93-4h13.86A8 8 0 0112 22z" />
                             </svg>
                             
-                    
                                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours de Conduite</span>
                                 
                                 <svg id="cours-conduite-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none"
@@ -177,11 +172,8 @@
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
                         <svg id="examen-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           </svg>
-                    </div>
+                        </div>
                     </a>
-                
-
-
                     </div>
 
                     <div>
@@ -197,11 +189,8 @@
                         <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
                         <svg id="moniteurs-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           </svg>
-
-                    </div>
+                        </div>
                     </a>
-                   
-
                     </div>
 
                    <a href="">
@@ -215,82 +204,77 @@
                             </svg>
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
                             <svg id="caisse-arrow" class="ml-auto h-4 w-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                             
+                            </svg>
                         </div>
                    </a>
-
-                       
-                        <a href="{{ route('logout') }} "
+                        
+                    <a href="{{ route('logout') }} ">
                         <div id="logout-button" class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer" id="logoutButton">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
                             </svg>
                             <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
                         </div>
-                     </a>
-                        
-                    </div>
+                    </a>
                 </nav>
             </div>
-            <div class="flex-1 overflow-y-auto ">
-                @yield('content')
-            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+            @yield('content')
         </div>
     </div>
 
-
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        const progressBars = document.querySelectorAll('.progress-bar');
-        progressBars.forEach(bar => {
-            const width = bar.style.width;
-            bar.style.width = '0';
-            setTimeout(() => {
-                bar.style.width = width;
-            }, 300);
-        });
-    }, 500);
-    
-    const badge = document.querySelector('.pulse');
-    if (badge) {
-        setInterval(() => {
-            badge.classList.add('animate-pulse');
-            setTimeout(() => {
-                badge.classList.remove('animate-pulse');
-            }, 1000);
-        }, 2000);
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 300);
+            });
+        }, 500);
+        
+        const badge = document.querySelector('.pulse');
+        if (badge) {
+            setInterval(() => {
+                badge.classList.add('animate-pulse');
+                setTimeout(() => {
+                    badge.classList.remove('animate-pulse');
+                }, 1000);
+            }, 2000);
+        }
 
-    function toggleSection(headerId, listId, arrowId) {
-        const header = document.getElementById(headerId);
-        const list = document.getElementById(listId);
-        const arrow = document.getElementById(arrowId);
+        function toggleSection(headerId, listId, arrowId) {
+            const header = document.getElementById(headerId);
+            const list = document.getElementById(listId);
+            const arrow = document.getElementById(arrowId);
 
-        let isOpen = list.style.maxHeight !== "0px";
+            let isOpen = list.style.maxHeight !== "0px";
 
-        header.addEventListener("click", function() {
-            if (isOpen) {
-                list.style.maxHeight = "0";
-                arrow.style.transform = "rotate(0deg)";
-            } else {
-                list.style.maxHeight = `${list.scrollHeight}px`;
-                arrow.style.transform = "rotate(90deg)";
-            }
-            isOpen = !isOpen;
-        });
-    }
+            header.addEventListener("click", function() {
+                if (isOpen) {
+                    list.style.maxHeight = "0";
+                    arrow.style.transform = "rotate(0deg)";
+                } else {
+                    list.style.maxHeight = `${list.scrollHeight}px`;
+                    arrow.style.transform = "rotate(90deg)";
+                }
+                isOpen = !isOpen;
+            });
+        }
 
-    toggleSection("candidats-header", "candidats-list", "candidats-arrow");
-    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-    toggleSection("vehicule-header", "vehicule-list", "vehicule-arrow");
-    toggleSection("examen-header", "examen-list", "examen-arrow");
-    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
-
-});
-</script>
+        toggleSection("candidats-header", "candidats-list", "candidats-arrow");
+        toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
+        toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
+        toggleSection("vehicule-header", "vehicule-list", "vehicule-arrow");
+        toggleSection("examen-header", "examen-list", "examen-arrow");
+        toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
+        toggleSection("caisse-header", "caisse-list", "caisse-arrow");
+    });
+    </script>
 </body>
-
 </html>
