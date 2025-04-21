@@ -148,5 +148,123 @@
 </div>
 
 <script>
+function showCourseDetails(courseId) {
+    document.getElementById('detailsModal').classList.remove('hidden');
+    document.getElementById('modalLoading').classList.remove('hidden');
+    document.getElementById('modalContent').classList.add('hidden');
+    document.body.classList.add('overflow-hidden');
 
+    fetch(`/candidats/conduite/${courseId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('modalDate').textContent = 
+                new Date(data.date_heure).toLocaleString('fr-FR');
+            document.getElementById('modalDuree').textContent = 
+                `${data.duree_minutes} minutes`;
+            document.getElementById('modalMoniteur').textContent = 
+                `${data.moniteur.nom} ${data.moniteur.prenom}`;
+            document.getElementById('modalVehicule').textContent = 
+                data.vehicule ? `${data.vehicule.marque} (${data.vehicule.immatriculation})` : 'Non assigné';
+            document.getElementById('modalStatut').textContent = 
+                data.statut.charAt(0).toUpperCase() + data.statut.slice(1);
+
+            const candidatInCourse = data.candidats.find(c => c.id === {{ Auth::id() }});
+            if (data.statut === 'termine' && candidatInCourse?.pivot?.notes) {
+                document.getElementById('notesSection').classList.remove('hidden');
+                document.getElementById('modalNotes').textContent = candidatInCourse.pivot.notes;
+            } else {
+                document.getElementById('notesSection').classList.add('hidden');
+            }
+
+            // Show other candidates if any
+            if (data.candidats.length > 1) {
+                document.getElementById('otherCandidatesSection').classList.remove('hidden');
+                const candidatesContainer = document.getElementById('modalCandidates');
+                candidatesContainer.innerHTML = '';
+                
+                data.candidats.forEach(candidat => {
+                    if (candidat.id !== {{ Auth::id() }}) {
+                        const div = document.createElement('div');
+                        div.className = 'bg-gray-50 p-2 rounded';
+                        div.textContent = `${candidat.nom} ${candidat.prenom}`;
+                        candidatesContainer.appendChild(div);
+                    }
+                });
+            } else {
+                document.getElementById('otherCandidatesSection').classList.add('hidden');
+            }
+
+            // Hide loading and show content
+            document.getElementById('modalLoading').classList.add('hidden');
+            document.getElementById('modalContent').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('modalLoading').innerHTML = 
+                '<p class="text-red-500">Erreur lors du chargement des détails</p>';
+        });
+}
+
+function closeDetailsModal() {
+    document.getElementById('detailsModal').classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('detailsModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDetailsModal();
+    }
+});
+</script>
+
+<style>
+@media (max-width: 640px) {
+    table {
+        display: block;
+        width: 100%;
+    }
+    
+    thead {
+        display: none;
+    }
+    
+    tbody {
+        display: block;
+    }
+    
+    tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+    }
+    
+    td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    td:last-child {
+        border-bottom: none;
+    }
+    
+    td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+    
+    /* Add data labels for mobile */
+    td:nth-of-type(1):before { content: "Date/Heure"; }
+    td:nth-of-type(2):before { content: "Durée"; }
+    td:nth-of-type(3):before { content: "Moniteur"; }
+    td:nth-of-type(4):before { content: "Véhicule"; }
+    td:nth-of-type(5):before { content: "Statut"; }
+    td:nth-of-type(6):before { content: "Actions"; }
+}
+</style>
 @endsection
