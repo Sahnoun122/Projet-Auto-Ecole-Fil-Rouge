@@ -35,6 +35,8 @@ class ExamController extends Controller
         return view('admin.exams', compact('exams', 'candidats'));
     }
 
+
+
     public function store(Request $request)
     {
         $validated = $request->validate([

@@ -2,49 +2,47 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class CoursConduite extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'date_heure', 
+        'date_heure',
         'duree_minutes',
-        'statut',
-        'moniteur_id', 
+        'moniteur_id',
         'vehicule_id',
         'admin_id',
-        'candidat_id'
-
+        'candidat_id',
+        'statut'
     ];
 
-    // Relation avec le moniteur (User)
-    public function moniteur(): BelongsTo
+    public function moniteur()
     {
         return $this->belongsTo(User::class, 'moniteur_id');
     }
 
-    // Relation avec le véhicule
-    public function vehicule(): BelongsTo
+    public function vehicule()
     {
-        return $this->belongsTo(Vehicle::class, 'vehicule_id');
+        return $this->belongsTo(Vehicle::class);
     }
 
-    // Relation avec le candidat principal (User)
-    public function candidat(): BelongsTo
+    public function candidat()
     {
         return $this->belongsTo(User::class, 'candidat_id');
     }
 
-    // Relation Many-to-Many avec les candidats supplémentaires
-    public function candidats(): BelongsToMany
+    public function candidats()
     {
-        return $this->belongsToMany(
-            User::class, 
-            'presences_cours',  // Nom de la table pivot
-            'cours_conduite_id', 
-            'candidat_id'
-        )->withPivot(['present', 'notes']);
+        return $this->belongsToMany(User::class, 'presences_cours', 'cours_conduite_id', 'candidat_id')
+                    ->withPivot('present', 'notes')
+                    ->withTimestamps();
+    }
+
+    public function presences()
+    {
+        return $this->hasMany(PresenceCours::class);
     }
 }

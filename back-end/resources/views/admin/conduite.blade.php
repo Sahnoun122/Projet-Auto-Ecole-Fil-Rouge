@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('content')
 
+@section('content')
 <div class="overflow-x-auto w-full">
     <header class="bg-[#4D44B5] text-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
@@ -222,13 +222,59 @@
         </div>
     </div>
 
-    <!-- Presence Modal -->
     <div id="presenceModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
         <div class="bg-white w-full max-w-md p-4 md:p-6 rounded-lg">
-            <h2 class="text-lg font-bold mb-4">Marquer les Présences</h2>
-            <div id="presenceContent">
-                <!-- Content will be loaded via AJAX -->
+            <h2 class="text-lg font-bold mb-4">Présences des Candidats</h2>
+            @if(isset($selectedCourse))
+            <div class="space-y-4">
+                <div class="border-b pb-2 mb-4">
+                    <h3 class="text-md font-medium">Cours du {{ $selectedCourse->date_heure->format('d/m/Y H:i') }}</h3>
+                    <p class="text-sm text-gray-600">Moniteur: {{ $selectedCourse->moniteur->nom }} {{ $selectedCourse->moniteur->prenom }}</p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="font-medium">Candidat Principal:</h4>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <span>{{ $selectedCourse->candidat->nom }} {{ $selectedCourse->candidat->prenom }}</span>
+                        <span class="px-2 py-1 text-xs rounded-full 
+                            {{ $selectedCourse->candidats->find($selectedCourse->candidat->id)->pivot->present ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                            {{ $selectedCourse->candidats->find($selectedCourse->candidat->id)->pivot->present ? 'Présent' : 'Absent' }}
+                        </span>
+                    </div>
+                    @if($selectedCourse->candidats->find($selectedCourse->candidat->id)->pivot->notes)
+                    <div class="mt-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes du moniteur:</label>
+                        <p class="text-gray-600 mt-1">{{ $selectedCourse->candidats->find($selectedCourse->candidat->id)->pivot->notes }}</p>
+                    </div>
+                    @endif
+                </div>
+
+                @if($selectedCourse->candidats->count() > 1)
+                <div class="space-y-2">
+                    <h4 class="font-medium">Autres Candidats:</h4>
+                    @foreach($selectedCourse->candidats as $candidat)
+                        @if($candidat->id != $selectedCourse->candidat_id)
+                        <div class="space-y-2 p-3 bg-gray-50 rounded">
+                            <div class="flex items-center justify-between">
+                                <span>{{ $candidat->nom }} {{ $candidat->prenom }}</span>
+                                <span class="px-2 py-1 text-xs rounded-full 
+                                    {{ $candidat->pivot->present ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $candidat->pivot->present ? 'Présent' : 'Absent' }}
+                                </span>
+                            </div>
+                            @if($candidat->pivot->notes)
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Notes du moniteur:</label>
+                                <p class="text-gray-600">{{ $candidat->pivot->notes }}</p>
+                            </div>
+                            @endif
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+                @endif
             </div>
+            @endif
             <div class="mt-4 flex justify-end">
                 <button type="button" id="closePresenceBtn"
                     class="px-3 py-1 md:px-4 md:py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition text-sm md:text-base">
@@ -245,14 +291,12 @@
 
 <script>
 $(document).ready(function() {
-    // Initialize multi-select
     $('#courseCandidatsSupplementaires').select2({
         placeholder: "Sélectionner des candidats",
         width: '100%',
         dropdownParent: $('#courseModal')
     });
 
-    // New course button
     $('#newCourseBtn').click(function() {
         $('#modalCourseTitle').text('Nouveau Cours de Conduite');
         $('#courseForm').attr('action', "{{ route('admin.conduite.store') }}");
@@ -264,14 +308,12 @@ $(document).ready(function() {
         $('body').addClass('overflow-hidden');
     });
 
-    // Edit course modal
     window.openEditModal = function(id, dateHeure, duree, moniteurId, vehiculeId, candidatId, candidatIds, statut) {
         $('#modalCourseTitle').text('Modifier Cours de Conduite');
         $('#courseForm').attr('action', "/admin/conduite/" + id);
         $('#_method').val('PUT');
         $('#courseId').val(id);
         
-        // Format date for mobile compatibility
         const formattedDate = dateHeure.replace(' ', 'T');
         $('#courseDateHeure').val(formattedDate);
         
@@ -292,50 +334,13 @@ $(document).ready(function() {
         $('body').addClass('overflow-hidden');
     };
 
-    // Close modals
+    window.openPresenceModal = function(courseId) {
+        window.location.href = "{{ route('admin.conduite.presence', '') }}/" + courseId;
+    };
+
     $('#cancelCourseBtn, #closePresenceBtn').click(function() {
         $('#courseModal, #presenceModal').addClass('hidden');
         $('body').removeClass('overflow-hidden');
-    });
-
-    // Open presence modal
-    window.openPresenceModal = function(courseId) {
-        $.ajax({
-            url: "{{ route('admin.conduite.presence', '') }}/" + courseId,
-            type: 'GET',
-            success: function(response) {
-                $('#presenceContent').html(response);
-                $('#presenceModal').removeClass('hidden');
-                $('body').addClass('overflow-hidden');
-            },
-            error: function(xhr) {
-                alert('Erreur lors du chargement des présences');
-            }
-        });
-    };
-
-    // Handle presence form submission
-    $(document).on('submit', '#presenceForm', function(e) {
-        e.preventDefault();
-        const form = $(this);
-        const url = form.attr('action');
-        
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: form.serialize(),
-            success: function(response) {
-                if(response.success) {
-                    alert('Présences enregistrées avec succès');
-                    $('#presenceModal').addClass('hidden');
-                    $('body').removeClass('overflow-hidden');
-                    location.reload();
-                }
-            },
-            error: function(xhr) {
-                alert('Erreur lors de l\'enregistrement des présences');
-            }
-        });
     });
 
     // Close modal when clicking outside
@@ -353,6 +358,11 @@ $(document).ready(function() {
             $('body').removeClass('overflow-hidden');
         }
     });
+
+    @if(isset($selectedCourse))
+        $('#presenceModal').removeClass('hidden');
+        $('body').addClass('overflow-hidden');
+    @endif
 });
 </script>
 
@@ -424,10 +434,8 @@ $(document).ready(function() {
     }
 }
 
-/* Ensure select2 dropdowns are visible in modals */
 .select2-dropdown {
-    z-index: 10060 !important; /* Higher than modal z-index */
+    z-index: 10060 !important; 
 }
 </style>
-
 @endsection

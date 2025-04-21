@@ -170,7 +170,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/conduite', [CoursConduiteController::class, 'store'])->name('admin.conduite.store');
     Route::put('/conduite/{coursConduite}', [CoursConduiteController::class, 'update'])->name('admin.conduite.update');
     Route::delete('/conduite/{coursConduite}', [CoursConduiteController::class, 'destroy'])->name('admin.conduite.destroy');
-    Route::post('/conduite/marquer-presence/{id}', [CoursConduiteController::class, 'marquerPresence'])->name('admin.conduite.presence');
+    Route::get('/conduite/presence/{id}', [CoursConduiteController::class, 'presence'])->name('admin.conduite.presence');
 
 
 // Route::prefix('api')->group(function () {
