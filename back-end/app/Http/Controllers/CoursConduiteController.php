@@ -119,27 +119,91 @@ class CoursConduiteController extends Controller
         return redirect()->route('admin.conduite', ['show_presence' => $id]);
     }
 
-    public function savePresence(Request $request, $id)
-    {
-        $cours = CoursConduite::findOrFail($id);
-        
-        $request->validate([
-            'present' => 'required|array',
-            'present.*' => 'boolean',
-            'notes' => 'nullable|array',
-            'notes.*' => 'nullable|string|max:500'
-        ]);
-
-        foreach ($request->present as $candidat_id => $present) {
-            $cours->candidats()->updateExistingPivot($candidat_id, [
-                'present' => $present,
-                'notes' => $request->notes[$candidat_id] ?? null
+  
+        public function moniteurIndex()
+        {
+            $cours = CoursConduite::with(['vehicule', 'candidat', 'candidats'])
+                ->where('moniteur_id', Auth::id())
+                ->where('statut', 'planifie')
+                ->latest()
+                ->paginate(10);
+    
+            $selectedCourse = null;
+            if(request()->has('show_presence')) {
+                $selectedCourse = CoursConduite::with(['candidat', 'candidats'])
+                    ->where('moniteur_id', Auth::id())
+                    ->findOrFail(request('show_presence'));
+            }
+    
+            return view('moniteur.conduite', compact('cours', 'selectedCourse'));
+        }
+    
+        public function moniteurPresence($id)
+        {
+            return redirect()->route('moniteur.conduite', ['show_presence' => $id]);
+        }
+    
+        public function moniteurSavePresence(Request $request, $id)
+        {
+            $cours = CoursConduite::where('moniteur_id', Auth::id())
+                        ->findOrFail($id);
+    
+            $request->validate([
+                'present' => 'required|array',
+                'present.*' => 'boolean',
+                'notes' => 'nullable|array',
+                'notes.*' => 'nullable|string|max:500'
             ]);
+    
+            foreach ($request->present as $candidat_id => $present) {
+                $cours->candidats()->syncWithoutDetaching([
+                    $candidat_id => [
+                        'present' => $present,
+                        'notes' => $request->notes[$candidat_id] ?? null
+                    ]
+                ]);
+            }
+    
+            return redirect()->route('moniteur.conduite')
+                ->with('success', 'Présences et notes enregistrées avec succès');
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Présences enregistrées avec succès'
-        ]);
-    }
+ public function candidatIndex()
+{
+    $cours = CoursConduite::with([
+            'moniteur:id,nom,prenom',
+            'vehicule:id,marque,immatriculation'
+        ])
+        ->where(function($query) {
+            $query->where('candidat_id', Auth::id())
+                  ->orWhereHas('candidats', function($q) {
+                      $q->where('users.id', Auth::id());
+                  });
+        })
+        ->latest()
+        ->paginate(10);
+
+    return view('candidats.conduite', compact('cours'));
+}
+
+public function candidatShow($id)
+{
+    $cour = CoursConduite::with([
+            'moniteur:id,nom,prenom',
+            'vehicule:id,marque,immatriculation',
+            'candidats' => function($query) {
+                $query->select('users.id', 'nom', 'prenom');
+            }
+        ])
+        ->where(function($query) {
+            $query->where('candidat_id', Auth::id())
+                  ->orWhereHas('candidats', function($q) {
+                      $q->where('users.id', Auth::id());
+                  });
+        })
+        ->findOrFail($id);
+
+    return response()->json($cour);
+    
+}
 }

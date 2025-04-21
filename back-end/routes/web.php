@@ -2,7 +2,7 @@
 
 // namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth; 
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\AdmindController;
 use App\Http\Controllers\CandidatsController;
@@ -276,8 +276,19 @@ Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candi
 
 Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitle'])
      ->name('candidats.titres.cours');
+
+     Route::get('/conduite', [CoursConduiteController::class, 'candidatIndex'])->name('candidats.conduite');
+     Route::get('/conduite/{id}', [CoursConduiteController::class, 'candidatShow'])->name('candidats.conduite.show');
      
     });
+
+Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function() {
+    Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
+
+    Route::get('/conduite', [CoursConduiteController::class, 'moniteurIndex'])->name('moniteur.conduite');
+    Route::get('/conduite/{id}/presence', [CoursConduiteController::class, 'moniteurPresence'])->name('moniteur.conduite.presence');
+    Route::post('/conduite/{id}/presence', [CoursConduiteController::class, 'moniteurSavePresence'])->name('moniteur.conduite.presence.save');
+});
 
 //     Route::middleware(['auth'])->group(function () {
 //         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
