@@ -218,5 +218,253 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Compteur de caractères pour les instructions
+    const instructionsTextarea = document.getElementById('examInstructions');
+    const instructionsCounter = document.getElementById('instructionsCounter');
+    
+    if (instructionsTextarea && instructionsCounter) {
+        instructionsTextarea.addEventListener('input', function() {
+            instructionsCounter.textContent = this.value.length;
+        });
+    }
+    
+    // Initialisation du flatpickr pour le datetime-local
+    const examDateInput = document.getElementById('examDate');
+    if (examDateInput) {
+        flatpickr(examDateInput, {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            minDate: "today",
+            time_24hr: true,
+            locale: "fr"
+        });
+    }
+    
+    // Si des erreurs de validation, on rouvre la modal
+    @if($errors->any())
+        const examId = {{ old('id') ?? 'null' }};
+        openModal(examId);
+        
+        // Pré-remplir avec les anciennes valeurs en cas d'erreur
+        @if(old('type'))
+            document.getElementById('examType').value = '{{ old('type') }}';
+        @endif
+        @if(old('date_exam'))
+            document.getElementById('examDate').value = '{{ old('date_exam') }}';
+        @endif
+        @if(old('lieu'))
+            document.getElementById('examLieu').value = '{{ old('lieu') }}';
+        @endif
+        @if(old('places_max'))
+            document.getElementById('examPlaces').value = '{{ old('places_max') }}';
+        @endif
+        @if(old('statut'))
+            document.getElementById('examStatut').value = '{{ old('statut') }}';
+        @endif
+        @if(old('candidat_id'))
+            document.getElementById('examCandidat').value = '{{ old('candidat_id') }}';
+        @endif
+        @if(old('instructions'))
+            document.getElementById('examInstructions').value = '{{ old('instructions') }}';
+            document.getElementById('instructionsCounter').textContent = '{{ old('instructions') }}'.length;
+        @endif
+    @endif
+});
 
+// Gestion de la modal
+function openModal(examId = null) {
+    const modal = document.getElementById('examModal');
+    const form = document.getElementById('examForm');
+    const methodField = document.getElementById('method-field');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    if (examId) {
+        // Mode édition - Récupérer les données via AJAX
+        fetch(`/admin/exams/${examId}/edit`)
+            .then(response => response.json())
+            .then(data => {
+                modalTitle.textContent = 'Modifier Examen';
+                form.action = `/admin/exams/${examId}`;
+                methodField.innerHTML = '@method("PUT")';
+                
+                // Remplir les champs avec les données de l'examen
+                document.getElementById('examType').value = data.type;
+                document.getElementById('examDate').value = data.date_exam;
+                document.getElementById('examLieu').value = data.lieu;
+                document.getElementById('examPlaces').value = data.places_max;
+                document.getElementById('examStatut').value = data.statut;
+                document.getElementById('examCandidat').value = data.candidat_id || '';
+                document.getElementById('examInstructions').value = data.instructions || '';
+                
+                // Mettre à jour le compteur d'instructions
+                document.getElementById('instructionsCounter').textContent = data.instructions ? data.instructions.length : 0;
+                
+                // Afficher la modal
+                modal.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors du chargement des données de l\'examen');
+            });
+    } else {
+        // Mode création
+        modalTitle.textContent = 'Nouvel Examen';
+        form.action = '{{ route("admin.exams.store") }}';
+        methodField.innerHTML = '';
+        
+        // Réinitialiser le formulaire
+        form.reset();
+        document.getElementById('instructionsCounter').textContent = '0';
+        
+        // Afficher la modal
+        modal.classList.remove('hidden');
+    }
+}
+
+function closeModal() {
+    document.getElementById('examModal').classList.add('hidden');
+}
+
+// Validation côté client
+(function() {
+    'use strict';
+    
+    // Sélectionnez tous les formulaires avec la classe needs-validation
+    const forms = document.querySelectorAll('.needs-validation');
+    
+    // Boucle sur chaque formulaire pour empêcher la soumission
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Afficher les messages d'erreur pour tous les champs invalides
+                const invalidFields = form.querySelectorAll(':invalid');
+                invalidFields.forEach(field => {
+                    field.nextElementSibling.style.display = 'block';
+                });
+            }
+            
+            form.classList.add('was-validated');
+        }, false);
+    });
+    
+    // Validation en temps réel pour chaque champ
+    const fields = document.querySelectorAll('#examForm [required], #examForm [pattern]');
+    fields.forEach(field => {
+        field.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            this.nextElementSibling.style.display = 'none';
+            
+            if (this.checkValidity()) {
+                this.classList.add('is-valid');
+            } else {
+                this.classList.add('is-invalid');
+                this.nextElementSibling.style.display = 'block';
+            }
+        });
+    });
+    
+    // Validation personnalisée pour le lieu
+    const lieuInput = document.getElementById('examLieu');
+    if (lieuInput) {
+        lieuInput.addEventListener('input', function() {
+            const regex = /^[a-zA-Z0-9\s\-.,'àâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ]{3,100}$/;
+            if (!regex.test(this.value)) {
+                this.setCustomValidity('Le lieu doit contenir entre 3 et 100 caractères valides');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+    
+    // Validation pour la date (doit être dans le futur)
+    const dateInput = document.getElementById('examDate');
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const now = new Date();
+            
+            if (selectedDate < now) {
+                this.setCustomValidity('La date doit être dans le futur');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+})();
+</script>
+
+<style>
+.action-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+}
+
+/* Styles de validation */
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: none;
+}
+
+.was-validated .invalid-feedback {
+    display: block;
+}
+
+/* Amélioration du calendrier */
+.flatpickr-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234D44B5' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 16px;
+    padding-right: 2.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .flex.justify-between.items-center {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    #examModal .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #examModal {
+        padding: 1rem;
+    }
+    
+    .flatpickr-input {
+        padding-right: 0.75rem;
+        background-image: none;
+    }
+}
+</style>
 @endsection
