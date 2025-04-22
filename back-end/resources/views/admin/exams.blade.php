@@ -151,15 +151,225 @@
         </div>
     </main>
 
-   
+    <div id="examModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white w-full max-w-md p-6 rounded-lg">
+            <h2 id="modalExamTitle" class="text-lg font-bold mb-4">Nouvel Examen</h2>
+            <form id="examForm" method="POST">
+                @csrf
+                <input type="hidden" id="examId" name="id">
+                <input type="hidden" id="_method" name="_method" value="POST">
+                
+                <div class="mb-4">
+                    <label for="examType" class="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                    <select id="examType" name="type" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                        <option value="">Sélectionnez un type</option>
+                        <option value="theorique">Théorique</option>
+                        <option value="pratique">Pratique</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="examDate" class="block text-sm font-medium text-gray-700 mb-1">Date et heure *</label>
+                    <input type="datetime-local" id="examDate" name="date_exam" 
+                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required
+                           min="{{ now()->format('Y-m-d\TH:i') }}">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="examLieu" class="block text-sm font-medium text-gray-700 mb-1">Lieu *</label>
+                    <input type="text" id="examLieu" name="lieu" maxlength="100"
+                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="examPlaces" class="block text-sm font-medium text-gray-700 mb-1">Places max *</label>
+                        <input type="number" id="examPlaces" name="places_max" min="1" max="50"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="examStatut" class="block text-sm font-medium text-gray-700 mb-1">Statut *</label>
+                        <select id="examStatut" name="statut" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            <option value="planifie">Planifié</option>
+                            <option value="en_cours">En cours</option>
+                            <option value="termine">Terminé</option>
+                            <option value="annule">Annulé</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="examCandidat" class="block text-sm font-medium text-gray-700 mb-1">Candidat</label>
+                    <select id="examCandidat" name="candidat_id" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                        <option value="">Non assigné</option>
+                        @foreach($candidats as $candidat)
+                            <option value="{{ $candidat->id }}">
+                                {{ $candidat->prenom }} {{ $candidat->nom }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="examInstructions" class="block text-sm font-medium text-gray-700 mb-1">Instructions</label>
+                    <textarea id="examInstructions" name="instructions" rows="3"
+                              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]"
+                              maxlength="500"></textarea>
+                    <small class="text-muted"><span id="charCount">0</span>/500 caractères</small>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelExamBtn"
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submitExamBtn"
+                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Modal pour saisir les résultats -->
-  
+    <div id="resultModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white w-full max-w-md p-6 rounded-lg">
+            <h2 id="modalResultTitle" class="text-lg font-bold mb-4">Saisie des Résultats</h2>
+            <form id="resultForm" method="POST">
+                @csrf
+                <input type="hidden" id="resultExamId" name="exam_id">
+                <input type="hidden" id="resultCandidatId" name="candidat_id">
+                <input type="hidden" id="resultMethod" name="_method" value="POST">
+                
+                <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-800" id="examInfoTitle"></h4>
+                    <p class="text-sm text-blue-600" id="examInfoDetails"></p>
+                    <p class="text-sm text-blue-600" id="examInfoCandidat"></p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Présent *</label>
+                    <div class="flex space-x-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="present" value="1" checked class="form-radio text-[#4D44B5]">
+                            <span class="ml-2">Oui</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="present" value="0" class="form-radio text-[#4D44B5]">
+                            <span class="ml-2">Non</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="resultScore" class="block text-sm font-medium text-gray-700 mb-1">Score *</label>
+                        <input type="number" id="resultScore" name="score" min="0" max="100"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="resultResultat" class="block text-sm font-medium text-gray-700 mb-1">Résultat *</label>
+                        <select id="resultResultat" name="resultat" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            <option value="">Sélectionnez</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="tres_bien">Très bien</option>
+                            <option value="bien">Bien</option>
+                            <option value="moyen">Moyen</option>
+                            <option value="insuffisant">Insuffisant</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="resultFeedbacks" class="block text-sm font-medium text-gray-700 mb-1">Feedbacks</label>
+                    <textarea id="resultFeedbacks" name="feedbacks" rows="3"
+                              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelResultBtn"
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submitResultBtn"
+                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Modal optimisé pour afficher les détails et résultats -->
- 
+    <div id="detailsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+        <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
+            <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
+                <h2 id="modalDetailsTitle" class="text-xl font-bold"></h2>
+                <button id="closeDetailsBtn" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-5 rounded-lg">
+                        <h3 class="font-semibold text-lg text-[#4D44B5] mb-4">Informations de l'examen</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Type</p>
+                                <p id="detailType" class="text-gray-800 font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Date</p>
+                                <p id="detailDate" class="text-gray-800 font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Lieu</p>
+                                <p id="detailLieu" class="text-gray-800 font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Places max</p>
+                                <p id="detailPlaces" class="text-gray-800 font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Statut</p>
+                                <p id="detailStatut" class="text-gray-800 font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Candidat</p>
+                                <p id="detailCandidat" class="text-gray-800 font-medium"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-5 rounded-lg">
+                        <h3 class="font-semibold text-lg text-[#4D44B5] mb-4">Résultats</h3>
+                        <div id="detailResults" class="space-y-3">
+                            <p class="text-gray-500 italic">Aucun résultat enregistré</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-5 rounded-lg">
+                    <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Instructions</h3>
+                    <p id="detailInstructions" class="text-gray-700 whitespace-pre-line"></p>
+                </div>
+                
+                <div class="bg-gray-50 p-5 rounded-lg">
+                    <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Feedbacks</h3>
+                    <p id="detailFeedbacks" class="text-gray-700 whitespace-pre-line italic">Aucun feedback enregistré</p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end">
+                <button type="button" id="closeDetailsBtnBottom"
+                    class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
