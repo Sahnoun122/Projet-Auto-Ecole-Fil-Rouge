@@ -373,6 +373,136 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+$(document).ready(function() {
+    $('#examInstructions').on('input', function() {
+        $('#charCount').text($(this).val().length);
+    });
 
+    $('#newExamBtn').click(function() {
+        $('#modalExamTitle').text('Nouvel Examen');
+        $('#examForm').attr('action', "{{ route('admin.exams.store') }}");
+        $('#_method').val('POST');
+        $('#examId').val('');
+        $('#examForm')[0].reset();
+        $('#charCount').text('0');
+        $('#examModal').removeClass('hidden');
+    });
+
+    window.openEditModal = function(id, type, date, lieu, places, candidatId, instructions, statut) {
+        $('#modalExamTitle').text('Modifier Examen');
+        $('#examForm').attr('action', "{{ route('admin.exams.update', '') }}/" + id);
+        $('#_method').val('PUT');
+        $('#examId').val(id);
+        
+        $('#examType').val(type);
+        $('#examDate').val(date);
+        $('#examLieu').val(lieu);
+        $('#examPlaces').val(places);
+        $('#examStatut').val(statut);
+        $('#examCandidat').val(candidatId || '');
+        $('#examInstructions').val(instructions || '');
+        $('#charCount').text(instructions ? instructions.length : 0);
+        
+        $('#examModal').removeClass('hidden');
+    };
+
+    window.openResultModal = function(examId, candidatId, candidatName, examType, examDate, examLieu) {
+        $('#modalResultTitle').text('Saisie des Résultats');
+        $('#examInfoTitle').text('Examen: ' + examType.charAt(0).toUpperCase() + examType.slice(1));
+        $('#examInfoDetails').text('Date: ' + examDate + ' | Lieu: ' + examLieu);
+        $('#examInfoCandidat').text('Candidat: ' + candidatName);
+        
+        $.get("{{ route('admin.exams.results.check', ['exam' => ':examId', 'candidat' => ':candidatId']) }}"
+            .replace(':examId', examId)
+            .replace(':candidatId', candidatId), 
+        function(data) {
+            if(data.exists) {
+                $('#resultForm').attr('action', "{{ route('admin.exams.results.update', ['exam' => ':examId', 'candidat' => ':candidatId']) }}"
+                    .replace(':examId', examId)
+                    .replace(':candidatId', candidatId));
+                $('#resultMethod').val('PUT');
+                $('input[name="present"][value="' + (data.result.present ? 1 : 0) + '"]').prop('checked', true);
+                $('#resultScore').val(data.result.score);
+                $('#resultResultat').val(data.result.resultat);
+                $('#resultFeedbacks').val(data.result.feedbacks || '');
+            } else {
+                $('#resultForm').attr('action', "{{ route('admin.exams.results.store', ['exam' => ':examId']) }}"
+                    .replace(':examId', examId));
+                $('#resultMethod').val('POST');
+                $('input[name="present"][value="1"]').prop('checked', true);
+                $('#resultScore').val('');
+                $('#resultResultat').val('');
+                $('#resultFeedbacks').val('');
+            }
+            
+            $('#resultExamId').val(examId);
+            $('#resultCandidatId').val(candidatId);
+            $('#resultModal').removeClass('hidden');
+        });
+    };
+
+    window.openDetailsModal = function(id, type, date, lieu, places, statut, candidat, instructions, score, resultat, feedbacks, present) {
+        $('#modalDetailsTitle').text('Détails de l\'Examen #' + id);
+        $('#detailType').text(type.charAt(0).toUpperCase() + type.slice(1));
+        $('#detailDate').text(date);
+        $('#detailLieu').text(lieu);
+        $('#detailPlaces').text(places);
+        $('#detailStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
+        $('#detailCandidat').text(candidat);
+        $('#detailInstructions').text(instructions || 'Aucune instruction spécifiée');
+        
+        if(score && resultat) {
+            $('#detailResults').html(`
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Présence</p>
+                        <p class="text-gray-800 font-medium">${present ? 'Présent' : 'Absent'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Score</p>
+                        <div class="w-full bg-gray-200 h-2.5 mt-1">
+                            <div class="bg-[#4D44B5] h-2.5 " style="width: ${score}%"></div>
+                        </div>
+                        <p class="text-gray-800 font-medium mt-1">${score}/100</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Résultat</p>
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                            ${resultat === 'excellent' ? 'bg-green-100 text-green-800' : 
+                             resultat === 'tres_bien' ? 'bg-blue-100 text-blue-800' :
+                             resultat === 'bien' ? 'bg-indigo-100 text-indigo-800' :
+                             resultat === 'moyen' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                            ${resultat.replace('_', ' ').charAt(0).toUpperCase() + resultat.replace('_', ' ').slice(1)}
+                        </span>
+                    </div>
+                </div>
+            `);
+            
+            if(feedbacks) {
+                $('#detailFeedbacks').removeClass('italic').text(feedbacks);
+            } else {
+                $('#detailFeedbacks').addClass('italic').text('Aucun feedback enregistré');
+            }
+        } else {
+            $('#detailResults').html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
+            $('#detailFeedbacks').addClass('italic').text('Aucun feedback enregistré');
+        }
+        
+        $('#detailsModal').removeClass('hidden');
+    };
+
+    $('#cancelExamBtn, #cancelResultBtn, #closeDetailsBtn, #closeDetailsBtnBottom').click(function() {
+        $('#examModal, #resultModal, #detailsModal').addClass('hidden');
+    });
+
+    $('form').on('submit', function(e) {
+        var form = $(this);
+        if (form[0].checkValidity() === false) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        form.addClass('was-validated');
+    });
+});
 </script>
 @endsection
