@@ -116,10 +116,10 @@
                                     '{{ $exam->statut }}',
                                     '{{ $exam->candidat ? $exam->candidat->prenom . ' ' . $exam->candidat->nom : 'Non assigné' }}',
                                     '{{ $exam->instructions }}',
-                                    '{{ optional($exam->participants->first()->pivot)->score ?? '' }}',
-                                    '{{ optional($exam->participants->first()->pivot)->resultat ?? '' }}',
-                                    '{{ optional($exam->participants->first()->pivot)->feedbacks ?? '' }}',
-                                    '{{ optional($exam->participants->first()->pivot)->present ?? '' }}'
+                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->score : '' }}',
+                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->resultat : '' }}',
+                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->feedbacks : '' }}',
+                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->present : '' }}'
                                 )" class="text-purple-500 hover:text-purple-700 mr-3">
                                     <i class="fas fa-eye"></i>
                                 </button>
