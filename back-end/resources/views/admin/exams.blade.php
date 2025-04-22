@@ -442,54 +442,65 @@ $(document).ready(function() {
     };
 
     window.openDetailsModal = function(id, type, date, lieu, places, statut, candidat, instructions, score, resultat, feedbacks, present) {
-        $('#modalDetailsTitle').text('Détails de l\'Examen #' + id);
-        $('#detailType').text(type.charAt(0).toUpperCase() + type.slice(1));
-        $('#detailDate').text(date);
-        $('#detailLieu').text(lieu);
-        $('#detailPlaces').text(places);
-        $('#detailStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
-        $('#detailCandidat').text(candidat);
-        $('#detailInstructions').text(instructions || 'Aucune instruction spécifiée');
+    $('#modalDetailsTitle').text('Détails de l\'Examen #' + id);
+    $('#detailType').text(type.charAt(0).toUpperCase() + type.slice(1));
+    $('#detailDate').text(date);
+    $('#detailLieu').text(lieu);
+    $('#detailPlaces').text(places);
+    $('#detailStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
+    $('#detailCandidat').text(candidat);
+    $('#detailInstructions').text(instructions || 'Aucune instruction spécifiée');
+    
+    // Section Résultats et Feedbacks
+    if(score && resultat && present !== '') {
+        $('#detailResults').html(`
+            <div class="space-y-3">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Présence</p>
+                    <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Score</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                        <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: ${score}%"></div>
+                    </div>
+                    <p class="text-gray-800 font-medium mt-1">${score}/100</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Résultat</p>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                        ${resultat === 'excellent' ? 'bg-green-100 text-green-800' : 
+                         resultat === 'tres_bien' ? 'bg-blue-100 text-blue-800' :
+                         resultat === 'bien' ? 'bg-indigo-100 text-indigo-800' :
+                         resultat === 'moyen' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                        ${resultat.replace('_', ' ').charAt(0).toUpperCase() + resultat.replace('_', ' ').slice(1)}
+                    </span>
+              
+                </div>
+              
+            </div>
+                    <p class="text-sm text-gray-500 font-medium">feedbacks</p>
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                    <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
+                </div>
+        `);
         
-        if(score && resultat) {
-            $('#detailResults').html(`
-                <div class="space-y-3">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Présence</p>
-                        <p class="text-gray-800 font-medium">${present ? 'Présent' : 'Absent'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Score</p>
-                        <div class="w-full bg-gray-200 h-2.5 mt-1">
-                            <div class="bg-[#4D44B5] h-2.5 " style="width: ${score}%"></div>
-                        </div>
-                        <p class="text-gray-800 font-medium mt-1">${score}/100</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Résultat</p>
-                        <span class="px-3 py-1 text-xs font-semibold rounded-full 
-                            ${resultat === 'excellent' ? 'bg-green-100 text-green-800' : 
-                             resultat === 'tres_bien' ? 'bg-blue-100 text-blue-800' :
-                             resultat === 'bien' ? 'bg-indigo-100 text-indigo-800' :
-                             resultat === 'moyen' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
-                            ${resultat.replace('_', ' ').charAt(0).toUpperCase() + resultat.replace('_', ' ').slice(1)}
-                        </span>
-                    </div>
+        if(feedbacks && feedbacks.trim() !== '') {
+            $('#detailFeedbacks').html(`
+                <div class="bg-blue-50 p-3 rounded-lg">
+                    <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
                 </div>
             `);
-            
-            if(feedbacks) {
-                $('#detailFeedbacks').removeClass('italic').text(feedbacks);
-            } else {
-                $('#detailFeedbacks').addClass('italic').text('Aucun feedback enregistré');
-            }
         } else {
-            $('#detailResults').html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
-            $('#detailFeedbacks').addClass('italic').text('Aucun feedback enregistré');
+            $('#detailFeedbacks').html('<p class="text-gray-500 italic">Aucun feedback disponible</p>');
         }
-        
-        $('#detailsModal').removeClass('hidden');
-    };
+    } else {
+        $('#detailResults').html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
+        $('#detailFeedbacks').html('<p class="text-gray-500 italic">Aucun feedback disponible</p>');
+    }
+    
+    $('#detailsModal').removeClass('hidden');
+};
 
     $('#cancelExamBtn, #cancelResultBtn, #closeDetailsBtn, #closeDetailsBtnBottom').click(function() {
         $('#examModal, #resultModal, #detailsModal').addClass('hidden');
