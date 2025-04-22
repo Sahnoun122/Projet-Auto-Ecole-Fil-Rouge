@@ -167,28 +167,26 @@ class ExamController extends Controller
     ]);
 }
 
-
 public function candidatExams()
 {
     $user = Auth::id();
     
     $plannedExams = Exam::where('candidat_id', $user)
-                        ->whereIn('statut', ['planifie', 'en_cours'])
-                        ->with('admin')
-                        ->orderBy('date_exam', 'asc')
-                        ->get();
+                       ->orderBy('date_exam', 'asc')
+                       ->get();
 
-    $examResults = Exam::where('candidat_id', $user)
-                      ->where('statut', 'termine')
-                      ->with(['admin', 'participants' => function($query) use ($user) {
-                          $query->where('user_id', $user);
-                      }])
-                      ->orderBy('date_exam', 'desc')
-                      ->get();
+    $completedExams = Exam::where('candidat_id', $user)
+                         ->with(['participants' => function($query) use ($user) {
+                             $query->where('user_id', $user);
+                         }])
+                         ->orderBy('date_exam', 'desc')
+                         ->get();
 
-    return view('candidat.exams', compact('plannedExams', 'examResults'));
+    return view('candidats.exams', [
+        'plannedExams' => $plannedExams,
+        'completedExams' => $completedExams
+    ]);
 }
-
 public function showCandidatExam(Exam $exam)
 {
     $user = Auth::id();
@@ -199,6 +197,6 @@ public function showCandidatExam(Exam $exam)
 
     $result = $exam->participants()->where('user_id', $user)->first();
 
-    return view('candidat.exams', compact('exam', 'result'));
+    return view('candidats.exams.show', compact('exam', 'result'));
 }
 }

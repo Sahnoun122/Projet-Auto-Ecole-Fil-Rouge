@@ -126,7 +126,7 @@
                     
 
                     <div>
-                    {{-- <a href=" {{ route('candidats.exams')}}"> --}}
+                    <a href=" {{ route('candidats.exams')}}">
                         <div id="examen-header"
                         class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
 
