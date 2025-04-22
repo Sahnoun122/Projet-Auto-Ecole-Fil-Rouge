@@ -15,7 +15,7 @@ class ExamController extends Controller
     {
         $search = request('search');
         
-        $exams = Exam::with(['admin', 'candidat'])
+        $exams = Exam::with(['admin', 'candidat', 'participants'])
             ->when($search, function($query) use ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('lieu', 'like', "%{$search}%")
@@ -35,7 +35,10 @@ class ExamController extends Controller
         return view('admin.exams', compact('exams', 'candidats'));
     }
 
-
+    public function create()
+    {
+        return redirect()->route('admin.exams');
+    }
 
     public function store(Request $request)
     {
@@ -61,7 +64,12 @@ class ExamController extends Controller
         return redirect()->route('admin.exams')->with('success', 'Examen créé avec succès');
     }
 
-    // Mettre à jour un examen
+    public function edit(Exam $exam)
+    {
+        $candidats = User::where('role', 'candidat')->get(['id', 'nom', 'prenom']);
+        return view('admin.exams.edit', compact('exam', 'candidats'));
+    }
+
     public function update(Request $request, Exam $exam)
     {
         $validated = $request->validate([
@@ -79,63 +87,56 @@ class ExamController extends Controller
         return redirect()->route('admin.exams')->with('success', 'Examen mis à jour');
     }
 
-    // Supprimer un examen
     public function destroy(Exam $exam)
     {
         $exam->delete();
         return redirect()->route('admin.exams')->with('success', 'Examen supprimé');
     }
 
-    public function showResults(Exam $exam, User $candidat)
+    public function show(Exam $exam)
     {
-        if ($exam->candidat_id !== $candidat->id) {
-            abort(404);
-        }
-    
-        $result = $exam->participants()->where('user_id', $candidat->id)->first();
-    
-        $chartData = [
-            'labels' => [],
-            'scores' => [],
-            'resultats' => []
-        ];
-    
-        // Charger tous les résultats du candidat pour les graphiques
-        $allResults = $candidat->exams()
-            ->withPivot(['score', 'resultat'])
-            ->orderBy('date_exam')
-            ->get();
-    
-        foreach ($allResults as $res) {
-            if ($res->pivot->score !== null) {
-                $chartData['labels'][] = ucfirst($res->type) . ' - ' . $res->date_exam->format('d/m');
-                $chartData['scores'][] = $res->pivot->score;
-                $chartData['resultats'][] = $res->pivot->resultat;
-            }
-        }
-    
-        return view('admin.resultats', compact('exam', 'candidat', 'result', 'chartData'));
+        $exam->load(['candidat', 'participants']);
+        $results = $exam->participants;
+        
+        return view('admin.exams', compact('exam', 'results'));
     }
 
-    public function storeResult(Request $request, User $candidat)
+    public function createResult(Exam $exam)
+    {
+        $candidats = User::where('role', 'candidat')->get();
+        return view('admin.exams.results.create', compact('exam', 'candidats'));
+    }
+
+    public function storeResult(Request $request, Exam $exam)
     {
         $data = $request->validate([
             'exam_id' => 'required|exists:exams,id',
+            'candidat_id' => 'required|exists:users,id',
             'present' => 'required|boolean',
             'resultat' => 'required|in:excellent,tres_bien,bien,moyen,insuffisant',
             'score' => 'required|integer|min:0|max:100',
             'feedbacks' => 'nullable|string|max:500'
         ]);
-
-        $exam = Exam::find($data['exam_id']);
-        $exam->participants()->attach($candidat->id, $data);
-
+    
+        $exam->participants()->attach($data['candidat_id'], [
+            'present' => $data['present'],
+            'resultat' => $data['resultat'],
+            'score' => $data['score'],
+            'feedbacks' => $data['feedbacks'] ?? null
+        ]);
+    
+        $candidat = User::find($data['candidat_id']);
         $candidat->notify(new ExamResultPublished($exam));
-
+    
         return back()->with('success', 'Résultat enregistré !');
     }
+    public function editResult(Exam $exam, User $candidat)
+    {
+        $result = $exam->participants()->where('user_id', $candidat->id)->first();
+        return view('admin.exams.results', compact('exam', 'candidat', 'result'));
+    }
 
-    public function updateResult(Request $request, User $candidat, Exam $exam)
+    public function updateResult(Request $request, Exam $exam, User $candidat)
     {
         $data = $request->validate([
             'present' => 'required|boolean',
@@ -146,12 +147,23 @@ class ExamController extends Controller
 
         $exam->participants()->updateExistingPivot($candidat->id, $data);
 
-        return back()->with('success', 'Résultat mis à jour !');
+        return redirect()->route('admin.exams', $exam->id)
+            ->with('success', 'Résultat mis à jour !');
     }
+    public function checkResult(Exam $exam, User $candidat)
+{
+    $result = $exam->participants()
+        ->where('user_id', $candidat->id)
+        ->first();
 
-    public function destroyResult(User $candidat, Exam $exam)
-    {
-        $exam->participants()->detach($candidat->id);
-        return back()->with('success', 'Résultat supprimé !');
-    }
+    return response()->json([
+        'exists' => $result !== null,
+        'result' => $result ? [
+            'present' => $result->pivot->present,
+            'score' => $result->pivot->score,
+            'resultat' => $result->pivot->resultat,
+            'feedbacks' => $result->pivot->feedbacks
+        ] : null
+    ]);
+}
 }

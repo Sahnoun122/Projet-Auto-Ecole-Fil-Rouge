@@ -68,7 +68,7 @@
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#4D44B5] text-white 
                                             flex items-center justify-center font-bold mr-4">
-                                    {{ chr(65 + $loop->index) }} <!-- A, B, C, D -->
+                                    {{ chr(65 + $loop->index) }} 
                                 </div>
                                 <div class="text-left">
                                     {{ $choice->choice_text }}
@@ -78,7 +78,6 @@
                         @endforeach
                     </div>
             
-                    <!-- Formulaire caché -->
                     <form id="answerForm" method="POST" 
                           action="{{ route('candidats.questions', ['quiz' => $quiz, 'question' => $question]) }}"
                           class="hidden">
@@ -105,7 +104,6 @@
                 function selectAnswer(choiceId, isCorrect) {
                     clearInterval(countdownInterval);
                     
-                    // Désactiver tous les boutons
                     document.querySelectorAll('.choice-btn').forEach(btn => {
                         btn.disabled = true;
                         btn.classList.remove('hover:shadow-lg', 'transform', 'hover:scale-[1.02]');
@@ -197,33 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleSection("caisse-header", "caisse-list", "caisse-arrow");
   });
 
-async function logout() {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
-            },
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            alert(data.message);
-            window.location.href = '/connecter'; 
-        } else {
-            alert('Échec de la déconnexion : ' + data.message); 
-        }
-    } catch (error) {
-        console.error('Erreur lors de la déconnexion:', error);
-        alert('Une erreur est survenue. Veuillez réessayer.');
-    }
-}
-
-document.getElementById('logoutButton').addEventListener('click', logout);
 
     </script>
 

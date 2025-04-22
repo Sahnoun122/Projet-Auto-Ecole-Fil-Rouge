@@ -178,13 +178,22 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 //          ->name('api.vehicles.maintenance-alerts');});
 
 
+    // Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
+    // Route::get('/exams/create', [ExamController::class, 'create'])->name('admin.exams.create');
+    // Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
+    // Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
+    // Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
+    // Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
+
     Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
-    Route::get('/exams/create', [ExamController::class, 'create'])->name('admin.exams.create');
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
-    Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
     Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
     Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
-
+    
+    Route::post('/exams/{exam}/results', [ExamController::class, 'storeResult'])->name('admin.exams.results.store');
+    Route::put('/exams/{exam}/results/{candidat}', [ExamController::class, 'updateResult'])->name('admin.exams.results.update');
+    
+    Route::get('/exams/{exam}/candidat/{candidat}/result', [ExamController::class, 'checkResult'])->name('admin.exams.results.check');
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

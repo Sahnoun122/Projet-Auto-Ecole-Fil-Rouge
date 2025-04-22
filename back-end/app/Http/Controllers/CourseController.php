@@ -23,7 +23,7 @@ class CourseController extends Controller
     {
         // Gate::authorize('create', Course::class);
 
-        $request->validate([
+        $request->validate([    
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',

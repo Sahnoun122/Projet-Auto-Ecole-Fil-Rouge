@@ -258,7 +258,6 @@ document.getElementById('detailsModal').addEventListener('click', function(e) {
         margin-right: 1rem;
     }
     
-    /* Add data labels for mobile */
     td:nth-of-type(1):before { content: "Date/Heure"; }
     td:nth-of-type(2):before { content: "Durée"; }
     td:nth-of-type(3):before { content: "Moniteur"; }

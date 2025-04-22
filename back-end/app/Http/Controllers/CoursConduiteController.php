@@ -114,11 +114,28 @@ class CoursConduiteController extends Controller
     //     return view('admin.conduite', compact('cours'));
     // }
 
-    public function presence($id)
-    {
-        return redirect()->route('admin.conduite', ['show_presence' => $id]);
-    }
+    // public function presence($id)
+    // {
+    //     return redirect()->route('admin.conduite', ['show_presence' => $id]);
+    // }
 
+    public function presence($id)
+{
+    $course = CoursConduite::with([
+        'moniteur',
+        'vehicule',
+        'candidat', 
+        'candidats' => function($query) {
+            $query->withPivot('present', 'notes'); 
+        }
+    ])->findOrFail($id);
+
+    return view('admin.conduite', [
+        'course' => $course,
+        'presentCount' => $course->candidats->where('pivot.present', true)->count(),
+        'absentCount' => $course->candidats->where('pivot.present', false)->count()
+    ]);
+}
   
         public function moniteurIndex()
         {
