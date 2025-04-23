@@ -266,6 +266,269 @@ $(document).ready(function() {
     $('#feedbackForm').submit(function(e) {
         e.preventDefault();
         
-      
-        </script>
+        const examId = $('#feedbackExamId').val();
+        const formData = $(this).serialize();
+        
+        $.ajax({
+            url: `/candidats/exams/${examId}/feedback`,
+            method: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if(response.success) {
+                    loadExistingFeedback(examId);
+                    
+                    $('#examFeedbackInput').val('');
+                    $('#schoolCommentInput').val('');
+                    $('#schoolRatingInput').val('0');
+                    $('.star-rating').removeClass('text-yellow-400').addClass('text-gray-300');
+                    $('#ratingTextInput').text('0 étoiles');
+                    
+                    showAlert('success', 'Votre feedback a été enregistré avec succès!');
+                }
+            },
+            error: function(xhr) {
+                showAlert('error', 'Une erreur est survenue lors de l\'envoi du feedback.');
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+
+function openFeedbackModal(examId) {
+    $('#feedbackExamId').val(examId);
+    $('#modalFeedbackTitle').text(`Feedback pour l'examen #${examId}`);
+    
+    $('#examFeedbackInput').val('');
+    $('#schoolCommentInput').val('');
+    $('#schoolRatingInput').val('0');
+    $('.star-rating').removeClass('text-yellow-400').addClass('text-gray-300');
+    $('#ratingTextInput').text('0 étoiles');
+    
+    loadExistingFeedback(examId);
+    
+    $('#feedbackModal').removeClass('hidden');
+}
+
+function closeFeedbackModal() {
+    $('#feedbackModal').addClass('hidden');
+}
+
+function loadExistingFeedback(examId) {
+    $.ajax({
+        url: `/candidats/exams/${examId}/feedback`,
+        method: 'GET',
+        success: function(response) {
+            if(response.exists && response.feedback) {
+                const feedback = response.feedback;
+                
+                $('#existingFeedbackContainer').removeClass('hidden');
+                $('#existingExamFeedback').text(feedback.exam_feedback || 'Non fourni');
+                $('#existingSchoolComment').text(feedback.school_comment || 'Non fourni');
+                
+                const rating = feedback.school_rating || 0;
+                $('#existingSchoolRating').html(generateStarsHTML(rating));
+                
+                $('#examFeedbackInput').val(feedback.exam_feedback || '');
+                $('#schoolCommentInput').val(feedback.school_comment || '');
+                $('#schoolRatingInput').val(rating);
+                highlightFeedbackStars(rating);
+                $('#ratingTextInput').text(rating + (rating > 1 ? ' étoiles' : ' étoile'));
+            } else {
+                $('#existingFeedbackContainer').addClass('hidden');
+            }
+        },
+        error: function(xhr) {
+            console.error('Erreur lors du chargement du feedback', xhr.responseText);
+        }
+    });
+}
+
+function deleteFeedback() {
+    const examId = $('#feedbackExamId').val();
+
+    if (confirm('Êtes-vous sûr de vouloir supprimer votre feedback ?')) {
+        $.ajax({
+            url: `/candidats/exams/${examId}/feedback`,
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') 
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#existingFeedbackContainer').addClass('hidden');
+
+                    $('#examFeedbackInput').val('');
+                    $('#schoolCommentInput').val('');
+                    $('#schoolRatingInput').val('0');
+                    $('.star-rating').removeClass('text-yellow-400').addClass('text-gray-300');
+                    $('#ratingTextInput').text('0 étoiles');
+
+                    showAlert('success', 'Feedback supprimé avec succès!');
+                } else {
+                    showAlert('error', 'La suppression du feedback a échoué. Réessayez plus tard.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Erreur lors de la requête DELETE:", xhr.responseText);
+                showAlert('error', 'Une erreur est survenue lors de la suppression du feedback. ' + error);
+            }
+        });
+    }
+}
+
+
+function highlightFeedbackStars(rating) {
+    $('.star-rating').each(function() {
+        if ($(this).data('rating') <= rating) {
+            $(this).removeClass('text-gray-300').addClass('text-yellow-400');
+        } else {
+            $(this).removeClass('text-yellow-400').addClass('text-gray-300');
+        }
+    });
+}
+
+function generateStarsHTML(rating) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            html += `<svg class="w-5 h-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>`;
+        } else {
+            html += `<svg class="w-5 h-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>`;
+        }
+    }
+    return html;
+}
+
+function showAlert(type, message) {
+    const alertHtml = `
+        <div class="fixed top-4 right-4 z-50">
+            <div class="px-6 py-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    $('body').append(alertHtml);
+    setTimeout(() => {
+        $('.fixed.top-4.right-4').fadeOut(500, function() {
+            $(this).remove();
+        });
+    }, 3000);
+}
+
+$(document).ready(function() {
+    $('#closePlanningBtn, #closePlanningBtnBottom').click(function() {
+        $('#planningModal').addClass('hidden');
+    });
+    
+    $('#closeResultsBtn, #closeResultsBtnBottom').click(function() {
+        $('#resultsModal').addClass('hidden');
+    });
+});
+
+
+function openPlanningModal(id, type, date, lieu, places, statut, instructions) {
+    $('#modalPlanningTitle').text('Planification Examen #' + id);
+    $('#planningType').text(type.charAt(0).toUpperCase() + type.slice(1));
+    $('#planningDate').text(date);
+    $('#planningLieu').text(lieu);
+    $('#planningPlaces').text(places);
+    $('#planningStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
+    $('#planningInstructions').text(instructions || 'Aucune instruction spécifiée');
+    
+    $('#planningModal').removeClass('hidden');
+}
+
+
+function openResultsModal(id, type, date, lieu, statut, score, resultat, feedbacks, present) {
+    $('#modalResultsTitle').text('Résultats Examen #' + id);
+    $('#resultType').text(type.charAt(0).toUpperCase() + type.slice(1));
+    $('#resultDate').text(date);
+    $('#resultLieu').text(lieu);
+    $('#resultStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
+
+    updateResultsSection(score, resultat, present);
+    
+    updateFeedbacksSection(feedbacks);
+    
+    $('#resultsModal').removeClass('hidden');
+}
+
+function updateResultsSection(score, resultat, present) {
+    const $resultsContainer = $('#resultDetails');
+    
+    if (score && resultat && present !== '') {
+        $resultsContainer.html(`
+            <div class="space-y-3">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Présence</p>
+                    <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Score</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                        <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: ${score}%"></div>
+                    </div>
+                    <p class="text-gray-800 font-medium mt-1">${score}/100</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Résultat</p>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${getResultColorClass(resultat)}">
+                        ${formatResultText(resultat)}
+                    </span>
+                </div>
+            </div>
+        `);
+    } else {
+        $resultsContainer.html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
+    }
+}
+
+
+function updateFeedbacksSection(feedbacks) {
+    const $feedbacksContainer = $('#resultFeedbacks');
+    
+    if (feedbacks && feedbacks.trim() !== '') {
+        $feedbacksContainer.html(`
+            <div class="bg-blue-50 p-3 rounded-lg">
+                <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
+            </div>
+        `);
+    } else {
+        $feedbacksContainer.html('<p class="text-gray-500 italic">Aucun feedback disponible</p>');
+    }
+}
+
+
+function getResultColorClass(resultat) {
+    const colorMap = {
+        'excellent': 'bg-green-100 text-green-800',
+        'tres_bien': 'bg-blue-100 text-blue-800',
+        'bien': 'bg-indigo-100 text-indigo-800',
+        'moyen': 'bg-yellow-100 text-yellow-800',
+        'insuffisant': 'bg-red-100 text-red-800'
+    };
+    return colorMap[resultat] || 'bg-gray-100 text-gray-800';
+}
+
+
+function formatResultText(resultat) {
+    if (!resultat) return 'Non évalué';
+    return resultat.replace('_', ' ')
+                  .split(' ')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ');
+}</script>
 @endsection
