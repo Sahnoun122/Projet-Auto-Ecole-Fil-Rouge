@@ -312,8 +312,16 @@ Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function
     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
 
     Route::get('/conduite', [CoursConduiteController::class, 'moniteurIndex'])->name('moniteur.conduite');
-    Route::get('/conduite/{id}/presence', [PresenceCoursController::class, 'show'])->name('moniteur.presence.show');
-    Route::post('/conduite/{id}/presence', [PresenceCoursController::class, 'store'])->name('moniteur.presence.store');
+    // Route::get('/conduite/{id}/presence', [PresenceCoursController::class, 'show'])->name('moniteur.presence.show');
+    // Route::post('/conduite/{id}/presence', [PresenceCoursController::class, 'store'])->name('moniteur.presence.store');
+
+    Route::get('/conduite', [App\Http\Controllers\PresenceCoursController::class, 'index'])->name('moniteur.conduite');
+    
+    Route::post('/conduite/${courseId}/presences', [App\Http\Controllers\PresenceCoursController::class, 'updatePresences'])
+         ->name('moniteur.conduite.presences');
+
+         Route::get('/vehicles', [VehicleController::class, 'indexMoniteur'])->name('moniteur.vehicles');
+
 });
 
 //     Route::middleware(['auth'])->group(function () {

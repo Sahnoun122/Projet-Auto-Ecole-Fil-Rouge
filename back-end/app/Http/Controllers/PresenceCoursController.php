@@ -17,7 +17,7 @@ class PresenceCoursController extends Controller
                 ->orderBy('date_heure', 'desc')
                 ->paginate(10);
 
-        return view('moniteur.cours', compact('cours'));
+        return view('moniteur.conduite', compact('cours'));
     }
 
     public function updatePresences(Request $request, $courseId)
@@ -42,10 +42,7 @@ class PresenceCoursController extends Controller
 
         $cours->candidats()->sync($presenceData);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Présences enregistrées avec succès',
-            'data' => $cours->load('candidats')
-        ]);
+        return redirect()->route('moniteur.conduite')
+               ->with('success', 'Les présences ont été enregistrées avec succès');
     }
 }

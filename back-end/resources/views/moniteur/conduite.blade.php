@@ -173,7 +173,7 @@ $(document).ready(function() {
         
         // Set modal content
         $modal.find('.course-date').text('Cours du ' + course.date_heure);
-        $modal.find('.presence-form').attr('action', '/moniteur/conduite/' + courseId + '/presence');
+        $modal.find('.presence-form').attr('action', '/moniteur/conduite/' + courseId + '/presences');
         
         if (course.candidat) {
             const principalPresent = course.presenceData[course.candidat.id]?.present || false;

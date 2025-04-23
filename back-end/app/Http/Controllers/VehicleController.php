@@ -74,4 +74,21 @@ class VehicleController extends Controller
 
     //     return view('admin.vehicles', compact('alerts'));
     // }
+
+
+    public function indexMoniteur()
+    {
+        $vehicles = Vehicle::whereIn('statut', ['disponible', 'en maintenance'])
+                    ->orderBy('marque')
+                    ->orderBy('modele')
+                    ->get();
+
+        $brands = Vehicle::select('marque')
+                    ->distinct()
+                    ->orderBy('marque')
+                    ->pluck('marque');
+
+        return view('moniteur.vehicles', compact('vehicles', 'brands'));
+    }
+
 }
