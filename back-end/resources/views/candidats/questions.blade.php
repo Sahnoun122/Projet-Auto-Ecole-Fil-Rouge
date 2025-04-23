@@ -145,55 +145,9 @@
                     }, 100);
                 });
  
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-      const progressBars = document.querySelectorAll('.progress-bar');
-      progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-          bar.style.width = width;
-        }, 300);
-      });
-    }, 500);
-    
-    const badge = document.querySelector('.pulse');
-    if (badge) {
-      setInterval(() => {
-        badge.classList.add('animate-pulse');
-        setTimeout(() => {
-          badge.classList.remove('animate-pulse');
-        }, 1000);
-      }, 2000);
-    }
-  });
+
         
-  document.addEventListener("DOMContentLoaded", function () {
-    function toggleSection(headerId, listId, arrowId) {
-      const header = document.getElementById(headerId);
-      const list = document.getElementById(listId);
-      const arrow = document.getElementById(arrowId);
-  
-      let isOpen = list.style.maxHeight !== "0px";
-  
-      header.addEventListener("click", function () {
-        if (isOpen) {
-          list.style.maxHeight = "0";
-          arrow.style.transform = "rotate(0deg)";
-        } else {
-          list.style.maxHeight = `${list.scrollHeight}px`;
-          arrow.style.transform = "rotate(90deg)";
-        }
-        isOpen = !isOpen;
-      });
-    }
-  
-    toggleSection("cours-theorique-header", "cours-theorique-list", "cours-theorique-arrow");
-    toggleSection("cours-pratique-header", "cours-pratique-list", "cours-pratique-arrow");
-    toggleSection("examen-header", "examen-list", "examen-arrow");
-    toggleSection("moniteurs-header", "moniteurs-list", "moniteurs-arrow");
-    toggleSection("caisse-header", "caisse-list", "caisse-arrow");
-  });
+
 
 
     </script>

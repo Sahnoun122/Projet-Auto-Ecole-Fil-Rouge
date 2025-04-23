@@ -9,7 +9,21 @@ class Progress extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['candidate_id', 'course_id', 'progress_percentage'];
+    protected $fillable = [
+        'candidate_id',
+        'course_id',
+        'quiz_id',
+        'progress_percentage',
+        'is_completed',
+        'completed_at',
+        'details'
+    ];
+
+    protected $casts = [
+        'is_completed' => 'boolean',
+        'completed_at' => 'datetime',
+        'details' => 'array'
+    ];
 
     public function candidate()
     {
@@ -21,22 +35,8 @@ class Progress extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public static function updateProgress($candidateId, $courseId, $percentage)
+    public function quiz()
     {
-        $progress = Progress::where('candidate_id', $candidateId)
-                            ->where('course_id', $courseId)
-                            ->first();
-
-        if (!$progress) {
-            $progress = Progress::create([
-                'candidate_id' => $candidateId,
-                'course_id' => $courseId,
-                'progress_percentage' => $percentage,
-            ]);
-        } else {
-            $progress->update(['progress_percentage' => $percentage]);
-        }
-
-        return $progress;
+        return $this->belongsTo(Quiz::class);
     }
 }
