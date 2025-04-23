@@ -22,7 +22,9 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\CoursConduiteController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ExamFeedbackController;
 use App\Http\Controllers\NotificationController;
+
 
 
 
@@ -291,6 +293,17 @@ Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitl
      
     Route::get('/exams', [ExamController::class, 'candidatExams'])->name('candidats.exams');
     Route::get('/exams/{exam}', [ExamController::class, 'showCandidatExam'])->name('candidats.exams.show');
+
+    Route::prefix('exams')->group(function () {
+        Route::get('/', [ExamController::class, 'candidatExams'])->name('candidats.exams');
+        
+        Route::prefix('{exam}/feedback')->group(function () {
+            Route::get('/', [ExamFeedbackController::class, 'index'])->name('candidats.exams.feedback');
+            Route::post('/', [ExamFeedbackController::class, 'store'])->name('candidats.exams.feedback.store');
+            Route::delete('/', [ExamFeedbackController::class, 'destroy'])->name('candidats.exams.feedback.destroy');
+        });
+    });
+
     });
 
 Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function() {

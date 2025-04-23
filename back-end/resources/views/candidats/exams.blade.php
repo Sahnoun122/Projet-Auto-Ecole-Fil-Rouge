@@ -129,8 +129,12 @@
                                         '{{ $result ? $result->resultat : '' }}',
                                         `{{ $result ? $result->feedbacks : '' }}`,
                                         '{{ $result ? $result->present : '' }}'
-                                    )" class="text-[#4D44B5] hover:text-[#3a32a1]">
-                                        <i class="fas fa-eye mr-1"></i> Détails
+                                    )" class="text-[#4D44B5] hover:text-[#3a32a1] mr-2">
+                                        <i class="fas fa-eye mr-1"></i> Résultats
+                                    </button>
+                                    <button onclick="openFeedbackModal('{{ $exam->id }}')" 
+                                        class="text-purple-600 hover:text-purple-800">
+                                        <i class="fas fa-comment mr-1"></i> Feedback
                                     </button>
                                 </td>
                             </tr>
@@ -143,110 +147,92 @@
     </main>
 
     <div id="planningModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-        <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
-            <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
-                <h2 id="modalPlanningTitle" class="text-xl font-bold">Détails de la Planification</h2>
-                <button id="closePlanningBtn" class="text-white hover:text-gray-200">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                <div class="grid grid-cols-1 gap-6">
-                    
-                    <div class="bg-gray-50 p-5 rounded-lg">
-                        <h3 class="font-semibold text-lg text-[#4D44B5] mb-4">Informations de l'examen</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Type</p>
-                                <p id="planningType" class="text-gray-800 font-medium"></p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Date</p>
-                                <p id="planningDate" class="text-gray-800 font-medium"></p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Lieu</p>
-                                <p id="planningLieu" class="text-gray-800 font-medium"></p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Places disponibles</p>
-                                <p id="planningPlaces" class="text-gray-800 font-medium"></p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Statut</p>
-                                <p id="planningStatut" class="text-gray-800 font-medium"></p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-5 rounded-lg">
-                        <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Instructions</h3>
-                        <p id="planningInstructions" class="text-gray-700 whitespace-pre-line"></p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end">
-                <button type="button" id="closePlanningBtnBottom"
-                    class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
-                    Fermer
-                </button>
-            </div>
-        </div>
     </div>
 
     <div id="resultsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+    </div>
+
+    <div id="feedbackModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
         <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
             <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
-                <h2 id="modalResultsTitle" class="text-xl font-bold">Résultats de l'Examen</h2>
-                <button id="closeResultsBtn" class="text-white hover:text-gray-200">
+                <h2 id="modalFeedbackTitle" class="text-xl font-bold">Votre Feedback</h2>
+                <button onclick="closeFeedbackModal()" class="text-white hover:text-gray-200">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-50 p-5 rounded-lg">
-                        <h3 class="font-semibold text-lg text-[#4D44B5] mb-4">Informations</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Type</p>
-                                <p id="resultType" class="text-gray-800 font-medium"></p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Date</p>
-                                <p id="resultDate" class="text-gray-800 font-medium"></p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Lieu</p>
-                                <p id="resultLieu" class="text-gray-800 font-medium"></p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Statut</p>
-                                <p id="resultStatut" class="text-gray-800 font-medium"></p>
-                            </div>
+                <div id="existingFeedbackContainer" class="hidden bg-blue-50 p-4 rounded-lg mb-4 border border-blue-200">
+                    <h3 class="font-semibold text-blue-800 mb-2">Votre feedback existant</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600 font-medium">Feedback sur l'examen</p>
+                            <p id="existingExamFeedback" class="text-gray-800 mt-1 whitespace-pre-line"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 font-medium">Commentaire sur l'école</p>
+                            <p id="existingSchoolComment" class="text-gray-800 mt-1 whitespace-pre-line"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 font-medium">Note à l'école</p>
+                            <div id="existingSchoolRating" class="flex mt-1"></div>
                         </div>
                     </div>
-                    
-                    <div class="bg-gray-50 p-5 rounded-lg">
-                        <h3 class="font-semibold text-lg text-[#4D44B5] mb-4">Votre Performance</h3>
-                        <div id="resultDetails" class="space-y-3">
-                        </div>
+                    <div class="mt-4 flex justify-end">
+                        <button onclick="deleteFeedback()" class="text-red-600 hover:text-red-800 text-sm">
+                            <i class="fas fa-trash mr-1"></i> Supprimer ce feedback
+                        </button>
                     </div>
                 </div>
                 
-                <div class="bg-gray-50 p-5 rounded-lg">
-                    <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Feedbacks</h3>
-                    <p id="resultFeedbacks" class="text-gray-700 whitespace-pre-line italic">Aucun feedback enregistré</p>
-                </div>
-            </div>
-            
-            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end">
-                <button type="button" id="closeResultsBtnBottom"
-                    class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
-                    Fermer
-                </button>
+                <form id="feedbackForm" class="space-y-4">
+                    @csrf
+                    <input type="hidden" id="feedbackExamId" name="exam_id">
+                    
+                    <div>
+                        <label for="examFeedbackInput" class="block text-sm font-medium text-gray-700 mb-1">
+                            Votre feedback sur l'examen (optionnel)
+                        </label>
+                        <textarea id="examFeedbackInput" name="exam_feedback" rows="3" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="schoolCommentInput" class="block text-sm font-medium text-gray-700 mb-1">
+                            Votre commentaire sur l'école (optionnel)
+                        </label>
+                        <textarea id="schoolCommentInput" name="school_comment" rows="3" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Notez votre expérience avec l'école (1-5 étoiles)
+                        </label>
+                        <div class="flex items-center">
+                            <div id="starRatingInput" class="flex">
+                                @for($i = 1; $i <= 5; $i++)
+                                <svg class="w-8 h-8 cursor-pointer star-rating" data-rating="{{ $i }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                                @endfor
+                            </div>
+                            <input type="hidden" id="schoolRatingInput" name="school_rating" value="0">
+                            <span id="ratingTextInput" class="ml-2 text-sm text-gray-500">0 étoiles</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-2">
+                        <button type="button" onclick="closeFeedbackModal()" 
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Annuler
+                        </button>
+                        <button type="submit" 
+                            class="px-4 py-2 bg-[#4D44B5] text-white rounded-md hover:bg-[#3a32a1]">
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -262,100 +248,24 @@ $(document).ready(function() {
     $('#closeResultsBtn, #closeResultsBtnBottom').click(function() {
         $('#resultsModal').addClass('hidden');
     });
-});
-
-
-function openPlanningModal(id, type, date, lieu, places, statut, instructions) {
-    $('#modalPlanningTitle').text('Planification Examen #' + id);
-    $('#planningType').text(type.charAt(0).toUpperCase() + type.slice(1));
-    $('#planningDate').text(date);
-    $('#planningLieu').text(lieu);
-    $('#planningPlaces').text(places);
-    $('#planningStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
-    $('#planningInstructions').text(instructions || 'Aucune instruction spécifiée');
     
-    $('#planningModal').removeClass('hidden');
-}
-
-
-function openResultsModal(id, type, date, lieu, statut, score, resultat, feedbacks, present) {
-    $('#modalResultsTitle').text('Résultats Examen #' + id);
-    $('#resultType').text(type.charAt(0).toUpperCase() + type.slice(1));
-    $('#resultDate').text(date);
-    $('#resultLieu').text(lieu);
-    $('#resultStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
-
-    updateResultsSection(score, resultat, present);
+    $('.star-rating').hover(function() {
+        const rating = $(this).data('rating');
+        highlightFeedbackStars(rating);
+    }, function() {
+        const currentRating = $('#schoolRatingInput').val();
+        highlightFeedbackStars(currentRating);
+    });
     
-    updateFeedbacksSection(feedbacks);
+    $('.star-rating').click(function() {
+        const rating = $(this).data('rating');
+        $('#schoolRatingInput').val(rating);
+        $('#ratingTextInput').text(rating + (rating > 1 ? ' étoiles' : ' étoile'));
+    });
     
-    $('#resultsModal').removeClass('hidden');
-}
-
-function updateResultsSection(score, resultat, present) {
-    const $resultsContainer = $('#resultDetails');
-    
-    if (score && resultat && present !== '') {
-        $resultsContainer.html(`
-            <div class="space-y-3">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Présence</p>
-                    <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Score</p>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                        <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: ${score}%"></div>
-                    </div>
-                    <p class="text-gray-800 font-medium mt-1">${score}/100</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Résultat</p>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${getResultColorClass(resultat)}">
-                        ${formatResultText(resultat)}
-                    </span>
-                </div>
-            </div>
-        `);
-    } else {
-        $resultsContainer.html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
-    }
-}
-
-
-function updateFeedbacksSection(feedbacks) {
-    const $feedbacksContainer = $('#resultFeedbacks');
-    
-    if (feedbacks && feedbacks.trim() !== '') {
-        $feedbacksContainer.html(`
-            <div class="bg-blue-50 p-3 rounded-lg">
-                <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
-            </div>
-        `);
-    } else {
-        $feedbacksContainer.html('<p class="text-gray-500 italic">Aucun feedback disponible</p>');
-    }
-}
-
-
-function getResultColorClass(resultat) {
-    const colorMap = {
-        'excellent': 'bg-green-100 text-green-800',
-        'tres_bien': 'bg-blue-100 text-blue-800',
-        'bien': 'bg-indigo-100 text-indigo-800',
-        'moyen': 'bg-yellow-100 text-yellow-800',
-        'insuffisant': 'bg-red-100 text-red-800'
-    };
-    return colorMap[resultat] || 'bg-gray-100 text-gray-800';
-}
-
-
-function formatResultText(resultat) {
-    if (!resultat) return 'Non évalué';
-    return resultat.replace('_', ' ')
-                  .split(' ')
-                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' ');
-}
-</script>
+    $('#feedbackForm').submit(function(e) {
+        e.preventDefault();
+        
+      
+        </script>
 @endsection
