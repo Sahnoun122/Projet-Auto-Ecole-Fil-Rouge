@@ -23,6 +23,8 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\CoursConduiteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExamFeedbackController;
+use App\Http\Controllers\PresenceCoursController;
+
 use App\Http\Controllers\NotificationController;
 
 
@@ -310,8 +312,8 @@ Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function
     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
 
     Route::get('/conduite', [CoursConduiteController::class, 'moniteurIndex'])->name('moniteur.conduite');
-    Route::get('/conduite/{id}/presence', [CoursConduiteController::class, 'moniteurPresence'])->name('moniteur.conduite.presence');
-    Route::post('/conduite/{id}/presence', [CoursConduiteController::class, 'moniteurSavePresence'])->name('moniteur.conduite.presence.save');
+    Route::get('/conduite/{id}/presence', [PresenceCoursController::class, 'show'])->name('moniteur.presence.show');
+    Route::post('/conduite/{id}/presence', [PresenceCoursController::class, 'store'])->name('moniteur.presence.store');
 });
 
 //     Route::middleware(['auth'])->group(function () {

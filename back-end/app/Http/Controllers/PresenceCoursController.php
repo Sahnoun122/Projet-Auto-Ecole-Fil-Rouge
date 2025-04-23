@@ -3,26 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\CoursConduite;
-use App\Models\PresenceCours;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PresenceCoursController extends Controller
 {
-    public function show($id)
+    public function index()
     {
-        $cours = CoursConduite::with([
-            'candidat',
-            'candidats' => function($query) {
-                $query->withPivot('present', 'notes');
-            }
-        ])->where('moniteur_id', Auth::id())
-          ->findOrFail($id);
+        $cours = CoursConduite::with(['candidat', 'vehicule', 'candidats' => function($query) {
+                    $query->withPivot('present', 'notes');
+                }])
+                ->where('moniteur_id', Auth::id())
+                ->orderBy('date_heure', 'desc')
+                ->paginate(10);
 
-        return view('moniteur.presence-modal', compact('cours'));
+        return view('moniteur.cours', compact('cours'));
     }
 
-    public function store(Request $request, $id)
+    public function updatePresences(Request $request, $courseId)
     {
         $request->validate([
             'present' => 'required|array',
@@ -32,7 +30,7 @@ class PresenceCoursController extends Controller
         ]);
 
         $cours = CoursConduite::where('moniteur_id', Auth::id())
-                 ->findOrFail($id);
+                 ->findOrFail($courseId);
 
         $presenceData = [];
         foreach ($request->present as $candidatId => $present) {
@@ -44,19 +42,10 @@ class PresenceCoursController extends Controller
 
         $cours->candidats()->sync($presenceData);
 
-        return redirect()->back()
-               ->with('success', 'Les présences et notes ont été enregistrées avec succès');
-    }
-
-    public function showNotes($id)
-    {
-        $cours = CoursConduite::with([
-            'candidat',
-            'candidats' => function($query) {
-                $query->withPivot('present', 'notes');
-            }
-        ])->findOrFail($id);
-
-        return view('candidats.notes-modal', compact('cours'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Présences enregistrées avec succès',
+            'data' => $cours->load('candidats')
+        ]);
     }
 }
