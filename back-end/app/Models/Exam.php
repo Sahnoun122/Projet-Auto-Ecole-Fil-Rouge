@@ -63,4 +63,9 @@ class Exam extends Model
             'taux_reussite' => $total > 0 ? round(($reussis / $total) * 100, 2) : null
         ]);
     }
+
+    public function feedbacks()
+{
+    return $this->hasMany(ExamFeedback::class);
+}
 }
