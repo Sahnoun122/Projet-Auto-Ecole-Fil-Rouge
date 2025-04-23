@@ -146,12 +146,104 @@
         </div>
     </main>
 
+    <!-- Modal Planification Examen -->
     <div id="planningModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+        <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
+            <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
+                <h2 id="modalPlanningTitle" class="text-xl font-bold">Détails de l'Examen</h2>
+                <button onclick="closePlanningModal()" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Type d'examen</p>
+                        <p id="planningType" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Date et heure</p>
+                        <p id="planningDate" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Lieu</p>
+                        <p id="planningLieu" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Places disponibles</p>
+                        <p id="planningPlaces" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Statut</p>
+                        <p id="planningStatut" class="text-gray-800 font-medium"></p>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Instructions</p>
+                    <p id="planningInstructions" class="text-gray-800 mt-1 whitespace-pre-line"></p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 px-6 py-4 flex justify-end">
+                <button onclick="closePlanningModal()" class="px-4 py-2 bg-[#4D44B5] text-white rounded-md hover:bg-[#3a32a1]">
+                    Fermer
+                </button>
+            </div>
+        </div>
     </div>
 
+    <!-- Modal Résultats Examen -->
     <div id="resultsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+        <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
+            <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
+                <h2 id="modalResultsTitle" class="text-xl font-bold">Résultats de l'Examen</h2>
+                <button onclick="closeResultsModal()" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Type d'examen</p>
+                        <p id="resultType" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Date et heure</p>
+                        <p id="resultDate" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Lieu</p>
+                        <p id="resultLieu" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Statut</p>
+                        <p id="resultStatut" class="text-gray-800 font-medium"></p>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Vos Résultats</h3>
+                    <div id="resultDetails" class="space-y-3"></div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Feedback du Moniteur</h3>
+                    <div id="resultFeedbacks" class="space-y-3"></div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 px-6 py-4 flex justify-end">
+                <button onclick="closeResultsModal()" class="px-4 py-2 bg-[#4D44B5] text-white rounded-md hover:bg-[#3a32a1]">
+                    Fermer
+                </button>
+            </div>
+        </div>
     </div>
 
+    <!-- Modal Feedback Candidat -->
     <div id="feedbackModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
         <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
             <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
@@ -241,14 +333,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
-    $('#closePlanningBtn, #closePlanningBtnBottom').click(function() {
-        $('#planningModal').addClass('hidden');
-    });
-    
-    $('#closeResultsBtn, #closeResultsBtnBottom').click(function() {
-        $('#resultsModal').addClass('hidden');
-    });
-    
+    // Gestion des modals
     $('.star-rating').hover(function() {
         const rating = $(this).data('rating');
         highlightFeedbackStars(rating);
@@ -263,6 +348,7 @@ $(document).ready(function() {
         $('#ratingTextInput').text(rating + (rating > 1 ? ' étoiles' : ' étoile'));
     });
     
+    // Soumission du formulaire de feedback
     $('#feedbackForm').submit(function(e) {
         e.preventDefault();
         
@@ -297,6 +383,86 @@ $(document).ready(function() {
     });
 });
 
+// Fonctions pour la modal de planification
+function openPlanningModal(id, type, date, lieu, places, statut, instructions) {
+    $('#modalPlanningTitle').text('Planification Examen #' + id);
+    $('#planningType').text(type.charAt(0).toUpperCase() + type.slice(1));
+    $('#planningDate').text(date);
+    $('#planningLieu').text(lieu);
+    $('#planningPlaces').text(places);
+    $('#planningStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
+    $('#planningInstructions').text(instructions || 'Aucune instruction spécifiée');
+    
+    $('#planningModal').removeClass('hidden');
+}
+
+function closePlanningModal() {
+    $('#planningModal').addClass('hidden');
+}
+
+// Fonctions pour la modal de résultats
+function openResultsModal(id, type, date, lieu, statut, score, resultat, feedbacks, present) {
+    $('#modalResultsTitle').text('Résultats Examen #' + id);
+    $('#resultType').text(type.charAt(0).toUpperCase() + type.slice(1));
+    $('#resultDate').text(date);
+    $('#resultLieu').text(lieu);
+    $('#resultStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
+
+    updateResultsSection(score, resultat, present);
+    updateFeedbacksSection(feedbacks);
+    
+    $('#resultsModal').removeClass('hidden');
+}
+
+function closeResultsModal() {
+    $('#resultsModal').addClass('hidden');
+}
+
+function updateResultsSection(score, resultat, present) {
+    const $resultsContainer = $('#resultDetails');
+    
+    if (score && resultat && present !== '') {
+        $resultsContainer.html(`
+            <div class="space-y-3">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Présence</p>
+                    <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Score</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                        <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: ${score}%"></div>
+                    </div>
+                    <p class="text-gray-800 font-medium mt-1">${score}/100</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Résultat</p>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${getResultColorClass(resultat)}">
+                        ${formatResultText(resultat)}
+                    </span>
+                </div>
+            </div>
+        `);
+    } else {
+        $resultsContainer.html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
+    }
+}
+
+function updateFeedbacksSection(feedbacks) {
+    const $feedbacksContainer = $('#resultFeedbacks');
+    
+    if (feedbacks && feedbacks.trim() !== '') {
+        $feedbacksContainer.html(`
+            <div class="bg-blue-50 p-3 rounded-lg">
+                <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
+            </div>
+        `);
+    } else {
+        $feedbacksContainer.html('<p class="text-gray-500 italic">Aucun feedback disponible</p>');
+    }
+}
+
+// Fonctions pour la modal de feedback
 function openFeedbackModal(examId) {
     $('#feedbackExamId').val(examId);
     $('#modalFeedbackTitle').text(`Feedback pour l'examen #${examId}`);
@@ -348,38 +514,36 @@ function loadExistingFeedback(examId) {
 
 function deleteFeedback() {
     const examId = $('#feedbackExamId').val();
-
-    if (confirm('Êtes-vous sûr de vouloir supprimer votre feedback ?')) {
+    
+    if(confirm('Êtes-vous sûr de vouloir supprimer votre feedback ?')) {
         $.ajax({
             url: `/candidats/exams/${examId}/feedback`,
             method: 'DELETE',
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') 
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
-                if (response.success) {
+                if(response.success) {
                     $('#existingFeedbackContainer').addClass('hidden');
-
+                    
                     $('#examFeedbackInput').val('');
                     $('#schoolCommentInput').val('');
                     $('#schoolRatingInput').val('0');
                     $('.star-rating').removeClass('text-yellow-400').addClass('text-gray-300');
                     $('#ratingTextInput').text('0 étoiles');
-
+                    
                     showAlert('success', 'Feedback supprimé avec succès!');
-                } else {
-                    showAlert('error', 'La suppression du feedback a échoué. Réessayez plus tard.');
                 }
             },
-            error: function(xhr, status, error) {
-                console.error("Erreur lors de la requête DELETE:", xhr.responseText);
-                showAlert('error', 'Une erreur est survenue lors de la suppression du feedback. ' + error);
+            error: function(xhr) {
+                showAlert('error', 'Une erreur est survenue lors de la suppression du feedback.');
+                console.error(xhr.responseText);
             }
         });
     }
 }
 
-
+// Fonctions utilitaires
 function highlightFeedbackStars(rating) {
     $('.star-rating').each(function() {
         if ($(this).data('rating') <= rating) {
@@ -406,6 +570,25 @@ function generateStarsHTML(rating) {
     return html;
 }
 
+function getResultColorClass(resultat) {
+    const colorMap = {
+        'excellent': 'bg-green-100 text-green-800',
+        'tres_bien': 'bg-blue-100 text-blue-800',
+        'bien': 'bg-indigo-100 text-indigo-800',
+        'moyen': 'bg-yellow-100 text-yellow-800',
+        'insuffisant': 'bg-red-100 text-red-800'
+    };
+    return colorMap[resultat] || 'bg-gray-100 text-gray-800';
+}
+
+function formatResultText(resultat) {
+    if (!resultat) return 'Non évalué';
+    return resultat.replace('_', ' ')
+                  .split(' ')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ');
+}
+
 function showAlert(type, message) {
     const alertHtml = `
         <div class="fixed top-4 right-4 z-50">
@@ -427,108 +610,5 @@ function showAlert(type, message) {
         });
     }, 3000);
 }
-
-$(document).ready(function() {
-    $('#closePlanningBtn, #closePlanningBtnBottom').click(function() {
-        $('#planningModal').addClass('hidden');
-    });
-    
-    $('#closeResultsBtn, #closeResultsBtnBottom').click(function() {
-        $('#resultsModal').addClass('hidden');
-    });
-});
-
-
-function openPlanningModal(id, type, date, lieu, places, statut, instructions) {
-    $('#modalPlanningTitle').text('Planification Examen #' + id);
-    $('#planningType').text(type.charAt(0).toUpperCase() + type.slice(1));
-    $('#planningDate').text(date);
-    $('#planningLieu').text(lieu);
-    $('#planningPlaces').text(places);
-    $('#planningStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
-    $('#planningInstructions').text(instructions || 'Aucune instruction spécifiée');
-    
-    $('#planningModal').removeClass('hidden');
-}
-
-
-function openResultsModal(id, type, date, lieu, statut, score, resultat, feedbacks, present) {
-    $('#modalResultsTitle').text('Résultats Examen #' + id);
-    $('#resultType').text(type.charAt(0).toUpperCase() + type.slice(1));
-    $('#resultDate').text(date);
-    $('#resultLieu').text(lieu);
-    $('#resultStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
-
-    updateResultsSection(score, resultat, present);
-    
-    updateFeedbacksSection(feedbacks);
-    
-    $('#resultsModal').removeClass('hidden');
-}
-
-function updateResultsSection(score, resultat, present) {
-    const $resultsContainer = $('#resultDetails');
-    
-    if (score && resultat && present !== '') {
-        $resultsContainer.html(`
-            <div class="space-y-3">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Présence</p>
-                    <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Score</p>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                        <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: ${score}%"></div>
-                    </div>
-                    <p class="text-gray-800 font-medium mt-1">${score}/100</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Résultat</p>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${getResultColorClass(resultat)}">
-                        ${formatResultText(resultat)}
-                    </span>
-                </div>
-            </div>
-        `);
-    } else {
-        $resultsContainer.html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
-    }
-}
-
-
-function updateFeedbacksSection(feedbacks) {
-    const $feedbacksContainer = $('#resultFeedbacks');
-    
-    if (feedbacks && feedbacks.trim() !== '') {
-        $feedbacksContainer.html(`
-            <div class="bg-blue-50 p-3 rounded-lg">
-                <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
-            </div>
-        `);
-    } else {
-        $feedbacksContainer.html('<p class="text-gray-500 italic">Aucun feedback disponible</p>');
-    }
-}
-
-
-function getResultColorClass(resultat) {
-    const colorMap = {
-        'excellent': 'bg-green-100 text-green-800',
-        'tres_bien': 'bg-blue-100 text-blue-800',
-        'bien': 'bg-indigo-100 text-indigo-800',
-        'moyen': 'bg-yellow-100 text-yellow-800',
-        'insuffisant': 'bg-red-100 text-red-800'
-    };
-    return colorMap[resultat] || 'bg-gray-100 text-gray-800';
-}
-
-
-function formatResultText(resultat) {
-    if (!resultat) return 'Non évalué';
-    return resultat.replace('_', ' ')
-                  .split(' ')
-                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' ');
-}</script>
+</script>
 @endsection

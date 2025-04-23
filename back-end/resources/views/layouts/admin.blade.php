@@ -20,7 +20,6 @@
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: true }">
     <div class="flex h-screen">
-        <!-- Sidebar -->
         <div :class="sidebarOpen ? 'w-64' : 'w-20'" class="bg-white shadow-lg transition-all duration-300 flex flex-col overflow-hidden">
             <div class="p-4 flex justify-between items-center border-b">
                 <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-primary">
