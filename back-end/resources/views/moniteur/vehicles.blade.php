@@ -166,6 +166,116 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+const vehiclesData = {
+    @foreach($vehicles as $vehicle)
+    {{ $vehicle->id }}: {
+        marque: "{{ $vehicle->marque }}",
+        modele: "{{ $vehicle->modele }}",
+        immatriculation: "{{ $vehicle->immatriculation }}",
+        date_achat: "{{ $vehicle->date_achat->format('Y-m-d') }}",
+        kilometrage: {{ $vehicle->kilometrage }},
+        prochaine_maintenance: "{{ $vehicle->prochaine_maintenance->format('Y-m-d') }}",
+        statut: "{{ $vehicle->statut }}"
+    },
+    @endforeach
+};
 
+function filterVehicles() {
+    const marque = $('#filterMarque').val();
+    const status = $('#filterStatus').val();
+    
+    let visibleCount = 0;
+    
+    $('.vehicle-row').each(function() {
+        const vehicleMarque = $(this).data('marque');
+        const vehicleStatus = $(this).data('statut');
+        
+        const marqueMatch = !marque || marque === '' || vehicleMarque === marque;
+        const statusMatch = status === 'all' || vehicleStatus === status;
+        
+        const shouldShow = marqueMatch && statusMatch;
+        $(this).toggle(shouldShow);
+        
+        if (shouldShow) visibleCount++;
+    });
+    
+    $('#vehicleCount').text(visibleCount);
+    
+    if (visibleCount === 0) {
+        if ($('#noResultsRow').length === 0) {
+            $('#vehicleTableBody').append(`
+                <tr id="noResultsRow">
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        Aucun véhicule ne correspond aux critères
+                    </td>
+                </tr>
+            `);
+        }
+    } else {
+        $('#noResultsRow').remove();
+    }
+}
+
+function showVehicleDetails(vehicleId) {
+    const vehicle = vehiclesData[vehicleId];
+    if (!vehicle) return;
+    
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('fr-FR', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric' 
+        });
+    };
+    
+    $('#detailVehicleTitle').text(`${vehicle.marque} ${vehicle.modele}`);
+    $('#detailMarque').text(vehicle.marque);
+    $('#detailModele').text(vehicle.modele);
+    $('#detailImmatriculation').text(vehicle.immatriculation);
+    $('#detailDateAchat').text(formatDate(vehicle.date_achat));
+    $('#detailKilometrage').text(vehicle.kilometrage.toLocaleString('fr-FR') + ' km');
+    $('#detailMaintenance').text(formatDate(vehicle.prochaine_maintenance));
+    
+    const statusElement = $('#detailStatut');
+    statusElement.text(vehicle.statut.charAt(0).toUpperCase() + vehicle.statut.slice(1));
+    statusElement.removeClass().addClass('inline-block px-3 py-1 rounded-full text-sm font-medium mt-1');
+    
+    if(vehicle.statut === 'disponible') {
+        statusElement.addClass('bg-green-100 text-green-800');
+    } else if(vehicle.statut === 'en maintenance') {
+        statusElement.addClass('bg-yellow-100 text-yellow-800');
+    } else {
+        statusElement.addClass('bg-red-100 text-red-800');
+    }
+
+    $('#vehicleDetailsModal').removeClass('hidden');
+}
+
+function closeVehicleDetails() {
+    $('#vehicleDetailsModal').addClass('hidden');
+}
+
+$(document).ready(function() {
+    $('#filterMarque, #filterStatus').change(filterVehicles);
+
+    $('#resetFilters').click(function() {
+        $('#filterMarque').val('');
+        $('#filterStatus').val('all');
+        filterVehicles();
+    });
+    
+    $(document).on('click', function(e) {
+        if ($(e.target).is('#vehicleDetailsModal')) {
+            closeVehicleDetails();
+        }
+    });
+    
+    $(document).keyup(function(e) {
+        if (e.key === "Escape" && $('#vehicleDetailsModal').is(':visible')) {
+            closeVehicleDetails();
+        }
+    });
+});
 </script>
 @endsection
