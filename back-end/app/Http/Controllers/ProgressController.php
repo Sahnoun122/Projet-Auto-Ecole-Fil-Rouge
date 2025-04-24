@@ -35,22 +35,37 @@ class ProgressController extends Controller
 
     public function trackQuizProgress(Request $request, Quiz $quiz)
     {
-        $request->validate([
+        $validated = $request->validate([
             'score' => 'required|integer',
             'passed' => 'required|boolean',
-            'details' => 'sometimes|array'
+            'details' => 'required|array'
         ]);
-
+    
+        $details = $this->cleanDetails($validated['details']);
+    
         $progress = Progress::create([
             'candidate_id' => Auth::id(),
             'quiz_id' => $quiz->id,
-            'progress_percentage' => ($request->score / 40) * 100, 
+            'course_id' => null,
+            'progress_percentage' => ($validated['score'] / 40) * 100,
             'is_completed' => true,
             'completed_at' => now(),
-            'details' => $request->details
+            'details' => $details
         ]);
-
+    
         return response()->json($progress);
+    }
+
+    
+    
+    protected function cleanDetails(array $details)
+    {
+        return collect($details)->map(function ($item) {
+            if (is_array($item)) {
+                return $this->cleanDetails($item);
+            }
+            return is_string($item) || is_int($item) ? $item : strval($item);
+        })->toArray();
     }
 
     public function getUserProgress()

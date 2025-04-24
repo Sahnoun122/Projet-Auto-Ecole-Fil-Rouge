@@ -35,6 +35,8 @@ class Course extends Model
             'completed' => $progress ? $progress->is_completed : false
         ];
     }
+
+
 }
 
 

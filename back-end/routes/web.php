@@ -23,6 +23,8 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\CoursConduiteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExamFeedbackController;
+use App\Http\Controllers\ProgressController;
+
 use App\Http\Controllers\PresenceCoursController;
 
 use App\Http\Controllers\NotificationController;
@@ -305,6 +307,15 @@ Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitl
             Route::delete('/', [ExamFeedbackController::class, 'destroy'])->name('candidats.exams.feedback.destroy');
         });
     });
+
+    Route::get('/progress', [ProgressController::class, 'showProgressPage'])
+    ->name('candidats.progress');
+
+Route::post('/course/{course}/progress', [ProgressController::class, 'trackCourseProgress'])
+    ->name('candidats.track.course.progress');
+
+Route::post('/quiz/{quiz}/progress', [ProgressController::class, 'trackQuizProgress'])
+    ->name('candidats.track.quiz.progress');
 
     });
 

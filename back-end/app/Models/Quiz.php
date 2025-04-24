@@ -62,4 +62,9 @@ class Quiz extends Model
                        !$question->answers->first()->choice->is_correct;
             });
     }
+
+public function progress()
+{
+    return $this->hasMany(Progress::class);
+}
 }

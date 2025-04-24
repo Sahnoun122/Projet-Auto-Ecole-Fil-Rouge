@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider; // Assurez-vous d'importer correctement
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+
+
 use App\Models\Vehicle;
 use App\Policies\VehiclePolicy;
 use App\Models\Exam;
@@ -59,7 +62,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-      
+        Schema::defaultStringLength(191);
+
+
             $this->registerPolicies();
         
             Gate::define('manage-exams', function ($user) {
@@ -70,39 +75,32 @@ class AuthServiceProvider extends ServiceProvider
                 return $user->role === 'admin' || $user->role === 'instructor';
             });
         
-            // Définition des gates pour le modèle Title
             Gate::define('viewAny-title', [TitlePolicy::class, 'viewAny']);
             Gate::define('view-title', [TitlePolicy::class, 'view']);
         
-            // Définition des gates pour le modèle Course
             Gate::define('viewAny-course', [CoursePolicy::class, 'viewAny']);
             Gate::define('view-course', [CoursePolicy::class, 'view']);
             Gate::define('create-course', [CoursePolicy::class, 'create']);
             Gate::define('update-course', [CoursePolicy::class, 'update']);
             Gate::define('delete-course', [CoursePolicy::class, 'delete']);
         
-            // Définition des gates pour le modèle Progress
             Gate::define('viewAny-progress', [ProgressPolicy::class, 'viewAny']);
             Gate::define('view-progress', [ProgressPolicy::class, 'view']);
             Gate::define('update-progress', [ProgressPolicy::class, 'update']);
         
-            // Définition des gates pour le modèle Quiz
             Gate::define('view-quiz', [QuizPolicy::class, 'view']);
             Gate::define('create-quiz', [QuizPolicy::class, 'create']);
             Gate::define('update-quiz', [QuizPolicy::class, 'update']);
             Gate::define('delete-quiz', [QuizPolicy::class, 'delete']);
         
-            // Définition des gates pour le modèle Question
             Gate::define('create-question', [QuestionPolicy::class, 'create']);
             Gate::define('update-question', [QuestionPolicy::class, 'update']);
             Gate::define('delete-question', [QuestionPolicy::class, 'delete']);
         
-            // Définition des gates pour le modèle Choice
             Gate::define('create-choice', [ChoicePolicy::class, 'create']);
             Gate::define('update-choice', [ChoicePolicy::class, 'update']);
             Gate::define('delete-choice', [ChoicePolicy::class, 'delete']);
         
-            // Définition des gates pour le modèle Answer
             Gate::define('create-answer', [AnswerPolicy::class, 'create']);
             Gate::define('view-answer', [AnswerPolicy::class, 'view']);
         }

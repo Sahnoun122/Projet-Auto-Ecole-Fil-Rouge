@@ -12,7 +12,7 @@ class CreateProgressTable extends Migration
         Schema::create('progress', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('candidate_id');
-            $table->unsignedBigInteger('course_id');
+            $table->unsignedBigInteger('course_id')->nullable(); 
             $table->unsignedBigInteger('quiz_id')->nullable(); 
             $table->integer('progress_percentage')->default(0);
             $table->boolean('is_completed')->default(false);
