@@ -178,6 +178,83 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-   
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        const resultsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Correctes', 'Incorrectes', 'Non répondues'],
+                datasets: [{
+                    data: [
+                        {{ $results['correct_answers'] }},
+                        {{ $results['wrong_answers'] }},
+                        {{ $results['unanswered'] }}
+                    ],
+                    backgroundColor: [
+                        '#10B981',
+                        '#EF4444',
+                        '#9CA3AF'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                            padding: 15,
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        bodyFont: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                cutout: window.innerWidth < 768 ? '60%' : '70%'
+            }
+        });
+
+        // Animation des éléments
+        setTimeout(() => {
+            const cards = document.querySelectorAll('.grid > div');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'translateY(10px)';
+                    card.style.opacity = '0';
+                    card.style.transition = 'all 0.3s ease-out';
+                    
+                    setTimeout(() => {
+                        card.style.transform = 'translateY(0)';
+                        card.style.opacity = '1';
+                    }, 300);
+                }, index * 100);
+            });
+        }, 500);
+
+        // Redimensionnement responsive du graphique
+        window.addEventListener('resize', function() {
+            resultsChart.options.plugins.legend.labels.font.size = window.innerWidth < 768 ? 10 : 12;
+            resultsChart.options.plugins.tooltip.bodyFont.size = window.innerWidth < 768 ? 10 : 12;
+            resultsChart.options.cutout = window.innerWidth < 768 ? '60%' : '70%';
+            resultsChart.update();
+        });
+    });
 </script>
 @endsection
