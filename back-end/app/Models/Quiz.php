@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Quiz extends Model
 {
     protected $fillable = ['admin_id', 'type_permis', 'title', 'description'];
+    const PASSING_SCORE = 32;
+    const TOTAL_QUESTIONS = 40;
 
     public function questions()
     {
@@ -20,51 +22,58 @@ class Quiz extends Model
 
     public function getResults($userId)
     {
+        $userAnswers = Answer::with(['choice'])
+            ->where('candidat_id', $userId)
+            ->whereHas('question', function($q) {
+                $q->where('quiz_id', $this->id);
+            })
+            ->get()
+            ->keyBy('question_id');
+
+        $questions = $this->questions()
+            ->with(['choices' => function($q) {
+                $q->orderBy('is_correct', 'desc');
+            }])
+            ->get();
+
+        $correctCount = 0;
+        $wrongCount = 0;
+        $results = [];
+
+        foreach ($questions as $question) {
+            $userAnswer = $userAnswers[$question->id] ?? null;
+            $correctChoice = $question->choices->firstWhere('is_correct', true);
+            $isCorrect = $userAnswer ? $userAnswer->choice->is_correct : false;
+
+            if ($isCorrect) {
+                $correctCount++;
+            } elseif ($userAnswer) {
+                $wrongCount++;
+            }
+
+            $results[] = [
+                'question_id' => $question->id,
+                'question_text' => $question->question_text,
+                'user_answer' => $userAnswer ? $userAnswer->choice->choice_text : null,
+                'correct_answer' => $correctChoice->choice_text ?? 'N/A',
+                'is_correct' => $isCorrect,
+                'answered' => (bool)$userAnswer
+            ];
+        }
+
+        $unanswered = self::TOTAL_QUESTIONS - ($correctCount + $wrongCount);
+
         return [
-            'total' => $this->questions()->count(),
-            'correct' => $this->questions()
-                ->whereHas('answers', function($query) use ($userId) {
-                    $query->where('candidat_id', $userId)
-                          ->whereHas('choice', function($q) {
-                              $q->where('is_correct', true);
-                          });
-                })
-                ->count(),
-            'passed' => $this->checkSuccess($userId),
-            'wrong_answers' => $this->getWrongAnswers($userId)
+            'total_questions' => self::TOTAL_QUESTIONS,
+            'correct_answers' => $correctCount,
+            'wrong_answers' => $wrongCount,
+            'unanswered' => $unanswered,
+            'correct_percentage' => round(($correctCount / self::TOTAL_QUESTIONS) * 100, 2),
+            'wrong_percentage' => round(($wrongCount / self::TOTAL_QUESTIONS) * 100, 2),
+            'unanswered_percentage' => round(($unanswered / self::TOTAL_QUESTIONS) * 100, 2),
+            'passed' => $correctCount >= self::PASSING_SCORE,
+            'passing_score' => self::PASSING_SCORE,
+            'details' => $results
         ];
     }
-
-    public function checkSuccess($userId)
-    {
-        $correct = $this->questions()
-            ->whereHas('answers', function($query) use ($userId) {
-                $query->where('candidat_id', $userId)
-                      ->whereHas('choice', function($q) {
-                          $q->where('is_correct', true);
-                      });
-            })
-            ->count();
-            
-        return $correct >= 32;
-    }
-
-    public function getWrongAnswers($userId)
-    {
-        return $this->questions()
-            ->with(['answers' => function($query) use ($userId) {
-                $query->where('candidat_id', $userId)
-                      ->with('choice');
-            }])
-            ->get()
-            ->filter(function($question) {
-                return $question->answers->isNotEmpty() && 
-                       !$question->answers->first()->choice->is_correct;
-            });
-    }
-
-public function progress()
-{
-    return $this->hasMany(Progress::class);
-}
 }

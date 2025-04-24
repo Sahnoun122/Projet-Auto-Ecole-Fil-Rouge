@@ -243,43 +243,65 @@ public function prepareQuiz(Quiz $quiz)
 //    }
 
 // Dans app/Http/Controllers/QuizController.php
+// public function showResults(Quiz $quiz)
+// {
+//     $user = Auth::user();
+    
+//     if ($quiz->type_permis !== $user->type_permis) {
+//         abort(403);
+//     }
+
+//     $results = $quiz->getResults($user->id);
+
+//     $details = [
+//         'score' => (int)$results['correct'],
+//         'passed' => (bool)$results['passed'],
+//         'wrong_answers' => array_map(function($item) {
+//             return is_array($item) ? $item : (array)$item;
+//         }, $results['wrong_answers']->toArray())
+//     ];
+
+//     $details = array_filter($details, function($value) {
+//         return !is_null($value);
+//     });
+
+//     app(ProgressController::class)->trackQuizProgress(
+//         new Request([
+//             'score' => $results['correct'],
+//             'passed' => $results['passed'],
+//             'details' => $details
+//         ]),
+//         $quiz
+//     );
+
+//     return view('candidats.results', [
+//         'quiz' => $quiz,
+//         'totalQuestions' => 40, 
+//         'correctAnswers' => $results['correct'],
+//         'passed' => $results['passed'],
+//         'wrongAnswers' => $results['wrong_answers']
+//     ]);
+// }
+
+
 public function showResults(Quiz $quiz)
 {
     $user = Auth::user();
     
     if ($quiz->type_permis !== $user->type_permis) {
-        abort(403);
+        abort(403, "Vous n'avez pas accès à ces résultats");
     }
 
     $results = $quiz->getResults($user->id);
 
-    $details = [
-        'score' => (int)$results['correct'],
-        'passed' => (bool)$results['passed'],
-        'wrong_answers' => array_map(function($item) {
-            return is_array($item) ? $item : (array)$item;
-        }, $results['wrong_answers']->toArray())
-    ];
-
-    $details = array_filter($details, function($value) {
-        return !is_null($value);
-    });
-
-    app(ProgressController::class)->trackQuizProgress(
-        new Request([
-            'score' => $results['correct'],
-            'passed' => $results['passed'],
-            'details' => $details
-        ]),
-        $quiz
-    );
+    if ($results['correct_answers'] + $results['wrong_answers'] > $results['total_questions']) {
+        abort(500, "Incohérence dans les résultats du quiz");
+    }
 
     return view('candidats.results', [
         'quiz' => $quiz,
-        'totalQuestions' => 40, 
-        'correctAnswers' => $results['correct'],
-        'passed' => $results['passed'],
-        'wrongAnswers' => $results['wrong_answers']
+        'results' => $results,
+        'user' => $user
     ]);
 }
 

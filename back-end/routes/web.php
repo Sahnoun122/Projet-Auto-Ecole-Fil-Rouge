@@ -308,14 +308,6 @@ Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitl
         });
     });
 
-    Route::get('/progress', [ProgressController::class, 'showProgressPage'])
-    ->name('candidats.progress');
-
-Route::post('/course/{course}/progress', [ProgressController::class, 'trackCourseProgress'])
-    ->name('candidats.track.course.progress');
-
-Route::post('/quiz/{quiz}/progress', [ProgressController::class, 'trackQuizProgress'])
-    ->name('candidats.track.quiz.progress');
 
     });
 
