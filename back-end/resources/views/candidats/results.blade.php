@@ -1,110 +1,183 @@
 @extends('layouts.candidats')
-@section('content')
-        <div class="flex-1 overflow-auto">
 
-         
-            <div class="min-h-screen bg-gray-50">
-                <div class="max-w-3xl mx-auto px-4 py-8">
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <!-- En-tête -->
-                        <div class="bg-[#4D44B5] px-6 py-8 text-white text-center">
-                            <h1 class="text-3xl font-bold">Résultats du Quiz Permis</h1>
-                            <div class="mt-4 text-4xl font-bold">
-                                {{ $correctAnswers }}/40
-                            </div>
-                            <div class="mt-2">
-                                @if($passed)
-                                    <span class="inline-block px-4 py-1 bg-green-500 text-white rounded-full">
-                                        Réussi !
-                                    </span>
-                                @else
-                                    <span class="inline-block px-4 py-1 bg-red-500 text-white rounded-full">
-                                        Échec (32/40 requis)
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-            
-                        <!-- Statistiques -->
-                        <div class="p-6 grid grid-cols-2 gap-4">
-                            <div class="bg-gray-100 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-[#4D44B5]">{{ $correctAnswers }}</div>
-                                <div class="text-gray-600">Bonnes réponses</div>
-                            </div>
-                            <div class="bg-gray-100 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-[#4D44B5]">{{ 40 - $correctAnswers }}</div>
-                                <div class="text-gray-600">Erreurs</div>
-                            </div>
-                        </div>
-            
-                        <!-- Détail des erreurs SEULEMENT -->
-                        @if($wrongAnswers->count() > 0)
-                        <div class="p-6 border-t">
-                            <h2 class="text-xl font-bold text-gray-800 mb-4">Détail des erreurs</h2>
-                            <div class="space-y-4">
-                                @foreach($wrongAnswers as $question)
-                                <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded-r-lg">
-                                    <div class="font-medium text-gray-800">{{ $question->question_text }}</div>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-red-600">
-                                            <span class="font-medium">Votre réponse:</span> 
-                                            {{ $question->answers->first()->choice->choice_text }}
-                                        </p>
-                                        <p class="text-sm text-gray-600 mt-1">
-                                            <span class="font-medium">Bonne réponse:</span> 
-                                            {{ $question->choices->where('is_correct', true)->first()->choice_text }}
-                                        </p>
-                                    </div>
+@section('content')
+<div class="flex-1 overflow-auto">
+    <div class="min-h-screen">
+        <header class="bg-[#4D44B5] text-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+                <h1 class="text-2xl md:text-3xl font-bold">Résultats du Quiz</h1>
+                <p class="mt-1 md:mt-2 text-base md:text-lg text-purple-100">
+                    Permis {{ $quiz->type_permis }} - {{ $quiz->title }}
+                </p>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+                <div class="bg-white rounded-lg md:rounded-xl shadow-md p-4 md:p-6 border-t-4 border-[#4D44B5]">
+                    <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-3 md:mb-4">Résumé</h3>
+                    
+                    <div class="space-y-3 md:space-y-4">
+                        <div class="flex items-center justify-between p-2 md:p-3 bg-green-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="p-1 md:p-2 rounded-full bg-green-100 text-green-600 mr-2 md:mr-3">
+                                    <i class="fas fa-check text-sm md:text-base"></i>
                                 </div>
-                                @endforeach
+                                <span class="text-sm md:text-base text-gray-700">Bonnes réponses</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-green-600">{{ $results['correct_answers'] }}</span>
+                                <span class="text-xs md:text-sm text-gray-500 ml-1">({{ $results['correct_percentage'] }}%)</span>
                             </div>
                         </div>
-                        @else
-                        <div class="p-6 text-center bg-green-50 text-green-700">
-                            <div class="text-5xl mb-2">🎉</div>
-                            <h3 class="text-xl font-bold">Parfait !</h3>
-                            <p>Aucune erreur commise</p>
+                        
+                        <div class="flex items-center justify-between p-2 md:p-3 bg-red-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="p-1 md:p-2 rounded-full bg-red-100 text-red-600 mr-2 md:mr-3">
+                                    <i class="fas fa-times text-sm md:text-base"></i>
+                                </div>
+                                <span class="text-sm md:text-base text-gray-700">Mauvaises réponses</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-red-600">{{ $results['wrong_answers'] }}</span>
+                                <span class="text-xs md:text-sm text-gray-500 ml-1">({{ $results['wrong_percentage'] }}%)</span>
+                            </div>
+                        </div>
+                        
+                        @if($results['unanswered'] > 0)
+                        <div class="flex items-center justify-between p-2 md:p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="p-1 md:p-2 rounded-full bg-gray-100 text-gray-600 mr-2 md:mr-3">
+                                    <i class="fas fa-question text-sm md:text-base"></i>
+                                </div>
+                                <span class="text-sm md:text-base text-gray-700">Non répondu</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-gray-600">{{ $results['unanswered'] }}</span>
+                                <span class="text-xs md:text-sm text-gray-500 ml-1">({{ $results['unanswered_percentage'] }}%)</span>
+                            </div>
                         </div>
                         @endif
-            
-                        <!-- Boutons -->
-                        <div class="p-6 border-t flex justify-center">
-                            <a href="{{ route('candidats.quizzes') }}" 
-                               class="px-6 py-2 bg-[#4D44B5] hover:bg-[#3a32a1] text-white rounded-lg">
-                                Retour aux quiz
-                            </a>
+                    </div>
+                    
+                    <div class="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm md:text-base text-gray-700">Score total</span>
+                            <span class="font-bold text-base md:text-lg {{ $results['passed'] ? 'text-green-600' : 'text-red-600' }}">
+                                {{ $results['correct_answers'] }}/40
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-sm md:text-base text-gray-700">Score requis</span>
+                            <span class="text-sm md:text-base font-medium">32/40</span>
                         </div>
                     </div>
                 </div>
+
+                <div class="bg-white rounded-lg md:rounded-xl shadow-md p-4 md:p-6">
+                    <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-3 md:mb-4">Répartition</h3>
+                    <div class="h-48 md:h-64 flex items-center justify-center">
+                        <canvas id="resultsChart"></canvas>
+                    </div>
+                </div>
             </div>
-    
-    <script>
 
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-      const progressBars = document.querySelectorAll('.progress-bar');
-      progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-          bar.style.width = width;
-        }, 300);
-      });
-    }, 500);
-    
-    const badge = document.querySelector('.pulse');
-    if (badge) {
-      setInterval(() => {
-        badge.classList.add('animate-pulse');
-        setTimeout(() => {
-          badge.classList.remove('animate-pulse');
-        }, 1000);
-      }, 2000);
-    }
-  });
-        
- 
+            <div class="bg-white rounded-lg md:rounded-xl shadow-md overflow-hidden mb-6 md:mb-8">
+                <div class="border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row md:justify-between md:items-center">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-list-ol text-[#4D44B5] mr-2"></i>
+                        Détail des questions
+                    </h3>
+                    <div class="flex space-x-2 overflow-x-auto py-1 md:py-0">
+                        <span class="whitespace-nowrap px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                            Correct: {{ $results['correct_answers'] }}
+                        </span>
+                        <span class="whitespace-nowrap px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+                            Incorrect: {{ $results['wrong_answers'] }}
+                        </span>
+                        @if($results['unanswered'] > 0)
+                        <span class="whitespace-nowrap px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">
+                            Non répondu: {{ $results['unanswered'] }}
+                        </span>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="divide-y divide-gray-200 max-h-[500px] overflow-y-auto">
+                    @foreach($results['details'] as $index => $detail)
+                    <div class="p-4 md:p-6 hover:bg-gray-50 transition">
+                        <div class="flex items-start">
+                            <span class="flex-shrink-0 flex items-center justify-center h-6 w-6 md:h-8 md:w-8 rounded-full 
+                                      {{ $detail['is_correct'] ? 'bg-green-100 text-green-800' : ($detail['answered'] ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }} mr-3 md:mr-4 text-xs md:text-sm">
+                                {{ $index + 1 }}
+                            </span>
+                            <div class="flex-1">
+                                <h4 class="text-base md:text-lg font-medium text-gray-800 mb-2 md:mb-3">{{ $detail['question_text'] }}</h4>
+                                
+                                @if($detail['answered'])
+                                <div class="grid grid-cols-1 gap-3 md:gap-4 mb-2 md:mb-3">
+                                    <div class="{{ $detail['is_correct'] ? 'bg-green-50' : 'bg-red-50' }} p-2 md:p-3 rounded-lg">
+                                        <p class="text-xs md:text-sm font-medium text-gray-600 mb-1">Votre réponse</p>
+                                        <p class="{{ $detail['is_correct'] ? 'text-green-800' : 'text-red-800' }} font-medium text-sm md:text-base">
+                                            {{ $detail['user_answer'] }}
+                                        </p>
+                                    </div>
+                                    <div class="bg-gray-50 p-2 md:p-3 rounded-lg">
+                                        <p class="text-xs md:text-sm font-medium text-gray-600 mb-1">Bonne réponse</p>
+                                        <p class="text-gray-800 font-medium text-sm md:text-base">{{ $detail['correct_answer'] }}</p>
+                                    </div>
+                                </div>
+                                @else
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 md:p-4 mb-2 md:mb-3">
+                                    <p class="text-yellow-700 flex items-center text-xs md:text-sm">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        Non répondu
+                                    </p>
+                                </div>
+                                @endif
+                                
+                                <div class="flex items-center text-xs md:text-sm">
+                                    @if($detail['answered'])
+                                        @if($detail['is_correct'])
+                                            <span class="inline-flex items-center text-green-600">
+                                                <i class="fas fa-check-circle mr-1"></i> Correcte
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center text-red-600">
+                                                <i class="fas fa-times-circle mr-1"></i> Incorrecte
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="inline-flex items-center text-gray-600">
+                                            <i class="fas fa-question-circle mr-1"></i> Non répondu
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
 
+            <div class="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
+                <a href="{{ route('candidats.quizzes') }}" 
+                   class="bg-[#4D44B5] hover:bg-[#3a32a1] text-white px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium transition text-center text-sm md:text-base">
+                   <i class="fas fa-list mr-1 md:mr-2"></i> Tous les quiz
+                </a>
+                @if(!$results['passed'])
+                <a href="{{ route('candidats.start', $quiz) }}" 
+                   class="bg-white hover:bg-gray-100 text-[#4D44B5] border border-[#4D44B5] px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium transition text-center text-sm md:text-base">
+                   <i class="fas fa-redo mr-1 md:mr-2"></i> Réessayer
+                </a>
+                @endif
+            </div>
+        </main>
+    </div>
+</div>
 
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+   
+</script>
 @endsection
