@@ -13,21 +13,16 @@ class CourseController extends Controller
 {
     public function index(Title $title)
     {
-        // Gate::authorize('viewAny', Course::class);
-
         $courses = $title->courses()->with('title')->get();
         return view('admin.courses', compact('title', 'courses'));
     }
 
     public function store(Request $request, Title $title)
     {
-        // Gate::authorize('create', Course::class);
-
-        $request->validate([    
+        $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
-            'duration' => 'required|integer|min:1'
         ]);
 
         $imagePath = null;
@@ -35,31 +30,24 @@ class CourseController extends Controller
             $imagePath = $request->file('image')->store('courses', 'public');
         }
 
-        $course = Course::create([
+        Course::create([
             'title_id' => $title->id,
             'admin_id' => Auth::id(),
             'title' => $request->title,
             'description' => $request->description,
             'image' => $imagePath,
-            'duration' => $request->duration,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'course' => $course,
-            'message' => 'Cours créé avec succès'
-        ]);
+        return redirect()->route('admin.courses', $title->id)
+            ->with('success', 'Cours créé avec succès');
     }
 
     public function update(Request $request, Course $course)
     {
-        // Gate::authorize('update', $course);
-
         $request->validate([
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
-            'duration' => 'nullable|integer|min:1'
         ]);
 
         $imagePath = $course->image;
@@ -72,61 +60,35 @@ class CourseController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'image' => $imagePath,
-            'duration' => $request->duration,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'course' => $course,
-            'message' => 'Cours mis à jour avec succès'
-        ]);
+        return redirect()->route('admin.courses', $course->title_id)
+            ->with('success', 'Cours mis à jour avec succès');
     }
 
     public function destroy(Course $course)
     {
-        // Gate::authorize('delete', $course);
-
         if ($course->image) Storage::delete('public/'.$course->image);
         $course->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cours supprimé avec succès'
-        ]);
+        return redirect()->route('admin.courses', $course->title_id)
+            ->with('success', 'Cours supprimé avec succès');
     }
-
-
-
-    // public function showForCandidat(Course $course)
-    // {
-    //     $user = Auth::user();
-        
-    //     if ($course->title->type_permis !== $user->type_permis) {
-    //         abort(403, "Accès non autorisé à ce cours");
-    //     }
-
-    //     return view('candidats.cours', [
-    //         'course' => $course,
-    //         'typePermis' => $user->type_permis
-    //     ]);
-    // }
-
 
     public function showCoursesByTitle(Title $title)
-{
-    $user = Auth::user();
-    
-    if ($title->type_permis !== $user->type_permis) {
-        abort(403, "Accès non autorisé à ces cours");
+    {
+        $user = Auth::user();
+        
+        if ($title->type_permis !== $user->type_permis) {
+            abort(403, "Accès non autorisé à ces cours");
+        }
+
+        $courses = $title->courses()->get();
+
+        return view('candidats.cours', [
+            'title' => $title,
+            'courses' => $courses,
+            'typePermis' => $user->type_permis
+        ]);
     }
-
-    $courses = $title->courses()->get();
-
-    return view('candidats.cours', [
-        'title' => $title,
-        'courses' => $courses,
-        'typePermis' => $user->type_permis
-    ]);
-}
-
 }

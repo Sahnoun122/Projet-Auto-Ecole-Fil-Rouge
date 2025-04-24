@@ -19,7 +19,7 @@ class Progress extends Model
         'details'
     ];
 
-protected $casts = [
+    protected $casts = [
     'details' => 'array',
     'is_completed' => 'boolean',
     'completed_at' => 'datetime'
@@ -33,23 +33,6 @@ public function setDetailsAttribute($value)
     );
 }
 
-protected function cleanArray($array)
-{
-    if (!is_array($array) && !($array instanceof \Illuminate\Support\Collection)) {
-        return $array;
-    }
-
-    $cleaned = [];
-    foreach ($array as $key => $value) {
-        if (is_array($value) || $value instanceof \Illuminate\Support\Collection) {
-            $cleaned[$key] = $this->cleanArray($value);
-        } else {
-            $cleaned[$key] = is_string($value) || is_int($value) ? $value : strval($value);
-        }
-    }
-    
-    return $cleaned;
-}
     public function candidate()
     {
         return $this->belongsTo(User::class, 'candidate_id');
@@ -65,12 +48,5 @@ protected function cleanArray($array)
         return $this->belongsTo(Quiz::class);
     }
 
-protected static function booted()
-{
-    static::saving(function ($progress) {
-        if (is_null($progress->course_id) && is_null($progress->quiz_id)) {
-            throw new \Exception("Un progrès doit être lié à un cours ou un quiz");
-        }
-    });
-}
+
 }
