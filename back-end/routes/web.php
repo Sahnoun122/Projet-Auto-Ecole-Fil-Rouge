@@ -295,6 +295,7 @@ Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitl
      Route::get('/conduite', [CoursConduiteController::class, 'candidatIndex'])->name('candidats.conduite');
      Route::get('/conduite/{id}', [CoursConduiteController::class, 'candidatShow'])->name('candidats.conduite.show');
      
+     
     Route::get('/exams', [ExamController::class, 'candidatExams'])->name('candidats.exams');
     Route::get('/exams/{exam}', [ExamController::class, 'showCandidatExam'])->name('candidats.exams.show');
 

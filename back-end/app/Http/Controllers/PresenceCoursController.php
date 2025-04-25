@@ -34,10 +34,8 @@ class PresenceCoursController extends Controller
         DB::beginTransaction();
         
         try {
-            // Delete existing presence records for this course
             PresenceCours::where('cours_conduite_id', $courseId)->delete();
             
-            // Create new presence records
             if ($request->has('present')) {
                 foreach ($request->present as $candidatId => $value) {
                     PresenceCours::create([
@@ -49,7 +47,6 @@ class PresenceCoursController extends Controller
                 }
             }
             
-            // For candidates with notes but not marked as present
             if ($request->has('notes')) {
                 foreach ($request->notes as $candidatId => $notes) {
                     if (!empty($notes) && !isset($request->present[$candidatId])) {

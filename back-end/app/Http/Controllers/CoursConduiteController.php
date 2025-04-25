@@ -184,43 +184,40 @@ class CoursConduiteController extends Controller
             return redirect()->route('moniteur.conduite')
                 ->with('success', 'Présences et notes enregistrées avec succès');
         }
-
- public function candidatIndex()
-{
-    $cours = CoursConduite::with([
-            'moniteur:id,nom,prenom',
-            'vehicule:id,marque,immatriculation'
-        ])
-        ->where(function($query) {
-            $query->where('candidat_id', Auth::id())
-                  ->orWhereHas('candidats', function($q) {
-                      $q->where('users.id', Auth::id());
-                  });
-        })
-        ->latest()
-        ->paginate(10);
-
-    return view('candidats.conduite', compact('cours'));
-}
-
-public function candidatShow($id)
-{
-    $cour = CoursConduite::with([
-            'moniteur:id,nom,prenom',
-            'vehicule:id,marque,immatriculation',
-            'candidats' => function($query) {
-                $query->select('users.id', 'nom', 'prenom');
-            }
-        ])
-        ->where(function($query) {
-            $query->where('candidat_id', Auth::id())
-                  ->orWhereHas('candidats', function($q) {
-                      $q->where('users.id', Auth::id());
-                  });
-        })
-        ->findOrFail($id);
-
-    return response()->json($cour);
+        public function candidatIndex()
+        {
+            $user = Auth::user();
+            
+            $cours =CoursConduite::with(['moniteur', 'vehicule', 'presences' => function($query) use ($user) {
+                    $query->where('candidat_id', $user->id);
+                }])
+                ->orderBy('date_heure', 'desc')
+                ->paginate(10);
     
-}
+            return view('candidats.conduite', compact('cours'));
+        }
+        public function candidatShow($id)
+        {
+            $user = Auth::user();
+            
+            $cours = CoursConduite::with(['moniteur', 'vehicule', 'presences' => function($query) use ($user) {
+                    $query->where('candidat_id', $user->id);
+                }])
+                ->whereHas('presences', function($query) use ($user) {
+                    $query->where('candidat_id', $user->id);
+                })
+                ->findOrFail($id);
+        
+            return response()->json([
+                'date_heure' => $cours->date_heure,
+                'duree_minutes' => $cours->duree_minutes,
+                'moniteur' => $cours->moniteur,
+                'vehicule' => $cours->vehicule,
+                'statut' => $cours->statut,
+                'presences' => $cours->presences,
+                'candidats' => $cours->candidats
+            ]);
+        }
+
+
 }
