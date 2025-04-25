@@ -194,5 +194,101 @@
 </div>
 @endforeach
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.show-presence-btn').on('click', function() {
+        const courseId = $(this).data('course-id');
+        $('#presenceModal-' + courseId).fadeIn(300);
+        $('body').addClass('overflow-hidden');
+    });
+    
+    $('.cancel-presence-btn').on('click', function() {
+        $(this).closest('.modal-presence').fadeOut(300);
+        $('body').removeClass('overflow-hidden');
+    });
+    
+    $('.modal-presence').on('click', function(e) {
+        if ($(e.target).hasClass('modal-presence')) {
+            $(this).fadeOut(300);
+            $('body').removeClass('overflow-hidden');
+        }
+    });
+});
+</script>
 
+<style>
+@media (max-width: 640px) {
+    table {
+        display: block;
+        width: 100%;
+    }
+    
+    thead {
+        display: none;
+    }
+    
+    tbody {
+        display: block;
+    }
+    
+    tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    td {
+        display: block;
+        padding: 0.75rem;
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+    }
+    
+    td:last-child {
+        border-bottom: none;
+    }
+    
+    td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #4B5563;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    td:last-child {
+        display: flex;
+        justify-content: center;
+        padding: 0.75rem;
+    }
+    
+    td:last-child::before {
+        display: none;
+    }
+}
+
+.presence-form > div::-webkit-scrollbar {
+    width: 6px;
+}
+
+.presence-form > div::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.presence-form > div::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.presence-form > div::-webkit-scrollbar-thumb:hover {
+    background: #4D44B5;
+}
+</style>
 @endsection
