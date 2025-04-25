@@ -4,25 +4,37 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreatePresencesCoursTable extends Migration
 {
-    public function up(): void
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
     {
         Schema::create('presences_cours', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('cours_conduite_id')->constrained('cours_conduites')->onDelete('cascade');
-            $table->foreignId('candidat_id')->constrained('users')->onDelete('cascade');
-
-            $table->boolean('present')->default(false); 
+            $table->unsignedBigInteger('cours_conduite_id');
+            $table->unsignedBigInteger('candidat_id');
+            $table->boolean('present')->default(false);
             $table->text('notes')->nullable();
-
             $table->timestamps();
+            
+            $table->foreign('cours_conduite_id')->references('id')->on('cours_conduites')->onDelete('cascade');
+            $table->foreign('candidat_id')->references('id')->on('users')->onDelete('cascade');
+            
+            $table->unique(['cours_conduite_id', 'candidat_id']);
         });
     }
 
-    public function down(): void
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
     {
         Schema::dropIfExists('presences_cours');
     }
-};
+}

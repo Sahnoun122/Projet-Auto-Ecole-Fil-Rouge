@@ -105,7 +105,7 @@
 
               
                     <div>
-                        {{-- <a href="{{ route('candidats.conduite') }}"> --}}
+                        <a href="{{ route('candidats.conduite') }}">
                             <div id="cours-conduite-header"
                                 class="sidebar-item flex items-center px-4 py-3 text-gray-600 hover:text-primary transition-colors cursor-pointer">
                                 
