@@ -85,7 +85,6 @@
             <div class="bg-white rounded-lg md:rounded-xl shadow-md overflow-hidden mb-6 md:mb-8">
                 <div class="border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row md:justify-between md:items-center">
                     <h3 class="text-lg md:text-xl font-semibold text-gray-800 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-list-ol text-[#4D44B5] mr-2"></i>
                         Détail des questions
                     </h3>
                     <div class="flex space-x-2 overflow-x-auto py-1 md:py-0">
@@ -231,7 +230,6 @@
             }
         });
 
-        // Animation des éléments
         setTimeout(() => {
             const cards = document.querySelectorAll('.grid > div');
             cards.forEach((card, index) => {
@@ -248,7 +246,6 @@
             });
         }, 500);
 
-        // Redimensionnement responsive du graphique
         window.addEventListener('resize', function() {
             resultsChart.options.plugins.legend.labels.font.size = window.innerWidth < 768 ? 10 : 12;
             resultsChart.options.plugins.tooltip.bodyFont.size = window.innerWidth < 768 ? 10 : 12;

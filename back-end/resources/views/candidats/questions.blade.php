@@ -23,7 +23,6 @@
          
             <div class="min-h-screen bg-gray-100">
                 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <!-- Header avec timer circulaire -->
                     <div class="flex justify-between items-center mb-8">
                         <div class="text-lg font-medium text-gray-700">
                             Question <span class="font-bold">{{ $currentPosition }}</span>/{{ $totalQuestions }}
@@ -43,7 +42,6 @@
                         </div>
                     </div>
             
-                    <!-- Question -->
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8 transition-all duration-500 transform" id="question-card">
                         <div class="p-6">
                             <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ $question->question_text }}</h2>
@@ -56,7 +54,6 @@
                         </div>
                     </div>
             
-                    <!-- Grille de réponses -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="choices-grid">
                         @foreach($choices as $choice)
                         <button onclick="selectAnswer({{ $choice->id }}, {{ $choice->is_correct }})"
@@ -122,7 +119,7 @@
                     document.getElementById('selectedChoice').value = choiceId;
                     setTimeout(() => {
                         document.getElementById('answerForm').submit();
-                    }, 1500); // Délai pour voir le feedback
+                    }, 1500);
                 }
             
                 function autoSelectAnswer() {

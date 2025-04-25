@@ -81,21 +81,6 @@ public function indexForCandidat(Request $request)
 
 
 
-//     public function indexForCandidat(Request $request)
-// {
-//     $user = Auth::user();
-//     $typePermis = $user->type_permis;
-    
-//     $quizzes = Quiz::where('type_permis', $typePermis)
-//         ->when($request->search, function($query, $search) {
-//             return $query->where('title', 'like', "%$search%")
-//                          ->orWhere('description', 'like', "%$search%");
-//         })
-//         ->withCount('questions')
-//         ->get();
-    
-//     return view('candidats.quizzes', compact('quizzes', 'typePermis'));
-// }
 
 public function prepareQuiz(Quiz $quiz)
 {
@@ -108,26 +93,6 @@ public function prepareQuiz(Quiz $quiz)
     return view('candidats.prepare', compact('quiz'));
 }
 
-// public function startQuiz(Quiz $quiz)
-// {
-//     $user = Auth::user();
-    
-//     Answer::where('candidat_id', $user->id)
-//         ->whereHas('question', fn($q) => $q->where('quiz_id', $quiz->id))
-//         ->delete();
-
-//     $firstQuestion = $quiz->questions()->orderBy('id')->first();
-
-//     if (!$firstQuestion) {
-//         return redirect()->route('candidats.index')
-//             ->with('error', 'Ce quiz ne contient aucune question');
-//     }
-
-//     return redirect()->route('candidats.questions', [
-//         'quiz' => $quiz,
-//         'question' => $firstQuestion
-//     ]);
-// }
 
 
     public function showForCandidat(Quiz $quiz)
@@ -220,68 +185,6 @@ public function prepareQuiz(Quiz $quiz)
        return redirect()->route('candidats.results', $quiz);
    }
    
-//    public function showResults(Quiz $quiz)
-//    {
-//        if ($quiz->type_permis !== Auth::user()->type_permis) {
-//            abort(403);
-//        }
-   
-//        $answers = Answer::with(['question', 'choice'])
-//            ->where('candidat_id', Auth::id())
-//            ->whereHas('question', function($query) use ($quiz) {
-//                $query->where('quiz_id', $quiz->id);
-//            })
-//            ->get();
-   
-//        $totalQuestions = $quiz->questions()->count();
-//        $correctAnswers = $answers->where('is_correct', true)->count();
-//        $passed = $correctAnswers >= 32; 
-   
-//        return view('candidats.results', compact(
-//            'quiz', 'answers', 'totalQuestions', 'correctAnswers', 'passed'
-//        ));
-//    }
-
-// Dans app/Http/Controllers/QuizController.php
-// public function showResults(Quiz $quiz)
-// {
-//     $user = Auth::user();
-    
-//     if ($quiz->type_permis !== $user->type_permis) {
-//         abort(403);
-//     }
-
-//     $results = $quiz->getResults($user->id);
-
-//     $details = [
-//         'score' => (int)$results['correct'],
-//         'passed' => (bool)$results['passed'],
-//         'wrong_answers' => array_map(function($item) {
-//             return is_array($item) ? $item : (array)$item;
-//         }, $results['wrong_answers']->toArray())
-//     ];
-
-//     $details = array_filter($details, function($value) {
-//         return !is_null($value);
-//     });
-
-//     app(ProgressController::class)->trackQuizProgress(
-//         new Request([
-//             'score' => $results['correct'],
-//             'passed' => $results['passed'],
-//             'details' => $details
-//         ]),
-//         $quiz
-//     );
-
-//     return view('candidats.results', [
-//         'quiz' => $quiz,
-//         'totalQuestions' => 40, 
-//         'correctAnswers' => $results['correct'],
-//         'passed' => $results['passed'],
-//         'wrongAnswers' => $results['wrong_answers']
-//     ]);
-// }
 
 
 public function showResults(Quiz $quiz)
