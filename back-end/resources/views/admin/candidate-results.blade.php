@@ -11,7 +11,7 @@
                 </p>
             </div>
             <div>
-                <a href="{{ route('admin.quizzes.results', $quiz) }}" 
+                <a href="{{ route('admin.results', $quiz) }}" 
                    class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition mr-2">
                     <i class="fas fa-arrow-left mr-1"></i> Retour
                 </a>
@@ -21,7 +21,6 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Carte Candidat -->
             <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-[#4D44B5]">
                 <div class="flex items-center mb-4">
                     <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-[#4D44B5] font-bold text-xl mr-4">
@@ -38,7 +37,6 @@
                 </div>
             </div>
 
-            <!-- Carte Résumé -->
             <div class="bg-white rounded-xl shadow-md p-6">
                 <h3 class="font-bold text-lg mb-4">Résumé</h3>
                 <div class="space-y-4">
@@ -80,7 +78,6 @@
                 </div>
             </div>
 
-            <!-- Carte Score -->
             <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-center items-center">
                 <div class="text-center mb-4">
                     <span class="text-5xl font-bold {{ $results['passed'] ? 'text-green-600' : 'text-red-600' }}">
@@ -96,7 +93,6 @@
             </div>
         </div>
 
-        <!-- Détail des questions -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-800">Détail des questions</h3>

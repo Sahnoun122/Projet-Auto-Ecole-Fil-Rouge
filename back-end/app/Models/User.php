@@ -87,6 +87,11 @@ public function coursCommeCandidat()
     return $this->hasMany(CoursConduite::class, 'candidat_id');
 }
 
+public function answers()
+{
+    return $this->hasMany(Answer::class, 'candidat_id');
+}
+
 public function coursSupplementaires()
 {
     return $this->belongsToMany(

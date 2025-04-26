@@ -5,7 +5,7 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Résultats du Quiz: {{ $quiz->title }}</h1>
-            <a href="{{ route('admin.quizzes.index') }}" class="btn btn-primary">
+            <a href="{{ route('admin.quizzes') }}" class="btn btn-primary">
                 <i class="fas fa-arrow-left mr-2"></i> Retour
             </a>
         </div>
@@ -60,7 +60,7 @@
                             {{ $candidate->answers->first()->created_at->format('d/m/Y H:i') }}
                         </td>
                         <td class="py-3 px-4">
-                            <a href="{{ route('admin.quizzes.candidate-results', ['quiz' => $quiz->id, 'candidate' => $candidate->id]) }}" 
+                            <a href="{{ route('admin.candidate-results', ['quiz' => $quiz->id, 'candidate' => $candidate->id]) }}" 
                                class="text-blue-600 hover:text-blue-800">
                                 <i class="fas fa-eye mr-1"></i> Détails
                             </a>
