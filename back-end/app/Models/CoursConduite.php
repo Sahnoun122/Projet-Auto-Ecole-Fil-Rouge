@@ -17,32 +17,38 @@ class CoursConduite extends Model
         'moniteur_id',
         'vehicule_id',
         'admin_id',
+        'candidat_id',
         'statut'
     ];
     
     protected $casts = [
         'date_heure' => 'datetime',
     ];
-    
+
     public function moniteur()
     {
         return $this->belongsTo(User::class, 'moniteur_id');
     }
-    
+
     public function vehicule()
     {
         return $this->belongsTo(Vehicle::class, 'vehicule_id');
     }
-    
+
     public function presences()
     {
         return $this->hasMany(PresenceCours::class, 'cours_conduite_id');
     }
-    
+
     public function candidats()
     {
         return $this->belongsToMany(User::class, 'presences_cours', 'cours_conduite_id', 'candidat_id')
                     ->withPivot('present', 'notes')
                     ->withTimestamps();
+    }
+
+    public function candidat()
+    {
+        return $this->belongsTo(User::class, 'candidat_id');
     }
 }

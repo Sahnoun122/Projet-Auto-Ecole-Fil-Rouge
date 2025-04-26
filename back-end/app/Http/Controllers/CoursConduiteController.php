@@ -108,17 +108,6 @@ class CoursConduiteController extends Controller
             ->with('success', 'Cours de conduite supprimé avec succès');
     }
 
-    // public function marquerPresence($id)
-    // {
-    //     $cours = CoursConduite::with(['candidat', 'candidats'])->findOrFail($id);
-    //     return view('admin.conduite', compact('cours'));
-    // }
-
-    // public function presence($id)
-    // {
-    //     return redirect()->route('admin.conduite', ['show_presence' => $id]);
-    // }
-
     public function presence($id)
 {
     $course = CoursConduite::with([
@@ -215,7 +204,7 @@ class CoursConduiteController extends Controller
                 'vehicule' => $cours->vehicule,
                 'statut' => $cours->statut,
                 'presences' => $cours->presences,
-                'candidats' => $cours->candidats
+                'candidat' => $cours->candidat
             ]);
         }
 

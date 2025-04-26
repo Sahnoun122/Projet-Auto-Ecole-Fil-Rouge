@@ -53,30 +53,9 @@ Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 
-// Route::prefix('candidats')->middleware(['auth', 'role:admin'])->group(function () {
-
-//     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-
-//     Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
-
-//         Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])
-//             ->name('candidats.quizzes.start');
-
-//         Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])
-//             ->name('candidats.quizzes.questions.show');
-
-//         Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])
-//             ->name('candidats.quizzes.questions.answer');
-
-//         Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])
-//             ->name('candidats.quizzes.results');
-//         });
-
-
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
-    // Route::get('/list-moniteur', [MoniteurController::class, 'index']);
 
     Route::get('/monitors', [MoniteurController::class, 'index'])->name('admin.monitors.index');
     Route::post('/monitors', [MoniteurController::class, 'store'])->name('admin.monitors.store');
@@ -157,39 +136,14 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
          Route::post('/reporting/generate-pdf', [ReportingController::class, 'generatePdfReport'])->name('admin.reporting.generate-pdf');
 
 
-        //  Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
-        //  Route::get('/exams/datatable', [ExamController::class, 'datatable'])->name('admin.exams.datatable');
-        //  Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
-        //  Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('admin.exams.show');
-        //  Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
-        //  Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
-        //  Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
-         
-        //  Route::get('/{exam}/candidates', [ExamController::class, 'manageCandidates'])->name('admin.exams.candidates');
-        //  Route::post('/{exam}/add-candidate', [ExamController::class, 'addCandidate'])->name('admin.exams.add-candidate');
-        //  Route::post('/{exam}/remove-candidate', [ExamController::class, 'removeCandidate'])->name('admin.exams.remove-candidate');
-
-
-            // Route::get('/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
+    
                
     Route::get('/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
     Route::post('/conduite', [CoursConduiteController::class, 'store'])->name('admin.conduite.store');
     Route::put('/conduite/{coursConduite}', [CoursConduiteController::class, 'update'])->name('admin.conduite.update');
     Route::delete('/conduite/{coursConduite}', [CoursConduiteController::class, 'destroy'])->name('admin.conduite.destroy');
-    Route::get('/conduite/presence/{id}', [CoursConduiteController::class, 'presence'])->name('admin.conduite.presence');
+    Route::get('/conduite/{course}/presence', [CoursConduiteController::class, 'presence'])->name('admin.conduite.presence');
 
-
-// Route::prefix('api')->group(function () {
-//     Route::get('/vehicles/maintenance-alerts', [VehicleController::class, 'maintenanceAlertsApi'])
-//          ->name('api.vehicles.maintenance-alerts');});
-
-
-    // Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
-    // Route::get('/exams/create', [ExamController::class, 'create'])->name('admin.exams.create');
-    // Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
-    // Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('admin.exams.edit');
-    // Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
-    // Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
 
     Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
@@ -208,58 +162,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 // });
 
             
-        // Route::get('/admin/conduite', [CoursConduiteController::class, 'index'])->name('admin.conduite');
-
-
-// Route::get('/quiz/{quiz}/play', [QuizPlayController::class, 'show'])->name('quiz.play');
-// Route::post('/quiz/{quiz}/submit', [AnswerController::class, 'store'])->name('quiz.submit');
-// Route::get('/quiz/{quiz}/results', [AnswerController::class, 'getResults'])->name('quiz.results');
-// Routes pour les candidats
 
 
 
-// Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    
-//     Route::get('/dashboard', [AdmindController::class, 'dashboard'])->name('admin.dashboard');
-//     Route::get('/AjouterMoniteur', [AdmindController::class, 'AjouterMoniteur'])->name('admin.AjouterMoniteur');
-//     Route::get('/gestionCandidats', [AdmindController::class, 'gestionCandidats'])->name('admin.gestionCandidats');
-//     Route::get('/gestionMoniteur', [AdmindController::class, 'gestionMoniteur'])->name('admin.gestionMoniteur');
 
-//     Route::get('/quizzes', [QuizController::class, 'index'])->name('admin.quizzes');
-//     Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
-//     Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
-//     Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
-
-//     Route::get('/{quiz}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
-//     Route::post('/{quiz}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
-//     Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])->name('admin.questions.edit');
-//     Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
-//     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
-//     Route::get('/questions/{question}/details', [QuestionController::class, 'showDetails'])->name('admin.questions.details');
-
-//     Route::post('/questions/{question}/choices', [ChoiceController::class, 'store'])->name('admin.choices.store');
-//     Route::put('/choices/{choice}', [ChoiceController::class, 'update'])->name('admin.choices.update');
-//     Route::delete('/choices/{choice}', [ChoiceController::class, 'destroy'])->name('admin.choices.destroy');
-
-// });
 
 
 Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(function () {
-
     Route::get('/dashboard', [CandidatsController::class, 'dashboard'])->name('candidats.dashboard');
-    // Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])->name('candidats.quizzes');
-    // Route::get('/quizzes/{quiz}/start', [QuizController::class, 'startQuiz'])->name('candidats.quizzes');
-    // Route::get('/quizzes/{quiz}/questions/{question}', [QuizController::class, 'showQuestion'])->name('candidats.questions');
-    // Route::post('/quizzes/{quiz}/questions/{question}/answer', [QuizController::class, 'submitAnswer'])->name('candidats.questions');
-    // Route::get('/quizzes/{quiz}/results', [QuizController::class, 'showResults'])->name('candidats.results');
 
-});
-
-
-Route::prefix('candidats')
-    ->middleware(['auth', 'role:candidat'])
-    ->group(function () {
-        
         Route::get('/quizzes', [QuizController::class, 'indexForCandidat'])
             ->name('candidats.quizzes');
             
@@ -316,21 +227,11 @@ Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function
     Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
 
         Route::get('/conduite', [PresenceCoursController::class, 'index'])->name('moniteur.conduite');
-        Route::post('/conduite/{course}/presences', [PresenceCoursController::class, 'updatePresences'])->name('moniteur.conduite.presences');
+        Route::post('/conduite/{courseId}/presences', [PresenceCoursController::class, 'updatePresences'])->name('moniteur.conduite.presences');
 
          Route::get('/vehicles', [VehicleController::class, 'indexMoniteur'])->name('moniteur.vehicles');
 
 });
-
-//     Route::middleware(['auth'])->group(function () {
-//         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//         Route::delete('/profile/{id}', [ProfileController::class, 'destroy'])->name('profile.destroy');
-//     });
-
-
-// Route::middleware(['auth'])->get('/profile', [ProfileController::class, 'index'])->name('profile.admin');
-// Route::middleware(['auth'])->get('/profile', [ProfileController::class, 'index'])->name('profile.candidat');
-// Route::middleware(['auth'])->get('/profile', [ProfileController::class, 'index'])->name('profile.moniteur');
 
 
 Route::middleware(['auth'])->group(function () {

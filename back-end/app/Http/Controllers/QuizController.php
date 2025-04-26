@@ -22,23 +22,52 @@ class QuizController extends Controller
     }
 
 
-public function indexForCandidat(Request $request)
-{
-    $user = Auth::user();
-    $typePermis = $user->type_permis;
+        public function indexForCandidat(Request $request)
+        {
+            $user = Auth::user();
+            $typePermis = $user->type_permis;
+            $activeTab = $request->get('tab', 'quizzes');
+            
+            $search = $request->input('search');
+            
+            $quizzes = Quiz::where('type_permis', $typePermis)
+                           ->when($search, function($query) use ($search) {
+                               return $query->where('title', 'like', '%'.$search.'%')
+                                           ->orWhere('description', 'like', '%'.$search.'%');
+                           })
+                           ->withCount('questions')
+                           ->get();
+            
+                    $passedQuizzes = Quiz::where('type_permis', $typePermis)
+                    ->whereHas('questions.answers', function($query) use ($user) {
+                        $query->where('candidat_id', $user->id);
+                    })
+                    ->with(['questions' => function($query) use ($user) {
+                        $query->with(['answers' => function($query) use ($user) {
+                            $query->where('candidat_id', $user->id)
+                                ->with('choice');
+                        }]);
+                    }])
+                    ->withCount(['questions', 
+                        'questions as correct_answers_count' => function($query) use ($user) {
+                            $query->whereHas('answers', function($query) use ($user) {
+                                $query->where('candidat_id', $user->id)
+                                    ->whereHas('choice', function($q) {
+                                        $q->where('is_correct', true);
+                                    });
+                            });
+                        }
+                    ])
+                    ->get()
+                    ->map(function($quiz) {
+                        $quiz->score = $quiz->correct_answers_count;
+                        $quiz->total_questions = $quiz->questions_count;
+                        $quiz->passed = $quiz->score >= Quiz::PASSING_SCORE;
+                        return $quiz;
+                    });
+            return view('candidats.quizzes', compact('quizzes', 'passedQuizzes', 'typePermis', 'activeTab'));
+        }
     
-    $search = $request->input('search');
-    
-    $quizzes = Quiz::where('type_permis', $typePermis)
-                   ->when($search, function($query) use ($search) {
-                       return $query->where('title', 'like', '%'.$search.'%')
-                                   ->orWhere('description', 'like', '%'.$search.'%');
-                   })
-                   ->withCount('questions')
-                   ->get();
-    
-    return view('candidats.quizzes', compact('quizzes', 'typePermis'));
-}
 
 
     public function store(Request $request)
