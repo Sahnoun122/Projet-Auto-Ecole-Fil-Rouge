@@ -82,6 +82,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/quizzes', [QuizController::class, 'store'])->name('admin.quizzes.store');
         Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('admin.quizzes.update');
         Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('admin.quizzes.destroy');
+
+        Route::get('/{quiz}/results', [QuizController::class, 'results'])->name('admin.results');
+        Route::get('/{quiz}/results/{candidate}', [QuizController::class, 'candidateResults'])->name('admin.candidate-results');
    
             Route::get('/{quiz}/questions', [QuestionController::class, 'index'])
                  ->name('admin.questions.index');
