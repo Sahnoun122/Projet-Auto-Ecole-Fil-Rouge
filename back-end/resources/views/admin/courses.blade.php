@@ -155,8 +155,14 @@
                     </button>
                 </div>
                 <div class="p-4 md:p-5 space-y-4">
-                    <div class="h-64 bg-gray-100 rounded-lg overflow-hidden mb-4">
-                        <img id="detailModalImage" class="w-full h-full object-cover" src="" onerror="this.src='{{ asset('images/default-course.jpg') }}'">
+                    <div class="flex justify-center items-center ">
+                        <img
+                            id="detailModalImage"
+                            class="w-80 h-80 object-cover rounded shadow-md"
+                            src=""
+                            onerror="this.src='{{ asset('course/') }}'"
+                            alt="Image du cours"
+                        >
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <p class="text-gray-700 whitespace-pre-line" id="detailModalDescription"></p>
@@ -195,7 +201,7 @@
     function showCourseDetails(title, description, imageUrl) {
         $('#detailModalTitle').text(title);
         $('#detailModalDescription').text(description);
-        $('#detailModalImage').attr('src', imageUrl || '{{ asset('images/default-course.jpg') }}');
+        $('#detailModalImage').attr('src', imageUrl || '{{ asset('course/') }}');
     }
 
     $('#courseImage').change(function() {
