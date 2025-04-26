@@ -3,16 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Title;
+use App\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TitleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $titles = Title::withCount('courses')->get();
-        return view('admin.titles', compact('titles'));
+        $activeTab = $request->get('tab', 'titles');
+        $search = $request->input('search');
+        
+        $titles = Title::withCount('courses')
+            ->when($search, function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhere('type_permis', 'like', "%$search%");
+            })
+            ->get();
+
+        return view('admin.titles', compact('titles', 'activeTab'));
     }
+
 
     public function create()
     {
@@ -60,7 +72,7 @@ class TitleController extends Controller
         return redirect()->route('admin.titles')
             ->with('success', 'Titre supprimé avec succès');
     }
-    
+
     public function indexForCandidat(Request $request)
     {
         $user = Auth::user();
@@ -98,6 +110,28 @@ class TitleController extends Controller
             'title' => $title,
             'courses' => $courses,
             'typePermis' => $user->type_permis
+        ]);
+    }
+
+    public function progress(Title $title)
+    {
+        $candidates = User::where('role', 'candidat')
+            ->whereHas('courseViews', function($q) use ($title) {
+                $q->whereHas('course', function($q) use ($title) {
+                    $q->where('title_id', $title->id);
+                });
+            })
+            ->withCount(['courseViews as completed_courses' => function($q) use ($title) {
+                $q->whereHas('course', function($q) use ($title) {
+                    $q->where('title_id', $title->id);
+                });
+            }])
+            ->paginate(10);
+
+        return view('admin.titles.progress', [
+            'title' => $title,
+            'candidates' => $candidates,
+            'totalCourses' => $title->courses()->count()
         ]);
     }
 }
