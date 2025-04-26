@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TitleController extends Controller
 {
+    
     public function index(Request $request)
     {
         $activeTab = $request->get('tab', 'titles');
@@ -25,12 +26,6 @@ class TitleController extends Controller
         return view('admin.titles', compact('titles', 'activeTab'));
     }
 
-
-    public function create()
-    {
-        return view('admin.titles.create');
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -44,13 +39,7 @@ class TitleController extends Controller
             'admin_id' => Auth::id(),
         ]);
 
-        return redirect()->route('admin.titles')
-            ->with('success', 'Titre créé avec succès');
-    }
-
-    public function edit(Title $title)
-    {
-        return view('admin.titles.edit', compact('title'));
+        return response()->json(['success' => true]);
     }
 
     public function update(Request $request, Title $title)
@@ -62,8 +51,7 @@ class TitleController extends Controller
 
         $title->update($request->only(['name', 'type_permis']));
 
-        return redirect()->route('admin.titles')
-            ->with('success', 'Titre mis à jour avec succès');
+        return response()->json(['success' => true]);
     }
 
     public function destroy(Title $title)
@@ -72,7 +60,7 @@ class TitleController extends Controller
         return redirect()->route('admin.titles')
             ->with('success', 'Titre supprimé avec succès');
     }
-
+    
     public function indexForCandidat(Request $request)
     {
         $user = Auth::user();
@@ -95,7 +83,6 @@ class TitleController extends Controller
             'searchTerm' => $searchTerm
         ]);
     }
-
     public function showForCandidat(Title $title)
     {
         $user = Auth::user();
@@ -128,7 +115,7 @@ class TitleController extends Controller
             }])
             ->paginate(10);
 
-        return view('admin.titles.progress', [
+        return view('admin.progress', [
             'title' => $title,
             'candidates' => $candidates,
             'totalCourses' => $title->courses()->count()

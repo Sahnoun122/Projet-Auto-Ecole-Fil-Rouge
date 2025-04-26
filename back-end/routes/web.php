@@ -117,6 +117,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/titles/{title}/courses', [CourseController::class, 'store'])->name('admin.courses.store');
         Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
         Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');
+        Route::get('/{title}/progress', [TitleController::class, 'progress'])->name('admin.progress');
 
 
     Route::get('/vehicles', [VehicleController::class, 'index'])
@@ -210,7 +211,8 @@ Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candi
     
 Route::get('/cours/{title}', [CourseController::class, 'showCourses'])->name('candidats.cours');
 
-Route::get('/course/{course}/detail', [CourseController::class, 'showCourseDetail'])->name('candidats.course.detail');
+Route::get('/cours/{cours}/detail', [CourseController::class, 'showCourseDetail'])->name('candidats.course.detail');
+
 
      Route::get('/conduite', [CoursConduiteController::class, 'candidatIndex'])->name('candidats.conduite');
      Route::get('/conduite/{id}', [CoursConduiteController::class, 'candidatShow'])->name('candidats.conduite.show');

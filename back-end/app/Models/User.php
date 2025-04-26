@@ -92,6 +92,12 @@ public function answers()
     return $this->hasMany(Answer::class, 'candidat_id');
 }
 
+public function courseViews()
+{
+    return $this->hasMany(CourseView::class);
+}
+
+
 public function coursSupplementaires()
 {
     return $this->belongsToMany(

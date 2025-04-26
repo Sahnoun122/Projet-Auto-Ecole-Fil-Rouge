@@ -109,7 +109,7 @@ class CourseController extends Controller
         return response()->json([
             'title' => $course->title,
             'description' => $course->description,
-            'image' => $course->image ? asset('storage/'.$course->image) : asset('images/default-course.jpg'),
+            'image' => $course->image ? asset('storage/'.$course->image) : asset('images/default-course.png'),
             'progress' => $course->title->getProgressForUser($user->id)
         ]);
     }
