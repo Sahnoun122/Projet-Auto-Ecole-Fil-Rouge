@@ -1,5 +1,4 @@
 <?php
-// app/Models/Course.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,7 +8,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title_id', 'admin_id', 'title', 'description', 'image']; 
+    protected $fillable = ['title_id', 'admin_id', 'title', 'description', 'image'];
 
     public function title()
     {
@@ -21,22 +20,13 @@ class Course extends Model
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function progress()
+    public function views()
     {
-        return $this->hasMany(Progress::class);
+        return $this->hasMany(CourseView::class);
     }
 
-    public function getCandidateProgress($candidateId)
+    public function markAsViewed($userId)
     {
-        $progress = $this->progress()->where('candidate_id', $candidateId)->first();
-
-        return [
-            'percentage' => $progress ? $progress->progress_percentage : 0,
-            'completed' => $progress ? $progress->is_completed : false
-        ];
+        return $this->views()->firstOrCreate(['user_id' => $userId]);
     }
-
-
 }
-
-

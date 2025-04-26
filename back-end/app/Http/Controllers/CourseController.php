@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Title;
+use App\Models\CourseView;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate; 
 
 class CourseController extends Controller
 {
@@ -75,6 +77,20 @@ class CourseController extends Controller
             ->with('success', 'Cours supprimé avec succès');
     }
 
+    public function showCourseDetail(Course $course)
+    {
+        $user = Auth::user();
+        
+        if (!$course->isViewedByUser($user->id)) {
+            CourseView::create([
+                'user_id' => $user->id,
+                'course_id' => $course->id
+            ]);
+        }
+
+        return view('candidats.course-detail', compact('course'));
+    }
+
     public function showCoursesByTitle(Title $title)
     {
         $user = Auth::user();
@@ -83,9 +99,11 @@ class CourseController extends Controller
             abort(403, "Accès non autorisé à ces cours");
         }
 
-        $courses = $title->courses()->get();
+        $courses = $title->courses()->withCount(['views' => function($q) use ($user) {
+            $q->where('user_id', $user->id);
+        }])->get();
 
-        return view('candidats.cours', [
+        return view('candidats.courses', [
             'title' => $title,
             'courses' => $courses,
             'typePermis' => $user->type_permis
