@@ -9,13 +9,8 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        @if(session('success'))
-            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
-                <p>{{ session('success') }}</p>
-            </div>
-        @endif
+    
 
-        <!-- Navigation tabs with search -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-white p-4 rounded-xl shadow">
             <nav class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
                 <button onclick="switchTab('quizzes')" 
@@ -50,7 +45,6 @@
             </div>
         </div>
 
-        <!-- Quizzes Tab -->
         <div id="quizzesTab" class="{{ $activeTab === 'quizzes' ? 'block' : 'hidden' }}">
             @if($quizzes->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -112,7 +106,6 @@
             @endif
         </div>
 
-        <!-- Results Tab -->
         <div id="resultsTab" class="{{ $activeTab === 'results' ? 'block' : 'hidden' }}">
             @if($passedQuizzes->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -160,7 +153,6 @@
     </main>
 </div>
 
-<!-- Quiz Modal -->
 <div id="quizModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
     <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-xl">
         <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Quiz</h2>
