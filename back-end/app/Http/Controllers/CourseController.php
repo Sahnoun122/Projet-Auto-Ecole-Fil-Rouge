@@ -80,15 +80,14 @@ class CourseController extends Controller
     public function showCourses(Title $title, Request $request)
     {
         $user = Auth::user();
-        $searchTerm = $request->get('search');
-
+        
         if ($title->type_permis !== $user->type_permis) {
-            abort(403, "Accès non autorisé");
+            abort(403);
         }
 
         $courses = $title->courses()
             ->withCount(['views' => fn($q) => $q->where('user_id', $user->id)])
-            ->when($searchTerm, fn($q) => $q->where('title', 'like', "%{$searchTerm}%"))
+            ->when($request->search, fn($q, $search) => $q->where('title', 'like', "%{$search}%"))
             ->get();
 
         $progress = $title->getProgressForUser($user->id);
@@ -97,7 +96,7 @@ class CourseController extends Controller
             'title' => $title,
             'courses' => $courses,
             'progress' => $progress,
-            'searchTerm' => $searchTerm,
+            'searchTerm' => $request->search,
             'typePermis' => $user->type_permis
         ]);
     }
@@ -110,7 +109,9 @@ class CourseController extends Controller
         return response()->json([
             'title' => $course->title,
             'description' => $course->description,
-            'image' => $course->image ? asset('storage/'.$course->image) : asset('images/default-course.jpg')
+            'image' => $course->image ? asset('storage/'.$course->image) : asset('images/default-course.jpg'),
+            'progress' => $course->title->getProgressForUser($user->id)
         ]);
     }
+
 }

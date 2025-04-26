@@ -97,24 +97,35 @@
 
             <div id="progressTab" class="{{ $activeTab === 'progress' ? 'block' : 'hidden' }}">
                 @if($titles->count() > 0)
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-6">Votre progression globale</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($titles as $title)
                     @php $progress = $title->getProgressForUser(Auth::id()); @endphp
-                    <div class="mb-6 last:mb-0">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-medium text-gray-800">{{ $title->name }}</h4>
-                            <span class="text-sm font-medium {{ $progress['percentage'] == 100 ? 'text-green-600' : 'text-[#4D44B5]' }}">
-                                {{ $progress['percentage'] }}%
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">{{ $title->name }}</h3>
+                            <span class="px-3 py-1 bg-purple-100 text-[#4D44B5] rounded-full text-xs font-medium">
+                                {{ $title->type_permis }}
                             </span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="h-2.5 rounded-full {{ $progress['percentage'] == 100 ? 'bg-green-500' : 'bg-[#4D44B5]' }}" 
-                                 style="width: {{ $progress['percentage'] }}%"></div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progression</span>
+                                <span class="font-medium text-[#4D44B5]">{{ $progress['percentage'] }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: {{ $progress['percentage'] }}%"></div>
+                            </div>
                         </div>
-                        <div class="text-right mt-1 text-sm text-gray-500">
-                            {{ $progress['viewed'] }} / {{ $progress['total'] }} cours
+                        
+                        <div class="text-center text-sm text-gray-500">
+                            {{ $progress['viewed'] }} sur {{ $progress['total'] }} cours complétés
                         </div>
+                        
+                        <a href="{{ route('candidats.cours', $title) }}" 
+                           class="mt-4 block text-center text-[#4D44B5] hover:text-[#3a32a1] font-medium">
+                           Voir les cours <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
                     </div>
                     @endforeach
                 </div>
@@ -151,7 +162,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('#titlesTab .grid > div, #progressTab > div');
+        const cards = document.querySelectorAll('#titlesTab .grid > div, #progressTab .grid > div');
         cards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';

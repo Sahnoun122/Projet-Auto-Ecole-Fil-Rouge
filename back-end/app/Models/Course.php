@@ -15,11 +15,6 @@ class Course extends Model
         return $this->belongsTo(Title::class);
     }
 
-    public function admin()
-    {
-        return $this->belongsTo(User::class, 'admin_id');
-    }
-
     public function views()
     {
         return $this->hasMany(CourseView::class);

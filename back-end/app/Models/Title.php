@@ -10,11 +10,6 @@ class Title extends Model
 
     protected $fillable = ['name', 'admin_id', 'type_permis', 'description'];
 
-    public function admin()
-    {
-        return $this->belongsTo(User::class, 'admin_id');
-    }
-
     public function courses()
     {
         return $this->hasMany(Course::class);
