@@ -199,12 +199,18 @@ Route::prefix('candidats')->middleware(['auth', 'role:candidat'])->group(functio
         Route::get('/{quiz}/results', [QuizController::class, 'showResults'])
 
             ->name('candidats.results');
+// Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candidats.titres');
+
+// Route::get('/titres/{title}', [TitleController::class, 'showForCandidat'])->name('candidats.titres');
+
+// Route::get('/{title}/cours', [CourseController::class, 'showCourses'])
+//      ->name('candidats.cours');
+
 Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candidats.titres');
+    
+Route::get('/cours/{title}', [CourseController::class, 'showCourses'])->name('candidats.cours');
 
-// Route::get('/titres/{title}', [TitleController::class, 'showForCandidat'])->name('candidats.titres.show');
-
-Route::get('/titres/{title}/cours', [CourseController::class, 'showCoursesByTitle'])
-     ->name('candidats.titres.cours');
+Route::get('/course/{course}/detail', [CourseController::class, 'showCourseDetail'])->name('candidats.course.detail');
 
      Route::get('/conduite', [CoursConduiteController::class, 'candidatIndex'])->name('candidats.conduite');
      Route::get('/conduite/{id}', [CoursConduiteController::class, 'candidatShow'])->name('candidats.conduite.show');

@@ -60,30 +60,30 @@ class TitleController extends Controller
         return redirect()->route('admin.titles')
             ->with('success', 'Titre supprimé avec succès');
     }
+    
     public function indexForCandidat(Request $request)
     {
         $user = Auth::user();
-        $typePermis = $user->type_permis;
-        
-        $query = Title::where('type_permis', $typePermis)
+        $activeTab = $request->get('tab', 'titles');
+        $searchTerm = $request->get('search');
+
+        $query = Title::where('type_permis', $user->type_permis)
                     ->withCount('courses');
-    
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ;
-            });
+
+        if ($searchTerm) {
+            $query->where('name', 'like', "%{$searchTerm}%");
         }
-    
-        $titles = $query->paginate(10); 
-    
+
+        $titles = $query->paginate(10);
+
         return view('candidats.titres', [
             'titles' => $titles,
-            'typePermis' => $typePermis,
-            'searchTerm' => $request->search ?? null
+            'typePermis' => $user->type_permis,
+            'activeTab' => $activeTab,
+            'searchTerm' => $searchTerm
         ]);
     }
+
     public function showForCandidat(Title $title)
     {
         $user = Auth::user();

@@ -77,35 +77,40 @@ class CourseController extends Controller
             ->with('success', 'Cours supprimé avec succès');
     }
 
-    public function showCoursesByTitle(Title $title)
+    public function showCourses(Title $title, Request $request)
     {
         $user = Auth::user();
-        
+        $searchTerm = $request->get('search');
+
         if ($title->type_permis !== $user->type_permis) {
-            abort(403, "Accès non autorisé à ces cours");
+            abort(403, "Accès non autorisé");
         }
-    
-        $courses = $title->courses()->get();
+
+        $courses = $title->courses()
+            ->withCount(['views' => fn($q) => $q->where('user_id', $user->id)])
+            ->when($searchTerm, fn($q) => $q->where('title', 'like', "%{$searchTerm}%"))
+            ->get();
+
         $progress = $title->getProgressForUser($user->id);
-    
+
         return view('candidats.cours', [
             'title' => $title,
             'courses' => $courses,
-            'typePermis' => $user->type_permis,
             'progress' => $progress,
-            'activeTab' => 'cours' 
+            'searchTerm' => $searchTerm,
+            'typePermis' => $user->type_permis
         ]);
     }
-    
-    public function showCourseDetail(Title $title, Course $course)
+
+    public function showCourseDetail(Course $course)
     {
         $user = Auth::user();
-        
         $course->markAsViewed($user->id);
-        
-        return redirect()->route('candidats.cours.detail', [
-            'title' => $title,
-            'course' => $course
+
+        return response()->json([
+            'title' => $course->title,
+            'description' => $course->description,
+            'image' => $course->image ? asset('storage/'.$course->image) : asset('images/default-course.jpg')
         ]);
     }
 }
