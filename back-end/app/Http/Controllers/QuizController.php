@@ -258,19 +258,21 @@ public function showResults(Quiz $quiz)
 
 
 
+
     public function results(Quiz $quiz)
     {
-        $candidates = User::role('candidat')
+        $candidates = User::where('role', 'candidat')
             ->whereHas('answers', function($query) use ($quiz) {
                 $query->whereHas('question', function($q) use ($quiz) {
                     $q->where('quiz_id', $quiz->id);
                 });
             })
             ->withCount(['answers as correct_answers' => function($query) use ($quiz) {
-                $query->where('is_correct', true)
-                    ->whereHas('question', function($q) use ($quiz) {
-                        $q->where('quiz_id', $quiz->id);
-                    });
+                $query->whereHas('choice', function($q) {
+                    $q->where('is_correct', true);
+                })->whereHas('question', function($q) use ($quiz) {
+                    $q->where('quiz_id', $quiz->id);
+                });
             }])
             ->with(['answers' => function($query) use ($quiz) {
                 $query->whereHas('question', function($q) use ($quiz) {
@@ -279,19 +281,28 @@ public function showResults(Quiz $quiz)
             }])
             ->paginate(10);
 
-        return view('admin.results', compact('quiz', 'candidates'));
+        return view('admin.results', [
+            'quiz' => $quiz,
+            'candidates' => $candidates,
+            'totalQuestions' => $quiz->questions()->count()
+        ]);
     }
 
     public function candidateResults(Quiz $quiz, User $candidate)
     {
-        if (!$candidate->hasRole('candidat')) {
-            abort(403);
+        if ($candidate->role !== 'candidat') {
+            abort(403, "Cet utilisateur n'est pas un candidat");
         }
 
         $results = $quiz->getResults($candidate->id);
 
-        return view('admin.candidate-results', compact('quiz', 'candidate', 'results'));
+        return view('admin.candidate-results', [
+            'quiz' => $quiz,
+            'candidate' => $candidate,
+            'results' => $results
+        ]);
     }
-
-
 }
+
+
+

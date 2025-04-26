@@ -31,5 +31,10 @@ protected $fillable = ['quiz_id', 'admin_id', 'question_text', 'image_path', 'du
         return $this->hasMany(Answer::class);
     }
 
+    // public function correctChoice()
+    // {
+    //     return $this->hasOne(Choice::class)->where('is_correct', true);
+    // }
+
 }
 

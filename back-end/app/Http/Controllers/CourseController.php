@@ -77,20 +77,6 @@ class CourseController extends Controller
             ->with('success', 'Cours supprimé avec succès');
     }
 
-    public function showCourseDetail(Course $course)
-    {
-        $user = Auth::user();
-        
-        if (!$course->isViewedByUser($user->id)) {
-            CourseView::create([
-                'user_id' => $user->id,
-                'course_id' => $course->id
-            ]);
-        }
-
-        return view('candidats.course-detail', compact('course'));
-    }
-
     public function showCoursesByTitle(Title $title)
     {
         $user = Auth::user();
@@ -98,15 +84,28 @@ class CourseController extends Controller
         if ($title->type_permis !== $user->type_permis) {
             abort(403, "Accès non autorisé à ces cours");
         }
-
-        $courses = $title->courses()->withCount(['views' => function($q) use ($user) {
-            $q->where('user_id', $user->id);
-        }])->get();
-
-        return view('candidats.courses', [
+    
+        $courses = $title->courses()->get();
+        $progress = $title->getProgressForUser($user->id);
+    
+        return view('candidats.cours', [
             'title' => $title,
             'courses' => $courses,
-            'typePermis' => $user->type_permis
+            'typePermis' => $user->type_permis,
+            'progress' => $progress,
+            'activeTab' => 'cours' 
+        ]);
+    }
+    
+    public function showCourseDetail(Title $title, Course $course)
+    {
+        $user = Auth::user();
+        
+        $course->markAsViewed($user->id);
+        
+        return redirect()->route('candidats.cours.detail', [
+            'title' => $title,
+            'course' => $course
         ]);
     }
 }
