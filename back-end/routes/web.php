@@ -170,11 +170,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/exams/{exam}/candidat/{candidat}/result', [ExamController::class, 'checkResult'])->name('admin.exams.results.check');
 
 
-    Route::get('/paiements', [PaiementController::class, 'adminIndex'])->name('admin.paiements');
+    Route::get('/paiements', [PaiementController::class, 'index'])->name('admin.paiements');
+    Route::get('/paiements/create', [PaiementController::class, 'create'])->name('admin.paiements.create');
     Route::post('/paiements', [PaiementController::class, 'store'])->name('admin.paiements.store');
-    Route::get ('/paiements/{paiement}', [PaiementController::class, 'edit'])->name('admin.paiements.edit');
+    Route::get('/paiements/{paiement}/edit', [PaiementController::class, 'edit'])->name('admin.paiements.edit');
+    Route::put('/paiements/{paiement}', [PaiementController::class, 'update'])->name('admin.paiements.update');
     Route::delete('/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('admin.paiements.destroy');
-    Route::get('/paiements/{paiement}/details', [PaiementController::class, 'getPaiementDetails']);
+    Route::get('/paiements/{paiement}/details', [PaiementController::class, 'show'])->name('admin.paiements.show');
 
 
 });

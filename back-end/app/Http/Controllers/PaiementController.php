@@ -56,9 +56,19 @@ class PaiementController extends Controller
 
     public function edit(Paiement $paiement)
     {
-        $candidats = User::where('role', 'candidat')->get();
-        return view('admin.paiements.edit', compact('paiement', 'candidats'));
-    }
+    
+            return response()->json([
+                'success' => true,
+                'paiement' => [
+                    'id' => $paiement->id,
+                    'user_id' => $paiement->user_id,
+                    'montant' => $paiement->montant,
+                    'montant_total' => $paiement->montant_total,
+                    'date_paiement' => $paiement->date_paiement,
+                    'description' => $paiement->description
+                ]
+            ]);
+        }    
 
     public function update(Request $request, Paiement $paiement)
     {

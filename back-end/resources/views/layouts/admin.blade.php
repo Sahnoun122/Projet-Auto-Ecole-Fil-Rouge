@@ -35,7 +35,6 @@
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: false }" @resize.window="sidebarOpen = window.innerWidth > 768">
     <div class="flex h-screen">
-        <!-- Overlay pour mobile -->
         <div 
             x-show="sidebarOpen && window.innerWidth < 768"
             @click="sidebarOpen = false"
@@ -48,7 +47,6 @@
             x-transition:leave-end="opacity-0"
         ></div>
 
-        <!-- Sidebar -->
         <div 
             :class="{
                 'w-64': sidebarOpen,
@@ -56,7 +54,6 @@
             }"
             class="fixed md:static inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 flex flex-col overflow-hidden"
         >
-            <!-- Toggle button -->
             <div class="p-4 flex justify-between items-center border-b">
                 <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-[#4D44B5] focus:outline-none">
                     <svg x-show="!sidebarOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,7 +65,6 @@
                 </button>
             </div>
 
-            <!-- Profile section -->
             <div x-show="sidebarOpen" x-transition class="p-4 border-b flex justify-center">
                 <div class="relative group">
                     <div class="absolute inset-0 bg-[#4D44B5] rounded-full opacity-10 group-hover:opacity-20 transition-opacity"></div>
@@ -87,9 +83,7 @@
                 </a>
             </div>
 
-            <!-- Navigation menu -->
             <nav class="flex-1 py-4 overflow-hidden hover:overflow-y-auto">
-                <!-- Dashboard -->
                 <a href="{{ route('admin.dashboard') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.dashboard') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,7 +93,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Tableau de bord</span>
                 </a>
 
-                <!-- Candidats -->
                 <a href="{{ route('admin.candidats') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.candidats') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,7 +102,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Candidats</span>
                 </a>
 
-                <!-- Cours Théorique -->
                 <a href="{{ route('admin.titles') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.titles') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,7 +111,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Théorique</span>
                 </a>
 
-                <!-- Cours Pratique -->
                 <a href="{{ route('admin.quizzes') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.quizzes') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -131,7 +122,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours Pratique</span>
                 </a>
 
-                <!-- Véhicule -->
                 <a href="{{ route('admin.vehicles') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.vehicles') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -141,7 +131,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Véhicule</span>
                 </a>
 
-                <!-- Cours de Conduite -->
                 <a href="{{ route('admin.conduite') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.conduite') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -151,7 +140,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Cours de Conduite</span>
                 </a>
 
-                <!-- Examen -->
                 <a href="{{ route('admin.exams') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.exams') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -161,7 +149,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Examen</span>
                 </a>
 
-                <!-- Moniteurs -->
                 <a href="{{ route('admin.monitors.index') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('admin.monitors.index') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -171,8 +158,7 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Moniteurs</span>
                 </a>
 
-                <!-- Caisse -->
-                <a href="#"
+                <a href="{{ route('admin.paiements')}}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -181,7 +167,6 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
                 </a>
 
-                <!-- Déconnexion -->
                 <form method="POST" action="{{ route('logout') }}" class="mt-auto">
                     @csrf
                     <button type="submit" class="sidebar-item flex items-center w-full px-4 py-3 text-gray-600">
@@ -194,9 +179,7 @@
             </nav>
         </div>
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col min-w-0">
-            <!-- Top Bar pour mobile et notification -->
             <div class="bg-white shadow">
                 <div class="px-4 py-3 flex items-center justify-between">
                     <div class="flex items-center">
@@ -208,7 +191,6 @@
                         <h1 class="ml-3 text-lg font-semibold text-gray-800 md:hidden">Auto-école Sahnoun</h1>
                     </div>
                     
-                    <!-- Notifications -->
                     <div class="relative" x-data="{ notificationsOpen: false }">
                         <button @click="notificationsOpen = !notificationsOpen" class="relative text-gray-500 hover:text-gray-600 focus:outline-none">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,7 +199,6 @@
                             <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
                         </button>
                         
-                        <!-- Dropdown notifications -->
                         <div x-show="notificationsOpen" 
                              @click.away="notificationsOpen = false"
                              x-transition:enter="transition ease-out duration-100"
@@ -252,7 +233,6 @@
                 </div>
             </div>
             
-            <!-- Content -->
             <div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
                 @yield('content')
             </div>
@@ -260,7 +240,6 @@
     </div>
 
     <script>
-        // Initialiser l'état de la sidebar selon la taille de l'écran au chargement
         document.addEventListener('alpine:init', () => {
             Alpine.data('layout', () => ({
                 init() {
