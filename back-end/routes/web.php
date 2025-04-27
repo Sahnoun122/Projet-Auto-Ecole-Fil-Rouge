@@ -169,12 +169,12 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     
     Route::get('/exams/{exam}/candidat/{candidat}/result', [ExamController::class, 'checkResult'])->name('admin.exams.results.check');
 
+
     Route::get('/paiements', [PaiementController::class, 'adminIndex'])->name('admin.paiements');
-    Route::post('/paiements/quick-store', [PaiementController::class, 'adminQuickStore'])->name('admin.paiements.quick-store');
-    Route::delete('/paiements/{paiement}', [PaiementController::class, 'adminDestroy'])->name('admin.paiements.destroy');
-    Route::get('/paiements/{paiement}/details', function(Paiement $paiement) {
-        return view('admin.paiements.details', compact('paiement'));
-    });
+    Route::post('/paiements', [PaiementController::class, 'store'])->name('admin.paiements.store');
+    Route::get ('/paiements/{paiement}', [PaiementController::class, 'edit'])->name('admin.paiements.edit');
+    Route::delete('/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('admin.paiements.destroy');
+    Route::get('/paiements/{paiement}/details', [PaiementController::class, 'getPaiementDetails']);
 
 
 });

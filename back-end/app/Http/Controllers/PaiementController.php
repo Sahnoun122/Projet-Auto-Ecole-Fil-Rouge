@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PaiementController extends Controller
 {
-    public function adminIndex()
+    public function index()
     {
         $paiements = Paiement::with(['candidat', 'admin'])
             ->orderBy('date_paiement', 'desc')
@@ -18,6 +18,12 @@ class PaiementController extends Controller
         $candidats = User::where('role', 'candidat')->get();
         
         return view('admin.paiements', compact('paiements', 'candidats'));
+    }
+
+    public function create()
+    {
+        $candidats = User::where('role', 'candidat')->get();
+        return view('admin.paiements.create', compact('candidats'));
     }
 
     public function store(Request $request)
@@ -30,26 +36,50 @@ class PaiementController extends Controller
             'description' => 'nullable|string|max:500',
         ]);
 
-        $data = [
+        Paiement::create([
             'user_id' => $request->candidat_id,
             'montant' => $request->montant,
             'montant_total' => $request->montant_total,
             'date_paiement' => $request->date_paiement,
             'description' => $request->description,
             'admin_id' => Auth::id(),
-        ];
-
-        if ($request->has('id')) {
-            $paiement = Paiement::findOrFail($request->id);
-            $paiement->update($data);
-            $message = 'Paiement mis à jour avec succès';
-        } else {
-            Paiement::create($data);
-            $message = 'Paiement enregistré avec succès';
-        }
+        ]);
 
         return redirect()->route('admin.paiements')
-            ->with('success', $message);
+            ->with('success', 'Paiement créé avec succès');
+    }
+
+    public function show(Paiement $paiement)
+    {
+        return view('admin.paiements.show', compact('paiement'));
+    }
+
+    public function edit(Paiement $paiement)
+    {
+        $candidats = User::where('role', 'candidat')->get();
+        return view('admin.paiements.edit', compact('paiement', 'candidats'));
+    }
+
+    public function update(Request $request, Paiement $paiement)
+    {
+        $request->validate([
+            'candidat_id' => 'required|exists:users,id',
+            'montant' => 'required|numeric|min:1',
+            'montant_total' => 'required|numeric|min:'.$request->montant,
+            'date_paiement' => 'required|date',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        $paiement->update([
+            'user_id' => $request->candidat_id,
+            'montant' => $request->montant,
+            'montant_total' => $request->montant_total,
+            'date_paiement' => $request->date_paiement,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('admin.paiements')
+            ->with('success', 'Paiement mis à jour avec succès');
     }
 
     public function destroy(Paiement $paiement)
@@ -73,10 +103,7 @@ class PaiementController extends Controller
         return view('candidats.paiements', compact('paiements', 'totalPaye', 'montantTotal', 'montantRestant'));
     }
 
-    public function edit(Paiement $paiement)
-    {
-        return response()->json($paiement);
-    }
+   
 
     public function getPaiementDetails(Paiement $paiement)
     {
