@@ -17,7 +17,7 @@ class PaiementController extends Controller
             
         $candidats = User::where('role', 'candidat')->get();
         
-        return view('admin.paiements.index', compact('paiements', 'candidats'));
+        return view('admin.paiements', compact('paiements', 'candidats'));
     }
 
     public function adminQuickStore(Request $request)
@@ -39,7 +39,7 @@ class PaiementController extends Controller
             'admin_id' => Auth::id(),
         ]);
 
-        return redirect()->route('admin.paiements.index')
+        return redirect()->route('admin.paiements')
             ->with('success', 'Paiement enregistré avec succès');
     }
 
@@ -47,7 +47,7 @@ class PaiementController extends Controller
     {
         $paiement->delete();
         
-        return redirect()->route('admin.paiements.index')
+        return redirect()->route('admin.paiements')
             ->with('success', 'Paiement supprimé avec succès');
     }
 
@@ -61,6 +61,6 @@ class PaiementController extends Controller
         $montantTotal = Paiement::where('user_id', Auth::id())->latest()->first()->montant_total ?? 0;
         $montantRestant = max(0, $montantTotal - $totalPaye);
         
-        return view('candidat.paiements.index', compact('paiements', 'totalPaye', 'montantTotal', 'montantRestant'));
+        return view('candidats.paiements', compact('paiements', 'totalPaye', 'montantTotal', 'montantRestant'));
     }
 }

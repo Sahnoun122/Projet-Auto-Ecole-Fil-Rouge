@@ -2,6 +2,8 @@
 
 // namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use App\Models\Paiement;
+
 use Illuminate\Support\Facades\Auth; 
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\AdmindController;
@@ -24,6 +26,8 @@ use App\Http\Controllers\CoursConduiteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExamFeedbackController;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\PaiementController
+;
 
 use App\Http\Controllers\PresenceCoursController;
 
@@ -164,6 +168,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/exams/{exam}/results/{candidat}', [ExamController::class, 'updateResult'])->name('admin.exams.results.update');
     
     Route::get('/exams/{exam}/candidat/{candidat}/result', [ExamController::class, 'checkResult'])->name('admin.exams.results.check');
+
+    Route::get('/paiements', [PaiementController::class, 'adminIndex'])->name('admin.paiements');
+    Route::post('/paiements/quick-store', [PaiementController::class, 'adminQuickStore'])->name('admin.paiements.quick-store');
+    Route::delete('/paiements/{paiement}', [PaiementController::class, 'adminDestroy'])->name('admin.paiements.destroy');
+    Route::get('/paiements/{paiement}/details', function(Paiement $paiement) {
+        return view('admin.paiements.details', compact('paiement'));
+    });
+
+
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -235,7 +248,17 @@ Route::get('/cours/{course}/detail', [CourseController::class, 'showCourseDetail
             Route::post('/', [ExamFeedbackController::class, 'store'])->name('candidats.exams.feedback.store');
             Route::delete('/', [ExamFeedbackController::class, 'destroy'])->name('candidats.exams.feedback.destroy');
         });
+
+
     });
+
+        Route::get('/mes-paiements', [PaiementController::class, 'candidatIndex'])->name('candidats.paiements');
+        Route::get('/mes-paiements/{paiement}/details', function(Paiement $paiement) {
+            if ($paiement->user_id !== Auth::id()) {
+                abort(403);
+            }
+            return view('candidats.paiements.details', compact('paiement'));
+        });
 
 
     });
