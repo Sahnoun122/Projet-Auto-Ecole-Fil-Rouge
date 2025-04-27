@@ -426,7 +426,6 @@ $(document).ready(function() {
         width: 100% !important;
     }
     
-    /* Modal adjustments */
     #courseModal > div, #presenceModal > div {
         width: 95%;
         margin: 0 auto;

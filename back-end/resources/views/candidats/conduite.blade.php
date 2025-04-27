@@ -157,15 +157,17 @@ function showCourseDetails(courseId) {
     document.getElementById('modalLoading').classList.remove('hidden');
     document.getElementById('modalContent').classList.add('hidden');
     document.body.classList.add('overflow-hidden');
-
-    fetch(`/candidats/conduite/${courseId}`)
+    
+    fetch(`/candidats/conduite/${courseId}/show`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
+           
             return response.json();
         })
-        .then(data => {
+        .then(result => {
+            const data = result.data
             document.getElementById('modalDate').textContent = 
                 new Date(data.date_heure).toLocaleString('fr-FR');
             document.getElementById('modalDuree').textContent = 
@@ -177,7 +179,6 @@ function showCourseDetails(courseId) {
             document.getElementById('modalStatut').textContent = 
                 data.statut.charAt(0).toUpperCase() + data.statut.slice(1);
 
-            // Afficher la présence
             const presenceDiv = document.getElementById('modalPresence');
             if (data.presences && data.presences.length > 0) {
                 const presence = data.presences[0];
@@ -202,7 +203,6 @@ function showCourseDetails(courseId) {
                 `;
             }
 
-            // Afficher les notes si disponibles
             if (data.presences && data.presences.length > 0 && data.presences[0].notes) {
                 document.getElementById('notesSection').classList.remove('hidden');
                 document.getElementById('modalNotes').textContent = data.presences[0].notes;
