@@ -156,13 +156,13 @@
                 </div>
                 <div class="p-4 md:p-5 space-y-4">
                     <div class="flex justify-center items-center ">
-                        <img
+                        {{-- <img
                             id="detailModalImage"
                             class="w-80 h-80 object-cover rounded shadow-md"
                             src=""
                             onerror="this.src='{{ asset('course/') }}'"
                             alt="Image du cours"
-                        >
+                        > --}}
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <p class="text-gray-700 whitespace-pre-line" id="detailModalDescription"></p>

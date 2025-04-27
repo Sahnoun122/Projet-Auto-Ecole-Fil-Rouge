@@ -65,7 +65,7 @@
                                    class="text-[#4D44B5] hover:text-[#3a32a1] text-sm">
                                     <i class="fas fa-book-open mr-1"></i> {{ $title->courses_count }} cours
                                 </a>
-                                <a href="{{ route('admin.titles', ['tab' => 'progress']) }}" 
+                                <a href="{{ route('admin.progress', $title) }}" 
                                    class="text-purple-600 hover:text-purple-800 text-sm">
                                     <i class="fas fa-chart-line mr-1"></i> Progression
                                 </a>
@@ -110,8 +110,8 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidats</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progression</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidats Inscrits</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progression Globale</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -128,24 +128,30 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">
-                                        {{ $title->views()->distinct('user_id')->count() }} candidats
+                                        @php
+                                            $candidateCount = App\Models\User::where('role', 'candidat')
+                                                                            ->where('type_permis', $title->type_permis)
+                                                                            ->count();
+                                        @endphp
+                                        {{ $candidateCount }} candidat{{ $candidateCount > 1 ? 's' : '' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="w-full bg-gray-200 rounded-full h-2.5">
                                         @php
-                                            $total = $title->courses()->count();
-                                            $completed = $title->views()->count();
-                                            $percentage = $total ? round(($completed / ($total * App\Models\User::where('role', 'candidat')->count())) * 100) : 0;
+                                            $totalCourses = $title->courses()->count();
+                                            $totalViews = $title->views()->count();
+                                            $totalPossibleViews = $totalCourses * $candidateCount;
+                                            $percentage = $totalPossibleViews ? round(($totalViews / $totalPossibleViews) * 100) : 0;
                                         @endphp
                                         <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: {{ $percentage }}%"></div>
                                     </div>
                                     <div class="text-xs text-gray-500 mt-1">{{ $percentage }}% complété</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('admin.titles', ['tab' => 'progress']) }}" 
+                                    <a href="{{ route('admin.progress', $title) }}" 
                                        class="text-[#4D44B5] hover:text-[#3a32a1]">
-                                        <i class="fas fa-eye mr-1"></i> Détails
+                                        <i class="fas fa-eye mr-1"></i> Voir détails
                                     </a>
                                 </td>
                             </tr>
@@ -169,6 +175,7 @@
     </main>
 </div>
 
+<!-- Modal pour nouveau/modifier titre -->
 <div id="titleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
         <div class="p-6">

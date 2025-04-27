@@ -5,17 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Title;
 use App\Models\CourseView;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Gate; 
 
 class CourseController extends Controller
 {
     public function index(Title $title)
     {
-        $courses = $title->courses()->with('title')->get();
+        $courses = $title->courses()->with('courseTitle')->get();
         return view('admin.courses', compact('title', 'courses'));
     }
 
@@ -96,22 +94,39 @@ class CourseController extends Controller
             'title' => $title,
             'courses' => $courses,
             'progress' => $progress,
-            'searchTerm' => $request->search,
+            'searchTerm' => $request->search ?? '', 
             'typePermis' => $user->type_permis
         ]);
     }
 
-    public function showCourseDetail(Course $course)
+    public function showCourseDetail($courseId)
     {
         $user = Auth::user();
+        
+        $course = Course::with('courseTitle')->find($courseId);
+        
+        if (!$course) {
+            return response()->json(['error' => 'Cours non trouvé'], 404);
+        }
+        
+        if (!$course->courseTitle) {
+            return response()->json(['error' => 'Ce cours n\'a pas de titre associé'], 404);
+        }
+        
+        if ($course->courseTitle->type_permis !== $user->type_permis) {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+
         $course->markAsViewed($user->id);
 
+        $progress = $course->courseTitle->getProgressForUser($user->id);
+
         return response()->json([
+            'id' => $course->id,
             'title' => $course->title,
             'description' => $course->description,
-            'image' => $course->image ? asset('storage/'.$course->image) : asset('images/default-course.png'),
-            'progress' => $course->title->getProgressForUser($user->id)
+            'image' => $course->image ? asset('storage/'.$course->image) : null,
+            'progress' => $progress
         ]);
     }
-
 }

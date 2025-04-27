@@ -112,7 +112,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/titles', [TitleController::class, 'store'])->name('admin.titles.store');
         Route::put('/titles/{title}', [TitleController::class, 'update'])->name('admin.titles.update');
         Route::delete('/titles/{title}', [TitleController::class, 'destroy'])->name('admin.titles.destroy');
-
+  
+        Route::get('titles/{title}/progress', [TitleController::class, 'progress'])
+        ->name('admin.progress');
+    
+    Route::get('titles/{title}/candidate/{candidate}/progress', [TitleController::class, 'candidateProgress'])
+        ->name('admin.candidate-progress');
+        
         Route::get('/titles/{title}/courses', [CourseController::class, 'index'])->name('admin.courses');
         Route::post('/titles/{title}/courses', [CourseController::class, 'store'])->name('admin.courses.store');
         Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
@@ -211,7 +217,7 @@ Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candi
     
 Route::get('/cours/{title}', [CourseController::class, 'showCourses'])->name('candidats.cours');
 
-Route::get('/cours/{cours}/detail', [CourseController::class, 'showCourseDetail'])->name('candidats.course.detail');
+Route::get('/cours/{course}/detail', [CourseController::class, 'showCourseDetail'])->name('candidats.cours');
 
 
      Route::get('/conduite', [CoursConduiteController::class, 'candidatIndex'])->name('candidats.conduite');

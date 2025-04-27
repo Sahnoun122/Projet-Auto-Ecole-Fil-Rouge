@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,9 +11,9 @@ class Course extends Model
 
     protected $fillable = ['title_id', 'admin_id', 'title', 'description', 'image'];
 
-    public function title()
+    public function courseTitle()
     {
-        return $this->belongsTo(Title::class);
+        return $this->belongsTo(Title::class, 'title_id');
     }
 
     public function views()
@@ -22,6 +23,14 @@ class Course extends Model
 
     public function markAsViewed($userId)
     {
-        return $this->views()->firstOrCreate(['user_id' => $userId]);
+        return $this->views()->firstOrCreate([
+            'user_id' => $userId,
+            'course_id' => $this->id
+        ]);
+    }
+
+    public function hasBeenViewedBy($userId)
+    {
+        return $this->views()->where('user_id', $userId)->exists();
     }
 }
