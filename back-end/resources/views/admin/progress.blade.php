@@ -123,7 +123,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('admin.titles.candidate-progress', [$title, $candidate]) }}" 
+                                <a href="{{ route('admin.candidate-progress', [$title, $candidate]) }}" 
                                    class="text-[#4D44B5] hover:text-[#3a32a1]">
                                     <i class="fas fa-eye mr-1"></i> Détails
                                 </a>
