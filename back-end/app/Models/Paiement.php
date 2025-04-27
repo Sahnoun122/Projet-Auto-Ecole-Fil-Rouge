@@ -13,19 +13,13 @@ class Paiement extends Model
         'user_id',
         'montant',
         'montant_total',
-        'methode',
-        'status',
         'date_paiement',
-        'reference',
         'description',
-        'admin_id',
-        'preuve_paiement',
-        'est_partiel'
+        'admin_id'
     ];
 
     protected $casts = [
-        'date_paiement' => 'datetime',
-        'est_partiel' => 'boolean'
+        'date_paiement' => 'date',
     ];
 
     public function candidat()
@@ -38,50 +32,37 @@ class Paiement extends Model
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    // Méthodes utilitaires
-    public function isCompleted()
+    public function getFormattedDateAttribute()
     {
-        return $this->status === 'complet';
+        return $this->date_paiement->format('d/m/Y');
     }
 
-    public function isPending()
+    public function getFormattedMontantAttribute()
     {
-        return $this->status === 'en_attente';
+        return number_format($this->montant, 2) . ' DH';
     }
 
-    public function isRejected()
+    public function getFormattedTotalAttribute()
     {
-        return $this->status === 'rejeté';
-    }
-
-    public function isPartial()
-    {
-        return $this->status === 'partiel';
-    }
-
-    public function getStatusBadgeAttribute()
-    {
-        $badges = [
-            'complet' => 'bg-green-100 text-green-800',
-            'en_attente' => 'bg-yellow-100 text-yellow-800',
-            'rejeté' => 'bg-red-100 text-red-800',
-            'partiel' => 'bg-blue-100 text-blue-800',
-        ];
-
-        return '<span class="px-2 py-1 text-xs font-semibold rounded-full ' . 
-               ($badges[$this->status] ?? 'bg-gray-100 text-gray-800') . '">' .
-               ucfirst(str_replace('_', ' ', $this->status)) . '</span>';
+        return number_format($this->montant_total, 2) . ' DH';
     }
 
     public function getMontantRestantAttribute()
     {
-        if ($this->montant_total) {
-            $totalPaye = self::where('user_id', $this->user_id)
-                ->whereIn('status', ['complet', 'partiel'])
-                ->sum('montant');
+        $totalPaye = Paiement::where('user_id', $this->user_id)
+            ->sum('montant');
+            
+        return max(0, $this->montant_total - $totalPaye);
+    }
 
-            return max(0, $this->montant_total - $totalPaye);
-        }
-        return 0;
+    public function getFormattedRestantAttribute()
+    {
+        return number_format($this->montant_restant, 2) . ' DH';
+    }
+
+    public function getPourcentagePayeAttribute()
+    {
+        if ($this->montant_total == 0) return 0;
+        return round(($this->montant / $this->montant_total) * 100, 2);
     }
 }
