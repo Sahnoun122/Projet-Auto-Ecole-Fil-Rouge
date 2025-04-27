@@ -167,15 +167,16 @@
                     <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
                 </a>
 
-                <form method="POST" action="{{ route('logout') }}" class="mt-auto">
-                    @csrf
-                    <button type="submit" class="sidebar-item flex items-center w-full px-4 py-3 text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
-                        </svg>
-                        <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
-                    </button>
-                </form>
+
+                <a href="{{ route('logout') }}"
+                class="sidebar-item flex items-center px-4 py-3 text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
+                </svg>
+                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
+             </a> 
+
+           
             </nav>
         </div>
 

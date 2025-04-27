@@ -49,10 +49,7 @@ class PaiementController extends Controller
             ->with('success', 'Paiement créé avec succès');
     }
 
-    public function show(Paiement $paiement)
-    {
-        return view('admin.paiements.show', compact('paiement'));
-    }
+  
 
     public function edit(Paiement $paiement)
     {

@@ -74,9 +74,7 @@
                                 {{ \Carbon\Carbon::parse($paiement->date_paiement)->format('d/m/Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button onclick="showPaiementDetails('{{ $paiement->id }}')" class="text-blue-500 hover:text-blue-700 mr-3" title="Voir détails">
-                                    <i class="fas fa-eye"></i>
-                                </button>
+                              
                                 <button onclick="editPaiement('{{ $paiement->id }}')" class="text-[#4D44B5] hover:text-[#3a32a1] mr-3" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -156,24 +154,7 @@
         </div>
     </div>
 
-    <div id="detailPaiementModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-white w-full max-w-2xl p-6 rounded-lg">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-bold">Détails du Paiement</h2>
-                <button onclick="document.getElementById('detailPaiementModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="detailPaiementContent">
-            </div>
-            <div class="mt-6 flex justify-end">
-                <button onclick="document.getElementById('detailPaiementModal').classList.add('hidden')" 
-                    class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition">
-                    Fermer
-                </button>
-            </div>
-        </div>
-    </div>
+  
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -182,7 +163,6 @@ $(document).ready(function() {
     const modal = $('#paiementModal');
     const form = $('#paiementForm');
 
-    // Nouveau paiement
     $('#newPaiementBtn').click(function() {
         $('#modalPaiementTitle').text('Nouveau Paiement');
         form.attr('action', "{{ route('admin.paiements.store') }}");
@@ -208,7 +188,6 @@ $(document).ready(function() {
                     $('#paiementMontant').val(paiement.montant);
                     $('#paiementTotal').val(paiement.montant_total);
                     
-                    // Gestion de la date
                     let datePaiement = '';
                     if(paiement.date_paiement) {
                         datePaiement = paiement.date_paiement.includes('T') 
