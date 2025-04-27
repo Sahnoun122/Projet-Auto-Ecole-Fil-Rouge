@@ -87,9 +87,7 @@
                                         <div class="text-sm font-medium text-gray-900">
                                             {{ $candidate->prenom }} {{ $candidate->nom }}
                                         </div>
-                                        <div class="text-sm text-gray-500">
-                                            ID: {{ $candidate->id }}
-                                        </div>
+                                     
                                     </div>
                                 </div>
                             </td>
