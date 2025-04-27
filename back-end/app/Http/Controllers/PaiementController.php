@@ -20,7 +20,7 @@ class PaiementController extends Controller
         return view('admin.paiements', compact('paiements', 'candidats'));
     }
 
-    public function adminQuickStore(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'candidat_id' => 'required|exists:users,id',
@@ -30,20 +30,29 @@ class PaiementController extends Controller
             'description' => 'nullable|string|max:500',
         ]);
 
-        Paiement::create([
+        $data = [
             'user_id' => $request->candidat_id,
             'montant' => $request->montant,
             'montant_total' => $request->montant_total,
             'date_paiement' => $request->date_paiement,
             'description' => $request->description,
             'admin_id' => Auth::id(),
-        ]);
+        ];
+
+        if ($request->has('id')) {
+            $paiement = Paiement::findOrFail($request->id);
+            $paiement->update($data);
+            $message = 'Paiement mis à jour avec succès';
+        } else {
+            Paiement::create($data);
+            $message = 'Paiement enregistré avec succès';
+        }
 
         return redirect()->route('admin.paiements')
-            ->with('success', 'Paiement enregistré avec succès');
+            ->with('success', $message);
     }
 
-    public function adminDestroy(Paiement $paiement)
+    public function destroy(Paiement $paiement)
     {
         $paiement->delete();
         
@@ -62,5 +71,19 @@ class PaiementController extends Controller
         $montantRestant = max(0, $montantTotal - $totalPaye);
         
         return view('candidats.paiements', compact('paiements', 'totalPaye', 'montantTotal', 'montantRestant'));
+    }
+
+    public function edit(Paiement $paiement)
+    {
+        return response()->json($paiement);
+    }
+
+    public function getPaiementDetails(Paiement $paiement)
+    {
+        if (Auth::user() && $paiement->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('partials.paiement-details', compact('paiement'));
     }
 }
