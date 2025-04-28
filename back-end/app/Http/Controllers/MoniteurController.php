@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Title;
+use App\Models\Quiz;
 
 use App\Models\CoursConduite;
 
@@ -190,6 +191,36 @@ class MoniteurController extends Controller
             ->get();
 
         return view('moniteur.cours', compact('candidat', 'titles'));
+    }
+
+    public function quiz(User $candidat)
+    {
+        $this->checkCandidatAssignement($candidat);
+
+        $quizzes = Quiz::where('type_permis', $candidat->type_permis)
+            ->with(['questions.answers' => function($query) use ($candidat) {
+                $query->where('candidat_id', $candidat->id)
+                    ->with('choice');
+            }])
+            ->withCount(['questions', 
+                'questions as correct_answers_count' => function($query) use ($candidat) {
+                    $query->whereHas('answers', function($q) use ($candidat) {
+                        $q->where('candidat_id', $candidat->id)
+                            ->whereHas('choice', function($q) {
+                                $q->where('is_correct', true);
+                            });
+                    });
+                }
+            ])
+            ->get()
+            ->map(function($quiz) {
+                $quiz->score = $quiz->correct_answers_count;
+                $quiz->total_questions = $quiz->questions_count;
+                $quiz->passed = $quiz->score >= Quiz::PASSING_SCORE;
+                return $quiz;
+            });
+
+        return view('moniteur.quiz', compact('candidat', 'quizzes'));
     }
     private function checkCandidatAssignement(User $candidat)
     {
