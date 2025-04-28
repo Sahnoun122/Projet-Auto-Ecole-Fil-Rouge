@@ -273,6 +273,11 @@ Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function
 
          Route::get('/vehicles', [VehicleController::class, 'indexMoniteur'])->name('moniteur.vehicles');
 
+         Route::get('/candidats', [MoniteurController::class, 'candidats'])->name('moniteur.candidats');
+         Route::get('/candidats/{candidat}/progression', [MoniteurController::class, 'progression'])->name('moniteur.progression');
+         Route::get('/candidats/{candidat}/cours', [MoniteurController::class, 'cours'])->name('moniteur.cours');
+         Route::get('/candidats/{candidat}/quiz', [MoniteurController::class, 'quiz'])->name('moniteur.quiz');
+
 });
 
 
