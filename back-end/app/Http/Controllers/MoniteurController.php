@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Storage;
 
 class MoniteurController extends Controller
@@ -137,5 +139,28 @@ class MoniteurController extends Controller
         $monitor->delete();
 
         return redirect()->route('admin.monitors.index')->with('success', 'Moniteur supprimé avec succès');
+    }
+
+
+    //candiadts 
+
+    public function candidats(Request $request)
+    {
+        $search = $request->input('search');
+        
+        $candidats = User::where('role', 'candidat')
+            ->whereHas('coursConduites', function($query) {
+                $query->where('moniteur_id', Auth::id());
+            })
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('nom', 'like', "%$search%")
+                      ->orWhere('prenom', 'like', "%$search%")
+                      ->orWhere('email', 'like', "%$search%");
+                });
+            })
+            ->paginate(10);
+
+        return view('moniteur.candidats', compact('candidats', 'search'));
     }
 }
