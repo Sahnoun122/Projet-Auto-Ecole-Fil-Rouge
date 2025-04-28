@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Title;
 use App\Models\Quiz;
+use App\Models\Exam;
 
 use App\Models\CoursConduite;
 
@@ -241,4 +242,83 @@ class MoniteurController extends Controller
             abort(403, "Ce candidat ne vous est pas assigné");
         }
     }
+
+    public function indexExms(Request $request)
+    {
+        $search = $request->input('search');
+        
+        $exams = Exam::whereHas('candidat', function($query) {
+                $query->whereHas('coursConduites', function($q) {
+                    $q->where('moniteur_id', Auth::id());
+                });
+            })
+            ->with(['candidat', 'participants'])
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('lieu', 'like', "%{$search}%")
+                      ->orWhere('type', 'like', "%{$search}%")
+                      ->orWhere('statut', 'like', "%{$search}%")
+                      ->orWhereHas('candidat', function($q) use ($search) {
+                          $q->where('nom', 'like', "%{$search}%")
+                            ->orWhere('prenom', 'like', "%{$search}%");
+                      });
+                });
+            })
+            ->orderBy('date_exam', 'desc')
+            ->paginate(10);
+
+        return view('moniteur.exams', compact('exams', 'search'));
+    }
+
+    public function showExam(Exam $exam)
+    {
+        $this->checkMoniteurAssignment($exam->candidat_id);
+
+        $exam->load(['candidat', 'participants']);
+        
+        return view('moniteur.exams.show', compact('exam'));
+    }
+
+    public function results(Exam $exam)
+    {
+        $this->checkMoniteurAssignment($exam->candidat_id);
+
+        $results = $exam->participants()
+            ->whereHas('coursConduites', function($query) {
+                $query->where('moniteur_id', Auth::id());
+            })
+            ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+            ->get();
+
+        return view('moniteur.results', compact('exam', 'results'));
+    }
+
+    public function showResult(Exam $exam, User $candidat)
+    {
+        $this->checkMoniteurAssignment($candidat->id);
+
+        $result = $exam->participants()
+            ->where('user_id', $candidat->id)
+            ->first();
+
+        if (!$result) {
+            abort(404, "Aucun résultat trouvé pour ce candidat");
+        }
+
+        return view('moniteur.result-details', compact('exam', 'candidat', 'result'));
+    }
+
+    private function checkMoniteurAssignment($candidatId)
+    {
+        $isAssigned = User::where('id', $candidatId)
+            ->whereHas('coursConduites', function($query) {
+                $query->where('moniteur_id', Auth::id());
+            })
+            ->exists();
+
+        if (!$isAssigned) {
+            abort(403, "Vous n'êtes pas autorisé à voir les informations de ce candidat");
+        }
+    }
+
 }
