@@ -278,6 +278,12 @@ Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function
          Route::get('/candidats/{candidat}/cours', [MoniteurController::class, 'cours'])->name('moniteur.cours');
          Route::get('/candidats/{candidat}/quiz', [MoniteurController::class, 'quiz'])->name('moniteur.quiz');
 
+
+         Route::get('/exams', [MoniteurController::class, 'indexExam'])->name('moniteur.exams');
+         Route::get('/exams/{exam}', [MoniteurController::class, 'showExam'])->name('moniteur.exams.show');
+         Route::get('/exams/{exam}/results', [MoniteurController::class, 'results'])->name('moniteur.exams.results');
+         Route::get('/exams/{exam}/results/{candidat}', [MoniteurController::class, 'showResult'])->name('moniteur.exams.results.show');
+
 });
 
 

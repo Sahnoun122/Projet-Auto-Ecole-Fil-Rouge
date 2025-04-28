@@ -243,7 +243,7 @@ class MoniteurController extends Controller
         }
     }
 
-    public function indexExms(Request $request)
+    public function indexExm(Request $request)
     {
         $search = $request->input('search');
         

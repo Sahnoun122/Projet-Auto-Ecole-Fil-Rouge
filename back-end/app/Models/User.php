@@ -130,6 +130,22 @@ public function coursSupplementaires()
         'cours_conduite_id'
     );
 }
+
+        public function examsAsCandidate()
+        {
+            return $this->hasMany(Exam::class, 'candidat_id');
+        }
+
+        public function examResults()
+        {
+            return $this->hasMany(ExamResult::class, 'candidat_id');
+        }
+
+        public function examsParticipated()
+        {
+            return $this->belongsToMany(Exam::class, 'exam_user', 'candidat_id', 'exam_id')
+                        ->withPivot(['present', 'resultat', 'score', 'feedbacks']);
+        }
     /**
      * Retourne l'identifiant unique de l'utilisateur pour le JWT
      *

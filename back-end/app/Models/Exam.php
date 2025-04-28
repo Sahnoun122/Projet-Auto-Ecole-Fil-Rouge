@@ -68,4 +68,6 @@ class Exam extends Model
 {
     return $this->hasMany(ExamFeedback::class);
 }
+
+
 }
