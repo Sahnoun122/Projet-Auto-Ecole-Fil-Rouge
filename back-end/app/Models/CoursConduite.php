@@ -51,4 +51,10 @@ class CoursConduite extends Model
     {
         return $this->belongsTo(User::class, 'candidat_id');
     }
+
+    public function candidatsAssignes()
+    {
+        return $this->belongsToMany(User::class, 'presences_cours', 'cours_conduite_id', 'candidat_id')
+                    ->where('role', 'candidat');
+    }
 }

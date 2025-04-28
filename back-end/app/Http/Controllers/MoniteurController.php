@@ -154,8 +154,13 @@ class MoniteurController extends Controller
         $search = $request->input('search');
         
         $candidats = User::where('role', 'candidat')
-            ->whereHas('coursConduites', function($query) {
-                $query->where('moniteur_id', Auth::id());
+            ->where(function($query) {
+                $query->whereHas('coursPrincipaux', function($q) {
+                        $q->where('moniteur_id', Auth::id());
+                    })
+                    ->orWhereHas('coursConduites', function($q) {
+                        $q->where('moniteur_id', Auth::id());
+                    });
             })
             ->when($search, function($query) use ($search) {
                 $query->where(function($q) use ($search) {
@@ -165,7 +170,7 @@ class MoniteurController extends Controller
                 });
             })
             ->paginate(10);
-
+    
         return view('moniteur.candidats', compact('candidats', 'search'));
     }
 

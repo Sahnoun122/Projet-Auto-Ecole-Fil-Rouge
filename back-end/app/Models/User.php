@@ -98,6 +98,29 @@ public function courseViews()
 }
 
 
+public function coursPrincipaux()
+{
+    return $this->hasMany(CoursConduite::class, 'candidat_id');
+}
+
+
+public function coursConduites()
+{
+    return $this->belongsToMany(CoursConduite::class, 'presences_cours', 'candidat_id', 'cours_conduite_id')
+               ->withPivot('present', 'notes');
+}
+
+
+public function tousLesCoursConduites()
+{
+    return CoursConduite::where(function($query) {
+        $query->where('candidat_id', $this->id)
+              ->orWhereHas('candidats', function($q) {
+                  $q->where('users.id', $this->id);
+              });
+    });
+}
+
 public function coursSupplementaires()
 {
     return $this->belongsToMany(
