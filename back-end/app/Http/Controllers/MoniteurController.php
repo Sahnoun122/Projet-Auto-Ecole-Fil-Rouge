@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Title;
+
+use App\Models\CoursConduite;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -162,5 +166,43 @@ class MoniteurController extends Controller
             ->paginate(10);
 
         return view('moniteur.candidats', compact('candidats', 'search'));
+    }
+
+
+    public function progression(User $candidat)
+    {
+        $this->checkCandidatAssignement($candidat);
+
+        return view('moniteur.progression', compact('candidat'));
+    }
+
+    public function cours(User $candidat)
+    {
+        $this->checkCandidatAssignement($candidat);
+
+        $titles = Title::where('type_permis', $candidat->type_permis)
+            ->with(['courses' => function($query) use ($candidat) {
+                $query->withCount(['views as viewed' => function($q) use ($candidat) {
+                    $q->where('user_id', $candidat->id);
+                }]);
+            }])
+            ->withCount('courses')
+            ->get();
+
+        return view('moniteur.cours', compact('candidat', 'titles'));
+    }
+    private function checkCandidatAssignement(User $candidat)
+    {
+        if ($candidat->role !== 'candidat' || 
+            !CoursConduite::where('moniteur_id', Auth::id())
+                ->where(function($q) use ($candidat) {
+                    $q->where('candidat_id', $candidat->id)
+                      ->orWhereHas('candidats', function($q) use ($candidat) {
+                          $q->where('users.id', $candidat->id);
+                      });
+                })
+                ->exists()) {
+            abort(403, "Ce candidat ne vous est pas assigné");
+        }
     }
 }
