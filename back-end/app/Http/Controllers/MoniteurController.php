@@ -19,17 +19,11 @@ use Illuminate\Support\Facades\Storage;
 class MoniteurController extends Controller
 {
     
-    public function dashboard()
-    {
-        return view('moniteur.dashboard'); 
-    }
-    
-
-    public function index(Request $request)
+ public function index(Request $request)
     {
         $search = $request->input('search');
         
-        $monitors = User::where('role', 'moniteur')
+        $moniteurs = User::where('role', 'moniteur')
             ->when($search, function($query) use ($search) {
                 return $query->where('nom', 'like', "%$search%")
                              ->orWhere('prenom', 'like', "%$search%")
@@ -40,7 +34,7 @@ class MoniteurController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
     
-        return view('admin.monitors', compact('monitors'));
+        return view('admin.moniteurs', compact('moniteurs'));
     }
 
     public function store(Request $request)
@@ -59,38 +53,38 @@ class MoniteurController extends Controller
             'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'],
         ]);
 
-        $validated['photo_profile'] = $request->file('photo_profile')->store('monitors/profile', 'public');
-        $validated['photo_identite'] = $request->file('photo_identite')->store('monitors/identite', 'public');
-        $validated['certifications'] = $request->file('certifications')->store('monitors/certifications', 'public');
-        $validated['qualifications'] = $request->file('qualifications')->store('monitors/qualifications', 'public');
+        $validated['photo_profile'] = $request->file('photo_profile')->store('moniteurs/profile', 'public');
+        $validated['photo_identite'] = $request->file('photo_identite')->store('moniteurs/identite', 'public');
+        $validated['certifications'] = $request->file('certifications')->store('moniteurs/certifications', 'public');
+        $validated['qualifications'] = $request->file('qualifications')->store('moniteurs/qualifications', 'public');
         $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = 'moniteur';
 
         User::create($validated);
 
-        return redirect()->route('admin.monitors.index')->with('success', 'Moniteur ajouté avec succès');
+        return redirect()->route('admin.moniteurs.index')->with('success', 'Moniteur ajouté avec succès');
     }
 
     public function show($id)
     {
-        $monitor = User::findOrFail($id);
-        return response()->json($monitor);
+        $moniteur = User::findOrFail($id);
+        return response()->json($moniteur);
     }
 
     public function edit($id)
     {
-        $monitor = User::findOrFail($id);
-        return response()->json($monitor);
+        $moniteur = User::findOrFail($id);
+        return response()->json($moniteur);
     }
 
     public function update(Request $request, $id)
     {
-        $monitor = User::findOrFail($id);
+        $moniteur = User::findOrFail($id);
 
         $rules = [
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $monitor->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $moniteur->id,
             'adresse' => 'required|string|max:255',
             'telephone' => 'required|string|max:20',
             'type_permis' => 'required|string|max:255',
@@ -112,40 +106,41 @@ class MoniteurController extends Controller
         $data = $request->validate($rules);
 
         if ($request->hasFile('photo_profile')) {
-            Storage::disk('public')->delete($monitor->photo_profile);
-            $data['photo_profile'] = $request->file('photo_profile')->store('monitors/profile', 'public');
+            Storage::disk('public')->delete($moniteur->photo_profile);
+            $data['photo_profile'] = $request->file('photo_profile')->store('moniteurs/profile', 'public');
         }
         if ($request->hasFile('photo_identite')) {
-            Storage::disk('public')->delete($monitor->photo_identite);
-            $data['photo_identite'] = $request->file('photo_identite')->store('monitors/identite', 'public');
+            Storage::disk('public')->delete($moniteur->photo_identite);
+            $data['photo_identite'] = $request->file('photo_identite')->store('moniteurs/identite', 'public');
         }
         if ($request->hasFile('certifications')) {
-            Storage::disk('public')->delete($monitor->certifications);
-            $data['certifications'] = $request->file('certifications')->store('monitors/certifications', 'public');
+            Storage::disk('public')->delete($moniteur->certifications);
+            $data['certifications'] = $request->file('certifications')->store('moniteurs/certifications', 'public');
         }
         if ($request->hasFile('qualifications')) {
-            Storage::disk('public')->delete($monitor->qualifications);
-            $data['qualifications'] = $request->file('qualifications')->store('monitors/qualifications', 'public');
+            Storage::disk('public')->delete($moniteur->qualifications);
+            $data['qualifications'] = $request->file('qualifications')->store('moniteurs/qualifications', 'public');
         }
 
-        $monitor->update($data);
+        $moniteur->update($data);
 
-        return redirect()->route('admin.monitors.index')->with('success', 'Moniteur mis à jour avec succès');
+        return redirect()->route('admin.moniteurs.index')->with('success', 'Moniteur mis à jour avec succès');
     }
 
     public function destroy($id)
     {
-        $monitor = User::findOrFail($id);
-                Storage::disk('public')->delete([
-            $monitor->photo_profile,
-            $monitor->photo_identite,
-            $monitor->certifications,
-            $monitor->qualifications
+        $moniteur = User::findOrFail($id);
+        
+        Storage::disk('public')->delete([
+            $moniteur->photo_profile,
+            $moniteur->photo_identite,
+            $moniteur->certifications,
+            $moniteur->qualifications
         ]);
         
-        $monitor->delete();
+        $moniteur->delete();
 
-        return redirect()->route('admin.monitors.index')->with('success', 'Moniteur supprimé avec succès');
+        return redirect()->route('admin.moniteurs.index')->with('success', 'Moniteur supprimé avec succès');
     }
 
 

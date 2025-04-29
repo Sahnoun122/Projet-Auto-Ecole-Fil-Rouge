@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\NouveauCoursConduiteCandidat;
 use App\Notifications\NouveauCoursConduiteMoniteur;
+use Illuminate\Support\Facades\Log;  
 
 class CoursConduiteController extends Controller
 {
@@ -93,7 +94,6 @@ class CoursConduiteController extends Controller
             'statut' => 'required|in:planifie,termine,annule',
         ]);
     
-        // Création du cours
         $cours = CoursConduite::create([
             'date_heure' => $validated['date_heure'],
             'duree_minutes' => $validated['duree_minutes'],
@@ -104,12 +104,10 @@ class CoursConduiteController extends Controller
             'statut' => $validated['statut'],
         ]);
     
-        // Ajout des candidats supplémentaires
         if (!empty($validated['candidat_ids'])) {
             $cours->candidats()->sync($validated['candidat_ids']);
         }
     
-        // Envoi des notifications
         $this->envoyerNotifications($cours);
     
         return redirect()->route('admin.conduite')
@@ -132,7 +130,6 @@ class CoursConduiteController extends Controller
         $coursConduite->update($validated);
         $coursConduite->candidats()->sync($validated['candidat_ids'] ?? []);
     
-        // Envoi des notifications seulement si des champs importants ont changé
         if ($coursConduite->wasChanged(['date_heure', 'moniteur_id', 'vehicule_id', 'candidat_id'])) {
             $this->envoyerNotifications($coursConduite, true);
         }
@@ -150,19 +147,16 @@ class CoursConduiteController extends Controller
     protected function envoyerNotifications(CoursConduite $cours, bool $isUpdate = false)
     {
         try {
-            // Notification au moniteur
             $moniteur = User::find($cours->moniteur_id);
             if ($moniteur && $moniteur->email_notifications) {
                 $moniteur->notify(new NouveauCoursConduiteMoniteur($cours, $isUpdate));
             }
     
-            // Notification au candidat principal
             $candidatPrincipal = User::find($cours->candidat_id);
             if ($candidatPrincipal && $candidatPrincipal->email_notifications) {
                 $candidatPrincipal->notify(new NouveauCoursConduiteCandidat($cours, $isUpdate));
             }
     
-            // Notifications aux candidats supplémentaires
             $autresCandidats = User::whereIn('id', $cours->candidats->pluck('id'))
                 ->where('id', '!=', $cours->candidat_id)
                 ->where('email_notifications', true)
@@ -176,7 +170,6 @@ class CoursConduiteController extends Controller
     
         } catch (\Exception $e) {
             Log::error('Erreur lors de l\'envoi des notifications: '.$e->getMessage());
-            // Vous pouvez choisir de ne pas interrompre le flux en cas d'erreur de notification
         }
     }
 
