@@ -55,7 +55,7 @@
                                 <span class="inline-block px-3 py-1 bg-purple-100 text-[#4D44B5] text-xs font-medium rounded-full mb-3">
                                     Permis {{ $title->type_permis }}
                                 </span>
-                                <h3 class="text-xl font-bold text-gray-800">{{ $title->name }}</h3>
+                                <a href="{{ route('admin.courses' , $title->id)}}"><h3 class="text-xl font-bold text-gray-800">{{ $title->name }}</h3>                                </a>
                             </div>
                         </div>
                         

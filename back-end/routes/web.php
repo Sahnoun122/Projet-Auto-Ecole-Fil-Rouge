@@ -71,7 +71,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/candidats', [CandidatsController::class, 'index'])->name('admin.candidats');
     Route::get('/candidats/create', [CandidatsController::class, 'create'])->name('admin.candidats.create');
     Route::post('/candidats/store', [CandidatsController::class, 'store'])->name('admin.candidats.store');
-    Route::get('/candidats/edit/{id}', [CandidatsController::class, 'edit'])->name('admin.candidats.edit');
+    Route::get('/candidats/{id}/edit', [CandidatsController::class, 'edit'])->name('admin.candidats.edit');
     Route::put('/candidats/update/{id}', [CandidatsController::class, 'update'])->name('admin.candidats.update');
     Route::delete('/candidats/destroy/{id}', [CandidatsController::class, 'destroy'])->name('admin.candidats.destroy');
     Route::get('/candidats/{id}', [CandidatsController::class, 'show'])->name('admin.candidats.show');

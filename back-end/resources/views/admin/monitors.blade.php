@@ -92,7 +92,6 @@
                     </div>
                 </main>
             
-                <!-- Modal pour ajout/modification -->
                 <div id="monitorModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                     <div class="bg-white w-full max-w-2xl p-6 rounded-lg">
                         <h2 id="modalTitle" class="text-lg font-bold mb-4">Nouveau Moniteur</h2>
@@ -202,7 +201,6 @@
                     </div>
                 </div>
             
-                <!-- Modal pour afficher les détails -->
                 <div id="detailModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                     <div class="bg-white w-full max-w-2xl p-6 rounded-lg">
                         <div class="flex justify-between items-center mb-4">
@@ -277,7 +275,6 @@
                 const form = $('#monitorForm');
                 const passwordField = $('#passwordField');
             
-                // Nouveau moniteur
                 $('#newMonitorBtn').click(function() {
                     $('#modalTitle').text('Nouveau Moniteur');
                     form.attr('action', "{{ route('admin.monitors.store') }}");
@@ -287,7 +284,6 @@
                     passwordField.show();
                     $('#monitorPassword').attr('required', true);
                     
-                    // Cacher les prévisualisations
                     $('[id^="current"]').addClass('hidden');
                     
                     modal.removeClass('hidden');
@@ -306,7 +302,6 @@
                             $('#detailPermisType').text(data.type_permis);
                             $('#detailDateInscription').text(new Date(data.created_at).toLocaleDateString());
                             
-                            // Afficher les fichiers
                             if(data.photo_profile) {
                                 $('#detailPhotoProfile').attr('src', "{{ asset('storage') }}/" + data.photo_profile);
                             }
@@ -320,7 +315,6 @@
                                 $('#detailQualifications').attr('href', "{{ asset('storage') }}/" + data.qualifications);
                             }
                             
-                            // Afficher la modal
                             document.getElementById('detailModal').classList.remove('hidden');
                         },
                         error: function(xhr) {
@@ -348,7 +342,6 @@
                             $('#monitorAdresse').val(data.adresse);
                             $('#monitorPermisType').val(data.type_permis);
                             
-                            // Afficher les fichiers actuels
                             if(data.photo_profile) {
                                 $('#currentPhotoProfile').removeClass('hidden');
                                 $('#photoProfilePreview').attr('src', "{{ asset('storage') }}/" + data.photo_profile);
