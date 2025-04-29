@@ -70,12 +70,6 @@ class User extends Authenticatable implements JWTSubject
     //                 ->withTimestamps();
     // }
 
-    public function exams()
-{
-    return $this->belongsToMany(Exam::class, 'exam_user') 
-        ->withPivot(['present', 'resultat', 'score', 'feedbacks', 'observations'])
-        ->withTimestamps();
-}
 
 public function coursCommeMoniteur()
 {
@@ -131,21 +125,27 @@ public function coursSupplementaires()
     );
 }
 
-        public function examsAsCandidate()
-        {
-            return $this->hasMany(Exam::class, 'candidat_id');
-        }
+  
+public function exams()
+{
+    return $this->belongsToMany(Exam::class, 'exam_results', 'user_id', 'exam_id')
+        ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+        ->withTimestamps();
+}
 
-        public function examResults()
-        {
-            return $this->hasMany(ExamResult::class, 'candidat_id');
-        }
+public function examsParticipated()
+{
+    return $this->belongsToMany(Exam::class, 'exam_results', 'user_id', 'exam_id')
+        ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+        ->withTimestamps()
+        ->as('result');
+}
 
-        public function examsParticipated()
-        {
-            return $this->belongsToMany(Exam::class, 'exam_user', 'candidat_id', 'exam_id')
-                        ->withPivot(['present', 'resultat', 'score', 'feedbacks']);
-        }
+
+    public function moniteurCours()
+    {
+        return $this->hasMany(CoursConduite::class, 'moniteur_id');
+    }
     /**
      * Retourne l'identifiant unique de l'utilisateur pour le JWT
      *

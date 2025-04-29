@@ -1,9 +1,7 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\ExamFeedback;
 use Illuminate\Http\Request;
@@ -49,5 +47,12 @@ class ExamFeedbackController extends Controller
             'success' => true,
             'message' => 'Feedback supprimé avec succès!'
         ]);
+    }
+
+    public function adminIndex(Exam $exam)
+    {
+        $feedbacks = $exam->feedbacks()->with('candidat')->get();
+        
+        return view('admin.exams.feedbacks', compact('exam', 'feedbacks'));
     }
 }

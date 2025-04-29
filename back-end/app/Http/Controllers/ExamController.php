@@ -1,43 +1,47 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
 use App\Models\User;
+use App\Models\ExamResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Notifications\ExamScheduled;
 use App\Notifications\ExamResultPublished;
 
 class ExamController extends Controller
 {
-    public function index()
-    {
-        $search = request('search');
-        
-        $exams = Exam::with(['admin', 'candidat', 'participants'])
-            ->when($search, function($query) use ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('lieu', 'like', "%{$search}%")
-                      ->orWhere('type', 'like', "%{$search}%")
-                      ->orWhere('statut', 'like', "%{$search}%")
-                      ->orWhereHas('candidat', function($q) use ($search) {
-                          $q->where('nom', 'like', "%{$search}%")
-                            ->orWhere('prenom', 'like', "%{$search}%");
-                      });
-                });
-            })
-            ->latest()
-            ->paginate(10);
 
-        $candidats = User::where('role', 'candidat')->get(['id', 'nom', 'prenom']);
-        
+    public function index(Request $request)
+    {
+        $query = Exam::with(['admin', 'candidat', 'examResults']);
+
+        // Filtres de recherche
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('lieu', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%")
+                  ->orWhere('statut', 'like', "%{$search}%")
+                  ->orWhereHas('candidat', function($subQuery) use ($search) {
+                      $subQuery->where('nom', 'like', "%{$search}%")
+                               ->orWhere('prenom', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($type = $request->input('type')) {
+            $query->where('type', $type);
+        }
+
+        if ($statut = $request->input('statut')) {
+            $query->where('statut', $statut);
+        }
+
+        $exams = $query->latest()->paginate(10);
+        $candidats = User::where('role', 'candidat')->get();
+
         return view('admin.exams', compact('exams', 'candidats'));
-    }
-
-    public function create()
-    {
-        return redirect()->route('admin.exams');
     }
 
     public function store(Request $request)
@@ -52,23 +56,29 @@ class ExamController extends Controller
             'statut' => 'required|in:planifie,en_cours,termine,annule'
         ]);
 
-        $exam = Exam::create([
-            ...$validated,
-            'admin_id' => Auth::id()
-        ]);
+        try {
+            DB::beginTransaction();
 
-        if ($exam->candidat_id) {
-            $exam->candidat->notify(new ExamScheduled($exam));
+            $exam = Exam::create([
+                ...$validated,
+                'admin_id' => Auth::id()
+            ]);
+
+            if ($exam->candidat_id) {
+                $exam->candidat->notify(new ExamScheduled($exam));
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.exams')
+                ->with('success', 'Examen créé avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Erreur lors de la création de l\'examen : ' . $e->getMessage());
         }
-
-        return redirect()->route('admin.exams')->with('success', 'Examen créé avec succès');
     }
 
-    public function edit(Exam $exam)
-    {
-        $candidats = User::where('role', 'candidat')->get(['id', 'nom', 'prenom']);
-        return view('admin.exams.edit', compact('exam', 'candidats'));
-    }
+
 
     public function update(Request $request, Exam $exam)
     {
@@ -82,121 +92,138 @@ class ExamController extends Controller
             'statut' => 'required|in:planifie,en_cours,termine,annule'
         ]);
 
-        $exam->update($validated);
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('admin.exams')->with('success', 'Examen mis à jour');
+            $exam->update([
+                ...$validated,
+                'admin_id' => $exam->admin_id ?? Auth::id()
+            ]);
+
+            if ($exam->candidat_id) {
+                $exam->candidat->notify(new ExamScheduled($exam));
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.exams')
+                ->with('success', 'Examen mis à jour avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Erreur lors de la mise à jour de l\'examen : ' . $e->getMessage());
+        }
     }
 
+ 
     public function destroy(Exam $exam)
     {
-        $exam->delete();
-        return redirect()->route('admin.exams')->with('success', 'Examen supprimé');
-    }
+        try {
+            DB::beginTransaction();
 
-    public function show(Exam $exam)
-    {
-        $exam->load(['candidat', 'participants']);
-        $results = $exam->participants;
-        
-        return view('admin.exams', compact('exam', 'results'));
-    }
+            $exam->delete();
 
-    public function createResult(Exam $exam)
-    {
-        $candidats = User::where('role', 'candidat')->get();
-        return view('admin.exams.results.create', compact('exam', 'candidats'));
-    }
+            DB::commit();
 
+            return redirect()->route('admin.exams')
+                ->with('success', 'Examen supprimé avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Erreur lors de la suppression de l\'examen : ' . $e->getMessage());
+        }
+    }
     public function storeResult(Request $request, Exam $exam)
     {
-        $data = $request->validate([
-            'exam_id' => 'required|exists:exams,id',
+        $validated = $request->validate([
             'candidat_id' => 'required|exists:users,id',
             'present' => 'required|boolean',
-            'resultat' => 'required|in:excellent,tres_bien,bien,moyen,insuffisant',
-            'score' => 'required|integer|min:0|max:100',
+            'score' => 'required_if:present,1|nullable|integer|min:0|max:100',
+            'resultat' => 'required_if:present,1|nullable|in:excellent,tres_bien,bien,moyen,insuffisant',
             'feedbacks' => 'nullable|string|max:500'
         ]);
-    
-        $exam->participants()->attach($data['candidat_id'], [
-            'present' => $data['present'],
-            'resultat' => $data['resultat'],
-            'score' => $data['score'],
-            'feedbacks' => $data['feedbacks'] ?? null
-        ]);
-    
-        $candidat = User::find($data['candidat_id']);
-        $candidat->notify(new ExamResultPublished($exam));
-    
-        return back()->with('success', 'Résultat enregistré !');
-    }
-    public function editResult(Exam $exam, User $candidat)
-    {
-        $result = $exam->participants()->where('user_id', $candidat->id)->first();
-        return view('admin.exams.results', compact('exam', 'candidat', 'result'));
+
+        try {
+            DB::beginTransaction();
+
+            $existingResult = ExamResult::where('exam_id', $exam->id)
+                ->where('user_id', $validated['candidat_id'])
+                ->first();
+
+            if ($existingResult) {
+                DB::rollBack();
+                return back()->with('error', 'Un résultat existe déjà pour ce candidat.');
+            }
+
+            $result = ExamResult::create([
+                'exam_id' => $exam->id,
+                'user_id' => $validated['candidat_id'],
+                'present' => $validated['present'],
+                'score' => $validated['present'] ? $validated['score'] : null,
+                'resultat' => $validated['present'] ? $validated['resultat'] : null,
+                'feedbacks' => $validated['feedbacks'] ?? null
+            ]);
+
+            $exam->updateStats();
+
+            $user = User::findOrFail($validated['candidat_id']);
+            $user->notify(new ExamResultPublished($exam));
+
+            DB::commit();
+
+            return back()->with('success', 'Résultat enregistré avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Erreur lors de l\'enregistrement du résultat : ' . $e->getMessage());
+        }
     }
 
     public function updateResult(Request $request, Exam $exam, User $candidat)
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             'present' => 'required|boolean',
-            'resultat' => 'required|in:excellent,tres_bien,bien,moyen,insuffisant',
-            'score' => 'required|integer|min:0|max:100',
+            'score' => 'required_if:present,1|nullable|integer|min:0|max:100',
+            'resultat' => 'required_if:present,1|nullable|in:excellent,tres_bien,bien,moyen,insuffisant',
             'feedbacks' => 'nullable|string|max:500'
         ]);
 
-        $exam->participants()->updateExistingPivot($candidat->id, $data);
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('admin.exams', $exam->id)
-            ->with('success', 'Résultat mis à jour !');
-    }
-    public function checkResult(Exam $exam, User $candidat)
-{
-    $result = $exam->participants()
-        ->where('user_id', $candidat->id)
-        ->first();
+            $result = ExamResult::where('exam_id', $exam->id)
+                ->where('user_id', $candidat->id)
+                ->firstOrFail();
 
-    return response()->json([
-        'exists' => $result !== null,
-        'result' => $result ? [
-            'present' => $result->pivot->present,
-            'score' => $result->pivot->score,
-            'resultat' => $result->pivot->resultat,
-            'feedbacks' => $result->pivot->feedbacks
-        ] : null
-    ]);
-}
+            $result->update([
+                'present' => $validated['present'],
+                'score' => $validated['present'] ? $validated['score'] : null,
+                'resultat' => $validated['present'] ? $validated['resultat'] : null,
+                'feedbacks' => $validated['feedbacks'] ?? null
+            ]);
 
-public function candidatExams()
-{
-    $user = Auth::id();
-    
-    $plannedExams = Exam::where('candidat_id', $user)
-                       ->orderBy('date_exam', 'asc')
-                       ->get();
+            $exam->updateStats();
 
-    $completedExams = Exam::where('candidat_id', $user)
-                         ->with(['participants' => function($query) use ($user) {
-                             $query->where('user_id', $user);
-                         }])
-                         ->orderBy('date_exam', 'desc')
-                         ->get();
+            DB::commit();
 
-    return view('candidats.exams', [
-        'plannedExams' => $plannedExams,
-        'completedExams' => $completedExams
-    ]);
-}
-public function showCandidatExam(Exam $exam)
-{
-    $user = Auth::id();
-    
-    if ($exam->candidat_id !== $user) {
-        abort(403);
+            return back()->with('success', 'Résultat mis à jour avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Erreur lors de la mise à jour du résultat : ' . $e->getMessage());
+        }
     }
 
-    $result = $exam->participants()->where('user_id', $user)->first();
+    public function checkResult(Exam $exam, User $user)
+    {
+        $result = ExamResult::where('exam_id', $exam->id)
+            ->where('user_id', $user->id)
+            ->first();
 
-    return view('candidats.exams.show', compact('exam', 'result'));
-}
+        return response()->json([
+            'exists' => $result !== null,
+            'result' => $result ? [
+                'present' => $result->present,
+                'score' => $result->score,
+                'resultat' => $result->resultat,
+                'feedbacks' => $result->feedbacks
+            ] : null
+        ]);
+    }
 }

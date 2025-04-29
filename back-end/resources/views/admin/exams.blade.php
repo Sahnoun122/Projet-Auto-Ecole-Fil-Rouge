@@ -12,21 +12,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        @if(session('success'))
-            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
-                <p>{{ session('success') }}</p>
-            </div>
-        @endif
-
-        @if($errors->any()))
-            <div class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    
 
         <div class="bg-white rounded-xl shadow overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
@@ -116,14 +102,13 @@
                                     '{{ $exam->statut }}',
                                     '{{ $exam->candidat ? $exam->candidat->prenom . ' ' . $exam->candidat->nom : 'Non assigné' }}',
                                     '{{ $exam->instructions }}',
-                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->score : '' }}',
-                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->resultat : '' }}',
-                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->feedbacks : '' }}',
-                                    '{{ $exam->participants->isNotEmpty() ? $exam->participants->first()->pivot->present : '' }}'
+                                    '{{ optional($exam->getResultDetailsForDisplay())['score'] ?? '' }}',
+                                    '{{ optional($exam->getResultDetailsForDisplay())['resultat'] ?? '' }}',
+                                    '{{ optional($exam->getResultDetailsForDisplay())['feedbacks'] ?? '' }}',
+                                    '{{ optional($exam->getResultDetailsForDisplay())['present'] === 'Présent' ? '1' : '0' }}'
                                 )" class="text-purple-500 hover:text-purple-700 mr-3">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                
                                 <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')

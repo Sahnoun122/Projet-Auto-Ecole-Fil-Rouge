@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Title;
 use App\Models\Quiz;
 use App\Models\Exam;
+use App\Models\ExamFeedback;
 
 use App\Models\CoursConduite;
 
@@ -190,7 +191,7 @@ class MoniteurController extends Controller
         $titles = Title::where('type_permis', $candidat->type_permis)
             ->with(['courses' => function($query) use ($candidat) {
                 $query->withCount(['views as viewed' => function($q) use ($candidat) {
-                    $q->where('user_id', $candidat->id);
+                    $q->where('candidat_id', $candidat->id);
                 }]);
             }])
             ->withCount('courses')
@@ -228,6 +229,8 @@ class MoniteurController extends Controller
 
         return view('moniteur.quiz', compact('candidat', 'quizzes'));
     }
+
+
     private function checkCandidatAssignement(User $candidat)
     {
         if ($candidat->role !== 'candidat' || 
@@ -243,82 +246,69 @@ class MoniteurController extends Controller
         }
     }
 
-    public function indexExm(Request $request)
+    public function candidatsWithExams(Request $request)
     {
         $search = $request->input('search');
         
-        $exams = Exam::whereHas('candidat', function($query) {
-                $query->whereHas('coursConduites', function($q) {
-                    $q->where('moniteur_id', Auth::id());
-                });
-            })
-            ->with(['candidat', 'participants'])
+        $candidatIds = $this->getAssignedCandidatIds();
+        
+        $candidats = User::where('role', 'candidat')
+            ->whereIn('id', $candidatIds)
+            ->withCount(['examsAsCandidate', 'examResults'])
             ->when($search, function($query) use ($search) {
                 $query->where(function($q) use ($search) {
-                    $q->where('lieu', 'like', "%{$search}%")
-                      ->orWhere('type', 'like', "%{$search}%")
-                      ->orWhere('statut', 'like', "%{$search}%")
-                      ->orWhereHas('candidat', function($q) use ($search) {
-                          $q->where('nom', 'like', "%{$search}%")
-                            ->orWhere('prenom', 'like', "%{$search}%");
-                      });
+                    $q->where('nom', 'like', "%$search%")
+                      ->orWhere('prenom', 'like', "%$search%")
+                      ->orWhere('email', 'like', "%$search%");
                 });
             })
-            ->orderBy('date_exam', 'desc')
+            ->orderBy('nom')
             ->paginate(10);
-
-        return view('moniteur.exams', compact('exams', 'search'));
+    
+        return view('moniteur.exams', compact('candidats', 'search'));
     }
-
-    public function showExam(Exam $exam)
+    
+    public function candidatExamResults(User $candidat)
     {
-        $this->checkMoniteurAssignment($exam->candidat_id);
-
-        $exam->load(['candidat', 'participants']);
+        $this->checkCandidatAssignment($candidat);
         
-        return view('moniteur.exams.show', compact('exam'));
-    }
-
-    public function results(Exam $exam)
-    {
-        $this->checkMoniteurAssignment($exam->candidat_id);
-
-        $results = $exam->participants()
-            ->whereHas('coursConduites', function($query) {
-                $query->where('moniteur_id', Auth::id());
+        $exams = Exam::where('candidat_id', $candidat->id)
+            ->orWhereHas('participants', function($q) use ($candidat) {
+                $q->where('candidat_id', $candidat->id);
             })
-            ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+            ->with(['participants' => function($q) use ($candidat) {
+                $q->where('candidat_id', $candidat->id);
+            }])
+            ->orderBy('date_exam', 'desc')
             ->get();
-
-        return view('moniteur.results', compact('exam', 'results'));
+        
+        $feedbacks = ExamFeedback::where('candidat_id', $candidat->id)
+            ->with('exam')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        $averageRating = $feedbacks->avg('school_rating');
+    
+        return view('moniteur.candidat-exam-results', compact('candidat', 'exams', 'feedbacks', 'averageRating'));
     }
-
-    public function showResult(Exam $exam, User $candidat)
+    
+    private function getAssignedCandidatIds()
     {
-        $this->checkMoniteurAssignment($candidat->id);
-
-        $result = $exam->participants()
-            ->where('user_id', $candidat->id)
-            ->first();
-
-        if (!$result) {
-            abort(404, "Aucun résultat trouvé pour ce candidat");
-        }
-
-        return view('moniteur.result-details', compact('exam', 'candidat', 'result'));
-    }
-
-    private function checkMoniteurAssignment($candidatId)
-    {
-        $isAssigned = User::where('id', $candidatId)
-            ->whereHas('coursConduites', function($query) {
-                $query->where('moniteur_id', Auth::id());
+        return CoursConduite::where('moniteur_id', Auth::id())
+            ->get()
+            ->flatMap(function($cours) {
+                return [$cours->candidat_id, ...$cours->candidats->pluck('id')];
             })
-            ->exists();
-
-        if (!$isAssigned) {
-            abort(403, "Vous n'êtes pas autorisé à voir les informations de ce candidat");
-        }
+            ->unique()
+            ->toArray();
     }
-
+    
+    private function checkCandidatAssignment(User $candidat)
+    {
+        $candidatIds = $this->getAssignedCandidatIds();
+        
+        if (!in_array($candidat->id, $candidatIds)) {
+            abort(403, "Ce candidat ne vous est pas assigné");
+        }
+}
 }
