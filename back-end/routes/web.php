@@ -63,6 +63,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/monitors', [MoniteurController::class, 'index'])->name('admin.monitors.index');
     Route::post('/monitors', [MoniteurController::class, 'store'])->name('admin.monitors.store');
+    Route::get('/monitors/{moniteur}/edit', [MoniteurController::class, 'edit'])->name('admin.monitors.edit');
     Route::put('/monitors/{monitor}', [MoniteurController::class, 'update'])->name('admin.monitors.update');
     Route::delete('/monitors/{monitor}', [MoniteurController::class, 'destroy'])->name('admin.monitors.destroy');
     Route::get('/monitors/{id}', [MoniteurController::class, 'show'])->name('admin.monitors.show');
