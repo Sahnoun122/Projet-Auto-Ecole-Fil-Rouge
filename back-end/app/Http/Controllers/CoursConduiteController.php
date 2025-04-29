@@ -184,4 +184,6 @@ class CoursConduiteController extends Controller
             ]
         ]);
     }
+
+    
 }

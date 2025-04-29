@@ -35,10 +35,7 @@ class CoursConduite extends Model
         return $this->belongsTo(Vehicle::class, 'vehicule_id');
     }
 
-    public function presences()
-    {
-        return $this->hasMany(PresenceCours::class, 'cours_conduite_id');
-    }
+ 
 
     public function candidats()
     {
@@ -57,4 +54,21 @@ class CoursConduite extends Model
         return $this->belongsToMany(User::class, 'presences_cours', 'cours_conduite_id', 'candidat_id')
                     ->where('role', 'candidat');
     }
+
+
+
+    public function presences()
+    {
+        return $this->hasMany(PresenceCours::class, 'cours_conduite_id');
+    }
+
+    public function getCandidatPresenceStatus($candidatId)
+    {
+        $presence = $this->presences()->where('candidat_id', $candidatId)->first();
+        return $presence ? [
+            'present' => $presence->present,
+            'notes' => $presence->notes
+        ] : null;
+    }
+
 }
