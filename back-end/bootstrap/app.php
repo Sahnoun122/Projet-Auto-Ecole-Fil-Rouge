@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'jwt' => \App\Http\Middleware\JwtMiddleware::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'notification.preferences' => \App\Http\Middleware\CheckNotificationPreferences::class,
+
 
         ]);
     })

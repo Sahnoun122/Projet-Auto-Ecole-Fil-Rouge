@@ -7,6 +7,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Hash;
+
 
 class NouveauCoursConduiteCandidat extends Notification implements ShouldQueue
 {
@@ -14,10 +16,16 @@ class NouveauCoursConduiteCandidat extends Notification implements ShouldQueue
 
     public $cours;
 
-    public function __construct(CoursConduite $cours)
-    {
-        $this->cours = $cours;
-    }
+  // Dans NouveauCoursConduiteCandidat et NouveauCoursConduiteMoniteur
+public $isUpdate;
+
+public function __construct(CoursConduite $cours, bool $isUpdate = false)
+{
+    $this->cours = $cours;
+    $this->isUpdate = $isUpdate;
+}
+
+
 
     public function via($notifiable)
     {
@@ -26,11 +34,17 @@ class NouveauCoursConduiteCandidat extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
+        $unsubscribeUrl = route('email.unsubscribe', [
+            'user' => $notifiable->id,
+            'token' => Hash::make($notifiable->id.$notifiable->email)
+        ]);
+    
         return (new MailMessage)
             ->subject('Nouveau cours de conduite programmé')
             ->markdown('emails.cours-conduite-candidat', [
                 'cours' => $this->cours,
-                'user' => $notifiable
+                'user' => $notifiable,
+                'unsubscribeUrl' => $unsubscribeUrl
             ]);
     }
 

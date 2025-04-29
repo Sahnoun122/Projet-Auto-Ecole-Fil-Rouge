@@ -165,7 +165,11 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
+                            @auth
+                            @if(auth()->user()->unreadNotifications->count() > 0)
                             <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                            @endif
+                            @endauth
                         </button>
                         
                         <div x-show="notificationsOpen" 
@@ -181,26 +185,69 @@
                                 <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
                             </div>
                             <div class="max-h-64 overflow-y-auto">
-                                <a href="#" class="block px-4 py-3 hover:bg-gray-50">
-                                    <p class="text-sm text-gray-900">Nouveau cours disponible</p>
-                                    <p class="text-xs text-gray-500">Il y a 5 minutes</p>
+                                @auth
+                                @forelse(auth()->user()->unreadNotifications as $notification)
+                                <a href="{{ $notification->data['url'] ?? '#' }}" 
+                                   class="block px-4 py-3 hover:bg-gray-50"
+                                   onclick="markAsRead('{{ $notification->id }}')">
+                                    <p class="text-sm text-gray-900">{{ $notification->data['message'] }}</p>
+                                    <p class="text-xs text-gray-500">
+                                        @if(isset($notification->data['type']) && $notification->data['type'] === 'nouveau_cours')
+                                        Cours le {{ \Carbon\Carbon::parse($notification->data['date_heure'])->format('d/m/Y H:i') }}
+                                        @endif
+                                        - {{ $notification->created_at->diffForHumans() }}
+                                    </p>
                                 </a>
-                                <a href="#" class="block px-4 py-3 hover:bg-gray-50">
-                                    <p class="text-sm text-gray-900">Examen programmé</p>
-                                    <p class="text-xs text-gray-500">Il y a 1 heure</p>
-                                </a>
-                                <a href="#" class="block px-4 py-3 hover:bg-gray-50">
-                                    <p class="text-sm text-gray-900">Résultat disponible</p>
-                                    <p class="text-xs text-gray-500">Il y a 3 heures</p>
-                                </a>
+                                @empty
+                                <div class="px-4 py-3">
+                                    <p class="text-sm text-gray-500">Aucune nouvelle notification</p>
+                                </div>
+                                @endforelse
+                                @else
+                                <div class="px-4 py-3">
+                                    <p class="text-sm text-gray-500">Connectez-vous pour voir les notifications</p>
+                                </div>
+                                @endauth
                             </div>
+                            @auth
                             <div class="px-4 py-2 border-t border-gray-100">
-                                <a href="#" class="text-sm text-[#4D44B5] hover:text-[#6058b8] font-medium">Voir toutes les notifications</a>
+                                <a href="{{ route('notifications.index') }}" class="text-sm text-[#4D44B5] hover:text-[#6058b8] font-medium">Voir toutes les notifications</a>
                             </div>
+                            @endauth
                         </div>
                     </div>
                 </div>
             </div>
+            
+            @push('scripts')
+            <script>
+            function markAsRead(notificationId) {
+                fetch(`/notifications/${notificationId}/mark-as-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        const notificationElement = document.querySelector(`a[onclick="markAsRead('${notificationId}')"]`);
+                        if (notificationElement) {
+                            notificationElement.remove();
+                        }
+                        
+                        const unreadCount = document.querySelectorAll('.max-h-64 a[onclick^="markAsRead"]').length;
+                        const badge = document.querySelector('.relative button svg + span');
+                        if (unreadCount === 0 && badge) {
+                            badge.remove();
+                        }
+                    }
+                }).catch(error => {
+                    console.error('Erreur:', error);
+                });
+            }
+            </script>
+            @endpush
             
             <div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
                 @yield('content')

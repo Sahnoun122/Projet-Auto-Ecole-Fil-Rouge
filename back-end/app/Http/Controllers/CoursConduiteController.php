@@ -80,85 +80,105 @@ class CoursConduiteController extends Controller
         ]);
     }
 
-
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'date_heure' => 'required|date',
-        'duree_minutes' => 'required|integer|min:30|max:240',
-        'moniteur_id' => 'required|exists:users,id',
-        'vehicule_id' => 'required|exists:vehicles,id',
-        'candidat_id' => 'required|exists:users,id',
-        'candidat_ids' => 'sometimes|array',
-        'candidat_ids.*' => 'exists:users,id',
-        'statut' => 'required|in:planifie,termine,annule',
-    ]);
-
-    $cours = CoursConduite::create([
-        'date_heure' => $validated['date_heure'],
-        'duree_minutes' => $validated['duree_minutes'],
-        'moniteur_id' => $validated['moniteur_id'],
-        'vehicule_id' => $validated['vehicule_id'],
-        'admin_id' => Auth::id(),
-        'candidat_id' => $validated['candidat_id'],
-        'statut' => $validated['statut'],
-    ]);
-
-    if (!empty($validated['candidat_ids'])) {
-        $cours->candidats()->sync($validated['candidat_ids']);
-    }
-
-    $moniteur = User::find($validated['moniteur_id']);
-    $moniteur->notify(new NouveauCoursConduiteMoniteur($cours));
-
-    $candidatPrincipal = User::find($validated['candidat_id']);
-    $candidatPrincipal->notify(new NouveauCoursConduiteCandidat($cours));
-
-    if (!empty($validated['candidat_ids'])) {
-        $autresCandidats = User::whereIn('id', $validated['candidat_ids'])->get();
-        foreach ($autresCandidats as $candidat) {
-            $candidat->notify(new NouveauCoursConduiteCandidat($cours));
-        }
-    }
-
-    return redirect()->route('admin.conduite')
-        ->with('success', 'Cours créé avec succès');
-}
-
-public function update(Request $request, CoursConduite $coursConduite)
-{
-    $validated = $request->validate([
-        'date_heure' => 'required|date',
-        'duree_minutes' => 'required|integer|min:30|max:240',
-        'moniteur_id' => 'required|exists:users,id',
-        'vehicule_id' => 'required|exists:vehicles,id',
-        'candidat_id' => 'required|exists:users,id',
-        'candidat_ids' => 'sometimes|array',
-        'candidat_ids.*' => 'exists:users,id',
-        'statut' => 'required|in:planifie,termine,annule',
-    ]);
-
-    $coursConduite->update($validated);
-    $coursConduite->candidats()->sync($validated['candidat_ids'] ?? []);
-
-    if ($coursConduite->wasChanged()) {
-        $moniteur = User::find($validated['moniteur_id']);
-        $moniteur->notify(new NouveauCoursConduiteMoniteur($coursConduite));
-
-        $candidatPrincipal = User::find($validated['candidat_id']);
-        $candidatPrincipal->notify(new NouveauCoursConduiteCandidat($coursConduite));
-
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'date_heure' => 'required|date',
+            'duree_minutes' => 'required|integer|min:30|max:240',
+            'moniteur_id' => 'required|exists:users,id',
+            'vehicule_id' => 'required|exists:vehicles,id',
+            'candidat_id' => 'required|exists:users,id',
+            'candidat_ids' => 'sometimes|array',
+            'candidat_ids.*' => 'exists:users,id',
+            'statut' => 'required|in:planifie,termine,annule',
+        ]);
+    
+        // Création du cours
+        $cours = CoursConduite::create([
+            'date_heure' => $validated['date_heure'],
+            'duree_minutes' => $validated['duree_minutes'],
+            'moniteur_id' => $validated['moniteur_id'],
+            'vehicule_id' => $validated['vehicule_id'],
+            'admin_id' => Auth::id(),
+            'candidat_id' => $validated['candidat_id'],
+            'statut' => $validated['statut'],
+        ]);
+    
+        // Ajout des candidats supplémentaires
         if (!empty($validated['candidat_ids'])) {
-            $autresCandidats = User::whereIn('id', $validated['candidat_ids'])->get();
-            foreach ($autresCandidats as $candidat) {
-                $candidat->notify(new NouveauCoursConduiteCandidat($coursConduite));
+            $cours->candidats()->sync($validated['candidat_ids']);
+        }
+    
+        // Envoi des notifications
+        $this->envoyerNotifications($cours);
+    
+        return redirect()->route('admin.conduite')
+            ->with('success', 'Cours créé avec succès');
+    }
+    
+    public function update(Request $request, CoursConduite $coursConduite)
+    {
+        $validated = $request->validate([
+            'date_heure' => 'required|date',
+            'duree_minutes' => 'required|integer|min:30|max:240',
+            'moniteur_id' => 'required|exists:users,id',
+            'vehicule_id' => 'required|exists:vehicles,id',
+            'candidat_id' => 'required|exists:users,id',
+            'candidat_ids' => 'sometimes|array',
+            'candidat_ids.*' => 'exists:users,id',
+            'statut' => 'required|in:planifie,termine,annule',
+        ]);
+    
+        $coursConduite->update($validated);
+        $coursConduite->candidats()->sync($validated['candidat_ids'] ?? []);
+    
+        // Envoi des notifications seulement si des champs importants ont changé
+        if ($coursConduite->wasChanged(['date_heure', 'moniteur_id', 'vehicule_id', 'candidat_id'])) {
+            $this->envoyerNotifications($coursConduite, true);
+        }
+    
+        return redirect()->route('admin.conduite')
+            ->with('success', 'Cours mis à jour avec succès');
+    }
+    
+    /**
+     * Envoie les notifications aux utilisateurs concernés
+     *
+     * @param CoursConduite $cours
+     * @param bool $isUpdate Si c'est une mise à jour
+     */
+    protected function envoyerNotifications(CoursConduite $cours, bool $isUpdate = false)
+    {
+        try {
+            // Notification au moniteur
+            $moniteur = User::find($cours->moniteur_id);
+            if ($moniteur && $moniteur->email_notifications) {
+                $moniteur->notify(new NouveauCoursConduiteMoniteur($cours, $isUpdate));
             }
+    
+            // Notification au candidat principal
+            $candidatPrincipal = User::find($cours->candidat_id);
+            if ($candidatPrincipal && $candidatPrincipal->email_notifications) {
+                $candidatPrincipal->notify(new NouveauCoursConduiteCandidat($cours, $isUpdate));
+            }
+    
+            // Notifications aux candidats supplémentaires
+            $autresCandidats = User::whereIn('id', $cours->candidats->pluck('id'))
+                ->where('id', '!=', $cours->candidat_id)
+                ->where('email_notifications', true)
+                ->get();
+    
+            foreach ($autresCandidats as $candidat) {
+                $candidat->notify(new NouveauCoursConduiteCandidat($cours, $isUpdate));
+            }
+    
+      
+    
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de l\'envoi des notifications: '.$e->getMessage());
+            // Vous pouvez choisir de ne pas interrompre le flux en cas d'erreur de notification
         }
     }
-
-    return redirect()->route('admin.conduite')
-        ->with('success', 'Cours mis à jour avec succès');
-}
 
     public function moniteurIndex()
     {

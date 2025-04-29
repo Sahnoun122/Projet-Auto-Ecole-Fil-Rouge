@@ -27,6 +27,8 @@ return new class extends Migration
                 $table->string('certifications')->nullable();
                 $table->string('qualifications')->nullable();
                 $table->enum('role',['admin','moniteur' , 'candidat']);
+                $table->boolean('email_notifications')->default(true);
+
                 $table->timestamp('email_verified_at')->nullable();
                 $table->string('password');
                 $table->rememberToken();

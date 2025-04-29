@@ -3,7 +3,7 @@
 // namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Paiement;
-
+use Illuminate\Notifications\Notifiable; 
 use Illuminate\Support\Facades\Auth; 
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\AdmindController;
@@ -187,9 +187,34 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 // });
 
             
+Route::prefix('email')->group(function () {
+    Route::get('/preview/cours-candidat', function () {
+        $cours = App\Models\CoursConduite::with(['moniteur', 'vehicule', 'candidat'])->first();
+        $user = $cours->candidat;
+        return new App\Notifications\NouveauCoursConduiteCandidat($cours)->toMail($user);
+    })->middleware('auth:admin'); 
 
+    Route::get('/preview/cours-moniteur', function () {
+        $cours = App\Models\CoursConduite::with(['moniteur', 'vehicule', 'candidat'])->first();
+        $user = $cours->moniteur;
+        return new App\Notifications\NouveauCoursConduiteMoniteur($cours)->toMail($user);
+    })->middleware('auth:admin');
+});
 
+Route::get('/email/unsubscribe/{user}/{token}', [App\Http\Controllers\NotificationController::class, 'unsubscribe'])
+    ->name('email.unsubscribe');
 
+Route::post('/notifications/{notification}/mark-as-read', function ($notificationId) {
+    Auth::user()->unreadNotifications()->where('id', $notificationId)->update(['read_at' => now()]);
+    return response()->json(['success' => true]);
+})->middleware('auth')->name('notifications.markAsRead');
+
+// Page de toutes les notifications
+Route::get('/notifications', function () {
+    return view('notifications.index', [
+        'notifications' => Auth::user()->notifications()->paginate(10)
+    ]);
+})->middleware('auth')->name('notifications.index');
 
 
 

@@ -2,33 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class NotificationController extends Controller
 {
-    public function fetch(Request $request)
+    public function unsubscribe(User $user, $token)
     {
-        return [
-            'unread' => $request->user()->unreadNotifications->count(),
-            'notifications' => $request->user()
-                ->notifications()
-                ->take(5)
-                ->get()
-                ->map(function ($notification) {
-                    return [
-                        'id' => $notification->id,
-                        'data' => $notification->data,
-                        'created_at' => $notification->created_at->diffForHumans(),
-                        'read_at' => $notification->read_at
-                    ];
-                })
-        ];
+        if (!Hash::check($user->id.$user->email, $token)) {
+            abort(403, 'Lien de désinscription invalide');
+        }
+
+        $user->update(['email_notifications' => false]);
+
+        return view('emails.unsubscribe-confirmation', [
+            'user' => $user,
+            'reactiverUrl' => route('email.resubscribe', [
+                'user' => $user->id,
+                'token' => Hash::make($user->id.$user->email)
+            ])
+        ]);
     }
 
-    public function markAsRead(Request $request)
+    public function resubscribe(User $user, $token)
     {
-        $request->user()->unreadNotifications->markAsRead();
-        return response()->json(['success' => true]);
+        if (!Hash::check($user->id.$user->email, $token)) {
+            abort(403, 'Lien de réactivation invalide');
+        }
+
+        $user->update(['email_notifications' => true]);
+
+        return view('emails.resubscribe-confirmation', [
+            'user' => $user
+        ]);
     }
 }

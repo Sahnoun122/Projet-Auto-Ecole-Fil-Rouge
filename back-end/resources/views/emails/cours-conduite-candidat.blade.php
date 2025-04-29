@@ -14,11 +14,16 @@
     **Détails du cours:**
     - Date et heure: {{ $cours->date_heure->format('d/m/Y H:i') }}
     - Durée: {{ $cours->duree_minutes }} minutes
-    - Moniteur: {{ $cours->moniteur->nom_complet }}
+    - Moniteur: {{ $cours->moniteur->nom }} {{ $cours->moniteur->prenom }}
     - Véhicule: {{ $cours->vehicule->marque }} ({{ $cours->vehicule->immatriculation }})
 
     @component('mail::button', ['url' => route('candidat.conduite'), 'color' => 'primary'])
         Voir mes cours
+    @endcomponent
+
+    @component('mail::subcopy')
+        Si vous ne souhaitez plus recevoir ces notifications, 
+        [cliquez ici pour vous désinscrire]({{ $unsubscribeUrl }}).
     @endcomponent
 
     Cordialement,<br>
