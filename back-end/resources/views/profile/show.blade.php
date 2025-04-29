@@ -69,15 +69,6 @@
                             </div>
                         </div>
 
-                        @if($user->role === 'moniteur')
-                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-100">
-                            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-calendar-check mr-2 text-[#4D44B5]"></i>
-                                Disponibilités
-                            </h2>
-                            <p class="text-gray-600 pl-8">Aucune disponibilité définie.</p>
-                        </div>
-                        @endif
                     </div>
 
                     <div class="space-y-6">
@@ -94,24 +85,44 @@
                                 @endif
                             </h2>
                             <div class="pl-8 space-y-3">
-                                @if($user->role === 'admin')
-                                    <p class="text-gray-600">Accès complet à l'application</p>
-                                @elseif($user->role === 'moniteur')
-                                    <div class="flex items-start">
-                                        <i class="fas fa-certificate mt-1 mr-3 text-gray-500"></i>
-                                        <div>
-                                            <p class="font-medium text-gray-700">Certifications</p>
-                                            <p class="text-gray-600">{{ $user->certifications ?? 'Non renseignées' }}</p>
+                                @if($user->role === 'moniteur')
+                                <div class="bg-gray-50 p-5 rounded-lg border border-gray-100">
+                                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-calendar-check mr-2 text-[#4D44B5]"></i>
+                                        Spécialisations
+                                    </h2>
+                                    <div class="pl-8 space-y-3">
+                                        <div class="flex items-start">
+                                            <i class="fas fa-certificate mt-1 mr-3 text-gray-500"></i>
+                                            <div>
+                                                <p class="font-medium text-gray-700">Certifications</p>
+                                                @if($user->certifications)
+                                                    <a href="{{ Storage::url($user->certifications) }}" target="_blank" 
+                                                       class="text-[#4D44B5] hover:underline flex items-center">
+                                                        <i class="fas fa-file-pdf mr-2"></i> Télécharger le PDF
+                                                    </a>
+                                                @else
+                                                    <p class="text-gray-600">Aucun fichier uploadé</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="fas fa-award mt-1 mr-3 text-gray-500"></i>
+                                            <div>
+                                                <p class="font-medium text-gray-700">Qualifications</p>
+                                                @if($user->qualifications)
+                                                    <a href="{{ Storage::url($user->qualifications) }}" target="_blank" 
+                                                       class="text-[#4D44B5] hover:underline flex items-center">
+                                                        <i class="fas fa-file-pdf mr-2"></i> Télécharger le PDF
+                                                    </a>
+                                                @else
+                                                    <p class="text-gray-600">Aucun fichier uploadé</p>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="flex items-start">
-                                        <i class="fas fa-award mt-1 mr-3 text-gray-500"></i>
-                                        <div>
-                                            <p class="font-medium text-gray-700">Qualifications</p>
-                                            <p class="text-gray-600">{{ $user->qualifications ?? 'Non renseignées' }}</p>
-                                        </div>
-                                    </div>
-                                @else
+                                </div>
+                            
                                     <div class="flex items-start">
                                         <i class="fas fa-car mt-1 mr-3 text-gray-500"></i>
                                         <div>
@@ -213,20 +224,36 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label for="certifications" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                            <i class="fas fa-certificate mr-2 text-[#4D44B5]"></i> Certifications *
+                            <i class="fas fa-certificate mr-2 text-[#4D44B5]"></i> Certifications (PDF)
                         </label>
-                        <input type="text" id="certifications" name="certifications" value="{{ old('certifications', $user->certifications) }}"
-                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                        <input type="file" id="certifications" name="certifications" 
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" 
+                               accept=".pdf">
+                        @if($user->certifications)
+                            <p class="text-xs text-gray-500 mt-1">Fichier actuel: 
+                                <a href="{{ Storage::url($user->certifications) }}" target="_blank" class="text-[#4D44B5] hover:underline">
+                                    Voir le fichier
+                                </a>
+                            </p>
+                        @endif
                     </div>
                     <div>
                         <label for="qualifications" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                            <i class="fas fa-award mr-2 text-[#4D44B5]"></i> Qualifications *
+                            <i class="fas fa-award mr-2 text-[#4D44B5]"></i> Qualifications (PDF)
                         </label>
-                        <input type="text" id="qualifications" name="qualifications" value="{{ old('qualifications', $user->qualifications) }}"
-                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" required>
+                        <input type="file" id="qualifications" name="qualifications" 
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent" 
+                               accept=".pdf">
+                        @if($user->qualifications)
+                            <p class="text-xs text-gray-500 mt-1">Fichier actuel: 
+                                <a href="{{ Storage::url($user->qualifications) }}" target="_blank" class="text-[#4D44B5] hover:underline">
+                                    Voir le fichier
+                                </a>
+                            </p>
+                        @endif
                     </div>
                 </div>
-                @endif
+                @endif 
 
                 <div class="mb-6">
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">

@@ -74,76 +74,7 @@
             @endif
         </div>
 
-        <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Résultats des Examens</h2>
-            
-            @if($completedExams->isEmpty())
-                <p class="text-gray-500">Aucun résultat d'examen disponible.</p>
-            @else
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($completedExams as $exam)
-                            @php
-                                $result = $exam->participants->first()->pivot ?? null;
-                            @endphp
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
-                                        {{ $exam->type === 'theorique' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                                        {{ ucfirst($exam->type) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $exam->date_exam->format('d/m/Y') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($result)
-                                        <div class="flex items-center">
-                                            <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                                                <div class="bg-[#4D44B5] h-2.5 rounded-full" 
-                                                     style="width: {{ $result->score }}%"></div>
-                                            </div>
-                                            <span class="text-sm font-medium">{{ $result->score }}/100</span>
-                                        </div>
-                                    @else
-                                        <span class="text-gray-500">N/A</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button onclick="openResultsModal(
-                                        '{{ $exam->id }}',
-                                        '{{ $exam->type }}',
-                                        '{{ $exam->date_exam->format('d/m/Y H:i') }}',
-                                        '{{ $exam->lieu }}',
-                                        '{{ $exam->statut }}',
-                                        '{{ $result ? $result->score : '' }}',
-                                        '{{ $result ? $result->resultat : '' }}',
-                                        `{{ $result ? $result->feedbacks : '' }}`,
-                                        '{{ $result ? $result->present : '' }}'
-                                    )" class="text-[#4D44B5] hover:text-[#3a32a1] mr-2">
-                                        <i class="fas fa-eye mr-1"></i> Résultats
-                                    </button>
-                                    <button onclick="openFeedbackModal('{{ $exam->id }}')" 
-                                        class="text-purple-600 hover:text-purple-800">
-                                        <i class="fas fa-comment mr-1"></i> Feedback
-                                    </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-        </div>
+   
     </main>
 
     <!-- Modal Planification Examen -->

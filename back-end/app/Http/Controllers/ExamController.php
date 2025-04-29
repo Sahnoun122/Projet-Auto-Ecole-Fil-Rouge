@@ -3,19 +3,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Exam;
 use App\Models\User;
-use App\Models\ExamResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\ExamScheduled;
-use App\Notifications\ExamResultPublished;
 
 class ExamController extends Controller
 {
-
     public function index(Request $request)
     {
-        $query = Exam::with(['admin', 'candidat', 'examResults']);
+        $query = Exam::with(['admin', 'candidat']);
 
         // Filtres de recherche
         if ($search = $request->input('search')) {
@@ -64,6 +61,7 @@ class ExamController extends Controller
                 'admin_id' => Auth::id()
             ]);
 
+            // Notification au candidat si assigné
             if ($exam->candidat_id) {
                 $exam->candidat->notify(new ExamScheduled($exam));
             }
@@ -77,8 +75,6 @@ class ExamController extends Controller
             return back()->with('error', 'Erreur lors de la création de l\'examen : ' . $e->getMessage());
         }
     }
-
-
 
     public function update(Request $request, Exam $exam)
     {
@@ -95,18 +91,16 @@ class ExamController extends Controller
         try {
             DB::beginTransaction();
 
-            $exam->update([
-                ...$validated,
-                'admin_id' => $exam->admin_id ?? Auth::id()
-            ]);
+            $exam->update($validated);
 
+            // Notification au candidat si assigné
             if ($exam->candidat_id) {
                 $exam->candidat->notify(new ExamScheduled($exam));
             }
 
             DB::commit();
 
-            return redirect()->route('admin.exams')
+            return redirect()->route('admin.exams.index')
                 ->with('success', 'Examen mis à jour avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -114,7 +108,6 @@ class ExamController extends Controller
         }
     }
 
- 
     public function destroy(Exam $exam)
     {
         try {
@@ -124,106 +117,32 @@ class ExamController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.exams')
+            return redirect()->route('admin.exams.index')
                 ->with('success', 'Examen supprimé avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Erreur lors de la suppression de l\'examen : ' . $e->getMessage());
         }
     }
-    public function storeResult(Request $request, Exam $exam)
+
+  
+    public function candidatExams()
     {
-        $validated = $request->validate([
-            'candidat_id' => 'required|exists:users,id',
-            'present' => 'required|boolean',
-            'score' => 'required_if:present,1|nullable|integer|min:0|max:100',
-            'resultat' => 'required_if:present,1|nullable|in:excellent,tres_bien,bien,moyen,insuffisant',
-            'feedbacks' => 'nullable|string|max:500'
-        ]);
+        $user = Auth::user();
+        
+        $plannedExams = Exam::where('candidat_id', $user->id)
+            ->where('date_exam', '>', now())
+            ->orderBy('date_exam', 'asc')
+            ->get();
 
-        try {
-            DB::beginTransaction();
+        $completedExams = Exam::where('candidat_id', $user->id)
+            ->where('date_exam', '<=', now())
+            ->with(['examResults' => function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }])
+            ->orderBy('date_exam', 'desc')
+            ->get();
 
-            $existingResult = ExamResult::where('exam_id', $exam->id)
-                ->where('user_id', $validated['candidat_id'])
-                ->first();
-
-            if ($existingResult) {
-                DB::rollBack();
-                return back()->with('error', 'Un résultat existe déjà pour ce candidat.');
-            }
-
-            $result = ExamResult::create([
-                'exam_id' => $exam->id,
-                'user_id' => $validated['candidat_id'],
-                'present' => $validated['present'],
-                'score' => $validated['present'] ? $validated['score'] : null,
-                'resultat' => $validated['present'] ? $validated['resultat'] : null,
-                'feedbacks' => $validated['feedbacks'] ?? null
-            ]);
-
-            $exam->updateStats();
-
-            $user = User::findOrFail($validated['candidat_id']);
-            $user->notify(new ExamResultPublished($exam));
-
-            DB::commit();
-
-            return back()->with('success', 'Résultat enregistré avec succès.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Erreur lors de l\'enregistrement du résultat : ' . $e->getMessage());
-        }
-    }
-
-    public function updateResult(Request $request, Exam $exam, User $candidat)
-    {
-        $validated = $request->validate([
-            'present' => 'required|boolean',
-            'score' => 'required_if:present,1|nullable|integer|min:0|max:100',
-            'resultat' => 'required_if:present,1|nullable|in:excellent,tres_bien,bien,moyen,insuffisant',
-            'feedbacks' => 'nullable|string|max:500'
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $result = ExamResult::where('exam_id', $exam->id)
-                ->where('user_id', $candidat->id)
-                ->firstOrFail();
-
-            $result->update([
-                'present' => $validated['present'],
-                'score' => $validated['present'] ? $validated['score'] : null,
-                'resultat' => $validated['present'] ? $validated['resultat'] : null,
-                'feedbacks' => $validated['feedbacks'] ?? null
-            ]);
-
-            $exam->updateStats();
-
-            DB::commit();
-
-            return back()->with('success', 'Résultat mis à jour avec succès.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Erreur lors de la mise à jour du résultat : ' . $e->getMessage());
-        }
-    }
-
-    public function checkResult(Exam $exam, User $user)
-    {
-        $result = ExamResult::where('exam_id', $exam->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        return response()->json([
-            'exists' => $result !== null,
-            'result' => $result ? [
-                'present' => $result->present,
-                'score' => $result->score,
-                'resultat' => $result->resultat,
-                'feedbacks' => $result->feedbacks
-            ] : null
-        ]);
+        return view('candidats.exams', compact('plannedExams', 'completedExams'));
     }
 }

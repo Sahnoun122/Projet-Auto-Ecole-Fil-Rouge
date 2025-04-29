@@ -56,7 +56,7 @@
                                 <span class="inline-block px-3 py-1 bg-purple-100 text-[#4D44B5] text-xs font-medium rounded-full mb-3">
                                     {{ $quiz->type_permis }}
                                 </span>
-                                <h3 class="text-xl font-bold text-gray-800">{{ $quiz->title }}</h3>
+                                <a href=" {{ route('admin.questions.index' , $quiz->id )}}"><h3 class="text-xl font-bold text-gray-800">{{ $quiz->title }}</h3>                                </a>
                             </div>
                             <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
                                 {{ $quiz->questions_count }} questions
