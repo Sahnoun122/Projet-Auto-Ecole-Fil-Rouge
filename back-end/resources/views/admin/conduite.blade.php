@@ -134,17 +134,97 @@
         </div>
     </main>
 
-    <!-- Course Modal -->
     <div id="courseModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-        <!-- ... contenu existant de la modal de cours ... -->
+        <div class="bg-white w-full max-w-md md:max-w-2xl p-4 md:p-6 rounded-lg overflow-y-auto max-h-screen">
+            <h2 id="modalCourseTitle" class="text-lg font-bold mb-4">Nouveau Cours de Conduite</h2>
+            <form id="courseForm" method="POST">
+                @csrf
+                <input type="hidden" id="courseId" name="id">
+                <input type="hidden" id="_method" name="_method" value="POST">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-3">
+                        <label for="courseDateHeure" class="block text-sm font-medium text-gray-700 mb-1">Date/Heure *</label>
+                        <input type="datetime-local" id="courseDateHeure" name="date_heure"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="courseDuree" class="block text-sm font-medium text-gray-700 mb-1">Durée (minutes) *</label>
+                        <input type="number" id="courseDuree" name="duree_minutes" min="30" max="240"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-3">
+                        <label for="courseMoniteur" class="block text-sm font-medium text-gray-700 mb-1">Moniteur *</label>
+                        <select id="courseMoniteur" name="moniteur_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            <option value="">Sélectionner un moniteur</option>
+                            @foreach($moniteurs as $moniteur)
+                                <option value="{{ $moniteur->id }}">{{ $moniteur->nom }} {{ $moniteur->prenom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="courseVehicule" class="block text-sm font-medium text-gray-700 mb-1">Véhicule *</label>
+                        <select id="courseVehicule" name="vehicule_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                            <option value="">Sélectionner un véhicule</option>
+                            @foreach($vehicules as $vehicule)
+                                <option value="{{ $vehicule->id }}">{{ $vehicule->marque }} ({{ $vehicule->immatriculation }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="courseCandidatPrincipal" class="block text-sm font-medium text-gray-700 mb-1">Candidat Principal *</label>
+                    <select id="courseCandidatPrincipal" name="candidat_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                        <option value="">Sélectionner un candidat</option>
+                        @foreach($candidats as $candidat)
+                            <option value="{{ $candidat->id }}">{{ $candidat->nom }} {{ $candidat->prenom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="courseCandidatsSupplementaires" class="block text-sm font-medium text-gray-700 mb-1">Candidats Supplémentaires</label>
+                    <select id="courseCandidatsSupplementaires" name="candidat_ids[]" multiple
+                        class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]">
+                        @foreach($candidats as $candidat)
+                            <option value="{{ $candidat->id }}">{{ $candidat->nom }} {{ $candidat->prenom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="courseStatut" class="block text-sm font-medium text-gray-700 mb-1">Statut *</label>
+                    <select id="courseStatut" name="statut" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]" required>
+                        <option value="planifie">Planifié</option>
+                        <option value="termine">Terminé</option>
+                        <option value="annule">Annulé</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelCourseBtn"
+                        class="px-3 py-1 md:px-4 md:py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition text-sm md:text-base">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submitCourseBtn"
+                        class="px-3 py-1 md:px-4 md:py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition text-sm md:text-base">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Presence Modal -->
     <div id="presenceModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
         <div class="bg-white w-full max-w-md p-4 md:p-6 rounded-lg max-h-[90vh] overflow-y-auto">
             <h2 class="text-lg font-bold mb-4">Présences des Candidats</h2>
             <div id="presenceModalContent">
-                <!-- Le contenu sera chargé dynamiquement via AJAX -->
                 <div class="text-center py-4">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4D44B5] mx-auto"></div>
                     <p class="mt-2 text-gray-600">Chargement des données...</p>
@@ -222,11 +302,12 @@ $(document).ready(function() {
                         <div class="space-y-4">
                             <div class="border-b pb-2 mb-4">
                                 <h3 class="text-md font-medium">Cours du ${new Date(course.date_heure).toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})}</h3>
-                                <p class="text-sm text-gray-600">Moniteur: ${course.moniteur.nom} ${course.moniteur.prenom}</p>
-                                <p class="text-sm text-gray-600">Véhicule: ${course.vehicule.marque} (${course.vehicule.immatriculation})</p>
+                                <p class="text-sm text-gray-600">Moniteur: ${course.moniteur?.nom || 'Non assigné'} ${course.moniteur?.prenom || ''}</p>
+                                <p class="text-sm text-gray-600">Véhicule: ${course.vehicule?.marque || 'Non assigné'} ${course.vehicule?.immatriculation ? '('+course.vehicule.immatriculation+')' : ''}</p>
                             </div>
                     `;
                     
+                    // Candidat principal (seulement s'il existe)
                     const principal = presences.find(p => p.is_principal);
                     if (principal) {
                         html += `
@@ -246,8 +327,18 @@ $(document).ready(function() {
                                 ` : ''}
                             </div>
                         `;
+                    } else {
+                        html += `
+                            <div class="space-y-2">
+                                <h4 class="font-medium">Candidat Principal:</h4>
+                                <div class="p-3 bg-gray-50 rounded text-red-500">
+                                    Aucun candidat principal assigné
+                                </div>
+                            </div>
+                        `;
                     }
                     
+                    // Autres candidats
                     const autresCandidats = presences.filter(p => !p.is_principal);
                     if (autresCandidats.length > 0) {
                         html += `
@@ -275,6 +366,13 @@ $(document).ready(function() {
                     
                     html += `</div>`;
                     $('#presenceModalContent').html(html);
+                } else {
+                    $('#presenceModalContent').html(`
+                        <div class="text-center py-4 text-red-500">
+                            <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                            <p>${response.message || 'Erreur inconnue'}</p>
+                        </div>
+                    `);
                 }
             },
             error: function(xhr) {
@@ -316,7 +414,24 @@ $(document).ready(function() {
 </script>
 
 <style>
-/* Styles existants... */
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    min-height: 42px;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #4D44B5;
+    border: none;
+    border-radius: 0.25rem;
+    color: white;
+    padding: 0 0.5rem;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: white;
+    margin-right: 2px;
+}
+
 .presence-badge {
     display: inline-block;
     padding: 0.25rem 0.5rem;
@@ -335,6 +450,54 @@ $(document).ready(function() {
     color: #B91C1C;
 }
 
-/* ... autres styles existants ... */
+@media (max-width: 640px) {
+    table {
+        border: 0;
+    }
+    
+    table thead {
+        display: none;
+    }
+    
+    table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+    }
+    
+    table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: right;
+    }
+    
+    table td:last-child {
+        border-bottom: 0;
+    }
+    
+    table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        margin-right: 1rem;
+    }
+    
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    #courseModal > div, #presenceModal > div {
+        width: 95%;
+        margin: 0 auto;
+        max-height: 90vh;
+    }
+}
+
+.select2-dropdown {
+    z-index: 10060 !important; 
+}
 </style>
 @endsection

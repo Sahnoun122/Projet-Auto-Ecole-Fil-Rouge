@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
                 User::create([
                     'nom' => 'Moniteur',
                     'prenom' => 'User',
-                    'email' => 'moniteur@example.com',
+                    'email' => 'khadijasahnoun70@gmail.com',
                     'adresse' => 'Moniteur Address',
                     'telephone' => '0698765432',
                     'photo_profile' => 'default.jpg',
@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
                 User::create([
                     'nom' => 'Candidat',
                     'prenom' => 'User',
-                    'email' => 'candidat@example.com',
+                    'email' => 'khadijasahnoun610@gmail.com',
                     'adresse' => 'Candidat Address',
                     'telephone' => '0676543210',
                     'photo_profile' => 'default.jpg',
