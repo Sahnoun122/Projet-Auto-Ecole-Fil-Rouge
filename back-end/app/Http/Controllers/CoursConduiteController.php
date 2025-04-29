@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CoursConduiteController extends Controller
 {
+
     public function index()
     {
         $cours = CoursConduite::with([
@@ -37,6 +38,44 @@ class CoursConduiteController extends Controller
             'candidats',
             'vehicules'
         ));
+    }
+
+    public function getPresences($id)
+    {
+        $course = CoursConduite::with([
+            'moniteur:id,nom,prenom',
+            'vehicule:id,marque,immatriculation',
+            'candidat:id,nom,prenom',
+            'candidats' => function($query) {
+                $query->withPivot(['present', 'notes']);
+            }
+        ])->find($id);
+    
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cours non trouvé'
+            ], 404);
+        }
+    
+        $presences = $course->candidats->map(function($candidat) use ($course) {
+            return [
+                'id' => $candidat->id,
+                'nom' => $candidat->nom,
+                'prenom' => $candidat->prenom,
+                'present' => $candidat->pivot->present,
+                'notes' => $candidat->pivot->notes,
+                'is_principal' => $course->candidat_id && $candidat->id === $course->candidat_id
+            ];
+        });
+    
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'course' => $course,
+                'presences' => $presences
+            ]
+        ]);
     }
 
     public function store(Request $request)

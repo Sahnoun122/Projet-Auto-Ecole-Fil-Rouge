@@ -156,8 +156,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/conduite', [CoursConduiteController::class, 'store'])->name('admin.conduite.store');
     Route::put('/conduite/{coursConduite}', [CoursConduiteController::class, 'update'])->name('admin.conduite.update');
     Route::delete('/conduite/{coursConduite}', [CoursConduiteController::class, 'destroy'])->name('admin.conduite.destroy');
-    Route::get('/conduite/{course}/presence', [CoursConduiteController::class, 'presence'])->name('admin.conduite.presence');
-
+    Route::get('/conduite/{id}/presences', [CoursConduiteController::class, 'getPresences'])
+         ->name('admin.conduite.presences');
 
     Route::get('/exams', [ExamController::class, 'index'])->name('admin.exams');
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
