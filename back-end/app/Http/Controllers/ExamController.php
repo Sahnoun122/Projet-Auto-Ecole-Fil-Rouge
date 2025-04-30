@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\ExamScheduled;
+use Illuminate\Support\Facades\Log;
+
 
 class ExamController extends Controller
 {
@@ -41,73 +43,83 @@ class ExamController extends Controller
         return view('admin.exams', compact('exams', 'candidats'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'type' => 'required|in:theorique,pratique',
-            'date_exam' => 'required|date|after:now',
-            'lieu' => 'required|string|max:100',
-            'places_max' => 'required|integer|min:1|max:50',
-            'candidat_id' => 'nullable|exists:users,id',
-            'instructions' => 'nullable|string|max:500',
-            'statut' => 'required|in:planifie,en_cours,termine,annule'
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $exam = Exam::create([
-                ...$validated,
-                'admin_id' => Auth::id()
+        public function store(Request $request)
+        {
+            $validated = $request->validate([
+                'type' => 'required|in:theorique,pratique',
+                'date_exam' => 'required|date|after:now',
+                'lieu' => 'required|string|max:100',
+                'places_max' => 'required|integer|min:1|max:50',
+                'candidat_id' => 'nullable|exists:users,id',
+                'instructions' => 'nullable|string|max:500',
+                'statut' => 'required|in:planifie,en_cours,termine,annule'
             ]);
-
-            // Notification au candidat si assigné
-            if ($exam->candidat_id) {
-                $exam->candidat->notify(new ExamScheduled($exam));
+    
+            try {
+                DB::beginTransaction();
+    
+                $exam = Exam::create([
+                    ...$validated,
+                    'admin_id' => Auth::id()
+                ]);
+    
+                if ($exam->candidat_id) {
+                    $candidat = User::find($exam->candidat_id);
+                    if ($candidat && $candidat->email_notifications) {
+                        $candidat->notify(new ExamScheduled($exam));
+                        Log::info("Notification d'examen envoyée au candidat ID: {$candidat->id}");
+                    }
+                }
+    
+                DB::commit();
+    
+                return redirect()->route('admin.exams')
+                    ->with('success', 'Examen créé avec succès.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error("Erreur création examen: " . $e->getMessage());
+                return back()->with('error', 'Erreur lors de la création de l\'examen : ' . $e->getMessage());
             }
-
-            DB::commit();
-
-            return redirect()->route('admin.exams')
-                ->with('success', 'Examen créé avec succès.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Erreur lors de la création de l\'examen : ' . $e->getMessage());
         }
-    }
-
-    public function update(Request $request, Exam $exam)
-    {
-        $validated = $request->validate([
-            'type' => 'required|in:theorique,pratique',
-            'date_exam' => 'required|date|after:now',
-            'lieu' => 'required|string|max:100',
-            'places_max' => 'required|integer|min:1|max:50',
-            'candidat_id' => 'nullable|exists:users,id',
-            'instructions' => 'nullable|string|max:500',
-            'statut' => 'required|in:planifie,en_cours,termine,annule'
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $exam->update($validated);
-
-            // Notification au candidat si assigné
-            if ($exam->candidat_id) {
-                $exam->candidat->notify(new ExamScheduled($exam));
+    
+        public function update(Request $request, Exam $exam)
+        {
+            $validated = $request->validate([
+                'type' => 'required|in:theorique,pratique',
+                'date_exam' => 'required|date|after:now',
+                'lieu' => 'required|string|max:100',
+                'places_max' => 'required|integer|min:1|max:50',
+                'candidat_id' => 'nullable|exists:users,id',
+                'instructions' => 'nullable|string|max:500',
+                'statut' => 'required|in:planifie,en_cours,termine,annule'
+            ]);
+    
+            try {
+                DB::beginTransaction();
+    
+                $wasChanged = $exam->wasChanged(['date_exam', 'lieu', 'type']);
+                $exam->update($validated);
+    
+                if ($exam->candidat_id && $wasChanged) {
+                    $candidat = User::find($exam->candidat_id);
+                    if ($candidat && $candidat->email_notifications) {
+                        $candidat->notify(new ExamScheduled($exam));
+                        Log::info("Notification de modification d'examen envoyée au candidat ID: {$candidat->id}");
+                    }
+                }
+    
+                DB::commit();
+    
+                return redirect()->route('admin.exams')
+                    ->with('success', 'Examen mis à jour avec succès.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error("Erreur mise à jour examen: " . $e->getMessage());
+                return back()->with('error', 'Erreur lors de la mise à jour de l\'examen : ' . $e->getMessage());
             }
-
-            DB::commit();
-
-            return redirect()->route('admin.exams.index')
-                ->with('success', 'Examen mis à jour avec succès.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Erreur lors de la mise à jour de l\'examen : ' . $e->getMessage());
         }
-    }
-
+    
+    
     public function destroy(Exam $exam)
     {
         try {
