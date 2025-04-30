@@ -165,9 +165,9 @@
 
                     <div>
                         <label for="questionDuration" class="block text-sm md:text-base font-medium text-gray-700 mb-1">Durée (secondes) *</label>
-                        <input type="number" id="questionDuration" name="duration" min="5" max="300" value="30"
+                        <input type="number" id="questionDuration" name="duration" min="5" max="30" value="30"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-1 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm md:text-base">
-                        <p class="mt-1 text-xs text-red-600 hidden" id="questionDurationError">La durée doit être entre 5 et 300 secondes.</p>
+                        <p class="mt-1 text-xs text-red-600 hidden" id="questionDurationError">La durée doit être entre 5 et 30 secondes.</p>
                     </div>
 
                     <div class="pt-4 border-t border-gray-200">
@@ -339,11 +339,11 @@
         }
 
         const duration = parseInt($('#questionDuration').val());
-        if (isNaN(duration) || duration < 5 || duration > 300) {
+        if (isNaN(duration) || duration < 5 || duration > 30) { // Changed max value from 300 to 30
             isValid = false;
             $('#questionDuration').addClass('border-red-500 focus:border-red-500 focus:ring-red-500').removeClass('border-gray-300 focus:border-[#4D44B5] focus:ring-[#4D44B5]');
-            $('#questionDurationError').removeClass('hidden');
-            errors.push('La durée doit être un nombre entre 5 et 300.');
+            $('#questionDurationError').removeClass('hidden').text('La durée doit être un nombre entre 5 et 30.'); // Updated error message
+            errors.push('La durée doit être un nombre entre 5 et 30.');
         }
 
         const choices = $('#choicesContainer .choice-item');
