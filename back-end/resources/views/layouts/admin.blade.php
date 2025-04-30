@@ -173,7 +173,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
                 </svg>
-                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Caisse</span>
+                 <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Dèconnexion</span>
              </a> 
 
            

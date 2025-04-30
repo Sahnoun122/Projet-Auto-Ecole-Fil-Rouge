@@ -37,7 +37,6 @@ use App\Http\Controllers\NotificationController;
 
 
 
-
 Route::controller(PagesController::class)->group(function () {
     Route::get('/', 'index')->name('/');
     Route::get('/services', 'services')->name('services');
@@ -188,34 +187,35 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 // });
 
             
-Route::prefix('email')->group(function () {
-    Route::get('/preview/cours-candidat', function () {
-        $cours = App\Models\CoursConduite::with(['moniteur', 'vehicule', 'candidat'])->first();
-        $user = $cours->candidat;
-        return new App\Notifications\NouveauCoursConduiteCandidat($cours)->toMail($user);
-    })->middleware('auth:admin'); 
 
-    Route::get('/preview/cours-moniteur', function () {
-        $cours = App\Models\CoursConduite::with(['moniteur', 'vehicule', 'candidat'])->first();
-        $user = $cours->moniteur;
-        return new App\Notifications\NouveauCoursConduiteMoniteur($cours)->toMail($user);
-    })->middleware('auth:admin');
-});
-
-Route::get('/email/unsubscribe/{user}/{token}', [App\Http\Controllers\NotificationController::class, 'unsubscribe'])
+Route::get('/email/unsubscribe/{user}/{token}', [NotificationController::class, 'unsubscribe'])
     ->name('email.unsubscribe');
 
 Route::post('/notifications/{notification}/mark-as-read', function ($notificationId) {
-    Auth::user()->unreadNotifications()->where('id', $notificationId)->update(['read_at' => now()]);
-    return response()->json(['success' => true]);
+   /** @var \App\Models\User  */
+   $user = Auth::user();    
+    if (!$user) {
+        return response()->json(['success' => false, 'message' => 'Non authentifié'], 401);
+    }
+
+    $affected = $user->unreadNotifications()
+                    ->where('id', $notificationId)
+                    ->update(['read_at' => now()]);
+
+    return response()->json([
+        'success' => (bool)$affected,
+        'message' => $affected ? 'Notification marquée comme lue' : 'Notification non trouvée'
+    ]);
 })->middleware('auth')->name('notifications.markAsRead');
 
-// Page de toutes les notifications
 Route::get('/notifications', function () {
-    return view('notifications.index', [
-        'notifications' => Auth::user()->notifications()->paginate(10)
+   /** @var \App\Models\User $user */
+   $user = Auth::user();    
+    return view('notifications', [
+        'notifications' => $user->notifications()->paginate(10)
     ]);
-})->middleware('auth')->name('notifications.index');
+})->middleware('auth')->name('notifications');
+
 
 
 

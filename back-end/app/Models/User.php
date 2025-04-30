@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\DatabaseNotification;
+
 
 class User extends Authenticatable 
 {
@@ -144,6 +146,11 @@ public function examsParticipated()
         ->as('result');
 }
 
+public function unreadNotifications()
+{
+    return $this->morphMany(DatabaseNotification::class, 'notifiable')
+                ->whereNull('read_at');
+}
 
     public function moniteurCours()
     {

@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Storage;
 class MoniteurController extends Controller
 {
 
+    public function dashboard(){
+        view('moniteur.dashboard');
+    }
         public function index(Request $request)
         {
             $search = $request->input('search');

@@ -173,6 +173,15 @@ class CoursConduiteController extends Controller
         }
     }
 
+    public function destroy($id)
+    {
+        $cours = CoursConduite::findOrFail($id);
+        $cours->candidats()->detach();
+        $cours->delete();
+
+        return redirect()->route('admin.conduite')
+            ->with('success', 'Cours supprimé avec succès');
+    }
     public function moniteurIndex()
     {
         $cours = CoursConduite::with(['vehicule', 'candidat', 'candidats'])
