@@ -28,4 +28,10 @@ class Vehicle extends Model
 {
     return $this->hasMany(CoursConduite::class, 'vehicule_id');
 }
+
+public function needsMaintenanceAlert()
+{
+    return $this->prochaine_maintenance <= now()->addDays(2) 
+           && $this->prochaine_maintenance >= now();
+}
 }
