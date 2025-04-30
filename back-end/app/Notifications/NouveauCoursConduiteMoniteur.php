@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log; 
 
 class NouveauCoursConduiteMoniteur extends Notification implements ShouldQueue
 {
@@ -36,13 +37,17 @@ class NouveauCoursConduiteMoniteur extends Notification implements ShouldQueue
 
     public function toArray($notifiable)
     {
+        $generatedUrl = route('moniteur.conduite');
+        $configUrl = config('app.url');
+        Log::info('[NouveauCoursConduiteMoniteur] Config URL: ' . $configUrl . ' | Generated URL: ' . $generatedUrl);
+
         return [
             'type' => 'nouveau_cours',
             'date_heure' => $this->cours->date_heure,
             'candidat_principal' => $this->cours->candidat->nom_complet,
             'vehicule' => $this->cours->vehicule->marque,
             'message' => 'Un nouveau cours de conduite vous a été assigné.',
-            'url' => route('moniteur.conduite')
+            'url' => $generatedUrl 
         ];
     }
 }

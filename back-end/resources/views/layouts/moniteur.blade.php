@@ -194,11 +194,7 @@
                                 </div>
                                 @endauth
                             </div>
-                            @auth
-                            <div class="px-4 py-2 border-t border-gray-100">
-                                <a href="{{ route('notifications.index') }}" class="text-sm text-[#4D44B5] hover:text-[#6058b8] font-medium">Voir toutes les notifications</a>
-                            </div>
-                            @endauth
+                           
                         </div>
                     </div>
                 </div>
