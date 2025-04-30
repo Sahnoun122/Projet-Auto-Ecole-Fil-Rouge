@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CandidatsController extends Controller
 {
-
     public function dashboard()
     {
         return view('candidats.dashboard'); 
@@ -34,64 +33,71 @@ class CandidatsController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'nom' => 'required|string|max:255',
-        'prenom' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'adresse' => 'required|string|max:255',
-        'telephone' => 'required|string|max:20',
-        'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        'photo_identite' => 'required|file|mimes:pdf|max:2048', 
-        'type_permis' => 'required|string|max:255',
-        'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'],
-    ]);
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'adresse' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'photo_identite' => 'required|file|mimes:pdf|max:2048', 
+            'type_permis' => 'required|string|max:255',
+            'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'],
+        ]);
 
-    $validated['photo_profile'] = $request->file('photo_profile')->store('candidats/profile', 'public');
-    $validated['photo_identite'] = $request->file('photo_identite')->store('candidats/identite', 'public');
-    $validated['password'] = Hash::make($validated['password']);
-    $validated['role'] = 'candidat';
+        $validated['photo_profile'] = $request->file('photo_profile')->store('candidats/profile', 'public');
+        $validated['photo_identite'] = $request->file('photo_identite')->store('candidats/identite', 'public');
+        $validated['password'] = Hash::make($validated['password']);
+        $validated['role'] = 'candidat';
 
-    User::create($validated);
+        User::create($validated);
 
-    return redirect()->route('admin.candidats')->with('success', 'Candidat ajouté avec succès');
-}
-
-public function update(Request $request, $id)
-{
-    $candidat = User::findOrFail($id);
-
-    $rules = [
-        'nom' => 'required|string|max:255',
-        'prenom' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users,email,' . $candidat->id,
-        'adresse' => 'required|string|max:255',
-        'telephone' => 'required|string|max:20',
-        'type_permis' => 'required|string|max:255',
-    ];
-
-    if ($request->hasFile('photo_profile')) {
-        $rules['photo_profile'] = 'image|mimes:jpeg,png,jpg|max:2048';
-    }
-    if ($request->hasFile('photo_identite')) {
-        $rules['photo_identite'] = 'file|mimes:pdf|max:2048';
+        return redirect()->route('admin.candidats')->with('success', 'Candidat ajouté avec succès');
     }
 
-    $data = $request->validate($rules);
+    public function update(Request $request, $id)
+    {
+        $candidat = User::findOrFail($id);
 
-    if ($request->hasFile('photo_profile')) {
-        Storage::disk('public')->delete($candidat->photo_profile);
-        $data['photo_profile'] = $request->file('photo_profile')->store('candidats/profile', 'public');
+        $rules = [
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $candidat->id,
+            'adresse' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'type_permis' => 'required|string|max:255',
+            'password' => 'nullable|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/',
+        ];
+
+        if ($request->hasFile('photo_profile')) {
+            $rules['photo_profile'] = 'image|mimes:jpeg,png,jpg|max:2048';
+        }
+        if ($request->hasFile('photo_identite')) {
+            $rules['photo_identite'] = 'file|mimes:pdf|max:2048';
+        }
+
+        $data = $request->validate($rules);
+
+        if ($request->hasFile('photo_profile')) {
+            Storage::disk('public')->delete($candidat->photo_profile);
+            $data['photo_profile'] = $request->file('photo_profile')->store('candidats/profile', 'public');
+        }
+        if ($request->hasFile('photo_identite')) {
+            Storage::disk('public')->delete($candidat->photo_identite);
+            $data['photo_identite'] = $request->file('photo_identite')->store('candidats/identite', 'public');
+        }
+
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $candidat->update($data);
+
+        return redirect()->route('admin.candidats')->with('success', 'Candidat mis à jour avec succès');
     }
-    if ($request->hasFile('photo_identite')) {
-        Storage::disk('public')->delete($candidat->photo_identite);
-        $data['photo_identite'] = $request->file('photo_identite')->store('candidats/identite', 'public');
-    }
-
-    $candidat->update($data);
-
-    return redirect()->route('admin.candidats')->with('success', 'Candidat mis à jour avec succès');
-}
 
     public function show($id)
     {
@@ -100,12 +106,11 @@ public function update(Request $request, $id)
     }
 
     public function edit($id)
-{
-    $candidat = User::findOrFail($id);
-    return response()->json($candidat);
-}
+    {
+        $candidat = User::findOrFail($id);
+        return response()->json($candidat);
+    }
 
-  
     public function destroy($id)
     {
         $candidat = User::findOrFail($id);
