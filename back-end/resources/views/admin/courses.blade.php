@@ -88,7 +88,7 @@
     </main>
 
     <div id="courseModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50">
-        <div class="relative p-4 w-full max-w-lg max-h-full"> <!-- Increased max-w -->
+        <div class="relative p-4 w-full max-w-lg max-h-full">
             <div class="relative bg-white rounded-lg shadow-lg">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                     <h3 class="text-xl font-semibold text-gray-900" id="modalCourseTitle">
@@ -107,8 +107,7 @@
                     <input type="hidden" id="titleId" name="title_id" value="{{ $title->id }}">
                     <input type="hidden" id="_methodCourse" name="_method" value="POST">
 
-                    <div class="p-4 md:p-5 space-y-6"> <!-- Increased spacing -->
-                         <!-- General Error Display Area -->
+                    <div class="p-4 md:p-5 space-y-6"> 
                         <div id="formErrors" class="hidden mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                             <strong class="font-bold">Erreur !</strong>
                             <span class="block sm:inline">Veuillez corriger les erreurs suivantes :</span>
@@ -119,14 +118,14 @@
                             <label for="courseTitle" class="block mb-2 text-sm font-medium text-gray-900">Titre *</label>
                             <input type="text" id="courseTitle" name="title" maxlength="255"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-offset-1 focus:ring-[#4D44B5] focus:border-[#4D44B5] block w-full p-2.5"
-                                placeholder="Ex: Les panneaux de signalisation" required>
+                                placeholder="Ex: Les panneaux de signalisation">
                             <p class="mt-1 text-xs text-red-600 hidden" id="titleError">Le titre est requis.</p>
                         </div>
                         <div>
                             <label for="courseDescription" class="block mb-2 text-sm font-medium text-gray-900">Description *</label>
                             <textarea id="courseDescription" name="description" rows="4"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-offset-1 focus:ring-[#4D44B5] focus:border-[#4D44B5] block w-full p-2.5"
-                                placeholder="Décrivez le contenu du cours..." required></textarea>
+                                placeholder="Décrivez le contenu du cours..."></textarea>
                             <p class="mt-1 text-xs text-red-600 hidden" id="descriptionError">La description est requise.</p>
                         </div>
                         <div>
@@ -160,7 +159,6 @@
         </div>
     </div>
 
-    <!-- Detail Modal -->
     <div id="detailModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="relative bg-white rounded-lg shadow-lg">
