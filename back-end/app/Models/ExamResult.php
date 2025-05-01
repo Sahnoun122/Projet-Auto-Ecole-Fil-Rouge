@@ -14,7 +14,6 @@ class ExamResult extends Model
         'feedbacks'
     ];
 
-    // Relations
     public function user()
     {
         return $this->belongsTo(User::class);
