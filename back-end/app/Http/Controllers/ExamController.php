@@ -212,4 +212,32 @@ class ExamController extends Controller
             return back()->with('error', 'Erreur lors de l\'enregistrement des résultats : ' . $e->getMessage())->withInput();
         }
     }
+
+
+    public function showExams() 
+    {
+        $candidatId = Auth::id();
+
+        $plannedExams = Exam::where('statut', 'planifie')
+                        
+                            ->whereHas('candidats', function ($query) use ($candidatId) {
+                                $query->where('user_id', $candidatId);
+                            })
+                            ->orderBy('date_exam', 'asc')
+                            ->get();
+
+        $completedExams = Exam::where('statut', 'termine')
+                            ->whereHas('results', function ($query) use ($candidatId) {
+                                $query->where('user_id', $candidatId);
+                            })
+                            ->with(['results' => function ($query) use ($candidatId) {
+                                $query->where('user_id', $candidatId);
+                            }, 'feedbacks' => function ($query) use ($candidatId) {
+                                $query->where('user_id', $candidatId);
+                            }])
+                            ->orderBy('date_exam', 'desc')
+                            ->get();
+
+        return view('candidats.exams', compact('plannedExams', 'completedExams'));
+    }
 }
