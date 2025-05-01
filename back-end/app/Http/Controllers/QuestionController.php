@@ -27,7 +27,7 @@ class QuestionController extends Controller
         $validated = $request->validate([
             'question_text' => 'required|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'duration' => 'required|integer|min:5|max:300',
+            'duration' => 'required|integer|min:5|max:30',
             'choices' => 'required|array|min:2|max:5',
             'choices.*.text' => 'required|string|max:255',
             'correct_choice' => 'required|integer'
