@@ -1,26 +1,19 @@
 @extends('layouts.candidats')
 
 @section('content')
-<div class="flex-1 overflow-auto bg-gray-50">
+<div class="flex-1 overflow-auto p-4 md:p-6">
     <div class="min-h-screen">
-        <header class="bg-gradient-to-r from-[#4D44B5] to-[#6059c9] text-white shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                    <div>
-                        <h1 class="text-3xl font-bold">{{ $title->name }}</h1>
-                        <p class="mt-2 text-blue-100">
-                            <i class="fas fa-car mr-1"></i> Permis {{ $title->type_permis }}
-                        </p>
-                    </div>
-                    <div class="w-full md:w-auto bg-white bg-opacity-10 rounded-lg p-4">
-                        <div class="flex items-center space-x-4">
-                            <div class="text-right">
-                                <span class="block text-sm font-medium text-blue-100">Progression</span>
-                                <span id="progress-text" class="block text-2xl font-bold">{{ $progress['percentage'] }}%</span>
-                            </div>
-                            <div class="w-40 bg-white bg-opacity-20 rounded-full h-3">
-                                <div id="progress-bar" class="bg-white h-3 rounded-full transition-all duration-500" style="width: {{ $progress['percentage'] }}%"></div>
-                            </div>
+        <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <h1 class="text-xl sm:text-2xl font-bold text-center sm:text-left">Catégories de Cours (Permis {{ $title->type_permis }})</h1>
+                <div class="w-full sm:w-auto bg-white bg-opacity-10 rounded-lg p-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right">
+                            <span class="block text-xs font-medium text-blue-100">Progression</span>
+                            <span id="progress-text" class="block text-lg font-bold">{{ $progress['percentage'] }}%</span>
+                        </div>
+                        <div class="w-32 bg-white bg-opacity-20 rounded-full h-2.5">
+                            <div id="progress-bar" class="bg-white h-2.5 rounded-full transition-all duration-500" style="width: {{ $progress['percentage'] }}%"></div>
                         </div>
                     </div>
                 </div>
@@ -52,7 +45,7 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($courses as $course)
-                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300" data-course-id="{{ $course->id }}">
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 relative" data-course-id="{{ $course->id }}">
                     <div class="relative h-48 bg-gray-100 rounded-t-xl overflow-hidden group">
                         @if($course->image)
                             <img src="{{ asset('storage/' . $course->image) }}" 
@@ -71,15 +64,14 @@
                         @endif
                     </div>
                     
-                    <div class="p-5">
-                        <h3 class="text-xl font-semibold text-[#4D44B5] mb-2">{{ $course->title }}</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $course->description }}</p>
-                        
-                        <button onclick="showCourseDetail({{ $course->id }})"
-                                class="w-12 h-12 flex items-center justify-center mx-auto bg-[#4D44B5] hover:bg-[#3a32a1] text-white rounded-full transition-all duration-300 hover:shadow-lg hover:scale-110">
-                            <i class="fas fa-eye text-lg"></i>
-                        </button>
+                    <div class="p-5 pb-16">
+                        <h3 class="text-lg font-semibold text-[#4D44B5] mb-2">{{ $course->title }}</h3>
                     </div>
+                    
+                    <button onclick="showCourseDetail({{ $course->id }})"
+                            class="absolute bottom-5 right-5 w-12 h-12 flex items-center justify-center text-[#4D44B5] hover:text-[#3a32a1] rounded-full transition-all duration-300 hover:scale-110">
+                        <i class="fas fa-eye text-lg"></i>
+                    </button>
                 </div>
                 @empty
                 <div class="col-span-full">
