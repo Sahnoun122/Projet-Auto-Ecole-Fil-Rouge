@@ -18,18 +18,15 @@ class AdmindController extends Controller
 
      public function dashboard()
      {
-         // Statistiques des utilisateurs
          $totalCandidats = User::where('role', 'candidat')->count();
          $totalMoniteurs = User::where('role', 'moniteur')->count();
          
-         // Statistiques des examens
          $examensTotal = Exam::count();
          $examensReussis = Exam::whereHas('result', function($query) {
              $query->whereIn('resultat', ['reussi', 'excellent', 'bien']);
          })->count();
          $tauxReussite = $examensTotal > 0 ? round(($examensReussis / $examensTotal) * 100) : 0;
          
-         // Alertes
          $paiementsEnRetard = Paiement::where('date_paiement', '<', now())
              ->whereColumn('montant', '<', 'montant_total')
              ->with('candidat')
@@ -43,10 +40,8 @@ class AdmindController extends Controller
              ->limit(5)
              ->get();
          
-         // Derniers examens
          $derniersExamens = Exam::with(['candidat', 'result'])->latest()->limit(5)->get();
          
-         // Liste des candidats
          $candidats = User::where('role', 'candidat')->orderBy('created_at', 'desc')->limit(5)->get();
      
          return view('admin.dashboard', compact(

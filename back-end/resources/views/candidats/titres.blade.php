@@ -1,27 +1,33 @@
-{{-- resources/views/candidats/titres.blade.php --}}
 @extends('layouts.candidats')
 
 @section('content')
 <div class="flex-1 overflow-auto">
     <div class="min-h-screen">
-        <header class="bg-[#4D44B5] text-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <h1 class="text-3xl font-bold">Cours Permis</h1>
-                <p class="mt-2 text-lg text-purple-100">
-                    Choisissez une catégorie pour votre permis {{ $typePermis }}
-                </p>
+        <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <h1 class="text-xl sm:text-2xl font-bold text-center sm:text-left">Catégories de Cours (Permis {{ $typePermis }})</h1>
             </div>
         </header>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <nav class="flex space-x-4 bg-white p-1 rounded-lg shadow-inner">
-                    <button onclick="switchTab('titles')" 
-                            class="{{ $activeTab === 'titles' ? 'bg-[#4D44B5] text-white' : 'text-gray-600 hover:text-[#4D44B5]' }} px-4 py-2 rounded-md font-medium text-sm transition-all duration-200">
+                    <button 
+                        onclick="switchTab('titles')" 
+                        @class([
+                            'px-4 py-2 rounded-md font-medium text-sm transition-all duration-200',
+                            'bg-[#4D44B5] text-white' => $activeTab === 'titles',
+                            'text-gray-600 hover:text-[#4D44B5]' => $activeTab !== 'titles',
+                        ])>
                         <i class="fas fa-list mr-1"></i> Catégories
                     </button>
-                    <button onclick="switchTab('progress')" 
-                            class="{{ $activeTab === 'progress' ? 'bg-[#4D44B5] text-white' : 'text-gray-600 hover:text-[#4D44B5]' }} px-4 py-2 rounded-md font-medium text-sm transition-all duration-200">
+                    <button 
+                        onclick="switchTab('progress')" 
+                        @class([
+                            'px-4 py-2 rounded-md font-medium text-sm transition-all duration-200',
+                            'bg-[#4D44B5] text-white' => $activeTab === 'progress',
+                            'text-gray-600 hover:text-[#4D44B5]' => $activeTab !== 'progress',
+                        ])>
                         <i class="fas fa-chart-bar mr-1"></i> Progression
                     </button>
                 </nav>
@@ -32,14 +38,14 @@
                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4D44B5] focus:border-transparent">
                     <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
                     @if($searchTerm)
-                    <a href="{{ route('candidats.titres') }}" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                    <a href="{{ route('candidats.titres') }}" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600" aria-label="Réinitialiser la recherche">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
                 </form>
             </div>
 
-            <div id="titlesTab" class="{{ $activeTab === 'titles' ? 'block' : 'hidden' }}">
+            <div id="titlesTab" @class(['hidden' => $activeTab !== 'titles'])>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($titles as $title)
                     <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
@@ -69,7 +75,7 @@
                         </div>
                     </div>
                     @empty
-                    <div class="col-span-3 text-center py-10">
+                    <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10">
                         <div class="bg-white rounded-xl shadow-md p-8">
                             <i class="fas fa-book-open text-4xl text-gray-300 mb-4"></i>
                             <h3 class="text-lg font-medium text-gray-700">
@@ -95,8 +101,8 @@
                 @endif
             </div>
 
-            <div id="progressTab" class="{{ $activeTab === 'progress' ? 'block' : 'hidden' }}">
-                @if($titles->count() > 0)
+            <div id="progressTab" @class(['hidden' => $activeTab !== 'progress'])>
+                @if($titles->isNotEmpty())
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($titles as $title)
                     @php $progress = $title->getProgressForUser(Auth::id()); @endphp
@@ -151,9 +157,28 @@
 
 <script>
     function switchTab(tabName) {
-        document.getElementById('titlesTab').classList.add('hidden');
-        document.getElementById('progressTab').classList.add('hidden');
-        document.getElementById(tabName + 'Tab').classList.remove('hidden');
+        const titlesTab = document.getElementById('titlesTab');
+        const progressTab = document.getElementById('progressTab');
+        const titlesButton = document.querySelector('nav button:first-child');
+        const progressButton = document.querySelector('nav button:last-child');
+        const activeClasses = ['bg-[#4D44B5]', 'text-white'];
+        const inactiveClasses = ['text-gray-600', 'hover:text-[#4D44B5]'];
+
+        if (tabName === 'titles') {
+            titlesTab.classList.remove('hidden');
+            progressTab.classList.add('hidden');
+            titlesButton.classList.add(...activeClasses);
+            titlesButton.classList.remove(...inactiveClasses);
+            progressButton.classList.add(...inactiveClasses);
+            progressButton.classList.remove(...activeClasses);
+        } else {
+            titlesTab.classList.add('hidden');
+            progressTab.classList.remove('hidden');
+            titlesButton.classList.add(...inactiveClasses);
+            titlesButton.classList.remove(...activeClasses);
+            progressButton.classList.add(...activeClasses);
+            progressButton.classList.remove(...inactiveClasses);
+        }
         
         const url = new URL(window.location.href);
         url.searchParams.set('tab', tabName);
@@ -162,11 +187,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('#titlesTab .grid > div, #progressTab .grid > div');
+        const cards = document.querySelectorAll('#titlesTab .grid > div:not(.col-span-3), #progressTab .grid > div');
         cards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
-            card.style.transition = 'all 0.4s ease-out';
+            card.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
             
             setTimeout(() => {
                 card.style.opacity = '1';
