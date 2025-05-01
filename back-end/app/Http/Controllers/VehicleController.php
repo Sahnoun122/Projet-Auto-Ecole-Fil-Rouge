@@ -66,14 +66,14 @@ class VehicleController extends Controller
         return redirect()->route('admin.vehicles')->with('success', 'Véhicule supprimé avec succès');
     }
 
-    // public function maintenanceAlerts()
-    // {
-    //     $alerts = Vehicle::where('prochaine_maintenance', '<=', now()->addDays(7))
-    //         ->orderBy('prochaine_maintenance')
-    //         ->get(['id', 'marque', 'modele', 'immatriculation', 'prochaine_maintenance']);
-
-    //     return view('admin.vehicles', compact('alerts'));
-    // }
+    public function maintenanceAlerts()
+    {
+        $alerts = Vehicle::where('prochaine_maintenance', '<=', now()->addDays(7))
+            ->orderBy('prochaine_maintenance')
+            ->get(['id', 'marque', 'modele', 'immatriculation', 'prochaine_maintenance']);
+         
+        return view('admin.vehicles', compact('alerts'));
+    }
 
 
     public function indexMoniteur()

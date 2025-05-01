@@ -13,12 +13,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto">
-        @if(session('success'))
-            <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-sm">
-                <p>{{ session('success') }}</p>
-            </div>
-        @endif
-
+    
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 bg-white p-4 rounded-lg shadow-sm gap-4">
             <nav class="flex flex-wrap gap-2 bg-gray-100 p-1.5 rounded-lg w-full lg:w-auto">
                 <a href="{{ route('admin.titles', ['tab' => 'titles']) }}"

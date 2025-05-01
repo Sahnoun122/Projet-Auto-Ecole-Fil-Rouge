@@ -21,18 +21,7 @@
     </div>
 </div>
 
-    @if (session('success'))
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
-            <div class="flex justify-between items-center">
-                <p class="text-sm md:text-base">{{ session('success') }}</p>
-                <button type="button" class="text-green-700" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
+
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div class="bg-white rounded-xl shadow overflow-hidden">
