@@ -1,7 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
+use App\Models\Exam;
+use App\Models\Paiement;
+use App\Models\Maintenance;
+use Carbon\Carbon;
+use App\Models\ExamResult;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 
 class AdmindController extends Controller
@@ -9,10 +15,51 @@ class AdmindController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function dashboard()
-    {
-        return view('admin.dashboard'); 
-    }
+
+     public function dashboard()
+     {
+         // Statistiques des utilisateurs
+         $totalCandidats = User::where('role', 'candidat')->count();
+         $totalMoniteurs = User::where('role', 'moniteur')->count();
+         
+         // Statistiques des examens
+         $examensTotal = Exam::count();
+         $examensReussis = Exam::whereHas('result', function($query) {
+             $query->whereIn('resultat', ['reussi', 'excellent', 'bien']);
+         })->count();
+         $tauxReussite = $examensTotal > 0 ? round(($examensReussis / $examensTotal) * 100) : 0;
+         
+         // Alertes
+         $paiementsEnRetard = Paiement::where('date_paiement', '<', now())
+             ->whereColumn('montant', '<', 'montant_total')
+             ->with('candidat')
+             ->orderBy('date_paiement')
+             ->limit(5)
+             ->get();
+             
+         $maintenancesAVenir = Vehicle::whereDate('prochaine_maintenance', '<=', now()->addDays(7))
+             ->whereDate('prochaine_maintenance', '>=', now())
+             ->orderBy('prochaine_maintenance')
+             ->limit(5)
+             ->get();
+         
+         // Derniers examens
+         $derniersExamens = Exam::with(['candidat', 'result'])->latest()->limit(5)->get();
+         
+         // Liste des candidats
+         $candidats = User::where('role', 'candidat')->orderBy('created_at', 'desc')->limit(5)->get();
+     
+         return view('admin.dashboard', compact(
+             'totalCandidats',
+             'totalMoniteurs',
+             'tauxReussite',
+             'paiementsEnRetard',
+             'maintenancesAVenir',
+             'derniersExamens',
+             'candidats'
+         ));
+     }
+    
     // public function AjouterMoniteur()
     // {
     //     return view('admin.AjouterMoniteur'); 
