@@ -1,10 +1,13 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ExamResult extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'exam_id',
         'user_id',
@@ -12,6 +15,11 @@ class ExamResult extends Model
         'score',
         'resultat',
         'feedbacks'
+    ];
+
+    protected $casts = [
+        'present' => 'boolean',
+        'date_enregistrement' => 'datetime',
     ];
 
     public function user()

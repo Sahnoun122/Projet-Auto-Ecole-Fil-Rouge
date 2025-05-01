@@ -97,12 +97,23 @@
                                         '{{ $exam->statut }}',
                                         '{{ $exam->candidat ? $exam->candidat->prenom . ' ' . $exam->candidat->nom : 'Non assigné' }}',
                                         '{{ $exam->instructions }}',
-                                        '{{ $exam->result ? $exam->result->score : '' }}',
-                                        '{{ $exam->result ? $exam->result->resultat : '' }}',
-                                        '{{ $exam->result ? $exam->result->feedbacks : '' }}',
-                                        '{{ $exam->result ? $exam->result->present : '' }}'
+                                        '{{ $exam->result->score ?? '' }}', 
+                                        '{{ $exam->result->resultat ?? '' }}',
+                                        '{{ $exam->result->feedbacks ?? '' }}',
+                                        '{{ $exam->result ? (int)$exam->result->present : '' }}'
                                     )" class="text-[#4D44B5] hover:text-[#3a32a1]">
                                         <i class="fas fa-eye"></i>
+                                    </button>
+
+                                    <button onclick="openResultsModal(
+                                        '{{ $exam->id }}', 
+                                        '{{ $exam->result->score ?? '' }}', 
+                                        '{{ $exam->result->resultat ?? '' }}', 
+                                        '{{ $exam->result->feedbacks ?? '' }}', 
+                                        '{{ $exam->result ? (int)$exam->result->present : '' }}'
+                                    )" 
+                                            class="text-green-600 hover:text-green-800" title="Ajouter/Modifier Résultats">
+                                        <i class="fas fa-poll"></i>
                                     </button>
                                     
                                     <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST" class="inline">
@@ -312,7 +323,6 @@
                     
                     <div id="detailResults" class="bg-gray-50 p-5 rounded-lg">
                         <h3 class="font-semibold text-lg text-[#4D44B5] mb-4">Résultats</h3>
-                        <!-- Contenu dynamique -->
                     </div>
                 </div>
                 
@@ -323,7 +333,6 @@
                 
                 <div id="detailFeedbacks" class="bg-gray-50 p-5 rounded-lg">
                     <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Feedback</h3>
-                    <!-- Contenu dynamique -->
                 </div>
             </div>
             
@@ -335,6 +344,96 @@
             </div>
         </div>
     </div>
+
+    <div id="resultsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+        <div class="bg-white w-full max-w-lg rounded-lg shadow-xl overflow-hidden">
+            <div class="bg-[#4D44B5] text-white px-6 py-4 rounded-t-lg flex justify-between items-center"> 
+                <h2 id="modalResultsTitle" class="text-xl font-bold">Ajouter/Modifier Résultats</h2>
+                <button id="cancelResultsBtn" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="resultsForm" method="POST" class="p-6">
+                @csrf
+                <input type="hidden" id="resultsExamId" name="exam_id"> 
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="resultScore" class="block text-sm font-medium text-gray-700 mb-1">Score (sur 100) *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-star-half-alt text-gray-400"></i>
+                            </div>
+                            <input type="number" id="resultScore" name="score" min="0" max="100" step="1"
+                                class="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] outline-none" required> 
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="resultResultat" class="block text-sm font-medium text-gray-700 mb-1">Résultat *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-check-circle text-gray-400"></i>
+                            </div>
+                            <select id="resultResultat" name="resultat" 
+                                class="w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] outline-none appearance-none" required> 
+                                <option value="">Sélectionnez un résultat</option>
+                                <option value="reussi">Réussi</option>
+                                <option value="echoue">Échoué</option>
+                                <option value="excellent">Excellent</option>
+                                <option value="bien">Bien</option>
+                                <option value="moyen">Moyen</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="fas fa-chevron-down text-gray-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="resultFeedbacks" class="block text-sm font-medium text-gray-700 mb-1">Feedback</label>
+                        <div class="relative">
+                             <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                                <i class="fas fa-comment-dots text-gray-400"></i>
+                            </div>
+                            <textarea id="resultFeedbacks" name="feedbacks" rows="4"
+                                class="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] outline-none"
+                                maxlength="1000"></textarea> 
+                        </div>
+                         <small class="text-gray-500 text-xs mt-1 block text-right"><span id="feedbackCharCount">0</span>/1000 caractères</small>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Présence *</label>
+                        <div class="flex items-center space-x-4">
+                             <label class="flex items-center">
+                                <input type="radio" name="present" value="1" class="form-radio h-4 w-4 text-[#4D44B5]" required> 
+                                <span class="ml-2 text-gray-700">Présent</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="present" value="0" class="form-radio h-4 w-4 text-red-600" required>
+                                <span class="ml-2 text-gray-700">Absent</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancelResultsBtnBottom"
+                        class="px-5 py-2.5 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submitResultsBtn"
+                        class="px-5 py-2.5 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition flex items-center"> 
+                        <i class="fas fa-save mr-2"></i> Enregistrer Résultats
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -384,20 +483,26 @@ $(document).ready(function() {
         $('#detailCandidat').text(candidat);
         $('#detailInstructions').text(instructions || 'Aucune instruction spécifiée');
         
-        if(score && resultat && present !== '') {
+        if(score !== '' && resultat !== '' && present !== '') {
             let resultatClass = '';
             let resultatText = resultat.replace('_', ' ').charAt(0).toUpperCase() + resultat.replace('_', ' ').slice(1);
             
-            if(resultat === 'excellent') {
-                resultatClass = 'bg-green-100 text-green-800';
-            } else if(resultat === 'tres_bien') {
-                resultatClass = 'bg-blue-100 text-blue-800';
-            } else if(resultat === 'bien') {
-                resultatClass = 'bg-indigo-100 text-indigo-800';
-            } else if(resultat === 'moyen') {
-                resultatClass = 'bg-yellow-100 text-yellow-800';
-            } else {
-                resultatClass = 'bg-red-100 text-red-800';
+            switch(resultat) {
+                case 'reussi':
+                case 'excellent':
+                    resultatClass = 'bg-green-100 text-green-800';
+                    break;
+                case 'bien':
+                    resultatClass = 'bg-blue-100 text-blue-800';
+                    break;
+                case 'moyen':
+                    resultatClass = 'bg-yellow-100 text-yellow-800';
+                    break;
+                case 'echoue':
+                    resultatClass = 'bg-red-100 text-red-800';
+                    break;
+                default:
+                    resultatClass = 'bg-gray-100 text-gray-800';
             }
             
             $('#detailResults').html(`
@@ -405,7 +510,7 @@ $(document).ready(function() {
                 <div class="space-y-3">
                     <div>
                         <p class="text-sm text-gray-500 font-medium">Présence</p>
-                        <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
+                        <p class="font-medium ${present === '1' ? 'text-green-600' : 'text-red-600'}">${present === '1' ? '<i class="fas fa-check-circle mr-1"></i>Présent' : '<i class="fas fa-times-circle mr-1"></i>Absent'}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 font-medium">Score</p>
@@ -426,34 +531,72 @@ $(document).ready(function() {
             if(feedbacks && feedbacks.trim() !== '') {
                 $('#detailFeedbacks').html(`
                     <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Feedback</h3>
-                    <div class="bg-blue-50 p-3 rounded-lg">
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
                         <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
                     </div>
-                `);
+                `).removeClass('hidden'); 
             } else {
                 $('#detailFeedbacks').html(`
                     <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Feedback</h3>
                     <p class="text-gray-500 italic">Aucun feedback disponible</p>
-                `);
+                `).removeClass('hidden'); 
             }
+            $('#detailResults').removeClass('hidden'); 
+
         } else {
+            
             $('#detailResults').html(`
                 <h3 class="font-semibold text-lg text-[#4D44B5] mb-4">Résultats</h3>
-                <p class="text-gray-500 italic">Aucun résultat enregistré</p>
-            `);
+                <p class="text-gray-500 italic">Aucun résultat enregistré pour cet examen.</p>
+            `).removeClass('hidden'); 
             $('#detailFeedbacks').html(`
-                <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Feedback</h3>
-                <p class="text-gray-500 italic">Aucun feedback disponible</p>
-            `);
+                 <h3 class="font-semibold text-lg text-[#4D44B5] mb-3">Feedback</h3>
+                 <p class="text-gray-500 italic">Aucun feedback disponible.</p>
+            `).removeClass('hidden');
         }
         
         $('#detailsModal').removeClass('hidden');
         $('body').addClass('overflow-hidden');
     };
 
-    $('#cancelExamBtn, #cancelExamBtnBottom, #closeDetailsBtn, #closeDetailsBtnBottom').click(function() {
-        $('#examModal, #detailsModal').addClass('hidden');
+    $('#resultFeedbacks').on('input', function() {
+        $('#feedbackCharCount').text($(this).val().length);
+    });
+
+    window.openResultsModal = function(examId, score, resultat, feedbacks, present) {
+        $('#modalResultsTitle').text('Ajouter/Modifier Résultats pour Examen #' + examId);
+        
+        const actionUrl = "{{ route('admin.exams.results.store', ':examId') }}".replace(':examId', examId);
+        $('#resultsForm').attr('action', actionUrl); 
+        $('#resultsExamId').val(examId); 
+        
+        $('#resultScore').val(score || '');
+        $('#resultResultat').val(resultat || '');
+        $('#resultFeedbacks').val(feedbacks || '');
+        $('#feedbackCharCount').text(feedbacks ? feedbacks.length : 0);
+
+        
+        if (present === '1') {
+            $('input[name="present"][value="1"]').prop('checked', true);
+        } else if (present === '0') {
+            $('input[name="present"][value="0"]').prop('checked', true);
+        } else {
+             $('input[name="present"]').prop('checked', false); 
+        }
+        
+        $('#resultsModal').removeClass('hidden');
+        $('body').addClass('overflow-hidden');
+    };
+
+    $('#cancelExamBtn, #cancelExamBtnBottom, #closeDetailsBtn, #closeDetailsBtnBottom, #cancelResultsBtn, #cancelResultsBtnBottom').click(function() {
+        $('#examModal, #detailsModal, #resultsModal').addClass('hidden'); 
         $('body').removeClass('overflow-hidden');
+        
+        $('#examForm')[0].reset();
+        $('#resultsForm')[0].reset(); 
+        $('#charCount').text('0');
+        $('#feedbackCharCount').text('0');
+        $('input[name="present"]').prop('checked', false);
     });
 
     $('form').on('submit', function(e) {

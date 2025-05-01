@@ -163,7 +163,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
     Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
     Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
-    
+
     Route::post('/exams/{exam}/results', [ExamController::class, 'storeResult'])->name('admin.exams.results.store');
     Route::put('/exams/{exam}/results/{candidat}', [ExamController::class, 'updateResult'])->name('admin.exams.results.update');
     

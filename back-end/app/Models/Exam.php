@@ -34,6 +34,11 @@ class Exam extends Model
         return $this->belongsTo(User::class, 'candidat_id');
     }
 
+    public function result()
+    {
+        return $this->hasOne(ExamResult::class);
+    }
+
     public function getFormattedTypeAttribute(): string
     {
         return match($this->type) {

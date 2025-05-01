@@ -7,16 +7,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\ExamScheduled;
+use App\Models\ExamResult;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Validation\ValidationException;
 
 class ExamController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Exam::with(['admin', 'candidat']);
+        
+        $query = Exam::with(['admin', 'candidat', 'result']);
 
-        // Filtres de recherche
+        
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
                 $q->where('lieu', 'like', "%{$search}%")
@@ -156,5 +158,58 @@ class ExamController extends Controller
             ->get();
 
         return view('candidats.exams', compact('plannedExams', 'completedExams'));
+    }
+
+    
+    public function storeResult(Request $request, Exam $exam)
+    {
+        $validated = $request->validate([
+            'score' => 'required|numeric|min:0|max:100',
+            'resultat' => 'required|string|in:reussi,echoue,excellent,bien,moyen',
+            'feedbacks' => 'nullable|string|max:1000',
+            'present' => 'required|boolean',
+        ]);
+
+        
+        if (!$exam->candidat_id) {
+            
+            
+             return back()->with('error', 'Impossible d\'enregistrer les résultats : Aucun candidat n\'est assigné à cet examen.')->withInput();
+        }
+
+        try {
+            DB::beginTransaction();
+
+            
+            $examResult = ExamResult::updateOrCreate(
+                [
+                    'exam_id' => $exam->id,
+                    'user_id' => $exam->candidat_id 
+                ],
+                [                         
+                    'score' => $validated['score'],
+                    'resultat' => $validated['resultat'],
+                    'feedbacks' => $validated['feedbacks'],
+                    'present' => $validated['present'],
+                    
+                ]
+            );
+
+            
+            if ($examResult) {
+                $exam->statut = 'termine';
+                $exam->save();
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.exams')
+                ->with('success', 'Résultats de l\'examen enregistrés avec succès.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur enregistrement résultat examen ID {$exam->id} pour user ID {$exam->candidat_id}: " . $e->getMessage());
+            return back()->with('error', 'Erreur lors de l\'enregistrement des résultats : ' . $e->getMessage())->withInput();
+        }
     }
 }
