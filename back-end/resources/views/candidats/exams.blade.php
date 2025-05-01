@@ -8,7 +8,9 @@ if (!function_exists('getResultColorClass')) {
             'tres_bien' => 'bg-blue-100 text-blue-800',
             'bien' => 'bg-indigo-100 text-indigo-800',
             'moyen' => 'bg-yellow-100 text-yellow-800',
-            'insuffisant' => 'bg-red-100 text-red-800'
+            'insuffisant' => 'bg-red-100 text-red-800',
+            'reussi' => 'bg-green-100 text-green-800',
+            'echoue' => 'bg-red-100 text-red-800'
         ];
         return $colorMap[$resultat] ?? 'bg-gray-100 text-gray-800';
     }
@@ -24,9 +26,11 @@ if (!function_exists('formatResultText')) {
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">Mes Examens</h1>
-    </div>
+    <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <h1 class="text-xl sm:text-2xl font-bold text-center sm:text-left">Mes Examens</h1>
+        </div>
+    </header>
 
     <main class="space-y-12">
         <div class="bg-white p-6 rounded-lg shadow-md">
@@ -34,9 +38,9 @@ if (!function_exists('formatResultText')) {
             @if($plannedExams->isEmpty())
                 <p class="text-gray-500 italic">Aucun examen planifié pour le moment.</p>
             @else
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                <div class="">
+                    <table class="min-w-full divide-y divide-gray-200 md:divide-y-0">
+                        <thead class="bg-gray-50 hidden md:table-header-group">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Heure</th>
@@ -47,25 +51,25 @@ if (!function_exists('formatResultText')) {
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($plannedExams as $exam)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            <tr class="block md:table-row mb-4 border border-gray-200 rounded-lg md:border-none md:mb-0">
+                                <td data-label="Type" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     <span class="px-3 py-1 text-xs font-semibold rounded-full 
                                         {{ $exam->type === 'theorique' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
                                         {{ ucfirst($exam->type) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <td data-label="Date & Heure" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 text-sm text-gray-700 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     {{ $exam->date_exam->format('d/m/Y H:i') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <td data-label="Lieu" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 text-sm text-gray-700 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     {{ $exam->lieu }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td data-label="Statut" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                         {{ ucfirst($exam->statut) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td data-label="Actions" class="block md:table-cell px-6 py-3 md:py-4 relative md:static pl-32 md:pl-6 text-sm font-medium before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     <button onclick="openPlanningModal(
                                         '{{ $exam->id }}',
                                         '{{ $exam->type }}',
@@ -91,9 +95,9 @@ if (!function_exists('formatResultText')) {
             @if($completedExams->isEmpty())
                 <p class="text-gray-500 italic">Aucun examen terminé.</p>
             @else
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                <div class="">
+                    <table class="min-w-full divide-y divide-gray-200 md:divide-y-0">
+                        <thead class="bg-gray-50 hidden md:table-header-group">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
@@ -108,25 +112,25 @@ if (!function_exists('formatResultText')) {
                             @php
                                 $result = $exam->result; 
                             @endphp
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            <tr class="block md:table-row mb-4 border border-gray-200 rounded-lg md:border-none md:mb-0">
+                                <td data-label="Type" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     <span class="px-3 py-1 text-xs font-semibold rounded-full 
                                         {{ $exam->type === 'theorique' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
                                         {{ ucfirst($exam->type) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <td data-label="Date" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 text-sm text-gray-700 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     {{ $exam->date_exam->format('d/m/Y H:i') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <td data-label="Lieu" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 text-sm text-gray-700 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     {{ $exam->lieu }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td data-label="Statut" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
                                         {{ ucfirst($exam->statut) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td data-label="Résultat" class="block md:table-cell px-6 py-3 md:py-4 border-b border-gray-200 md:border-none relative md:static pl-32 md:pl-6 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     @if($result && isset($result->resultat) && $result->resultat !== null && $result->resultat !== '')
                                         <span class="px-3 py-1 text-xs font-semibold rounded-full {{ getResultColorClass($result->resultat) }}">
                                             {{ formatResultText($result->resultat) }}
@@ -135,7 +139,7 @@ if (!function_exists('formatResultText')) {
                                         <span class="text-gray-500 italic">Non évalué</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                <td data-label="Actions" class="block md:table-cell px-6 py-3 md:py-4 relative md:static pl-32 md:pl-6 text-sm font-medium space-x-2 before:content-[attr(data-label)] before:absolute before:left-4 before:top-3 before:text-xs before:font-bold before:uppercase before:text-gray-500 md:before:content-none">
                                     <button onclick="openResultsModal(
                                         '{{ $exam->id }}',
                                         '{{ $exam->type }}',
