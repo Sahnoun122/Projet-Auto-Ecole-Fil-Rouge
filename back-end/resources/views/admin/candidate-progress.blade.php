@@ -1,22 +1,23 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="flex-1 overflow-auto">
-    <header class="bg-[#4D44B5] text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex-1 overflow-auto  p-4 md:p-6">
+    <header class="bg-[#4D44B5] text-white shadow-md rounded-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold">{{ $candidate->prenom }} {{ $candidate->nom }}</h1>
-                    <p class="text-sm text-blue-100 mt-1">Progression - {{ $title->name }}</p>
+                    <p class="text-sm text-blue-100 mt-2 flex items-center">
+                        <i class="fas fa-chart-line mr-2"></i>Progression - {{ $title->name }}
+                    </p>
                 </div>
-                <a href="{{ route('admin.progress', $title) }}" 
-                   class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                <a href="{{ route('admin.progress', $title) }}"
+                    class="bg-white text-[#4D44B5] px-5 py-2.5 rounded-lg font-medium hover:bg-gray-100 hover:shadow-sm transition-all duration-300 flex items-center">
                     <i class="fas fa-arrow-left mr-2"></i> Retour
                 </a>
             </div>
         </div>
     </header>
-
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div class="bg-white rounded-xl shadow-md p-6">
@@ -80,15 +81,13 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cours</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de consultation</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temps passé</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($courses as $course)
-                        <tr class="hover:bg-gray-50">
+                        @foreach($courses as $index => $course)
+                        <tr class="{{ $index % 2 === 0 ? 'bg-white' : 'bg-gray-50' }}">
                             <td class="px-6 py-4">
                                 <div class="text-sm font-medium text-gray-900">{{ $course->title }}</div>
-                                <div class="text-sm text-gray-500">{{ Str::limit($course->description, 60) }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($course->views->count() > 0)
@@ -106,11 +105,7 @@
                                     {{ $course->views->count() > 0 ? $course->views->first()->created_at->format('d/m/Y H:i') : '-' }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">
-                                    {{ $course->views->count() > 0 ? $course->views->first()->duration ?? '-' : '-' }}
-                                </div>
-                            </td>
+                         
                         </tr>
                         @endforeach
                     </tbody>
