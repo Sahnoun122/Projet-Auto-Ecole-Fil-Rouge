@@ -25,12 +25,12 @@
                     <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date/Heure</th>
-                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Durée</th>
-                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Moniteur</th>
-                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Véhicule</th>
-                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th class="px-2 py-1 sm:px-3 sm:py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-xs">Date/Heure</th>
+                                <th class="px-2 py-1 sm:px-3 sm:py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-xs">Durée</th>
+                                <th class="px-2 py-1 sm:px-3 sm:py-2 text-left font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell text-xs">Moniteur</th>
+                                <th class="px-2 py-1 sm:px-3 sm:py-2 text-left font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell text-xs">Véhicule</th>
+                                <th class="px-2 py-1 sm:px-3 sm:py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-xs">Statut</th>
+                                <th class="px-2 py-1 sm:px-3 sm:py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-xs">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
