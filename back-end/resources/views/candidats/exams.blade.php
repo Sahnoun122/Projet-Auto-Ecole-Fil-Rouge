@@ -1,35 +1,48 @@
 @extends('layouts.candidats')
 
+@php
+if (!function_exists('getResultColorClass')) {
+    function getResultColorClass($resultat) {
+        $colorMap = [
+            'excellent' => 'bg-green-100 text-green-800',
+            'tres_bien' => 'bg-blue-100 text-blue-800',
+            'bien' => 'bg-indigo-100 text-indigo-800',
+            'moyen' => 'bg-yellow-100 text-yellow-800',
+            'insuffisant' => 'bg-red-100 text-red-800'
+        ];
+        return $colorMap[$resultat] ?? 'bg-gray-100 text-gray-800';
+    }
+}
+
+if (!function_exists('formatResultText')) {
+    function formatResultText($resultat) {
+        if (!$resultat) return 'Non évalué';
+        return ucwords(str_replace('_', ' ', $resultat));
+    }
+}
+@endphp
+
 @section('content')
-<div class="flex-1 overflow-auto">
-    <header class="bg-[#4D44B5] text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h1 class="text-2xl font-bold">Mes Examens</h1>
-        </div>
-    </header>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Mes Examens</h1>
+    </div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        @if(session('success'))
-            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
-                <p>{{ session('success') }}</p>
-            </div>
-        @endif
-
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Examens Planifiés</h2>
-            
+    <main class="space-y-12">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Examens Planifiés</h2>
             @if($plannedExams->isEmpty())
-                <p class="text-gray-500">Aucun examen planifié pour le moment.</p>
+                <p class="text-gray-500 italic">Aucun examen planifié pour le moment.</p>
             @else
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Heure</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -48,9 +61,8 @@
                                     {{ $exam->lieu }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
-                                        {{ $exam->statut === 'planifie' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800' }}">
-                                        {{ ucfirst(str_replace('_', ' ', $exam->statut)) }}
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        {{ ucfirst($exam->statut) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -63,7 +75,7 @@
                                         '{{ $exam->statut }}',
                                         '{{ $exam->instructions }}'
                                     )" class="text-[#4D44B5] hover:text-[#3a32a1]">
-                                        <i class="fas fa-eye mr-1"></i> Détails
+                                        <i class="fas fa-info-circle mr-1"></i> Détails
                                     </button>
                                 </td>
                             </tr>
@@ -74,49 +86,113 @@
             @endif
         </div>
 
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Examens Terminés</h2>
+            @if($completedExams->isEmpty())
+                <p class="text-gray-500 italic">Aucun examen terminé.</p>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résultat</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($completedExams as $exam)
+                            @php
+                                $result = $exam->result; 
+                            @endphp
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                                        {{ $exam->type === 'theorique' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
+                                        {{ ucfirst($exam->type) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    {{ $exam->date_exam->format('d/m/Y H:i') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    {{ $exam->lieu }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        {{ ucfirst($exam->statut) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($result && isset($result->resultat) && $result->resultat !== null && $result->resultat !== '')
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full {{ getResultColorClass($result->resultat) }}">
+                                            {{ formatResultText($result->resultat) }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-500 italic">Non évalué</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                    <button onclick="openResultsModal(
+                                        '{{ $exam->id }}',
+                                        '{{ $exam->type }}',
+                                        '{{ $exam->date_exam->format('d/m/Y H:i') }}',
+                                        '{{ $exam->lieu }}',
+                                        '{{ $exam->statut }}',
+                                        '{{ $result ? $result->score : '' }}',
+                                        '{{ $result ? $result->resultat : '' }}',
+                                        '{{ ($result && isset($result->present)) ? (int)$result->present : '' }}'
+                                    )" class="text-[#4D44B5] hover:text-[#3a32a1]">
+                                        <i class="fas fa-poll mr-1"></i> Voir Résultats
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
    
     </main>
 
-    <!-- Modal Planification Examen -->
     <div id="planningModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-        <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-xl overflow-hidden">
             <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
-                <h2 id="modalPlanningTitle" class="text-xl font-bold">Détails de l'Examen</h2>
+                <h2 id="modalTitle" class="text-xl font-bold">Détails de l'Examen Planifié</h2>
                 <button onclick="closePlanningModal()" class="text-white hover:text-gray-200">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
             <div class="p-6 space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Type d'examen</p>
-                        <p id="planningType" class="text-gray-800 font-medium"></p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Date et heure</p>
-                        <p id="planningDate" class="text-gray-800 font-medium"></p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Lieu</p>
-                        <p id="planningLieu" class="text-gray-800 font-medium"></p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Places disponibles</p>
-                        <p id="planningPlaces" class="text-gray-800 font-medium"></p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">Statut</p>
-                        <p id="planningStatut" class="text-gray-800 font-medium"></p>
-                    </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Type</p>
+                    <p id="modalType" class="text-gray-800 font-medium"></p>
                 </div>
-                
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Date et heure</p>
+                    <p id="modalDate" class="text-gray-800 font-medium"></p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Lieu</p>
+                    <p id="modalLieu" class="text-gray-800 font-medium"></p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Places Max</p>
+                    <p id="modalPlaces" class="text-gray-800 font-medium"></p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Statut</p>
+                    <p id="modalStatut" class="text-gray-800 font-medium"></p>
+                </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Instructions</p>
-                    <p id="planningInstructions" class="text-gray-800 mt-1 whitespace-pre-line"></p>
+                    <p id="modalInstructions" class="text-gray-800 whitespace-pre-line"></p>
                 </div>
             </div>
-            
             <div class="bg-gray-50 px-6 py-4 flex justify-end">
                 <button onclick="closePlanningModal()" class="px-4 py-2 bg-[#4D44B5] text-white rounded-md hover:bg-[#3a32a1]">
                     Fermer
@@ -125,7 +201,6 @@
         </div>
     </div>
 
-    <!-- Modal Résultats Examen -->
     <div id="resultsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
         <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
             <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
@@ -160,10 +235,6 @@
                     <div id="resultDetails" class="space-y-3"></div>
                 </div>
                 
-                <div class="border-t border-gray-200 pt-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Feedback du Moniteur</h3>
-                    <div id="resultFeedbacks" class="space-y-3"></div>
-                </div>
             </div>
             
             <div class="bg-gray-50 px-6 py-4 flex justify-end">
@@ -174,156 +245,101 @@
         </div>
     </div>
 
-    <!-- Modal Feedback Candidat -->
     <div id="feedbackModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-        <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-xl overflow-hidden">
             <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
-                <h2 id="modalFeedbackTitle" class="text-xl font-bold">Votre Feedback</h2>
+                <h2 class="text-xl font-bold">Donner un Feedback</h2>
                 <button onclick="closeFeedbackModal()" class="text-white hover:text-gray-200">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
-            <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                <div id="existingFeedbackContainer" class="hidden bg-blue-50 p-4 rounded-lg mb-4 border border-blue-200">
-                    <h3 class="font-semibold text-blue-800 mb-2">Votre feedback existant</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-sm text-gray-600 font-medium">Feedback sur l'examen</p>
-                            <p id="existingExamFeedback" class="text-gray-800 mt-1 whitespace-pre-line"></p>
+            <form id="feedbackForm" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" id="feedbackExamId" name="exam_id">
+                <input type="hidden" id="feedbackMethod" name="_method" value="POST">
+                
+                <div id="existingFeedbackSection" class="hidden mb-4">
+                    <h3 class="text-md font-semibold text-gray-700 mb-2">Votre Feedback Précédent</h3>
+                    <div class="bg-gray-100 p-3 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <span class="text-yellow-500 mr-2">Note:</span>
+                            <div id="existingRatingStars" class="flex"></div>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-600 font-medium">Commentaire sur l'école</p>
-                            <p id="existingSchoolComment" class="text-gray-800 mt-1 whitespace-pre-line"></p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 font-medium">Note à l'école</p>
-                            <div id="existingSchoolRating" class="flex mt-1"></div>
-                        </div>
+                        <p class="text-gray-700 whitespace-pre-line" id="existingComment"></p>
                     </div>
-                    <div class="mt-4 flex justify-end">
-                        <button onclick="deleteFeedback()" class="text-red-600 hover:text-red-800 text-sm">
-                            <i class="fas fa-trash mr-1"></i> Supprimer ce feedback
-                        </button>
+                    <button type="button" onclick="deleteFeedback()" class="mt-2 text-sm text-red-600 hover:text-red-800">
+                        <i class="fas fa-trash-alt mr-1"></i> Supprimer ce feedback
+                    </button>
+                </div>
+
+                <div id="newFeedbackSection">
+                    <div>
+                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Note (sur 5)</label>
+                        <div id="ratingStars" class="flex space-x-1 text-2xl text-gray-300 cursor-pointer">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i class="fas fa-star" data-value="{{ $i }}" onclick="highlightFeedbackStars({{ $i }})"></i>
+                            @endfor
+                        </div>
+                        <input type="hidden" id="rating" name="rating" required>
+                    </div>
+                    <div>
+                        <label for="comment" class="block text-sm font-medium text-gray-700">Commentaire</label>
+                        <textarea id="comment" name="comment" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#4D44B5] focus:ring focus:ring-[#4D44B5] focus:ring-opacity-50"></textarea>
                     </div>
                 </div>
                 
-                <form id="feedbackForm" class="space-y-4">
-                    @csrf
-                    <input type="hidden" id="feedbackExamId" name="exam_id">
-                    
-                    <div>
-                        <label for="examFeedbackInput" class="block text-sm font-medium text-gray-700 mb-1">
-                            Votre feedback sur l'examen (optionnel)
-                        </label>
-                        <textarea id="examFeedbackInput" name="exam_feedback" rows="3" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]"></textarea>
-                    </div>
-                    
-                    <div>
-                        <label for="schoolCommentInput" class="block text-sm font-medium text-gray-700 mb-1">
-                            Votre commentaire sur l'école (optionnel)
-                        </label>
-                        <textarea id="schoolCommentInput" name="school_comment" rows="3" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5]"></textarea>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Notez votre expérience avec l'école (1-5 étoiles)
-                        </label>
-                        <div class="flex items-center">
-                            <div id="starRatingInput" class="flex">
-                                @for($i = 1; $i <= 5; $i++)
-                                <svg class="w-8 h-8 cursor-pointer star-rating" data-rating="{{ $i }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                </svg>
-                                @endfor
-                            </div>
-                            <input type="hidden" id="schoolRatingInput" name="school_rating" value="0">
-                            <span id="ratingTextInput" class="ml-2 text-sm text-gray-500">0 étoiles</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end space-x-3 pt-2">
-                        <button type="button" onclick="closeFeedbackModal()" 
-                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-                            Annuler
-                        </button>
-                        <button type="submit" 
-                            class="px-4 py-2 bg-[#4D44B5] text-white rounded-md hover:bg-[#3a32a1]">
-                            Enregistrer
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="bg-gray-50 px-6 py-4 -mx-6 -mb-6 mt-6 flex justify-end">
+                    <button type="button" onclick="closeFeedbackModal()" class="mr-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-[#4D44B5] text-white rounded-md hover:bg-[#3a32a1]">
+                        <span id="feedbackSubmitButtonText">Soumettre</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
+<div id="alert-container" class="fixed top-5 right-5 z-[100] space-y-2"></div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Gestion des modals
-    $('.star-rating').hover(function() {
-        const rating = $(this).data('rating');
-        highlightFeedbackStars(rating);
-    }, function() {
-        const currentRating = $('#schoolRatingInput').val();
-        highlightFeedbackStars(currentRating);
-    });
-    
-    $('.star-rating').click(function() {
-        const rating = $(this).data('rating');
-        $('#schoolRatingInput').val(rating);
-        $('#ratingTextInput').text(rating + (rating > 1 ? ' étoiles' : ' étoile'));
-    });
-    
-    // Soumission du formulaire de feedback
-    $('#feedbackForm').submit(function(e) {
+    $('#feedbackForm').on('submit', function(e) {
         e.preventDefault();
-        
+        const form = $(this);
         const examId = $('#feedbackExamId').val();
-        const formData = $(this).serialize();
+        const method = $('#feedbackMethod').val(); 
+        let url = `{{ route('candidats.exams.feedback.store', '') }}/${examId}`;
         
         $.ajax({
-            url: `/candidats/exams/${examId}/feedback`,
-            method: 'POST',
-            data: formData,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
+            url: url,
+            method: method,
+            data: form.serialize(),
             success: function(response) {
-                if(response.success) {
-                    loadExistingFeedback(examId);
-                    
-                    $('#examFeedbackInput').val('');
-                    $('#schoolCommentInput').val('');
-                    $('#schoolRatingInput').val('0');
-                    $('.star-rating').removeClass('text-yellow-400').addClass('text-gray-300');
-                    $('#ratingTextInput').text('0 étoiles');
-                    
-                    showAlert('success', 'Votre feedback a été enregistré avec succès!');
-                }
+                showAlert('success', response.message || 'Feedback soumis avec succès!');
+                closeFeedbackModal();
             },
             error: function(xhr) {
-                showAlert('error', 'Une erreur est survenue lors de l\'envoi du feedback.');
-                console.error(xhr.responseText);
+                let errorMsg = 'Erreur lors de la soumission du feedback.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                showAlert('error', errorMsg);
             }
         });
     });
 });
 
-// Fonctions pour la modal de planification
 function openPlanningModal(id, type, date, lieu, places, statut, instructions) {
-    $('#modalPlanningTitle').text('Planification Examen #' + id);
-    $('#planningType').text(type.charAt(0).toUpperCase() + type.slice(1));
-    $('#planningDate').text(date);
-    $('#planningLieu').text(lieu);
-    $('#planningPlaces').text(places);
-    $('#planningStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
-    $('#planningInstructions').text(instructions || 'Aucune instruction spécifiée');
-    
+    $('#modalTitle').text('Détails Examen Planifié #' + id);
+    $('#modalType').text(type.charAt(0).toUpperCase() + type.slice(1));
+    $('#modalDate').text(date);
+    $('#modalLieu').text(lieu);
+    $('#modalPlaces').text(places);
+    $('#modalStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1));
+    $('#modalInstructions').text(instructions || 'Aucune instruction');
     $('#planningModal').removeClass('hidden');
 }
 
@@ -331,8 +347,7 @@ function closePlanningModal() {
     $('#planningModal').addClass('hidden');
 }
 
-// Fonctions pour la modal de résultats
-function openResultsModal(id, type, date, lieu, statut, score, resultat, feedbacks, present) {
+function openResultsModal(id, type, date, lieu, statut, score, resultat, present) {
     $('#modalResultsTitle').text('Résultats Examen #' + id);
     $('#resultType').text(type.charAt(0).toUpperCase() + type.slice(1));
     $('#resultDate').text(date);
@@ -340,7 +355,6 @@ function openResultsModal(id, type, date, lieu, statut, score, resultat, feedbac
     $('#resultStatut').text(statut.charAt(0).toUpperCase() + statut.slice(1).replace('_', ' '));
 
     updateResultsSection(score, resultat, present);
-    updateFeedbacksSection(feedbacks);
     
     $('#resultsModal').removeClass('hidden');
 }
@@ -351,61 +365,55 @@ function closeResultsModal() {
 
 function updateResultsSection(score, resultat, present) {
     const $resultsContainer = $('#resultDetails');
-    
-    if (score && resultat && present !== '') {
-        $resultsContainer.html(`
-            <div class="space-y-3">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Présence</p>
-                    <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
-                </div>
+    $resultsContainer.empty();
+
+    if (present !== '') { 
+        let contentHtml = `
+            <div>
+                <p class="text-sm text-gray-500 font-medium">Présence</p>
+                <p class="text-gray-800 font-medium">${present === '1' ? 'Présent' : 'Absent'}</p>
+            </div>
+        `;
+
+        if (score !== '') { 
+            const scoreNum = parseFloat(score);
+            contentHtml += `
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Score</p>
                     <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                        <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: ${score}%"></div>
+                        <div class="bg-[#4D44B5] h-2.5 rounded-full" style="width: ${scoreNum}%"></div>
                     </div>
-                    <p class="text-gray-800 font-medium mt-1">${score}/100</p>
+                    <p class="text-gray-800 font-medium mt-1">${scoreNum.toFixed(2)}/100</p>
                 </div>
+            `;
+        }
+        if (resultat !== '') { 
+            contentHtml += `
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Résultat</p>
                     <span class="px-3 py-1 text-xs font-semibold rounded-full ${getResultColorClass(resultat)}">
                         ${formatResultText(resultat)}
                     </span>
                 </div>
-            </div>
-        `);
+            `;
+        }
+        
+        $resultsContainer.html(`<div class="space-y-3">${contentHtml}</div>`);
+
     } else {
         $resultsContainer.html('<p class="text-gray-500 italic">Aucun résultat enregistré</p>');
     }
 }
 
-function updateFeedbacksSection(feedbacks) {
-    const $feedbacksContainer = $('#resultFeedbacks');
-    
-    if (feedbacks && feedbacks.trim() !== '') {
-        $feedbacksContainer.html(`
-            <div class="bg-blue-50 p-3 rounded-lg">
-                <p class="text-gray-700 whitespace-pre-line">${feedbacks}</p>
-            </div>
-        `);
-    } else {
-        $feedbacksContainer.html('<p class="text-gray-500 italic">Aucun feedback disponible</p>');
-    }
-}
-
-// Fonctions pour la modal de feedback
 function openFeedbackModal(examId) {
     $('#feedbackExamId').val(examId);
-    $('#modalFeedbackTitle').text(`Feedback pour l'examen #${examId}`);
-    
-    $('#examFeedbackInput').val('');
-    $('#schoolCommentInput').val('');
-    $('#schoolRatingInput').val('0');
-    $('.star-rating').removeClass('text-yellow-400').addClass('text-gray-300');
-    $('#ratingTextInput').text('0 étoiles');
-    
+    $('#feedbackForm')[0].reset(); 
+    highlightFeedbackStars(0); 
+    $('#feedbackMethod').val('POST'); 
+    $('#feedbackSubmitButtonText').text('Soumettre');
+    $('#existingFeedbackSection').addClass('hidden');
+    $('#newFeedbackSection').removeClass('hidden');
     loadExistingFeedback(examId);
-    
     $('#feedbackModal').removeClass('hidden');
 }
 
@@ -415,69 +423,66 @@ function closeFeedbackModal() {
 
 function loadExistingFeedback(examId) {
     $.ajax({
-        url: `/candidats/exams/${examId}/feedback`,
+        url: `{{ route('candidats.exams.feedback', '') }}/${examId}`,
         method: 'GET',
         success: function(response) {
-            if(response.exists && response.feedback) {
+            if (response.feedback) {
                 const feedback = response.feedback;
-                
-                $('#existingFeedbackContainer').removeClass('hidden');
-                $('#existingExamFeedback').text(feedback.exam_feedback || 'Non fourni');
-                $('#existingSchoolComment').text(feedback.school_comment || 'Non fourni');
-                
-                const rating = feedback.school_rating || 0;
-                $('#existingSchoolRating').html(generateStarsHTML(rating));
-                
-                $('#examFeedbackInput').val(feedback.exam_feedback || '');
-                $('#schoolCommentInput').val(feedback.school_comment || '');
-                $('#schoolRatingInput').val(rating);
-                highlightFeedbackStars(rating);
-                $('#ratingTextInput').text(rating + (rating > 1 ? ' étoiles' : ' étoile'));
+                $('#existingRatingStars').html(generateStarsHTML(feedback.rating));
+                $('#existingComment').text(feedback.comment || 'Aucun commentaire');
+                $('#existingFeedbackSection').removeClass('hidden');
+                $('#newFeedbackSection').addClass('hidden');
+                $('#feedbackMethod').val('DELETE'); 
+                $('#feedbackSubmitButtonText').text('Modifier'); 
             } else {
-                $('#existingFeedbackContainer').addClass('hidden');
+                $('#existingFeedbackSection').addClass('hidden');
+                $('#newFeedbackSection').removeClass('hidden');
+                $('#feedbackMethod').val('POST');
+                $('#feedbackSubmitButtonText').text('Soumettre');
             }
         },
-        error: function(xhr) {
-            console.error('Erreur lors du chargement du feedback', xhr.responseText);
+        error: function() {
+            console.error('Erreur lors du chargement du feedback existant.');
+            $('#existingFeedbackSection').addClass('hidden');
+            $('#newFeedbackSection').removeClass('hidden');
+            $('#feedbackMethod').val('POST');
+            $('#feedbackSubmitButtonText').text('Soumettre');
         }
     });
 }
 
 function deleteFeedback() {
     const examId = $('#feedbackExamId').val();
-    
-    if(confirm('Êtes-vous sûr de vouloir supprimer votre feedback ?')) {
-        $.ajax({
-            url: `/candidats/exams/${examId}/feedback`,
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                if(response.success) {
-                    $('#existingFeedbackContainer').addClass('hidden');
-                    
-                    $('#examFeedbackInput').val('');
-                    $('#schoolCommentInput').val('');
-                    $('#schoolRatingInput').val('0');
-                    $('.star-rating').removeClass('text-yellow-400').addClass('text-gray-300');
-                    $('#ratingTextInput').text('0 étoiles');
-                    
-                    showAlert('success', 'Feedback supprimé avec succès!');
-                }
-            },
-            error: function(xhr) {
-                showAlert('error', 'Une erreur est survenue lors de la suppression du feedback.');
-                console.error(xhr.responseText);
-            }
-        });
+    if (!confirm('Êtes-vous sûr de vouloir supprimer votre feedback ?')) {
+        return;
     }
+    $.ajax({
+        url: `{{ route('candidats.exams.feedback.destroy', '') }}/${examId}`,
+        method: 'DELETE',
+        data: { _token: '{{ csrf_token() }}' },
+        success: function(response) {
+            showAlert('success', response.message || 'Feedback supprimé avec succès!');
+            $('#feedbackForm')[0].reset();
+            highlightFeedbackStars(0);
+            $('#existingFeedbackSection').addClass('hidden');
+            $('#newFeedbackSection').removeClass('hidden');
+            $('#feedbackMethod').val('POST');
+            $('#feedbackSubmitButtonText').text('Soumettre');
+        },
+        error: function(xhr) {
+            let errorMsg = 'Erreur lors de la suppression du feedback.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            showAlert('error', errorMsg);
+        }
+    });
 }
 
-// Fonctions utilitaires
 function highlightFeedbackStars(rating) {
-    $('.star-rating').each(function() {
-        if ($(this).data('rating') <= rating) {
+    $('#rating').val(rating);
+    $('#ratingStars i').each(function(index) {
+        if (index < rating) {
             $(this).removeClass('text-gray-300').addClass('text-yellow-400');
         } else {
             $(this).removeClass('text-yellow-400').addClass('text-gray-300');
@@ -486,19 +491,11 @@ function highlightFeedbackStars(rating) {
 }
 
 function generateStarsHTML(rating) {
-    let html = '';
+    let starsHtml = '';
     for (let i = 1; i <= 5; i++) {
-        if (i <= rating) {
-            html += `<svg class="w-5 h-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>`;
-        } else {
-            html += `<svg class="w-5 h-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>`;
-        }
+        starsHtml += `<i class="fas fa-star ${i <= rating ? 'text-yellow-400' : 'text-gray-300'}"></i>`;
     }
-    return html;
+    return starsHtml;
 }
 
 function getResultColorClass(resultat) {
@@ -507,39 +504,37 @@ function getResultColorClass(resultat) {
         'tres_bien': 'bg-blue-100 text-blue-800',
         'bien': 'bg-indigo-100 text-indigo-800',
         'moyen': 'bg-yellow-100 text-yellow-800',
-        'insuffisant': 'bg-red-100 text-red-800'
+        'insuffisant': 'bg-red-100 text-red-800',
+        'reussi': 'bg-green-100 text-green-800', 
+        'echoue': 'bg-red-100 text-red-800' 
     };
     return colorMap[resultat] || 'bg-gray-100 text-gray-800';
 }
 
 function formatResultText(resultat) {
     if (!resultat) return 'Non évalué';
-    return resultat.replace('_', ' ')
-                  .split(' ')
-                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' ');
+    return resultat.charAt(0).toUpperCase() + resultat.slice(1).replace('_', ' ');
 }
 
 function showAlert(type, message) {
-    const alertHtml = `
-        <div class="fixed top-4 right-4 z-50">
-            <div class="px-6 py-4 rounded-md shadow-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path>
-                    </svg>
-                    <span>${message}</span>
-                </div>
-            </div>
+    const alertId = `alert-${Date.now()}`;
+    const alertBg = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    const alert = `
+        <div id="${alertId}" class="${alertBg} text-white px-4 py-2 rounded-md shadow-lg flex justify-between items-center opacity-0 transform translate-x-full transition-all duration-300 ease-out">
+            <span>${message}</span>
+            <button onclick="document.getElementById('${alertId}').remove()" class="ml-4 text-xl font-bold">&times;</button>
         </div>
     `;
+    $('#alert-container').append(alert);
     
-    $('body').append(alertHtml);
     setTimeout(() => {
-        $('.fixed.top-4.right-4').fadeOut(500, function() {
-            $(this).remove();
-        });
-    }, 3000);
+        $(`#${alertId}`).removeClass('opacity-0 translate-x-full').addClass('opacity-100 translate-x-0');
+    }, 10);
+
+    setTimeout(() => {
+        $(`#${alertId}`).removeClass('opacity-100 translate-x-0').addClass('opacity-0 translate-x-full');
+        setTimeout(() => $(`#${alertId}`).remove(), 300);
+    }, 5000);
 }
 </script>
 @endsection

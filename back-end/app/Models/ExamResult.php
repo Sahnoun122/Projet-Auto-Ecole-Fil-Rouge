@@ -48,4 +48,9 @@ class ExamResult extends Model
     {
         return $this->present ? 'Présent' : 'Absent';
     }
+
+    public function result()
+{
+    return $this->hasOne(ExamResult::class);
+}
 }

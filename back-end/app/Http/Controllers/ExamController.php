@@ -143,17 +143,22 @@ class ExamController extends Controller
     public function candidatExams()
     {
         $user = Auth::user();
+        $candidatId = $user->id; // Use candidatId for clarity in closures
         
-        $plannedExams = Exam::where('candidat_id', $user->id)
-            ->where('date_exam', '>', now())
+        $plannedExams = Exam::where('candidat_id', $candidatId)
+            ->where('statut', 'planifie') // Also check status
+            // ->where('date_exam', '>', now()) // Removed date check, rely on status
             ->orderBy('date_exam', 'asc')
             ->get();
 
-        $completedExams = Exam::where('candidat_id', $user->id)
-            ->where('date_exam', '<=', now())
-            ->with(['examResults' => function($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
+        $completedExams = Exam::where('candidat_id', $candidatId)
+            ->where('statut', 'termine') // Filter by status 'termine'
+            ->with([
+                'result' => function($query) use ($candidatId) { // Load result relationship
+                    $query->where('user_id', $candidatId);
+                }
+                // Removed feedbacks loading
+            ])
             ->orderBy('date_exam', 'desc')
             ->get();
 
