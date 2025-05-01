@@ -166,9 +166,6 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex space-x-1 sm:space-x-2 justify-end">
-                                    <button onclick="showPaiementDetails('{{ $paiement->id }}')" class="text-gray-500 hover:text-blue-600 p-1 rounded hover:bg-gray-100" title="Voir les détails">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
                                     <button onclick="editPaiement('{{ $paiement->id }}')" class="text-[#4D44B5] hover:text-[#3a32a1] p-1 rounded hover:bg-gray-100" title="Modifier">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -264,28 +261,6 @@
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Méthode de paiement</label>
-                    <div class="grid grid-cols-3 gap-4">
-                        <label for="methodeEspeces" class="border rounded-lg p-3 cursor-pointer hover:border-[#4D44B5] text-center flex flex-col items-center justify-center transition payment-method-label">
-                            <input type="radio" name="methode_paiement" id="methodeEspeces" value="especes" class="hidden payment-method-input">
-                            <i class="fas fa-money-bill text-2xl mb-2 text-gray-600"></i>
-                            <span class="text-sm">Espèces</span>
-                        </label>
-                         <label for="methodeCheque" class="border rounded-lg p-3 cursor-pointer hover:border-[#4D44B5] text-center flex flex-col items-center justify-center transition payment-method-label">
-                            <input type="radio" name="methode_paiement" id="methodeCheque" value="cheque" class="hidden payment-method-input">
-                            <i class="fas fa-money-check text-2xl mb-2 text-gray-600"></i>
-                            <span class="text-sm">Chèque</span>
-                        </label>
-                         <label for="methodeVirement" class="border rounded-lg p-3 cursor-pointer hover:border-[#4D44B5] text-center flex flex-col items-center justify-center transition payment-method-label">
-                            <input type="radio" name="methode_paiement" id="methodeVirement" value="virement" class="hidden payment-method-input">
-                            <i class="fas fa-university text-2xl mb-2 text-gray-600"></i>
-                            <span class="text-sm">Virement</span>
-                        </label>
-                    </div>
-                     <span class="text-red-500 text-xs mt-1 hidden error-message">Veuillez sélectionner une méthode.</span>
-                </div>
-
-                <div class="mb-6">
                     <label for="paiementDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <div class="relative">
                         <textarea id="paiementDescription" name="description" rows="3" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#4D44B5]"></textarea>
@@ -305,34 +280,12 @@
             </form>
         </div>
     </div>
-
-    <div id="detailPaiementModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-        <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6 pb-4 border-b">
-                <h2 class="text-xl font-bold text-gray-800">Détails du Paiement</h2>
-                <button id="closeDetailModalBtn" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-
-            <div id="detailPaiementContent" class="space-y-4">
-                Chargement des détails...
-            </div>
-
-            <div class="flex justify-end mt-6 pt-4 border-t">
-                <button id="closeDetailBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-                    Fermer
-                </button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
     const modal = $('#paiementModal');
-    const detailModal = $('#detailPaiementModal');
     const form = $('#paiementForm');
     const modalTitle = $('#modalPaiementTitle');
     const paiementIdInput = $('#paiementId');
@@ -345,7 +298,6 @@ $(document).ready(function() {
         paiementIdInput.val(paiementData ? paiementData.id : '');
         form.trigger('reset');
         clearValidationErrors();
-        $('.payment-method-label').removeClass('border-[#4D44B5] bg-blue-50');
 
         if (paiementData) {
             $('#paiementCandidat').val(paiementData.user_id || paiementData.candidat_id);
@@ -353,11 +305,6 @@ $(document).ready(function() {
             $('#paiementTotal').val(paiementData.montant_total);
             $('#paiementDate').val(paiementData.date_paiement ? paiementData.date_paiement.split('T')[0] : '');
             $('#paiementDescription').val(paiementData.description || '');
-            if (paiementData.methode_paiement) {
-                const methodRadio = $(`#methode${paiementData.methode_paiement.charAt(0).toUpperCase() + paiementData.methode_paiement.slice(1)}`);
-                methodRadio.prop('checked', true);
-                methodRadio.closest('.payment-method-label').addClass('border-[#4D44B5] bg-blue-50');
-            }
         }
         modal.removeClass('hidden').addClass('flex');
     }
@@ -398,17 +345,6 @@ $(document).ready(function() {
         hideModal(modal);
     });
 
-    $('#closeDetailBtn, #closeDetailModalBtn').click(function() {
-        hideModal(detailModal);
-    });
-
-    $('.payment-method-label').click(function() {
-        $('.payment-method-label').removeClass('border-[#4D44B5] bg-blue-50');
-        $(this).addClass('border-[#4D44B5] bg-blue-50');
-        $(this).find('input[type="radio"]').prop('checked', true);
-         $(this).closest('.mb-6').find('.error-message').addClass('hidden');
-    });
-
     window.editPaiement = function(id) {
         $.ajax({
             url: `/admin/paiements/${id}/edit`,
@@ -423,22 +359,6 @@ $(document).ready(function() {
             error: function(xhr) {
                 console.error(xhr);
                 alert('Erreur lors du chargement des données. Voir la console.');
-            }
-        });
-    };
-
-    window.showPaiementDetails = function(id) {
-        $('#detailPaiementContent').html('Chargement des détails...');
-        detailModal.removeClass('hidden').addClass('flex');
-        $.ajax({
-            url: `/admin/paiements/${id}/details`,
-            method: 'GET',
-            success: function(data) {
-                $('#detailPaiementContent').html(data);
-            },
-            error: function(xhr) {
-                 $('#detailPaiementContent').html('<p class="text-red-500">Erreur lors du chargement des détails.</p>');
-                console.error(xhr);
             }
         });
     };
@@ -517,9 +437,6 @@ $(document).ready(function() {
          fieldContainer.find('.error-message').addClass('hidden');
          $(this).removeClass('border-red-500 focus:ring-red-500').addClass('focus:ring-[#4D44B5]');
 
-         if ($(this).is('input[type="radio"]')) {
-             $(this).closest('.mb-6').find('.error-message').addClass('hidden');
-         }
      });
 
 });

@@ -1,86 +1,88 @@
 @extends('layouts.candidats')
 
 @section('content')
-<div class="w-full">
-    <header class="bg-[#4D44B5] text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h1 class="text-xl sm:text-2xl font-bold">Mes Cours de Conduite</h1>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        @if(session('success'))
-            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
-                <p>{{ session('success') }}</p>
+<div class="flex-1 overflow-auto p-4 md:p-6">
+    <div class="min-h-screen">
+        <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <h1 class="text-xl sm:text-2xl font-bold">Mes Cours de Conduite</h1>
             </div>
-        @endif
+        </header>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-            <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Planning des Cours</h2>
-            </div>
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            @if(session('success'))
+                <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date/Heure</th>
-                            <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Durée</th>
-                            <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Moniteur</th>
-                            <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Véhicule</th>
-                            <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                            <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse ($cours as $cour)
-                        <tr>
-                            <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap" data-label="Date/Heure">
-                                {{ $cour->date_heure }}
-                            </td>
-                            <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap" data-label="Durée">
-                                {{ $cour->duree_minutes }} min
-                            </td>
-                            <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap hidden sm:table-cell" data-label="Moniteur">
-                                {{ $cour->moniteur->nom }} {{ $cour->moniteur->prenom }}
-                            </td>
-                            <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap hidden md:table-cell" data-label="Véhicule">
-                                @if($cour->vehicule)
-                                    {{ $cour->vehicule->marque }} ({{ $cour->vehicule->immatriculation }})
-                                @else
-                                    <span class="text-red-500">Non assigné</span>
-                                @endif
-                            </td>
-                            <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap" data-label="Statut">
-                                <span class="px-2 py-1 text-xs rounded-full 
-                                    @if($cour->statut === 'planifie') bg-blue-100 text-blue-800
-                                    @elseif($cour->statut === 'termine') bg-green-100 text-green-800
-                                    @else bg-red-100 text-red-800 @endif">
-                                    {{ ucfirst($cour->statut) }}
-                                </span>
-                            </td>
-                            <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                                <button onclick="showCourseDetails({{ $cour->id }})" 
-                                    class="text-[#4D44B5] hover:text-[#3a32a1] px-2 py-1 bg-[#4D44B5]/10 rounded">
-                                    <i class="fas fa-eye mr-1"></i>Détails
-                                </button>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                Aucun cours programmé
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-                <div class="px-4 py-2">
-                    {{ $cours->links() }}
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+                <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Planning des Cours</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date/Heure</th>
+                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Durée</th>
+                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Moniteur</th>
+                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Véhicule</th>
+                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th class="px-3 py-2 sm:px-4 sm:py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($cours as $cour)
+                            <tr>
+                                <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap" data-label="Date/Heure">
+                                    {{ $cour->date_heure }}
+                                </td>
+                                <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap" data-label="Durée">
+                                    {{ $cour->duree_minutes }} min
+                                </td>
+                                <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap hidden sm:table-cell" data-label="Moniteur">
+                                    {{ $cour->moniteur->nom }} {{ $cour->moniteur->prenom }}
+                                </td>
+                                <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap hidden md:table-cell" data-label="Véhicule">
+                                    @if($cour->vehicule)
+                                        {{ $cour->vehicule->marque }} ({{ $cour->vehicule->immatriculation }})
+                                    @else
+                                        <span class="text-red-500">Non assigné</span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap" data-label="Statut">
+                                    <span class="px-2 py-1 text-xs rounded-full 
+                                        @if($cour->statut === 'planifie') bg-blue-100 text-blue-800
+                                        @elseif($cour->statut === 'termine') bg-green-100 text-green-800
+                                        @else bg-red-100 text-red-800 @endif">
+                                        {{ ucfirst($cour->statut) }}
+                                    </span>
+                                </td>
+                                <td class="px-3 py-2 sm:px-4 sm:py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
+                                    <button onclick="showCourseDetails({{ $cour->id }})" 
+                                        class="text-[#4D44B5] hover:text-[#3a32a1] px-2 py-1 bg-[#4D44B5]/10 rounded">
+                                        <i class="fas fa-eye mr-1"></i>Détails
+                                    </button>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                    Aucun cours programmé
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    <div class="px-4 py-2">
+                        {{ $cours->links() }}
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 </div>
 
 <div id="detailsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
