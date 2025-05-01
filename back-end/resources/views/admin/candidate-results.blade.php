@@ -1,27 +1,27 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="flex-1 overflow-auto">
-    <header class="bg-[#4D44B5] text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold">Détail des résultats</h1>
-                <p class="text-purple-100 mt-1">
-                    {{ $candidate->name }} - {{ $quiz->title }}
-                </p>
-            </div>
-            <div>
+<div class="flex-1 overflow-auto p-4 md:p-6">
+    <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold">Détail des résultats</h1>
+                    <p class="text-sm text-blue-100 mt-1">
+                        {{ $candidate->name }} - {{ $quiz->title }}
+                    </p>
+                </div>
                 <a href="{{ route('admin.results', $quiz) }}" 
-                   class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition mr-2">
-                    <i class="fas fa-arrow-left mr-1"></i> Retour
+                   class="bg-white text-[#4D44B5] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 hover:shadow-sm transition-all duration-300 flex items-center w-max">
+                    <i class="fas fa-arrow-left mr-2"></i> Retour
                 </a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-[#4D44B5]">
+    <main class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 border-t-4 border-[#4D44B5]">
                 <div class="flex items-center mb-4">
                     <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-[#4D44B5] font-bold text-xl mr-4">
                         {{ strtoupper(substr($candidate->name, 0, 1)) }}
@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="bg-white rounded-xl shadow-md p-4 sm:p-6">
                 <h3 class="font-bold text-lg mb-4">Résumé</h3>
                 <div class="space-y-4">
                     <div>
@@ -78,9 +78,9 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-center items-center">
+            <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 flex flex-col justify-center items-center">
                 <div class="text-center mb-4">
-                    <span class="text-5xl font-bold {{ $results['passed'] ? 'text-green-600' : 'text-red-600' }}">
+                    <span class="text-4xl md:text-5xl font-bold {{ $results['passed'] ? 'text-green-600' : 'text-red-600' }}">
                         {{ $results['correct_answers'] }}/{{ $results['total_questions'] }}
                     </span>
                     <p class="text-gray-600 mt-1">Score obtenu</p>
@@ -94,7 +94,7 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-800">Détail des questions</h3>
             </div>
             <div class="divide-y divide-gray-200 max-h-[500px] overflow-y-auto">
@@ -130,19 +130,19 @@
                             </div>
                             @endif
                             
-                            <div class="flex items-center text-xs">
+                            <div class="flex flex-wrap items-center text-xs gap-3">
                                 @if($detail['answered'])
                                     @if($detail['is_correct'])
-                                        <span class="inline-flex items-center text-green-600 mr-3">
+                                        <span class="inline-flex items-center text-green-600">
                                             <i class="fas fa-check-circle mr-1"></i> Correct
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center text-red-600 mr-3">
+                                        <span class="inline-flex items-center text-red-600">
                                             <i class="fas fa-times-circle mr-1"></i> Incorrect
                                         </span>
                                     @endif
                                 @else
-                                    <span class="inline-flex items-center text-gray-600 mr-3">
+                                    <span class="inline-flex items-center text-gray-600">
                                         <i class="fas fa-question-circle mr-1"></i> Non répondu
                                     </span>
                                 @endif
