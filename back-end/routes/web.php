@@ -304,6 +304,8 @@ Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function
          Route::get('/candidats/{candidat}/cours', [MoniteurController::class, 'cours'])->name('moniteur.cours');
          Route::get('/candidats/{candidat}/quiz', [MoniteurController::class, 'quiz'])->name('moniteur.quiz');
 
+         // Add the missing route definition here
+         Route::get('/quiz/{quiz}/candidat/{candidat}/results', [MoniteurController::class, 'quizResults'])->name('moniteur.quiz.results');
 
          Route::get('/exams', [MoniteurController::class, 'candidatsWithExams'])->name('moniteur.exams');
          Route::get('/exams/{candidat}/results', [MoniteurController::class, 'candidatExamResults'])->name('moniteur.results');

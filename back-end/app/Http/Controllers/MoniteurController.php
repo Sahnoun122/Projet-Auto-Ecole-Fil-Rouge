@@ -227,6 +227,27 @@ class MoniteurController extends Controller
         return view('moniteur.quiz', compact('candidat', 'quizzes'));
     }
 
+    // New method to show detailed quiz results for a candidate
+    public function quizResults(Quiz $quiz, User $candidat)
+    {
+        // Ensure the user is a candidate
+        if ($candidat->role !== 'candidat') {
+            abort(403, "Cet utilisateur n'est pas un candidat.");
+        }
+
+        // Ensure the monitor has access (optional, add logic if needed)
+        // For example, check if the candidate is assigned to this monitor
+
+        // Reuse the result fetching logic (similar to QuizController@candidateResults)
+        $results = $quiz->getResults($candidat->id);
+
+        // Return the new view
+        return view('moniteur.quiz-results', [
+            'quiz' => $quiz,
+            'candidate' => $candidat,
+            'results' => $results
+        ]);
+    }
 
     private function checkCandidatAssignement(User $candidat)
     {
