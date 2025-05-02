@@ -291,24 +291,31 @@ Route::get('/cours/{course}/detail', [CourseController::class, 'showCourseDetail
 
     });
 
-Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->group(function() {
-    Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('moniteur.dashboard');
+Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->name('moniteur.')->group(function() {
+    // Correct the route name to just 'dashboard'
+    Route::get('/dashboard', [MoniteurController::class, 'dashboard'])->name('dashboard');
 
-        Route::get('/conduite', [PresenceCoursController::class, 'index'])->name('moniteur.conduite');
-        Route::post('/conduite/{courseId}/presences', [PresenceCoursController::class, 'updatePresences'])->name('moniteur.conduite.presences');
+        // Standardize route names within the group (remove explicit 'moniteur.' prefix)
+        Route::get('/conduite', [PresenceCoursController::class, 'index'])->name('conduite');
+        Route::post('/conduite/{courseId}/presences', [PresenceCoursController::class, 'updatePresences'])->name('conduite.presences');
 
-         Route::get('/vehicles', [VehicleController::class, 'indexMoniteur'])->name('moniteur.vehicles');
+         Route::get('/vehicles', [VehicleController::class, 'indexMoniteur'])->name('vehicles');
 
-         Route::get('/candidats', [MoniteurController::class, 'candidats'])->name('moniteur.candidats');
-         Route::get('/candidats/{candidat}/progression', [MoniteurController::class, 'progression'])->name('moniteur.progression');
-         Route::get('/candidats/{candidat}/cours', [MoniteurController::class, 'cours'])->name('moniteur.cours');
-         Route::get('/candidats/{candidat}/quiz', [MoniteurController::class, 'quiz'])->name('moniteur.quiz');
+         Route::get('/candidats', [MoniteurController::class, 'candidats'])->name('candidats'); // Already correct
+         Route::get('/candidats/{candidat}/progression', [MoniteurController::class, 'progression'])->name('progression');
+         Route::get('/candidats/{candidat}/cours', [MoniteurController::class, 'cours'])->name('cours');
+         Route::get('/candidats/{candidat}/quiz', [MoniteurController::class, 'quiz'])->name('quiz');
 
-         // Add the missing route definition here
-         Route::get('/quiz/{quiz}/candidat/{candidat}/results', [MoniteurController::class, 'quizResults'])->name('moniteur.quiz.results');
+         Route::get('/quiz/{quiz}/candidat/{candidat}/results', [MoniteurController::class, 'quizResults'])->name('quiz.results');
 
-         Route::get('/exams', [MoniteurController::class, 'candidatsWithExams'])->name('moniteur.exams');
-         Route::get('/exams/{candidat}/results', [MoniteurController::class, 'candidatExamResults'])->name('moniteur.results');
+         // Corrected route to use showAssignedExams
+         Route::get('/exams', [MoniteurController::class, 'showAssignedExams'])->name('exams.index'); 
+         
+         // Remove or comment out the route for storing results
+         // Route::post('/exams/{exam}/results', [MoniteurController::class, 'storeExamResults'])->name('exams.results.store');
+
+         // Keep the route for viewing individual candidate results if needed, or adjust as necessary
+         Route::get('/exams/{candidat}/results', [MoniteurController::class, 'candidatExamResults'])->name('results');
 
 
 

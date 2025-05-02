@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB; // Add this import
 
 class MoniteurController extends Controller
 {
@@ -264,28 +265,57 @@ class MoniteurController extends Controller
         }
     }
 
-    public function candidatsWithExams(Request $request)
+    // Renamed method to reflect its purpose
+    public function showAssignedExams(Request $request)
     {
         $search = $request->input('search');
-        
-        $candidatIds = $this->getAssignedCandidatIds();
-        
-        $candidats = User::where('role', 'candidat')
-            ->whereIn('id', $candidatIds)
-            ->withCount(['examsAsCandidate', 'examResults'])
-            ->when($search, function($query) use ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('nom', 'like', "%$search%")
-                      ->orWhere('prenom', 'like', "%$search%")
-                      ->orWhere('email', 'like', "%$search%");
-                });
-            })
-            ->orderBy('nom')
-            ->paginate(10);
-    
-        return view('moniteur.exams', compact('candidats', 'search'));
+        $moniteurId = Auth::id();
+
+        // Get IDs of candidates assigned to this monitor's courses
+        $candidatIds = CoursConduite::where('moniteur_id', $moniteurId)
+            ->pluck('candidat_id') // Get primary candidate IDs
+            ->merge(
+                DB::table('presences_cours') // Get additional candidates from pivot table
+                    ->join('cours_conduites', 'presences_cours.cours_conduite_id', '=', 'cours_conduites.id')
+                    ->where('cours_conduites.moniteur_id', $moniteurId)
+                    ->pluck('presences_cours.candidat_id')
+            )
+            ->unique()
+            ->filter() // Remove nulls if any
+            ->toArray();
+
+        // Fetch exams for these candidates
+        $assignedExamsQuery = Exam::whereIn('candidat_id', $candidatIds)
+            ->with('candidat', 'result') // Eager load relationships
+            ->orderBy('date_exam', 'desc');
+
+        // Apply search if provided
+        if ($search) {
+            $assignedExamsQuery->where(function($query) use ($search) {
+                $query->where('type', 'like', "%$search%")
+                      ->orWhere('lieu', 'like', "%$search%")
+                      ->orWhere('statut', 'like', "%$search%")
+                      ->orWhereHas('candidat', function($q) use ($search) {
+                          $q->where('nom', 'like', "%$search%")
+                            ->orWhere('prenom', 'like', "%$search%");
+                      });
+            });
+        }
+
+        $assignedExams = $assignedExamsQuery->paginate(15); // Or your preferred pagination number
+
+        // Pass the exams to the view
+        return view('moniteur.exams', compact('assignedExams', 'search'));
     }
-    
+
+    // Remove or comment out the old candidatsWithExams method if no longer needed
+    /*
+    public function candidatsWithExams(Request $request)
+    {
+        // ... old code ...
+    }
+    */
+
     public function candidatExamResults(User $candidat)
     {
         $this->checkCandidatAssignment($candidat);

@@ -7,9 +7,11 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Exam;
+use App\Models\ExamResult; // Add this import
 
-
-class User extends Authenticatable 
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
@@ -36,9 +38,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-
-
 
     public function isAdmin()
     {
@@ -75,87 +74,99 @@ class User extends Authenticatable
     //                 ->withTimestamps();
     // }
 
+    public function coursCommeMoniteur()
+    {
+        return $this->hasMany(CoursConduite::class, 'moniteur_id');
+    }
 
-public function coursCommeMoniteur()
-{
-    return $this->hasMany(CoursConduite::class, 'moniteur_id');
-}
+    public function coursCommeCandidat()
+    {
+        return $this->hasMany(CoursConduite::class, 'candidat_id');
+    }
 
-public function coursCommeCandidat()
-{
-    return $this->hasMany(CoursConduite::class, 'candidat_id');
-}
+    public function answers()
+    {
+        return $this->hasMany(Answer::class, 'candidat_id');
+    }
 
-public function answers()
-{
-    return $this->hasMany(Answer::class, 'candidat_id');
-}
+    public function courseViews()
+    {
+        return $this->hasMany(CourseView::class);
+    }
 
-public function courseViews()
-{
-    return $this->hasMany(CourseView::class);
-}
+    public function coursPrincipaux()
+    {
+        return $this->hasMany(CoursConduite::class, 'candidat_id');
+    }
 
+    public function coursConduites()
+    {
+        return $this->belongsToMany(CoursConduite::class, 'presences_cours', 'candidat_id', 'cours_conduite_id')
+                   ->withPivot('present', 'notes');
+    }
 
-public function coursPrincipaux()
-{
-    return $this->hasMany(CoursConduite::class, 'candidat_id');
-}
+    public function tousLesCoursConduites()
+    {
+        return CoursConduite::where(function($query) {
+            $query->where('candidat_id', $this->id)
+                  ->orWhereHas('candidats', function($q) {
+                      $q->where('users.id', $this->id);
+                  });
+        });
+    }
 
+    public function coursSupplementaires()
+    {
+        return $this->belongsToMany(
+            CoursConduite::class, 
+            'presences_cours', 
+            'candidat_id', 
+            'cours_conduite_id'
+        );
+    }
 
-public function coursConduites()
-{
-    return $this->belongsToMany(CoursConduite::class, 'presences_cours', 'candidat_id', 'cours_conduite_id')
-               ->withPivot('present', 'notes');
-}
+    public function exams()
+    {
+        return $this->belongsToMany(Exam::class, 'exam_results', 'user_id', 'exam_id')
+            ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+            ->withTimestamps();
+    }
 
+    public function examsParticipated()
+    {
+        return $this->belongsToMany(Exam::class, 'exam_results', 'user_id', 'exam_id')
+            ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
+            ->withTimestamps()
+            ->as('result');
+    }
 
-public function tousLesCoursConduites()
-{
-    return CoursConduite::where(function($query) {
-        $query->where('candidat_id', $this->id)
-              ->orWhereHas('candidats', function($q) {
-                  $q->where('users.id', $this->id);
-              });
-    });
-}
-
-public function coursSupplementaires()
-{
-    return $this->belongsToMany(
-        CoursConduite::class, 
-        'presences_cours', 
-        'candidat_id', 
-        'cours_conduite_id'
-    );
-}
-
-  
-public function exams()
-{
-    return $this->belongsToMany(Exam::class, 'exam_results', 'user_id', 'exam_id')
-        ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
-        ->withTimestamps();
-}
-
-public function examsParticipated()
-{
-    return $this->belongsToMany(Exam::class, 'exam_results', 'user_id', 'exam_id')
-        ->withPivot(['present', 'resultat', 'score', 'feedbacks'])
-        ->withTimestamps()
-        ->as('result');
-}
-
-public function unreadNotifications()
-{
-    return $this->morphMany(DatabaseNotification::class, 'notifiable')
-                ->whereNull('read_at');
-}
+    public function unreadNotifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')
+                    ->whereNull('read_at');
+    }
 
     public function moniteurCours()
     {
         return $this->hasMany(CoursConduite::class, 'moniteur_id');
     }
+
+    /**
+     * Get the exams associated with the user as a candidate.
+     */
+    public function examsAsCandidate(): HasMany
+    {
+        return $this->hasMany(Exam::class, 'candidat_id');
+    }
+
+    /**
+     * Get the exam results associated with the user.
+     */
+    public function examResults(): HasMany
+    {
+        return $this->hasMany(ExamResult::class, 'user_id');
+    }
+
     /**
      * Retourne l'identifiant unique de l'utilisateur pour le JWT
      *
