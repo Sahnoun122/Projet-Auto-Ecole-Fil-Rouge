@@ -1,26 +1,28 @@
 @extends('layouts.moniteur')
+@section('title', 'Véhicules Disponibles')
 @section('content')
-<div class="flex-1 overflow-auto">
-    <header class="bg-[#4D44B5] text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex-1 overflow-auto p-4 md:p-6">
+    <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold">Véhicules Disponibles</h1>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto">
         @if(session('success'))
-            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow">
                 <p>{{ session('success') }}</p>
             </div>
         @endif
 
-        <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
-            <div class="p-4 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">Filtres</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="flex flex-col">
-                        <label for="filterMarque" class="text-sm font-medium text-gray-700 mb-1">Marque</label>
-                        <select id="filterMarque" class="max-w-xs p-2 border rounded-md text-sm focus:ring-[#4D44B5] focus:border-[#4D44B5]">
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                <h2 class="text-xl font-semibold text-gray-800 whitespace-nowrap">Liste des Véhicules (<span id="vehicleCount">{{ $vehicles->count() }}</span>)</h2>
+                
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <div class="flex flex-col w-full sm:w-auto">
+                        <label for="filterMarque" class="text-sm font-medium text-gray-700 mb-1 sr-only">Marque</label>
+                        <select id="filterMarque" class="p-2 border rounded-md text-sm focus:ring-[#4D44B5] focus:border-[#4D44B5] w-full" aria-label="Filtrer par marque">
                             <option value="">Toutes les marques</option>
                             @foreach($brands as $brand)
                                 <option value="{{ $brand }}">{{ $brand }}</option>
@@ -28,9 +30,9 @@
                         </select>
                     </div>
         
-                    <div class="flex flex-col">
-                        <label for="filterStatus" class="text-sm font-medium text-gray-700 mb-1">Statut</label>
-                        <select id="filterStatus" class="max-w-xs p-2 border rounded-md text-sm focus:ring-[#4D44B5] focus:border-[#4D44B5]">
+                    <div class="flex flex-col w-full sm:w-auto">
+                        <label for="filterStatus" class="text-sm font-medium text-gray-700 mb-1 sr-only">Statut</label>
+                        <select id="filterStatus" class="p-2 border rounded-md text-sm focus:ring-[#4D44B5] focus:border-[#4D44B5] w-full" aria-label="Filtrer par statut">
                             <option value="all">Tous les statuts</option>
                             <option value="disponible">Disponible</option>
                             <option value="en maintenance">En maintenance</option>
@@ -38,46 +40,37 @@
                     </div>
                 </div>
             </div>
-        
-        </div>
-
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-800">Liste des Véhicules</h2>
-                <div class="text-sm text-gray-500">
-                    <span id="vehicleCount">{{ $vehicles->count() }}</span> véhicule(s)
-                </div>
-            </div>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marque</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kilométrage</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prochaine Maintenance</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marque & Modèle</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Kilométrage</th> 
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Prochaine Maintenance</th> 
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="vehicleTableBody">
                         @forelse ($vehicles as $vehicle)
-                        <tr class="vehicle-row" 
+                        <tr class="vehicle-row hover:bg-gray-50 transition duration-150 ease-in-out"
                             data-id="{{ $vehicle->id }}"
                             data-marque="{{ $vehicle->marque }}"
                             data-statut="{{ $vehicle->statut }}">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="font-medium text-[#4D44B5]">{{ $vehicle->marque }} {{ $vehicle->modele }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $vehicle->marque }}</div>
+                                <div class="text-sm text-gray-500">{{ $vehicle->modele }}</div>
                             </td>
                           
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                {{ number_format($vehicle->kilometrage, 0, ',', ' ') }} km
+                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell"> 
+                                <div class="text-sm text-gray-900">{{ number_format($vehicle->kilometrage, 0, ',', ' ') }} km</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap @if($vehicle->prochaine_maintenance <= now()->addDays(7)) text-red-500 font-medium @endif">
+                            <td class="px-6 py-4 whitespace-nowrap hidden lg:table-cell @if($vehicle->prochaine_maintenance <= now()->addDays(7)) text-red-600 font-medium @else text-sm text-gray-900 @endif"> 
                                 {{ $vehicle->prochaine_maintenance->format('d/m/Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs rounded-full 
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                     @if($vehicle->statut === 'disponible') bg-green-100 text-green-800
                                     @elseif($vehicle->statut === 'en maintenance') bg-yellow-100 text-yellow-800
                                     @else bg-red-100 text-red-800 @endif">
@@ -86,76 +79,77 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <button onclick="showVehicleDetails({{ $vehicle->id }})" 
-                                    class="text-[#4D44B5] hover:text-[#3a32a1] flex items-center">
+                                    class="text-[#4D44B5] hover:text-[#3a32a1] flex items-center text-sm p-1 rounded hover:bg-indigo-50 transition duration-150 ease-in-out"
+                                    title="Voir les détails">
                                     <i class="fas fa-eye mr-1"></i> Détails
                                 </button>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                Aucun véhicule disponible
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500"> 
+                                Aucun véhicule disponible ou correspondant aux filtres
                             </td>
                         </tr>
                         @endforelse
+                        <tr id="noResultsRow" class="hidden">
+                             <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                Aucun véhicule ne correspond aux critères
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
 
-    <div id="vehicleDetailsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-lg overflow-hidden shadow-xl transform transition-all">
+    <div id="vehicleDetailsModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out">
+        <div class="bg-white w-full max-w-lg rounded-lg overflow-hidden shadow-xl transform transition-all duration-300 ease-in-out scale-95 opacity-0" 
+             id="modalContent">
             <div class="bg-[#4D44B5] text-white px-6 py-4 flex justify-between items-center">
-                <h2 id="detailVehicleTitle" class="text-xl font-bold"></h2>
-                <button onclick="closeVehicleDetails()" class="text-white hover:text-gray-200 focus:outline-none">
+                <h2 id="detailVehicleTitle" class="text-xl font-semibold"></h2>
+                <button onclick="closeVehicleDetails()" class="text-white hover:text-gray-200 focus:outline-none text-xl" aria-label="Fermer">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <div class="p-6">
                 <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                         <div>
-                            <p class="text-sm text-gray-500">Marque</p>
-                            <p id="detailMarque" class="font-medium text-gray-800"></p>
+                            <p class="text-sm font-medium text-gray-500">Marque</p>
+                            <p id="detailMarque" class="mt-1 text-sm text-gray-900"></p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Modèle</p>
-                            <p id="detailModele" class="font-medium text-gray-800"></p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-sm text-gray-500">Immatriculation</p>
-                            <p id="detailImmatriculation" class="font-medium text-gray-800"></p>
+                            <p class="text-sm font-medium text-gray-500">Modèle</p>
+                            <p id="detailModele" class="mt-1 text-sm text-gray-900"></p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Kilométrage</p>
-                            <p id="detailKilometrage" class="font-medium text-gray-800"></p>
+                            <p class="text-sm font-medium text-gray-500">Immatriculation</p>
+                            <p id="detailImmatriculation" class="mt-1 text-sm text-gray-900"></p>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <p class="text-sm text-gray-500">Date d'achat</p>
-                        <p id="detailDateAchat" class="font-medium text-gray-800"></p>
-                    </div>
-                    
-                    <div>
-                        <p class="text-sm text-gray-500">Prochaine maintenance</p>
-                        <p id="detailMaintenance" class="font-medium text-gray-800"></p>
-                    </div>
-                    
-                    <div>
-                        <p class="text-sm text-gray-500">Statut</p>
-                        <p id="detailStatut" class="inline-block px-3 py-1 rounded-full text-sm font-medium mt-1"></p>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Kilométrage</p>
+                            <p id="detailKilometrage" class="mt-1 text-sm text-gray-900"></p>
+                        </div>
+                         <div>
+                            <p class="text-sm font-medium text-gray-500">Date d'achat</p>
+                            <p id="detailDateAchat" class="mt-1 text-sm text-gray-900"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Prochaine maintenance</p>
+                            <p id="detailMaintenance" class="mt-1 text-sm text-gray-900"></p>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <p class="text-sm font-medium text-gray-500">Statut</p>
+                            <p id="detailStatut" class="inline-block px-3 py-1 rounded-full text-xs font-semibold mt-1"></p>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="mt-6 flex justify-end">
+                <div class="mt-6 flex justify-end border-t pt-4">
                     <button onclick="closeVehicleDetails()" 
-                        class="px-4 py-2 bg-[#4D44B5] text-white rounded-lg hover:bg-[#3a32a1] transition focus:outline-none">
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 text-sm">
                         Fermer
                     </button>
                 </div>
@@ -169,13 +163,13 @@
 const vehiclesData = {
     @foreach($vehicles as $vehicle)
     {{ $vehicle->id }}: {
-        marque: "{{ $vehicle->marque }}",
-        modele: "{{ $vehicle->modele }}",
-        immatriculation: "{{ $vehicle->immatriculation }}",
-        date_achat: "{{ $vehicle->date_achat->format('Y-m-d') }}",
-        kilometrage: {{ $vehicle->kilometrage }},
-        prochaine_maintenance: "{{ $vehicle->prochaine_maintenance->format('Y-m-d') }}",
-        statut: "{{ $vehicle->statut }}"
+        marque: "{{ $vehicle->marque ?? 'N/A' }}",
+        modele: "{{ $vehicle->modele ?? 'N/A' }}",
+        immatriculation: "{{ $vehicle->immatriculation ?? 'N/A' }}",
+        date_achat: "{{ $vehicle->date_achat ? $vehicle->date_achat->format('Y-m-d') : null }}", 
+        kilometrage: {{ $vehicle->kilometrage ?? 0 }},
+        prochaine_maintenance: "{{ $vehicle->prochaine_maintenance ? $vehicle->prochaine_maintenance->format('Y-m-d') : null }}",
+        statut: "{{ $vehicle->statut ?? 'Inconnu' }}"
     },
     @endforeach
 };
@@ -185,8 +179,9 @@ function filterVehicles() {
     const status = $('#filterStatus').val();
     
     let visibleCount = 0;
+    let hasVisibleRows = false;
     
-    $('.vehicle-row').each(function() {
+    $('#vehicleTableBody .vehicle-row').each(function() {
         const vehicleMarque = $(this).data('marque');
         const vehicleStatus = $(this).data('statut');
         
@@ -194,34 +189,38 @@ function filterVehicles() {
         const statusMatch = status === 'all' || vehicleStatus === status;
         
         const shouldShow = marqueMatch && statusMatch;
-        $(this).toggle(shouldShow);
-        
-        if (shouldShow) visibleCount++;
+        if (shouldShow) {
+            $(this).fadeIn(200);
+            visibleCount++;
+            hasVisibleRows = true;
+        } else {
+            $(this).fadeOut(200);
+        }
     });
     
     $('#vehicleCount').text(visibleCount);
     
-    if (visibleCount === 0) {
-        if ($('#noResultsRow').length === 0) {
-            $('#vehicleTableBody').append(`
-                <tr id="noResultsRow">
-                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                        Aucun véhicule ne correspond aux critères
-                    </td>
-                </tr>
-            `);
+    setTimeout(() => {
+        hasVisibleRows = $('#vehicleTableBody .vehicle-row:visible').length > 0;
+        if (!hasVisibleRows) {
+            $('#noResultsRow').removeClass('hidden');
+        } else {
+            $('#noResultsRow').addClass('hidden');
         }
-    } else {
-        $('#noResultsRow').remove();
-    }
+    }, 250);
 }
 
 function showVehicleDetails(vehicleId) {
     const vehicle = vehiclesData[vehicleId];
-    if (!vehicle) return;
+    
+    if (!vehicle) { 
+        return; 
+    }
     
     const formatDate = (dateStr) => {
+        if (!dateStr) return 'N/A';
         const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return 'Date invalide'; 
         return date.toLocaleDateString('fr-FR', { 
             day: '2-digit', 
             month: '2-digit', 
@@ -234,45 +233,60 @@ function showVehicleDetails(vehicleId) {
     $('#detailModele').text(vehicle.modele);
     $('#detailImmatriculation').text(vehicle.immatriculation);
     $('#detailDateAchat').text(formatDate(vehicle.date_achat));
-    $('#detailKilometrage').text(vehicle.kilometrage.toLocaleString('fr-FR') + ' km');
+    $('#detailKilometrage').text(vehicle.kilometrage ? vehicle.kilometrage.toLocaleString('fr-FR') + ' km' : 'N/A');
     $('#detailMaintenance').text(formatDate(vehicle.prochaine_maintenance));
     
     const statusElement = $('#detailStatut');
-    statusElement.text(vehicle.statut.charAt(0).toUpperCase() + vehicle.statut.slice(1));
-    statusElement.removeClass().addClass('inline-block px-3 py-1 rounded-full text-sm font-medium mt-1');
+    const statusText = vehicle.statut.charAt(0).toUpperCase() + vehicle.statut.slice(1);
+    statusElement.text(statusText);
+    statusElement.removeClass().addClass('inline-block px-3 py-1 rounded-full text-xs font-semibold mt-1'); 
     
     if(vehicle.statut === 'disponible') {
         statusElement.addClass('bg-green-100 text-green-800');
     } else if(vehicle.statut === 'en maintenance') {
         statusElement.addClass('bg-yellow-100 text-yellow-800');
     } else {
-        statusElement.addClass('bg-red-100 text-red-800');
+        statusElement.addClass('bg-gray-100 text-gray-800');
     }
 
-    $('#vehicleDetailsModal').removeClass('hidden');
+    const modal = $('#vehicleDetailsModal');
+    const modalContent = $('#modalContent');
+    
+    modal.removeClass('hidden').css('opacity', 0);
+    modalContent.removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
+
+    requestAnimationFrame(() => {
+        modal.css('opacity', '1');
+        modalContent.removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100');
+    });
 }
 
 function closeVehicleDetails() {
-    $('#vehicleDetailsModal').addClass('hidden');
+    const modal = $('#vehicleDetailsModal');
+    const modalContent = $('#modalContent');
+    
+    modalContent.removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
+    modal.css('opacity', '0');
+    
+    setTimeout(() => {
+        modal.addClass('hidden');
+    }, 300);
 }
+
 
 $(document).ready(function() {
     $('#filterMarque, #filterStatus').change(filterVehicles);
 
-    $('#resetFilters').click(function() {
-        $('#filterMarque').val('');
-        $('#filterStatus').val('all');
-        filterVehicles();
-    });
-    
-    $(document).on('click', function(e) {
-        if ($(e.target).is('#vehicleDetailsModal')) {
+    filterVehicles(); 
+
+    $('#vehicleDetailsModal').on('click', function(e) {
+        if ($(e.target).is('#vehicleDetailsModal')) { 
             closeVehicleDetails();
         }
     });
     
     $(document).keyup(function(e) {
-        if (e.key === "Escape" && $('#vehicleDetailsModal').is(':visible')) {
+        if (e.key === "Escape" && !$('#vehicleDetailsModal').hasClass('hidden')) {
             closeVehicleDetails();
         }
     });
