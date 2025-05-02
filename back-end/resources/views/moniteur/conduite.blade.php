@@ -1,10 +1,10 @@
 @extends('layouts.moniteur')
 
 @section('content')
-<div class="w-full">
-    <header class="bg-[#4D44B5] text-white shadow-md">
+<div class="flex-1 overflow-auto p-4 md:p-6">
+    <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h1 class="text-xl sm:text-2xl font-bold">Mes Cours de Conduite</h1>
+            <h1 class="text-2xl font-bold">Mes Cours de Conduite</h1>
         </div>
     </header>
 
