@@ -188,7 +188,7 @@ class MoniteurController extends Controller
         $titles = Title::where('type_permis', $candidat->type_permis)
             ->with(['courses' => function($query) use ($candidat) {
                 $query->withCount(['views as viewed' => function($q) use ($candidat) {
-                    $q->where('candidat_id', $candidat->id);
+                    $q->where('user_id', $candidat->id);
                 }]);
             }])
             ->withCount('courses')
