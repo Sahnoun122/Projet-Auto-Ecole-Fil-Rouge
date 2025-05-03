@@ -54,7 +54,7 @@
                 'translate-x-0 w-64': sidebarOpen,
                 '-translate-x-full w-64 md:translate-x-0 md:w-20': !sidebarOpen
             }"
-            class="fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-transform duration-300 flex flex-col overflow-hidden"
+            class="fixed md:static inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 flex flex-col overflow-hidden"
         >
             
             <div class="p-4 flex justify-end md:hidden" x-show="sidebarOpen">
@@ -180,17 +180,6 @@
                  <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Dèconnexion</span>
              </a> 
 
-                <a href="{{ route('logout') }}"
-                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                   class="sidebar-item flex items-center px-4 py-3 text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3" />
-                    </svg>
-                    <span :class="sidebarOpen ? 'block ml-3' : 'hidden'">Déconnexion</span>
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
             </nav>
         </div>
 

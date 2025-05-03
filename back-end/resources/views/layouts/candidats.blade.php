@@ -80,7 +80,7 @@
                 </a>
             </div>
 
-=            <nav class="flex-1 py-4 overflow-hidden hover:overflow-y-auto">
+            <nav class="flex-1 py-4 overflow-hidden hover:overflow-y-auto">
                 <a href="{{ route('candidats.dashboard') }}"
                    class="sidebar-item flex items-center px-4 py-3 text-gray-600 {{ request()->routeIs('candidats.dashboard') ? 'active-sidebar-item' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,58 +149,75 @@
         </div>
 
         <div class="flex-1 flex flex-col min-w-0">
-            <div class="relative" x-data="{ notificationsOpen: false }">
-                <button @click="notificationsOpen = !notificationsOpen" class="relative text-gray-500 hover:text-gray-600 focus:outline-none">
+            <!-- Top Bar -->
+            <div class="bg-white shadow-md flex justify-between items-center p-4">
+                <!-- Hamburger Menu (always visible) -->
+                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-[#4D44B5] focus:outline-none"> <!-- Removed md:hidden -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
-                    @auth
-                    @if(auth()->user()->unreadNotifications()->count() > 0)
-                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                    @endif
-                    @endauth
                 </button>
-                
-                <div x-show="notificationsOpen" 
-                     @click.away="notificationsOpen = false"
-                     x-transition:enter="transition ease-out duration-100"
-                     x-transition:enter-start="transform opacity-0 scale-95"
-                     x-transition:enter-end="transform opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-75"
-                     x-transition:leave-start="transform opacity-100 scale-100"
-                     x-transition:leave-end="transform opacity-0 scale-95"
-                     class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-1 z-50">
-                    <div class="px-4 py-2 border-b border-gray-100">
-                        <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
-                    </div>
-                    <div class="max-h-64 overflow-y-auto">
+
+                <!-- Placeholder for potential left-side elements on larger screens -->
+                <div class="hidden md:block">
+                    <!-- You can add breadcrumbs or title here if needed -->
+                </div>
+
+                <!-- Right side elements: Notifications -->
+                <div class="relative" x-data="{ notificationsOpen: false }">
+                    <button @click="notificationsOpen = !notificationsOpen" class="relative text-gray-500 hover:text-gray-600 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
                         @auth
-                        @forelse(auth()->user()->unreadNotifications as $notification)
-                        <a href="{{ $notification->data['url'] ?? '#' }}" 
-                           class="block px-4 py-3 hover:bg-gray-50"
-                           onclick="markAsRead('{{ $notification->id }}')">
-                            <p class="text-sm text-gray-900">{{ $notification->data['message'] }}</p>
-                            <p class="text-xs text-gray-500">
-                                @if(isset($notification->data['exam_id']))
-                                <span class="text-[#4D44B5]">Examen</span> - 
-                                @endif
-                                {{ $notification->created_at->diffForHumans() }}
-                            </p>
-                        </a>
-                        @empty
-                        <div class="px-4 py-3">
-                            <p class="text-sm text-gray-500">Aucune nouvelle notification</p>
-                        </div>
-                        @endforelse
-                        @else
-                        <div class="px-4 py-3">
-                            <p class="text-sm text-gray-500">Connectez-vous pour voir les notifications</p>
-                        </div>
+                        @if(auth()->user()->unreadNotifications()->count() > 0)
+                        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                        @endif
                         @endauth
+                    </button>
+                    
+                    <div x-show="notificationsOpen" 
+                         @click.away="notificationsOpen = false"
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-1 z-50">
+                        <div class="px-4 py-2 border-b border-gray-100">
+                            <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+                        </div>
+                        <div class="max-h-64 overflow-y-auto">
+                            @auth
+                            @forelse(auth()->user()->unreadNotifications as $notification)
+                            <a href="{{ $notification->data['url'] ?? '#' }}" 
+                               class="block px-4 py-3 hover:bg-gray-50"
+                               onclick="markAsRead('{{ $notification->id }}')">
+                                <p class="text-sm text-gray-900">{{ $notification->data['message'] }}</p>
+                                <p class="text-xs text-gray-500">
+                                    @if(isset($notification->data['exam_id']))
+                                    <span class="text-[#4D44B5]">Examen</span> - 
+                                    @endif
+                                    {{ $notification->created_at->diffForHumans() }}
+                                </p>
+                            </a>
+                            @empty
+                            <div class="px-4 py-3">
+                                <p class="text-sm text-gray-500">Aucune nouvelle notification</p>
+                            </div>
+                            @endforelse
+                            @else
+                            <div class="px-4 py-3">
+                                <p class="text-sm text-gray-500">Connectez-vous pour voir les notifications</p>
+                            </div>
+                            @endauth
+                        </div>
+                   
                     </div>
-               
                 </div>
             </div>
+            <!-- End Top Bar -->
             
             @push('scripts')
             <script>
@@ -232,7 +249,7 @@
             </script>
             @endpush
             
-            <div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+            <div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6"> <!-- Added padding p-6 -->
                 @yield('content')
             </div>
         </div>
