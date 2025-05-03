@@ -54,7 +54,7 @@
 <body class="flex flex-col md:flex-row min-h-screen w-full">
   <div class="hidden md:flex animated-bg text-white p-8 flex-col items-center justify-center">
     <div class="mb-8 animate__animated animate__fadeIn">
-      <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="w-64">
+      <img src="{{asset('storage/images/logo.png') }}" alt="Logo" class="w-64">
     </div>
     
     <div class="text-center mb-16">

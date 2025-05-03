@@ -20,7 +20,8 @@ class AdmindController extends Controller
      {
          $totalCandidats = User::where('role', 'candidat')->count();
          $totalMoniteurs = User::where('role', 'moniteur')->count();
-         
+         $totalVehicles = Vehicle::count(); // Add this line
+
          $examensTotal = Exam::count();
          $examensReussis = Exam::whereHas('result', function($query) {
              $query->whereIn('resultat', ['reussi', 'excellent', 'bien']);
@@ -47,6 +48,7 @@ class AdmindController extends Controller
          return view('admin.dashboard', compact(
              'totalCandidats',
              'totalMoniteurs',
+             'totalVehicles',
              'tauxReussite',
              'paiementsEnRetard',
              'maintenancesAVenir',

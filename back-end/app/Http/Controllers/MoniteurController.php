@@ -21,8 +21,9 @@ class MoniteurController extends Controller
 {
 
     public function dashboard(){
-        view('moniteur.dashboard');
+       return view('moniteur.dashboard');
     }
+    
         public function index(Request $request)
         {
             $search = $request->input('search');

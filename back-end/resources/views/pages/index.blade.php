@@ -119,13 +119,12 @@
     <header class="bg-white py-4 shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center">
-                <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="h-10 animate__animated animate__fadeIn">
+                <a href="{{ route('/') }}"> <img src="{{ asset('storage/images/logo.png') }}" alt="Logo Auto-École" class="h-20 w-auto animate__animated animate__fadeIn"> </a>
             </div>
             <nav class="hidden md:flex space-x-8">
                 <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.1s;">Accueil</a>
                 <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.2s;">Services</a>
                 <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.3s;">À propos</a>
-                <a href="#" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.4s;">Contact</a>
             </nav>
             
             <div class="hidden md:flex space-x-4">
@@ -144,7 +143,6 @@
                     <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left">Accueil</a>
                     <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.1s;">Services</a>
                     <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.2s;">À propos</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 transition duration-300 slide-in-left" style="animation-delay: 0.3s;">Contact</a>
                 </nav>
                 
                 <div class="mt-6 flex flex-col space-y-4">
@@ -167,7 +165,7 @@
             </div>
             
             <div class="md:w-1/2 mt-10 md:mt-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-                <img src="{{url('storage/images/accueil.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
+                <img src="{{ asset('storage/images/accueil.png') }}" alt="Voiture Auto-École" class="w-full rounded-lg shadow-lg animate-float">
             </div>
         </div>
     </section>
@@ -213,13 +211,13 @@
             
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0" data-aos="fade-right">
-                    <img src="{{ url('photoss/about.png')}}" alt="Leçon de conduite" class="w-full rounded-lg shadow-lg">
+                    <img src="{{ asset('storage/images/propos.png') }}" alt="Leçon de conduite" class="w-full h-auto max-h-96 object-cover rounded-lg shadow-lg">
                 </div>
                 
                 <div class="md:w-1/2" data-aos="fade-left">
                     <h3 class="text-2xl font-semibold mb-4">Pourquoi choisir notre auto-école ?</h3>
                     <p class="text-gray-600 mb-6">Une brève description de l'auto-école ici. "Fondée en 2010, notre auto-école a formé plus de 1000 candidats avec un taux de réussite de 95%."</p>
-                    <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300">En savoir plus</a>
+                    <a href="{{ route('propos') }}" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-300">En savoir plus</a>
                 </div>
             </div>
         </div>
@@ -230,9 +228,11 @@
             <h2 class="text-3xl font-bold text-center text-gray-800 mb-12" data-aos="fade-up">Avis des Candidats</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {{-- Testimonial 1 --}}
                 <div class="bg-white p-8 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="100">
                     <div class="flex justify-center mb-4">
-                        <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
+                        {{-- Replaced placeholder div with img tag --}}
+                        <img src="{{ asset('storage/images/1.jpg') }}" alt="Avatar Janat Sahnoun" class="w-16 h-16 rounded-full object-cover">
                     </div>
                     <div class="flex justify-center text-yellow-400 mb-2">
                         <i class="fas fa-star"></i>
@@ -245,9 +245,11 @@
                     <p class="text-gray-600 text-center">Très professionnel, j'ai obtenu mon permis du premier coup !</p>
                 </div>
                 
+                {{-- Testimonial 2 --}}
                 <div class="bg-white p-8 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="200">
                     <div class="flex justify-center mb-4">
-                        <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
+                        {{-- Replaced placeholder div with img tag --}}
+                        <img src="{{ asset('storage/images/2.jpg') }}" alt="Avatar Issa Sahnoun" class="w-16 h-16 rounded-full object-cover">
                     </div>
                     <div class="flex justify-center text-yellow-400 mb-2">
                         <i class="fas fa-star"></i>
@@ -260,9 +262,11 @@
                     <p class="text-gray-600 text-center">Les moniteurs sont très patients et pédagogues.</p>
                 </div>
                 
+                {{-- Testimonial 3 --}}
                 <div class="bg-white p-8 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="300">
                     <div class="flex justify-center mb-4">
-                        <div class="w-16 h-16 bg-gray-300 rounded-full"></div>
+                        {{-- Replaced placeholder div with img tag --}}
+                        <img src="{{ asset('storage/images/3.jpg') }}" alt="Avatar Maryam Sahnoun" class="w-16 h-16 rounded-full object-cover">
                     </div>
                     <div class="flex justify-center text-yellow-400 mb-2">
                         <i class="fas fa-star"></i>

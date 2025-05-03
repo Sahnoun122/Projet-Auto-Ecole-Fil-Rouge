@@ -119,13 +119,12 @@
     <header class="bg-white py-4 shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center">
-                <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="h-10 animate__animated animate__fadeIn">
+                <a href="{{ route('/') }}"> <img src="{{ asset('storage/images/logo.png') }}" alt="Logo Auto-École" class="h-20 w-auto animate__animated animate__fadeIn"> </a>
             </div>
             <nav class="hidden md:flex space-x-8">
                 <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.1s;">Accueil</a>
                 <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.2s;">Services</a>
                 <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.3s;">À propos</a>
-                <a href="#" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.4s;">Contact</a>
             </nav>
             
             <div class="hidden md:flex space-x-4">
@@ -144,7 +143,6 @@
                     <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left">Accueil</a>
                     <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.1s;">Services</a>
                     <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.2s;">À propos</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 transition duration-300 slide-in-left" style="animation-delay: 0.3s;">Contact</a>
                 </nav>
                 
                 <div class="mt-6 flex flex-col space-y-4">
@@ -167,7 +165,7 @@
             </div>
             
             <div class="md:w-1/2 mt-10 md:mt-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-                <img src="{{url('resources/photoss/logo.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
+                <img src="{{asset('storage/images/accueil.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
             </div>
         </div>
     </section>
@@ -181,7 +179,7 @@
                 <!-- Cours de Conduite -->
                 <div class="service-card bg-white rounded-xl shadow-md overflow-hidden" data-aos="fade-up" data-aos-delay="150">
                     <div class="relative">
-                        <img src="{{ url('resources/photoss/service1.png')}}" alt="Cours de conduite" class="w-full h-56 object-cover">
+                        <img src="{{asset('storage/images/service1.png')}}" alt="Cours de conduite" class="w-full h-56 object-cover">
                         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-60"></div>
                     </div>
                     <div class="p-6">
@@ -208,7 +206,7 @@
 
                 <div class="service-card bg-white rounded-xl shadow-md overflow-hidden" data-aos="fade-up" data-aos-delay="300">
                     <div class="relative">
-                        <img src="{{ url('resources/photoss/service2.png')}}" alt="Code de la route" class="w-full h-56 object-cover">
+                        <img src="{{asset('storage/images/service2.png')}}" alt="Code de la route" class="w-full h-56 object-cover">
                         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-60"></div>
                     </div>
                     <div class="p-6">
@@ -235,7 +233,7 @@
 
                 <div class="service-card bg-white rounded-xl shadow-md overflow-hidden" data-aos="fade-up" data-aos-delay="450">
                     <div class="relative">
-                        <img src="{{ url('resources/photoss/service3.png')}}" alt="Examen pratique" class="w-full h-56 object-cover">
+                        <img src="{{ asset('storage/images/service3.png')}}" alt="Examen pratique" class="w-full h-56 object-cover">
                         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-60"></div>
                     </div>
                     <div class="p-6">
@@ -309,7 +307,7 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
-                    <img src="{{ url('resources/photoss/logo.png')}}" alt="Témoignages" class="rounded-lg shadow-lg w-full">
+                    <img src="{{asset('storage/images/permis.jpg')}}" alt="Témoignages" class="rounded-lg shadow-lg w-full">
                 </div>
                 <div class="md:w-1/2 md:pl-12" data-aos="fade-left">
                     <h2 class="text-3xl font-bold mb-8">Ce que nos élèves disent</h2>
@@ -326,7 +324,7 @@
                                 </div>
                             </div>
                             <p class="text-gray-700 italic mb-4">"Grâce à mon moniteur patient et pédagogue, j'ai réussi mon permis du premier coup ! Je recommande vivement cette auto-école."</p>
-                            <p class="font-semibold">- Marie D.</p>
+                            <p class="font-semibold">khadija sahnoun</p>
                         </div>
                         
                         <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-indigo-500">
@@ -340,7 +338,7 @@
                                 </div>
                             </div>
                             <p class="text-gray-700 italic mb-4">"Formation complète et de qualité. Les cours de code en ligne m'ont permis d'apprendre à mon rythme. Je suis très satisfait !"</p>
-                            <p class="font-semibold">- Thomas R.</p>
+                            <p class="font-semibold">issa sahnoun</p>
                         </div>
                     </div>
                 </div>
@@ -352,7 +350,7 @@
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-3xl font-bold mb-8" data-aos="fade-up">Prêt à prendre le volant ?</h2>
             <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Inscrivez-vous dès maintenant et commencez votre formation à la conduite avec les meilleurs moniteurs.</p>
-            <a href="#" class="inline-block px-8 py-3 bg-white text-indigo-700 rounded-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105" data-aos="fade-up" data-aos-delay="200">S'inscrire maintenant</a>
+            <a href="{{ route('register')}}" class="inline-block px-8 py-3 bg-white text-indigo-700 rounded-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105" data-aos="fade-up" data-aos-delay="200">S'inscrire maintenant</a>
         </div>
     </section>
     <footer class="bg-gray-800 text-white py-12">

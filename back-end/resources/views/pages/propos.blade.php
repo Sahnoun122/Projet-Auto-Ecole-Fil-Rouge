@@ -119,13 +119,12 @@
     <header class="bg-white py-4 shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center">
-                <img src="{{ url('resources/photoss/logo.png') }}" alt="Logo" class="h-10 animate__animated animate__fadeIn">
+                <a href="{{ route('/') }}"> <img src="{{ asset('storage/images/logo.png') }}" alt="Logo Auto-École" class="h-20 w-auto animate__animated animate__fadeIn"> </a>
             </div>
             <nav class="hidden md:flex space-x-8">
                 <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.1s;">Accueil</a>
                 <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.2s;">Services</a>
                 <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.3s;">À propos</a>
-                <a href="#" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 animate__animated animate__fadeInDown" style="animation-delay: 0.4s;">Contact</a>
             </nav>
             
             <div class="hidden md:flex space-x-4">
@@ -144,7 +143,6 @@
                     <a href="{{ route('/') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left">Accueil</a>
                     <a href="{{ route('services') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.1s;">Services</a>
                     <a href="{{ route('propos') }}" class="nav-item text-gray-600 hover:text-indigo-600 transition duration-300 slide-in-left" style="animation-delay: 0.2s;">À propos</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 py-2 transition duration-300 slide-in-left" style="animation-delay: 0.3s;">Contact</a>
                 </nav>
                 
                 <div class="mt-6 flex flex-col space-y-4">
@@ -167,7 +165,7 @@
             </div>
             
             <div class="md:w-1/2 mt-10 md:mt-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-                <img src="{{url('resources/photoss/logo.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
+                <img src="{{asset('storage/images/accueil.png')}}" alt="Voiture" class="w-full rounded-lg shadow-lg animate-float">
             </div>
         </div>
     </section>
@@ -248,7 +246,7 @@
             <h2 class="text-2xl font-bold mb-4 animate__animated animate__fadeInUp">Prêt à commencer votre formation ?</h2>
             <p class="text-indigo-100 mb-6 max-w-2xl mx-auto animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">Rejoignez les milliers d'élèves satisfaits qui ont obtenu leur permis avec l'auto-école Sahnoun.</p>
             <div class="flex justify-center space-x-4">
-                <a href="#" class="px-6 py-3 bg-indigo-700 text-white font-medium rounded-md hover:bg-indigo-800 transition duration-300 btn-hover animate__animated animate__fadeInUp pulse" style="animation-delay: 0.4s;">S'inscrire maintenant</a>
+                <a href="{{route('register')}}" class="px-6 py-3 bg-indigo-700 text-white font-medium rounded-md hover:bg-indigo-800 transition duration-300 btn-hover animate__animated animate__fadeInUp pulse" style="animation-delay: 0.4s;">S'inscrire maintenant</a>
             </div>
         </div>
     </section>
