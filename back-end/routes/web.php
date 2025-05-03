@@ -309,7 +309,7 @@ Route::prefix('moniteur')->middleware(['auth', 'role:moniteur'])->name('moniteur
          Route::get('/quiz/{quiz}/candidat/{candidat}/results', [MoniteurController::class, 'quizResults'])->name('quiz.results');
 
          // Corrected route to use showAssignedExams
-         Route::get('/exams', [MoniteurController::class, 'showAssignedExams'])->name('exams.index'); 
+         Route::get('/exams', [MoniteurController::class, 'showAssignedExams'])->name('exams'); 
          
          // Remove or comment out the route for storing results
          // Route::post('/exams/{exam}/results', [MoniteurController::class, 'storeExamResults'])->name('exams.results.store');
