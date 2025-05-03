@@ -52,10 +52,9 @@
   </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen w-full">
-  <!-- Left side with animation - Fixed -->
-  <div class="hidden md:flex animated-bg text-white p-8 flex-col items-center justify-center">
+=  <div class="hidden md:flex animated-bg text-white p-8 flex-col items-center justify-center">
     <div class="mb-8 animate__animated animate__fadeIn">
-      <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-64">
+      <a href="{{ route('/') }}"> <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-64"></a>
     </div>
     
     <div class="text-center mb-16">
@@ -64,7 +63,6 @@
     </div>
   </div>
 
-  <!-- Right side with form - Scrollable -->
   <div class="right-side bg-white p-8 flex flex-col justify-center">
     <div class="max-w-lg mx-auto w-full">
       <h2 class="text-3xl font-bold text-gray-800 mb-6">Nouveau mot de passe</h2>

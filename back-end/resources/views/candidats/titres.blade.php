@@ -67,7 +67,7 @@
                                 </p>
                             </div>
                             <div class="mt-6">
-                                <a href="{{ route('candidats.cours', $title) }}" 
+                                <a href="{{ route('candidats.cours', $title->id) }}" 
                                    class="w-full block text-center bg-[#4D44B5] hover:bg-[#3a32a1] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300">
                                    Voir les cours <i class="fas fa-arrow-right ml-2"></i>
                                 </a>

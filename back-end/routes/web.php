@@ -258,7 +258,7 @@ Route::get('/titres', [TitleController::class, 'indexForCandidat'])->name('candi
     
 Route::get('/cours/{title}', [CourseController::class, 'showCourses'])->name('candidats.cours');
 
-Route::get('/cours/{course}/detail', [CourseController::class, 'showCourseDetail'])->name('candidats.cours');
+Route::get('/cours/{course}/detail', [CourseController::class, 'showCourseDetail'])->name('candidats.cours.detail');
 
 
      Route::get('/conduite', [CoursConduiteController::class, 'candidatIndex'])->name('candidats.conduite');

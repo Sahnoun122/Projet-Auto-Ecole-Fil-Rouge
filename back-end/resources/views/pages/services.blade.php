@@ -492,26 +492,7 @@
                 window.requestAnimationFrame(step);
             }
             
-            // Use this for counters if you add them later
-            // const counterElements = document.querySelectorAll('.counter');
-            // const observerOptions = {
-            //     threshold: 0.5
-            // };
-            
-            // const observer = new IntersectionObserver((entries) => {
-            //     entries.forEach(entry => {
-            //         if (entry.isIntersecting) {
-            //             const target = entry.target;
-            //             const endValue = parseInt(target.getAttribute('data-count'));
-            //             animateValue(target, 0, endValue, 1500);
-            //             observer.unobserve(target);
-            //         }
-            //     });
-            // }, observerOptions);
-            
-            // counterElements.forEach(counter => {
-            //     observer.observe(counter);
-            // });
+     
         });
     </script>
 </body>
