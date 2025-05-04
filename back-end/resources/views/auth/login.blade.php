@@ -143,7 +143,7 @@
     </div>
   </div>
 
-  <div class="right-side bg-white p-8 flex flex-col justify-center">
+  <div class="right-side flex-grow bg-white p-8 flex flex-col justify-center"> {{-- Added flex-grow --}}
     <div class="max-w-lg mx-auto w-full">
       <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Se connecter</h2>
       

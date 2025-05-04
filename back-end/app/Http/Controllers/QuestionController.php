@@ -75,11 +75,11 @@ class QuestionController extends Controller
             'question_text' => 'required|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'remove_image' => 'nullable|boolean',
-            'duration' => 'required|integer|min:5|max:300',
-            'choices' => 'required|array|min:2|max:5',
+            'duration' => 'nullable|integer|min:5|max:300',
+            'choices' => 'nullable|array|min:2|max:5',
             'choices.*.id' => 'nullable|integer',
-            'choices.*.text' => 'required|string|max:255',
-            'correct_choice' => 'required|integer'
+            'choices.*.text' => 'nullable|string|max:255',
+            'correct_choice' => 'nullable|integer'
         ]);
 
         $imagePath = $question->image_path;
