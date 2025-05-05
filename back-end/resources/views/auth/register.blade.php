@@ -262,68 +262,69 @@
           <p id="type_permis-error" class="error-message"></p>
         </div>
 
+        <div class="fade-in-up" style="animation-delay: 0.8s;">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Avez-vous déjà un permis de conduire ? *</label>
+            <div class="flex items-center space-x-4">
+                <label class="flex items-center">
+                    <input type="radio" name="avez_vous_permis" value="1" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" {{ old('avez_vous_permis') == '1' ? 'checked' : '' }}>
+                    <span class="ml-2 text-sm text-gray-700">Oui</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="avez_vous_permis" value="0" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" {{ old('avez_vous_permis', '0') == '0' ? 'checked' : '' }}>
+                    <span class="ml-2 text-sm text-gray-700">Non</span>
+                </label>
+            </div>
+             <p id="avez_vous_permis-error" class="error-message"></p>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="fade-in-up" style="animation-delay: 0.8s;">
-            <label for="photo_profile" class="block text-sm font-medium text-gray-700 mb-2">Photo de profil *</label>
-            <div class="file-upload-container">
-              <input 
-                type="file" 
-                id="photo_profile" 
-                name="photo_profile"
-                accept="image/*"
-                class="hidden"
-                onchange="previewProfilePhoto(event)"
-              
-              >
-              <label for="photo_profile" class="block text-center cursor-pointer">
-                <svg class="mx-auto h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                <span class="mt-2 block text-sm font-medium text-gray-700">Glissez-déposez votre photo ou cliquez pour sélectionner</span>
-                <span class="mt-1 block text-xs text-gray-500">Format JPG, PNG (max. 2MB)</span>
-              </label>
-              <p id="photo_profile-error" class="error-message"></p>
-            </div>
-            <div id="previewProfileContainer" class="mt-4 hidden">
-              <img id="profileImagePreview" class="mx-auto rounded-lg shadow-lg w-32 h-32 object-cover" alt="Aperçu de la photo de profil">
-              <button type="button" id="removeProfileImage" class="mt-2 text-red-500 hover:text-red-600 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-                <span class="block text-sm">Supprimer l'image</span>
-              </button>
+            <label for="photo_profile" class="block text-sm font-medium text-gray-700 mb-1">Photo de profil *</label>
+            <input 
+              type="file" 
+              id="photo_profile" 
+              name="photo_profile"
+              accept="image/*"
+              class="block w-full text-sm text-gray-500
+                     file:mr-4 file:py-2 file:px-4
+                     file:rounded-md file:border-0
+                     file:text-sm file:font-semibold
+                     file:bg-indigo-50 file:text-indigo-700
+                     hover:file:bg-indigo-100"
+              onchange="previewProfilePhoto(event)"
+            >
+            <p id="photo_profile-error" class="error-message mt-1"></p>
+            <div id="previewProfileContainer" class="mt-2 hidden flex items-center space-x-2">
+              <img id="profileImagePreview" class="rounded-md w-16 h-16 object-cover" alt="Aperçu profil">
+              <span id="profileFileName" class="text-sm text-gray-600 truncate"></span>
+              <button type="button" id="removeProfileImage" class="ml-auto text-xs text-red-600 hover:text-red-800 transition">Supprimer</button>
             </div>
           </div>
           
           <div class="fade-in-up" style="animation-delay: 0.9s;">
-            <label for="photo_identite" class="block text-sm font-medium text-gray-700 mb-2">Photo d'identité *</label>
-            <div class="file-upload-container">
-              <input 
-                type="file" 
-                id="photo_identite" 
-                name="photo_identite"
-                accept="image/*"
-                class="hidden"
-                onchange="previewIdentityPhoto(event)"
-                
-              >
-              <label for="photo_identite" class="block text-center cursor-pointer">
-                <svg class="mx-auto h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                <span class="mt-2 block text-sm font-medium text-gray-700">Glissez-déposez votre photo ou cliquez pour sélectionner</span>
-                <span class="mt-1 block text-xs text-gray-500">Format JPG, PNG (max. 2MB)</span>
-              </label>
-              <p id="photo_identite-error" class="error-message"></p>
-            </div>
-            <div id="previewIdentityContainer" class="mt-4 hidden">
-              <img id="identityImagePreview" class="mx-auto rounded-lg shadow-lg w-32 h-32 object-cover" alt="Aperçu de la photo d'identité">
-              <button type="button" id="removeIdentityImage" class="mt-2 text-red-500 hover:text-red-600 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-                <span class="block text-sm">Supprimer l'image</span>
-              </button>
+            <label for="photo_identite" id="photo_identite_label" class="block text-sm font-medium text-gray-700 mb-1">Pièce d'identité (PDF) *</label> {{-- Label mis à jour par JS --}}
+            <input 
+              type="file" 
+              id="photo_identite" 
+              name="photo_identite"
+              accept="application/pdf" {{-- Toujours PDF --}}
+              class="block w-full text-sm text-gray-500
+                     file:mr-4 file:py-2 file:px-4
+                     file:rounded-md file:border-0
+                     file:text-sm file:font-semibold
+                     file:bg-indigo-50 file:text-indigo-700
+                     hover:file:bg-indigo-100"
+              onchange="previewIdentityPhoto(event)"
+            >
+             <p id="photo_identite_format" class="text-xs text-gray-500 mt-1">Format PDF (max. 2MB)</p> {{-- Toujours PDF --}}
+            <p id="photo_identite-error" class="error-message"></p>
+            <div id="previewIdentityContainer" class="mt-2 hidden flex items-center space-x-2">
+              {{-- Retrait de l'aperçu image, seule l'icône PDF est nécessaire --}}
+               <svg id="identityPdfIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500 hidden" viewBox="0 0 20 20" fill="currentColor">
+                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A1 1 0 0111.293 2.707l4 4A1 1 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+               </svg>
+              <span id="identityFileName" class="text-sm text-gray-600 truncate"></span>
+              <button type="button" id="removeIdentityImage" class="ml-auto text-xs text-red-600 hover:text-red-800 transition">Supprimer</button>
             </div>
           </div>
         </div>
@@ -603,34 +604,260 @@
       isValid &= validatePassword(document.getElementById('password'));
       isValid &= validatePhone(document.getElementById('telephone'));
       isValid &= validateFile(document.getElementById('photo_profile'), 'photo_profile-error', ['jpg', 'jpeg', 'png']);
-      isValid &= validateFile(document.getElementById('photo_identite'), 'photo_identite-error', ['jpg', 'jpeg', 'png']);
-      isValid &= validateTerms();
       
-      // Check select field
+      const hasPermis = document.querySelector('input[name="avez_vous_permis"]:checked').value === '1';
+      const identiteExtensions = hasPermis ? ['jpg', 'jpeg', 'png'] : ['pdf'];
+      isValid &= validateFile(document.getElementById('photo_identite'), 'photo_identite-error', identiteExtensions);
+      
+      const permisRadios = document.querySelectorAll('input[name="avez_vous_permis"]');
+      const permisError = document.getElementById('avez_vous_permis-error');
+      let permisSelected = false;
+      permisRadios.forEach(radio => {
+          if (radio.checked) permisSelected = true;
+      });
+      if (!permisSelected) {
+          showError(permisRadios[0], permisError, "Veuillez indiquer si vous avez un permis."); 
+          isValid = false;
+      } else {
+          clearError(permisRadios[0], permisError);
+      }
+
       const typePermis = document.getElementById('type_permis');
       const typePermisError = document.getElementById('type_permis-error');
       if (typePermis.value === '') {
-        showError(typePermis, typePermisError, "Veuillez sélectionner un type de permis");
-        isValid = false;
+          showError(typePermis, typePermisError, "Veuillez sélectionner un type de permis");
+          isValid = false;
       } else {
-        clearError(typePermis, typePermisError);
+          clearError(typePermis, typePermisError);
       }
       
       const adresse = document.getElementById('adresse');
       const adresseError = document.getElementById('adresse-error');
       if (adresse.value.trim() === '') {
-        showError(adresse, adresseError, "Veuillez entrer une adresse");
-        isValid = false;
+          showError(adresse, adresseError, "Veuillez entrer une adresse");
+          isValid = false;
       } else {
-        clearError(adresse, adresseError);
+          clearError(adresse, adresseError);
       }
       
       if (!isValid) {
-        e.preventDefault();
+          e.preventDefault();
       }
     });
 
-    
+    document.addEventListener('DOMContentLoaded', function() {
+        const radiosPermis = document.querySelectorAll('input[name="avez_vous_permis"]');
+        const photoIdentiteInput = document.getElementById('photo_identite');
+        const photoIdentiteLabel = document.getElementById('photo_identite_label');
+        const photoIdentiteFormat = document.getElementById('photo_identite_format');
+        
+        const previewProfileContainer = document.getElementById('previewProfileContainer');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        const profileFileName = document.getElementById('profileFileName'); 
+
+        const previewIdentityContainer = document.getElementById('previewIdentityContainer');
+        const identityImagePreview = document.getElementById('identityImagePreview');
+        const identityFileName = document.getElementById('identityFileName');
+        const identityPdfIcon = document.getElementById('identityPdfIcon'); 
+
+        function updatePhotoIdentiteField(hasPermis) {
+            if (hasPermis) {
+                photoIdentiteLabel.textContent = "Photo du permis (PDF) *"; // Préciser PDF
+            } else {
+                photoIdentiteLabel.textContent = "Pièce d'identité (PDF) *"; // Préciser PDF
+            }
+            // Toujours PDF
+            photoIdentiteInput.accept = "application/pdf";
+            photoIdentiteFormat.textContent = "Format PDF (max. 2MB)";
+            
+            // Réinitialiser
+            photoIdentiteInput.value = ''; 
+            previewIdentityContainer.classList.add('hidden');
+            identityPdfIcon.classList.add('hidden');
+            identityFileName.textContent = '';
+            clearError(photoIdentiteInput, document.getElementById('photo_identite-error'));
+        }
+
+        radiosPermis.forEach(radio => {
+            radio.addEventListener('change', function() {
+                updatePhotoIdentiteField(this.value === '1');
+            });
+        });
+
+        const initialPermisValue = document.querySelector('input[name="avez_vous_permis"]:checked').value;
+        updatePhotoIdentiteField(initialPermisValue === '1');
+
+        window.previewProfilePhoto = function(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    profileImagePreview.src = reader.result;
+                    profileFileName.textContent = file.name; 
+                    previewProfileContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+                clearError(event.target, document.getElementById('photo_profile-error'));
+            } else {
+                event.target.value = ''; 
+                previewProfileContainer.classList.add('hidden');
+                 if(file) { 
+                   showError(event.target, document.getElementById('photo_profile-error'), 'Veuillez sélectionner une image (PNG, JPG).');
+                }
+            }
+        };
+
+        window.previewIdentityPhoto = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                let isValid = false;
+                
+                // Cacher icône par défaut
+                identityPdfIcon.classList.add('hidden');
+
+                // Accepter uniquement PDF
+                if (file.type === 'application/pdf') {
+                    isValid = true;
+                    identityPdfIcon.classList.remove('hidden'); // Afficher icône PDF
+                    identityFileName.textContent = file.name; // Afficher le nom du fichier
+                    previewIdentityContainer.classList.remove('hidden');
+                } else {
+                    // Fichier invalide
+                    event.target.value = ''; 
+                    previewIdentityContainer.classList.add('hidden');
+                    alert('Veuillez sélectionner un fichier PDF.');
+                }
+
+                if(isValid){
+                    clearError(event.target, document.getElementById('photo_identite-error'));
+                }
+            } else {
+                 previewIdentityContainer.classList.add('hidden'); 
+            }
+        };
+
+        document.getElementById('removeProfileImage').addEventListener('click', function() {
+            document.getElementById('photo_profile').value = '';
+            previewProfileContainer.classList.add('hidden');
+            profileFileName.textContent = '';
+            profileImagePreview.src = '';
+            clearError(document.getElementById('photo_profile'), document.getElementById('photo_profile-error'));
+        });
+
+        document.getElementById('removeIdentityImage').addEventListener('click', function() {
+            document.getElementById('photo_identite').value = '';
+            previewIdentityContainer.classList.add('hidden');
+            identityFileName.textContent = '';
+            identityPdfIcon.classList.add('hidden');
+            clearError(document.getElementById('photo_identite'), document.getElementById('photo_identite-error'));
+        });
+        
+        window.validateFile = function(input, errorId, allowedExtensions) {
+            const errorElement = document.getElementById(errorId);
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const extension = file.name.split('.').pop().toLowerCase();
+                let isValid = false;
+                let currentAllowedExtensions = [];
+
+                // Toujours PDF pour photo_identite
+                if (input.id === 'photo_identite') {
+                    currentAllowedExtensions = ['pdf'];
+                    isValid = currentAllowedExtensions.includes(extension);
+                } else { // Pour photo_profile (image)
+                    currentAllowedExtensions = allowedExtensions; // ['jpg', 'jpeg', 'png']
+                    isValid = currentAllowedExtensions.includes(extension);
+                }
+                
+                if (!isValid) {
+                    showError(input, errorElement, `Format non supporté. Utilisez: ${currentAllowedExtensions.join(', ')}`);
+                    if(input.id === 'photo_profile') {
+                         document.getElementById('previewProfileContainer').classList.add('hidden');
+                    } else {
+                         document.getElementById('previewIdentityContainer').classList.add('hidden');
+                    }
+                    return false;
+                } else if (file.size > 2 * 1024 * 1024) { 
+                    showError(input, errorElement, "La taille du fichier ne doit pas dépasser 2MB");
+                     if(input.id === 'photo_profile') {
+                         document.getElementById('previewProfileContainer').classList.add('hidden');
+                    } else {
+                         document.getElementById('previewIdentityContainer').classList.add('hidden');
+                    }
+                    return false;
+                } else {
+                    clearError(input, errorElement);
+                    return true;
+                }
+            } else {
+                 clearError(input, errorElement);
+                 return true; 
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            isValid &= validateName(document.getElementById('nom'));
+            isValid &= validateName(document.getElementById('prenom'));
+            isValid &= validateEmail(document.getElementById('email'));
+            isValid &= validatePassword(document.getElementById('password'));
+            isValid &= validatePhone(document.getElementById('telephone'));
+            
+            const photoProfileInput = document.getElementById('photo_profile');
+            if (!photoProfileInput.files.length) {
+                 showError(photoProfileInput, document.getElementById('photo_profile-error'), "Ce champ est obligatoire");
+                 isValid = false;
+            } else {
+                 isValid &= validateFile(photoProfileInput, 'photo_profile-error', ['jpg', 'jpeg', 'png']);
+            }
+
+            const photoIdentiteInput = document.getElementById('photo_identite');
+            const identiteExtensions = ['pdf']; // Toujours PDF
+             if (!photoIdentiteInput.files.length) {
+                 showError(photoIdentiteInput, document.getElementById('photo_identite-error'), "Ce champ est obligatoire");
+                 isValid = false;
+            } else {
+                isValid &= validateFile(photoIdentiteInput, 'photo_identite-error', identiteExtensions);
+            }
+            
+            const permisRadios = document.querySelectorAll('input[name="avez_vous_permis"]');
+            const permisError = document.getElementById('avez_vous_permis-error');
+            let permisSelected = false;
+            permisRadios.forEach(radio => {
+                if (radio.checked) permisSelected = true;
+            });
+            if (!permisSelected) {
+                const permisLabel = document.querySelector('label[for="avez_vous_permis"]'); 
+                 showError(permisRadios[0], permisError, "Veuillez indiquer si vous avez un permis."); 
+                isValid = false;
+            } else {
+                clearError(permisRadios[0], permisError);
+            }
+
+            const typePermis = document.getElementById('type_permis');
+            const typePermisError = document.getElementById('type_permis-error');
+            if (typePermis.value === '') {
+                showError(typePermis, typePermisError, "Veuillez sélectionner un type de permis");
+                isValid = false;
+            } else {
+                clearError(typePermis, typePermisError);
+            }
+            
+            const adresse = document.getElementById('adresse');
+            const adresseError = document.getElementById('adresse-error');
+            if (adresse.value.trim() === '') {
+                showError(adresse, adresseError, "Veuillez entrer une adresse");
+                isValid = false;
+            } else {
+                clearError(adresse, adresseError);
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
   </script>
 </body>
 </html>

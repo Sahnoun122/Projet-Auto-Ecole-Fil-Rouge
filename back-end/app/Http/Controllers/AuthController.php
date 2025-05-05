@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
-
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,12 +17,6 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-//     use Notifiable;
-
-// public function sendPasswordResetNotification($token)
-// {
-//     $this->notify(new CustomResetPassword($token, $this->email));
-// }
 
     public function showRegisterForm()
     {
@@ -40,19 +32,29 @@ class AuthController extends Controller
             'adresse' => 'required|string|max:255',
             'telephone' => 'required|string|max:20',
             'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'photo_identite' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'type_permis' => 'required|string|max:255',
             'password' => ['required','string','min:8','regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'],
             'role' => 'required|in:admin,moniteur,candidat',
         ];
 
-        if ($request->role === 'moniteur') {
+        if ($request->role === 'candidat') {
+            $rules['avez_vous_permis'] = 'required|boolean'; 
+
+            if ($request->input('avez_vous_permis') == '0') {
+                $rules['photo_identite'] = 'required|file|mimes:pdf|max:2048';
+            }
+            else {
+                $rules['photo_identite'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+            }
+        } elseif ($request->role === 'moniteur') {
             $rules['certifications'] = 'required|file|mimes:pdf,doc,docx|max:2048';
             $rules['qualifications'] = 'required|file|mimes:pdf,doc,docx|max:2048';
+            $rules['photo_identite'] = 'required|image|mimes:jpeg,png,jpg|max:2048'; 
         }
         
 
         $validator = Validator::make($request->all(), $rules);
+
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -72,7 +74,7 @@ class AuthController extends Controller
             'adresse' => $request->adresse,
             'telephone' => $request->telephone,
             'photo_profile' => $profilePhotoPath,
-            'photo_identite' => $identityPhotoPath,
+            'photo_identite' => $identityPhotoPath, 
             'type_permis' => $request->type_permis,
             'role' => $request->role,
             'password' => Hash::make($request->password),
