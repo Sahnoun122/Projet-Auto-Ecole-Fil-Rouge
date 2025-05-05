@@ -6,12 +6,58 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth; // Add this line
+use App\Models\Quiz; // Add this line
+use App\Models\Title; // Add this line
+use App\Models\Course; // Add this line
+use App\Models\CourseView; // Add this line
 
 class CandidatsController extends Controller
 {
     public function dashboard()
     {
-        return view('candidats.dashboard'); 
+        /** @var \App\Models\User $candidat */
+        $candidat = Auth::user();
+
+        // --- Progress Summary ---
+        // Assuming 'type_permis' on User determines relevant titles
+        // Adjust this logic if your application assigns courses differently
+        $relevantTitleIds = Title::where('type_permis', $candidat->type_permis)->pluck('id'); // Corrected column name
+
+        $totalCourses = Course::whereIn('title_id', $relevantTitleIds)->count();
+
+        $completedCoursesCount = 0;
+        if ($totalCourses > 0) {
+             $completedCoursesCount = CourseView::where('user_id', $candidat->id)
+                                       ->whereIn('course_id', function($query) use ($relevantTitleIds) {
+                                           $query->select('id')
+                                                 ->from('courses')
+                                                 ->whereIn('title_id', $relevantTitleIds);
+                                       })
+                                       ->distinct('course_id') // Ensure we count each course only once
+                                       ->count();
+        }
+
+
+        $progressPercentage = $totalCourses > 0 ? round(($completedCoursesCount / $totalCourses) * 100) : 0;
+        $remainingCourses = $totalCourses - $completedCoursesCount;
+
+        // --- Notifications ---
+        // Fetch latest 5 unread notifications
+        $notifications = $candidat->unreadNotifications()->latest()->take(5)->get();
+
+        // --- Quizzes ---
+        // Fetch latest 3 quizzes (adjust query if quizzes are specific to candidate/permis)
+        $quizzes = Quiz::orderBy('created_at', 'desc')->take(3)->get();
+
+        return view('candidats.dashboard', compact(
+            'candidat',
+            'progressPercentage',
+            'remainingCourses',
+            'totalCourses',
+            'notifications',
+            'quizzes'
+        ));
     }
     
     public function index(Request $request)
