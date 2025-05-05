@@ -119,6 +119,7 @@
                             <div class="relative w-full">
                                 <input type="file" id="questionImage" name="image" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
                             </div>
+                            <button type="button" id="uploadImageBtn" class="hidden bg-[#4D44B5] text-white px-3 py-1 rounded-lg font-medium hover:bg-[#3a32a1] transition text-sm ml-2">Uploader l'image</button>
                             <div id="imagePreviewContainer" class="hidden flex-shrink-0">
                                 <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border border-gray-200">
                                     <img id="imagePreview" class="w-full h-full object-cover">
@@ -470,10 +471,43 @@
                     $('#removeImageFlag').val('0');
                 };
                 reader.readAsDataURL(this.files[0]);
+                $('#uploadImageBtn').removeClass('hidden');
             } else {
                  $('#imagePreviewContainer').addClass('hidden');
                  $('#imagePreview').attr('src', '');
+                 $('#uploadImageBtn').addClass('hidden');
             }
+        });
+
+        $('#uploadImageBtn').click(function() {
+            const fileInput = document.getElementById('questionImage');
+            const file = fileInput.files[0];
+            const questionId = $('#questionId').val();
+            if (!file || !questionId) {
+                showToast('Veuillez sélectionner une image et une question.', false);
+                return;
+            }
+            const formData = new FormData();
+            formData.append('image', file);
+            $.ajax({
+                url: `/admin/questions/${questionId}/image`,
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || $('input[name="_token"]').val(),
+                    'Accept': 'application/json'
+                },
+                success: function(response) {
+                    $('#imagePreview').attr('src', response.image_url);
+                    showToast(response.message || "Image mise à jour avec succès!", true);
+                    $('#uploadImageBtn').addClass('hidden');
+                },
+                error: function(xhr) {
+                    showToast(xhr.responseJSON?.message || "Erreur lors de l'upload de l'image.", false);
+                }
+            });
         });
 
         $('#addChoiceBtn').click(function() {
@@ -523,31 +557,31 @@
             e.preventDefault();
 
             const $form = $(this);
-            const formData = new FormData(this);
-            const $submitBtn = $form.find('button[type="submit"]');
-            const originalBtnText = $submitBtn.html();
+            const url = $form.attr('action');
             const method = $form.find('input[name="_method"]').val() || $form.attr('method');
 
-            $('.error-message').remove();
-            $('.border-red-500').removeClass('border-red-500');
+            // Build the data object for JSON
+            const data = {
+                question_text: $('#questionText').val(),
+                duration: $('#questionDuration').val(),
+                remove_image: $('#removeImageFlag').val(),
+                correct_choice: $form.find('input[name="correct_choice"]:checked').val(),
+                choices: []
+            };
 
-            if (!$form.find('input[name="correct_choice"]:checked').length) {
-                showToast('Veuillez sélectionner une réponse correcte', false);
-                const $choicesContainer = $('#choicesContainer');
-                $choicesContainer.addClass('border-red-500');
-                $choicesContainer.after('<p class="error-message text-red-500 text-xs mt-1">Une réponse correcte doit être sélectionnée.</p>');
-                return;
-            }
-
-            $submitBtn.prop('disabled', true);
-            $submitBtn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...');
+            $('#choicesContainer .choice-item').each(function(index) {
+                data.choices.push({
+                    text: $(this).find('input[type="text"]').val(),
+                    id: $(this).find('input[type="hidden"]').val()
+                });
+            });
 
             $.ajax({
-                url: $form.attr('action'),
+                url: url,
                 method: method,
-                data: formData,
+                data: JSON.stringify(data),
                 processData: false,
-                contentType: false,
+                contentType: 'application/json',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || $('input[name="_token"]').val(),
                     'Accept': 'application/json'
@@ -566,8 +600,7 @@
                     }
                 },
                 complete: function() {
-                    $submitBtn.prop('disabled', false);
-                    $submitBtn.html(originalBtnText);
+                    $form.find('button[type="submit"]').prop('disabled', false).html('Enregistrer');
                 }
             });
         });

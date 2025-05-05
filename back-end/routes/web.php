@@ -178,6 +178,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('admin.paiements.destroy');
     Route::get('/paiements/{paiement}/details', [PaiementController::class, 'show'])->name('admin.paiements.show');
 
+    Route::post('/admin/questions/{question}/image', [\App\Http\Controllers\QuestionController::class, 'updateImage'])->name('admin.questions.updateImage');
 
 });
 

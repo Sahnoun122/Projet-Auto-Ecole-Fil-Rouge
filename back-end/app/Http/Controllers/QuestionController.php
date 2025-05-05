@@ -8,6 +8,8 @@ use App\Models\Choice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr; 
+use Illuminate\Support\Facades\Log; 
 
 class QuestionController extends Controller
 {
@@ -72,8 +74,7 @@ class QuestionController extends Controller
     public function update(Request $request, Question $question)
     {
         $validated = $request->validate([
-            'question_text' => 'required|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'question_text' => 'sometimes|string|max:1000|nullable',
             'remove_image' => 'nullable|boolean',
             'duration' => 'nullable|integer|min:5|max:300',
             'choices' => 'nullable|array|min:2|max:5',
@@ -82,54 +83,72 @@ class QuestionController extends Controller
             'correct_choice' => 'nullable|integer'
         ]);
 
-        $imagePath = $question->image_path;
-        
-        if ($request->hasFile('image')) {
-            if ($imagePath) {
-                Storage::disk('public')->delete($imagePath);
-            }
-            $imagePath = $request->file('image')->store('questions', 'public');
-        } elseif ($request->remove_image) {
-            if ($imagePath) {
-                Storage::disk('public')->delete($imagePath);
-                $imagePath = null;
+        $updatePayload = [];
+        if (array_key_exists('question_text', $validated)) {
+            $updatePayload['question_text'] = $request->input('question_text');
+        }
+        if (array_key_exists('duration', $validated)) {
+            $updatePayload['duration'] = $request->input('duration');
+        }
+        if ($request->input('remove_image') == '1') {
+            if ($question->image_path) {
+                Storage::disk('public')->delete($question->image_path);
+                $updatePayload['image_path'] = null;
             }
         }
-
-        $question->update([
-            'question_text' => $validated['question_text'],
-            'image_path' => $imagePath,
-            'duration' => $validated['duration'],
-        ]);
+        if (!empty($updatePayload)) {
+            $question->update($updatePayload);
+        }
 
         $existingChoiceIds = [];
-        
-        foreach ($validated['choices'] as $index => $choiceData) {
-            if (isset($choiceData['id'])) {
-                $choice = $question->choices()->find($choiceData['id']);
-                if ($choice) {
-                    $choice->update([
-                        'choice_text' => $choiceData['text'],
-                        'is_correct' => $index == $validated['correct_choice']
+        if (isset($validated['choices'])) {
+            foreach ($validated['choices'] as $index => $choiceData) {
+                $choiceText = Arr::get($choiceData, 'text');
+                if ($choiceText === null || $choiceText === '') continue;
+                $isCorrect = isset($validated['correct_choice']) && $index == $validated['correct_choice'];
+                $choiceId = Arr::get($choiceData, 'id');
+                if ($choiceId) {
+                    $choice = $question->choices()->find($choiceId);
+                    if ($choice) {
+                        $choice->update([
+                            'choice_text' => $choiceText,
+                            'is_correct' => $isCorrect
+                        ]);
+                        $existingChoiceIds[] = $choice->id;
+                    }
+                } else {
+                    $newChoice = $question->choices()->create([
+                        'admin_id' => Auth::id(),
+                        'choice_text' => $choiceText,
+                        'is_correct' => $isCorrect
                     ]);
-                    $existingChoiceIds[] = $choice->id;
+                    $existingChoiceIds[] = $newChoice->id;
                 }
-            } else {
-                $newChoice = $question->choices()->create([
-                    'admin_id' => Auth::id(),
-                    'choice_text' => $choiceData['text'],
-                    'is_correct' => $index == $validated['correct_choice']
-                ]);
-                $existingChoiceIds[] = $newChoice->id;
             }
+            $question->choices()->whereNotIn('id', $existingChoiceIds)->delete();
         }
-
-        $question->choices()->whereNotIn('id', $existingChoiceIds)->delete();
-
         return response()->json([
             'success' => true,
             'message' => 'Question mise à jour avec succès!',
             'question' => $question->fresh('choices')
+        ]);
+    }
+
+    public function updateImage(Request $request, Question $question)
+    {
+        $validated = $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        if ($question->image_path) {
+            Storage::disk('public')->delete($question->image_path);
+        }
+        $imagePath = $request->file('image')->store('questions', 'public');
+        $question->update(['image_path' => $imagePath]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Image mise à jour avec succès!',
+            'image_path' => $imagePath,
+            'image_url' => asset('storage/' . $imagePath)
         ]);
     }
 
