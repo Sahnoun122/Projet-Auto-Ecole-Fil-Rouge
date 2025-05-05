@@ -15,13 +15,38 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB; // Add this import
+use Illuminate\Support\Facades\DB;
 
 class MoniteurController extends Controller
 {
 
     public function dashboard(){
-       return view('moniteur.dashboard');
+        $moniteurId = Auth::id();
+
+        $coursConduite = CoursConduite::where('moniteur_id', $moniteurId)
+                                    ->with([
+                                        'candidat',
+                                        'candidatsAssignes' => function ($query) {
+                                            $query->where('role', 'candidat');
+                                        },
+                                        'vehicule'
+                                    ])
+                                    ->orderBy('date_heure', 'desc')
+                                    ->take(5)
+                                    ->get();
+
+        $candidatsAssignes = User::where('role', 'candidat')
+            ->whereHas('coursConduites', function($q) use ($moniteurId) {
+                $q->where('moniteur_id', $moniteurId);
+            })
+            ->limit(5)
+            ->get();
+
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        $notifications = $user ? $user->unreadNotifications()->limit(5)->get() : collect();
+
+       return view('moniteur.dashboard', compact('coursConduite', 'candidatsAssignes', 'notifications'));
     }
     
         public function index(Request $request)
@@ -51,7 +76,7 @@ class MoniteurController extends Controller
                 'adresse' => 'required|string|max:255',
                 'telephone' => 'required|string|max:20',
                 'photo_profile' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-                'photo_identite' => 'required|file|mimes:pdf|max:2048', // Changé pour accepter PDF
+                'photo_identite' => 'required|file|mimes:pdf|max:2048',
                 'type_permis' => 'required|string|max:255',
                 'certifications' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'qualifications' => 'required|file|mimes:pdf,doc,docx|max:2048',
@@ -99,7 +124,7 @@ class MoniteurController extends Controller
                 $rules['photo_profile'] = 'image|mimes:jpeg,png,jpg|max:2048';
             }
             if ($request->hasFile('photo_identite')) {
-                $rules['photo_identite'] = 'file|mimes:pdf|max:2048'; // Changé pour accepter PDF
+                $rules['photo_identite'] = 'file|mimes:pdf|max:2048';
             }
             if ($request->hasFile('certifications')) {
                 $rules['certifications'] = 'file|mimes:pdf,doc,docx|max:2048';
@@ -148,7 +173,6 @@ class MoniteurController extends Controller
             return redirect()->route('admin.monitors.index')->with('success', 'Moniteur supprimé avec succès');
         }
     
-    //candiadts 
 
     public function candidats(Request $request)
     {
@@ -229,21 +253,14 @@ class MoniteurController extends Controller
         return view('moniteur.quiz', compact('candidat', 'quizzes'));
     }
 
-    // New method to show detailed quiz results for a candidate
     public function quizResults(Quiz $quiz, User $candidat)
     {
-        // Ensure the user is a candidate
         if ($candidat->role !== 'candidat') {
             abort(403, "Cet utilisateur n'est pas un candidat.");
         }
 
-        // Ensure the monitor has access (optional, add logic if needed)
-        // For example, check if the candidate is assigned to this monitor
-
-        // Reuse the result fetching logic (similar to QuizController@candidateResults)
         $results = $quiz->getResults($candidat->id);
 
-        // Return the new view
         return view('moniteur.quiz-results', [
             'quiz' => $quiz,
             'candidate' => $candidat,
@@ -266,31 +283,27 @@ class MoniteurController extends Controller
         }
     }
 
-    // Renamed method to reflect its purpose
     public function showAssignedExams(Request $request)
     {
         $search = $request->input('search');
         $moniteurId = Auth::id();
 
-        // Get IDs of candidates assigned to this monitor's courses
         $candidatIds = CoursConduite::where('moniteur_id', $moniteurId)
-            ->pluck('candidat_id') // Get primary candidate IDs
+            ->pluck('candidat_id')
             ->merge(
-                DB::table('presences_cours') // Get additional candidates from pivot table
+                DB::table('presences_cours')
                     ->join('cours_conduites', 'presences_cours.cours_conduite_id', '=', 'cours_conduites.id')
                     ->where('cours_conduites.moniteur_id', $moniteurId)
                     ->pluck('presences_cours.candidat_id')
             )
             ->unique()
-            ->filter() // Remove nulls if any
+            ->filter()
             ->toArray();
 
-        // Fetch exams for these candidates
         $assignedExamsQuery = Exam::whereIn('candidat_id', $candidatIds)
-            ->with('candidat', 'result') // Eager load relationships
+            ->with('candidat', 'result')
             ->orderBy('date_exam', 'desc');
 
-        // Apply search if provided
         if ($search) {
             $assignedExamsQuery->where(function($query) use ($search) {
                 $query->where('type', 'like', "%$search%")
@@ -303,19 +316,11 @@ class MoniteurController extends Controller
             });
         }
 
-        $assignedExams = $assignedExamsQuery->paginate(15); // Or your preferred pagination number
+        $assignedExams = $assignedExamsQuery->paginate(15);
 
-        // Pass the exams to the view
         return view('moniteur.exams', compact('assignedExams', 'search'));
     }
 
-    // Remove or comment out the old candidatsWithExams method if no longer needed
-    /*
-    public function candidatsWithExams(Request $request)
-    {
-        // ... old code ...
-    }
-    */
 
     public function candidatExamResults(User $candidat)
     {
