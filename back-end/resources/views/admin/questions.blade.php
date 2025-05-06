@@ -163,11 +163,11 @@
         </div>
     </div>
 
-    <div id="successToast" class="hidden fixed top-4 right-4 z-50">
+    {{-- <div id="successToast" class="hidden fixed top-4 right-4 z-50">
         <div class="bg-green-500 text-white px-4 py-3 md:px-6 md:py-4 rounded-lg shadow-lg flex items-center text-sm md:text-base">
             <i class="fas fa-check-circle mr-2"></i>
             <span id="successMessage"></span>
-        </div>
+        </div> --}}
     </div>
 </div>
 

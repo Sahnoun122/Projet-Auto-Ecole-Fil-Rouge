@@ -6,6 +6,8 @@
   <title>Sahnoun - Réinitialisation du mot de passe</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="icon" type="images/png" href="{{ asset('storage/images/logo.png') }}">
+
   <style>
     @keyframes gradientBG {
       0% { background-position: 0% 50%; }
