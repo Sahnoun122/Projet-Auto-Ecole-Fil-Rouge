@@ -26,6 +26,9 @@ class QuestionController extends Controller
     }
     public function store(Request $request, Quiz $quiz)
     {
+        
+        $imagePath = "";
+
         $validated = $request->validate([
             'question_text' => 'required|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -35,7 +38,8 @@ class QuestionController extends Controller
             'correct_choice' => 'required|integer'
         ]);
 
-        $imagePath = null;
+        // dd($request);
+
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('questions', 'public');
         }

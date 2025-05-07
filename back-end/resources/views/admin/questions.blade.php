@@ -482,6 +482,7 @@
         $('#uploadImageBtn').click(function() {
             const fileInput = document.getElementById('questionImage');
             const file = fileInput.files[0];
+            
             const questionId = $('#questionId').val();
             if (!file || !questionId) {
                 showToast('Veuillez sélectionner une image et une question.', false);
@@ -489,6 +490,7 @@
             }
             const formData = new FormData();
             formData.append('image', file);
+            
             $.ajax({
                 url: `/admin/questions/${questionId}/image`,
                 method: 'POST',
@@ -559,29 +561,12 @@
             const $form = $(this);
             const url = $form.attr('action');
             const method = $form.find('input[name="_method"]').val() || $form.attr('method');
+            const imageInput = document.getElementById('questionImage');
+            const hasImage = imageInput && imageInput.files && imageInput.files.length > 0;
 
-            // Build the data object for JSON
-            const data = {
-                question_text: $('#questionText').val(),
-                duration: $('#questionDuration').val(),
-                remove_image: $('#removeImageFlag').val(),
-                correct_choice: $form.find('input[name="correct_choice"]:checked').val(),
-                choices: []
-            };
-
-            $('#choicesContainer .choice-item').each(function(index) {
-                data.choices.push({
-                    text: $(this).find('input[type="text"]').val(),
-                    id: $(this).find('input[type="hidden"]').val()
-                });
-            });
-
-            $.ajax({
+            let ajaxOptions = {
                 url: url,
                 method: method,
-                data: JSON.stringify(data),
-                processData: false,
-                contentType: 'application/json',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || $('input[name="_token"]').val(),
                     'Accept': 'application/json'
@@ -602,7 +587,42 @@
                 complete: function() {
                     $form.find('button[type="submit"]').prop('disabled', false).html('Enregistrer');
                 }
-            });
+            };
+
+            if (hasImage) {
+                const formData = new FormData();
+                formData.append('question_text', $('#questionText').val());
+                formData.append('duration', $('#questionDuration').val());
+                formData.append('remove_image', $('#removeImageFlag').val());
+                formData.append('correct_choice', $form.find('input[name="correct_choice"]:checked').val());
+                formData.append('image', imageInput.files[0]);
+                $('#choicesContainer .choice-item').each(function(index) {
+                    formData.append(`choices[${index}][text]`, $(this).find('input[type="text"]').val());
+                    formData.append(`choices[${index}][id]`, $(this).find('input[type="hidden"]').val());
+                });
+                ajaxOptions.data = formData;
+                ajaxOptions.processData = false;
+                ajaxOptions.contentType = false;
+            } else {
+                const data = {
+                    question_text: $('#questionText').val(),
+                    duration: $('#questionDuration').val(),
+                    remove_image: $('#removeImageFlag').val(),
+                    correct_choice: $form.find('input[name="correct_choice"]:checked').val(),
+                    choices: []
+                };
+                $('#choicesContainer .choice-item').each(function(index) {
+                    data.choices.push({
+                        text: $(this).find('input[type="text"]').val(),
+                        id: $(this).find('input[type="hidden"]').val()
+                    });
+                });
+                ajaxOptions.data = JSON.stringify(data);
+                ajaxOptions.processData = false;
+                ajaxOptions.contentType = 'application/json';
+            }
+
+            $.ajax(ajaxOptions);
         });
 
         $('.modal-content').on('click', function(e) {
