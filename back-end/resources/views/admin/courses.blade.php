@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
- 
+
 <div class="flex-1 overflow-auto p-4 md:p-6">
     <header class="bg-[#4D44B5] text-white shadow-md rounded-lg mb-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
@@ -23,8 +23,6 @@
     </div>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      
-        
         <div id="formErrors" class="hidden mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md">
             <p>Veuillez corriger les erreurs suivantes :</p>
             <ul class="list-disc list-inside"></ul>
@@ -59,13 +57,13 @@
                         <h6 class="text-lg font-semibold text-[#4D44B5] mb-2 flex-grow">{{ $course->title }}</h6>
                         <div class="flex justify-between items-center mt-auto pt-2 border-t border-gray-100">
                             <button data-modal-target="detailModal" data-modal-toggle="detailModal"
-                                onclick="showCourseDetails('{{ $course->title }}', '{{ $course->description }}', '{{ $course->image ? asset('storage/' . $course->image) : '' }}')"
+                                onclick="showCourseDetails('{{ addslashes($course->title) }}', `{{ addslashes($course->description) }}`, '{{ $course->image ? asset('storage/' . $course->image) : '' }}')"
                                 class="text-gray-600 hover:text-[#4D44B5] p-1 rounded-full hover:bg-gray-100 transition" title="Voir les détails">
                                 <i class="fas fa-eye"></i>
                             </button>
                             <div class="flex space-x-1">
                                 <button data-modal-target="courseModal" data-modal-toggle="courseModal"
-                                    onclick="prepareEditForm('{{ $course->id }}', '{{ $course->title }}', `{{ $course->description }}`, '{{ $course->image ? asset('storage/' . $course->image) : '' }}')"
+                                    onclick="prepareEditForm('{{ $course->id }}', '{{ addslashes($course->title) }}', `{{ addslashes($course->description) }}`, '{{ $course->image ? asset('storage/' . $course->image) : '' }}')"
                                     class="text-[#4D44B5] hover:text-[#3a32a1] p-1 rounded-full hover:bg-gray-100 transition" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -87,6 +85,7 @@
         </div>
     </main>
 
+    <!-- Modal pour créer/modifier un cours -->
     <div id="courseModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50">
         <div class="relative p-4 w-full max-w-lg max-h-full">
             <div class="relative bg-white rounded-lg shadow-lg">
@@ -159,6 +158,7 @@
         </div>
     </div>
 
+    <!-- Modal pour afficher les détails du cours -->
     <div id="detailModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="relative bg-white rounded-lg shadow-lg">
@@ -173,13 +173,11 @@
                 </div>
                 <div class="p-4 md:p-5 space-y-4">
                     <div class="flex justify-center items-center mb-4">
-                        <img
-                            id="detailModalImage"
-                            class="max-w-full h-auto max-h-80 object-contain rounded shadow-md bg-gray-100"
-                            src=""
-                            onerror="this.style.display='none';"
-                            alt="Image du cours"
-                        >
+                        <img id="detailModalImage" 
+                             class="max-w-full h-auto max-h-80 object-contain rounded shadow-md bg-gray-100" 
+                             src="" 
+                             alt="Image du cours"
+                             style="display: none;">
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h4 class="font-semibold mb-2 text-gray-800">Description :</h4>
@@ -223,10 +221,13 @@
     function showCourseDetails(title, description, imageUrl) {
         $('#detailModalTitle').text(title);
         $('#detailModalDescription').text(description);
+        
         const imgElement = $('#detailModalImage');
-        if (imageUrl) {
+        if (imageUrl && imageUrl !== '') {
             imgElement.attr('src', imageUrl).show();
-            imgElement.onerror = function() { this.style.display='none'; };
+            imgElement.on('error', function() {
+                $(this).hide();
+            });
         } else {
             imgElement.hide();
         }

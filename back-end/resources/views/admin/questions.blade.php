@@ -135,7 +135,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
                             <label for="questionDuration" class="block text-sm md:text-base font-medium text-gray-700 mb-1">Durée (secondes) *</label>
-                            <input type="number" id="questionDuration" name="duration" min="5" max="60" value="30" class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm md:text-base" required>
+                            <input type="number" id="questionDuration" name="duration" min="5" max="30" value="30" class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4D44B5] focus:border-[#4D44B5] transition text-sm md:text-base" required>
                         </div>
                     </div>
 
