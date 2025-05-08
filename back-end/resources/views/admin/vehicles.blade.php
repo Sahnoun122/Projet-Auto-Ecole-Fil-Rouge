@@ -14,11 +14,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto">
-        @if(session('success'))
-            <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
-                <p>{{ session('success') }}</p>
-            </div>
-        @endif
+    
 
         <div class="mb-6" id="maintenanceAlertsSection">
             <div class="bg-white rounded-xl shadow-md overflow-hidden">

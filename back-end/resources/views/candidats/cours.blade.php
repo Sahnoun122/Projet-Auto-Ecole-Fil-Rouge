@@ -68,8 +68,8 @@
                         <h3 class="text-lg font-semibold text-[#4D44B5] mb-2">{{ $course->title }}</h3>
                     </div>
                     
-                    <button onclick="showCourseDetail({{ $course->id }})"
-                            class="absolute bottom-5 right-5 w-12 h-12 flex items-center justify-center text-[#4D44B5] hover:text-[#3a32a1] rounded-full transition-all duration-300 hover:scale-110">
+                    <button onclick="showCourseDetails('{{ addslashes($course->title) }}', `{{ addslashes($course->description) }}`, '{{ $course->image ? asset('storage/' . $course->image) : '' }}')"
+                            class="absolute bottom-5 right-5 w-12 h-12 flex items-center justify-center center text-[#4D44B5] hover:text-[#3a32a1] rounded-full transition-all duration-300 hover:scale-110">
                         <i class="fas fa-eye text-lg"></i>
                     </button>
                 </div>
@@ -97,105 +97,109 @@
     </div>
 </div>
 
-<div id="courseDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-        <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75" 
-             onclick="closeModal()"></div>
-        
-        <div class="relative inline-block w-full max-w-3xl overflow-hidden text-left align-bottom transition-all transform bg-white rounded-xl shadow-xl sm:my-8 sm:align-middle">
-            <div class="absolute top-0 right-0 pt-4 pr-4">
-                <button type="button" 
-                        onclick="closeModal()" 
-                        class="text-gray-400 hover:text-gray-500 transition-colors">
+<!-- Modal de détails (similaire à l'admin) -->
+<div id="detailModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50">
+    <div class="relative p-4 w-full max-w-2xl max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                <h3 class="text-xl font-semibold text-gray-900" id="detailModalTitle"></h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="detailModal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
                     <span class="sr-only">Fermer</span>
-                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            
-            <div class="bg-white px-6 pt-6 pb-8">
-                <div id="modal-image-container" class="mb-6 rounded-xl overflow-hidden"></div>
-                
-                <h3 class="text-2xl font-bold text-gray-900 mb-4" id="modal-title"></h3>
-                
-                <div class="prose max-w-none">
-                    <p class="text-gray-600 whitespace-pre-line" id="modal-description"></p>
+            <div class="p-4 md:p-5 space-y-4">
+                <div class="flex justify-center items-center mb-4">
+                    <img id="detailModalImage" 
+                         class="max-w-full h-auto max-h-80 object-contain rounded shadow-md bg-gray-100" 
+                         src="" 
+                         alt="Image du cours"
+                         style="display: none;">
                 </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-2 text-gray-800">Description :</h4>
+                    <p class="text-gray-700 whitespace-pre-line" id="detailModalDescription"></p>
+                </div>
+            </div>
+            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b">
+                <button type="button" onclick="closeDetailModal()" class="text-white bg-[#4D44B5] hover:bg-[#3a32a1] focus:ring-4 focus:outline-none focus:ring-[#4D44B5] font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Fermer
+                </button>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@1.6.6/dist/flowbite.min.js"></script>
 <script>
-function showCourseDetail(courseId) {
-    fetch(`/candidats/cours/${courseId}/detail`)
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => Promise.reject(err));
-            }
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById('modal-title').textContent = data.title;
-            document.getElementById('modal-description').textContent = data.description;
-            
-            const imageContainer = document.getElementById('modal-image-container');
-            imageContainer.innerHTML = '';
-            
-            if (data.image) {
-                const img = document.createElement('img');
-                img.src = data.image;
-                img.className = 'w-full h-80 object-cover';
-                img.onerror = function() {
-                    this.style.display = 'none';
-                    const placeholder = document.createElement('div');
-                    placeholder.className = 'w-full h-80 bg-gray-100 flex items-center justify-center';
-                    placeholder.innerHTML = '<i class="fas fa-book-open text-6xl text-gray-400"></i>';
-                    imageContainer.appendChild(placeholder);
-                };
-                imageContainer.appendChild(img);
-            } else {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'w-full h-80 bg-gray-100 flex items-center justify-center';
-                placeholder.innerHTML = '<i class="fas fa-book-open text-6xl text-gray-400"></i>';
-                imageContainer.appendChild(placeholder);
-            }
-            
-            document.getElementById('courseDetailModal').classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-            
-            const courseElement = document.querySelector(`[data-course-id="${courseId}"]`);
-            if (courseElement) {
-                let viewIndicator = courseElement.querySelector('.view-indicator');
-                if (!viewIndicator) {
-                    const container = courseElement.querySelector('.relative');
-                    if (container) {
-                        viewIndicator = document.createElement('div');
-                        viewIndicator.className = 'absolute top-3 right-3 bg-green-500 text-white text-xs px-3 py-1 rounded-full shadow view-indicator';
-                        viewIndicator.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Vu';
-                        container.appendChild(viewIndicator);
-                    }
-                }
-            }
-            
-            if (data.progress) {
-                document.getElementById('progress-text').textContent = `${data.progress.percentage}%`;
-                document.getElementById('progress-bar').style.width = `${data.progress.percentage}%`;
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            alert(error.error || 'Une erreur est survenue lors du chargement du cours');
+function showCourseDetails(title, description, imageUrl) {
+    $('#detailModalTitle').text(title);
+    $('#detailModalDescription').text(description);
+    
+    const imgElement = $('#detailModalImage');
+    if (imageUrl && imageUrl !== '') {
+        imgElement.attr('src', imageUrl).show();
+        imgElement.on('error', function() {
+            $(this).hide();
         });
+    } else {
+        imgElement.hide();
+    }
+    
+    $('#detailModal').removeClass('hidden');
+    $('body').addClass('overflow-hidden');
+    
+    const courseId = $(event.currentTarget).closest('[data-course-id]').data('course-id');
+    if (courseId) {
+        markCourseAsViewed(courseId);
+    }
 }
 
-function closeModal() {
-    document.getElementById('courseDetailModal').classList.add('hidden');
-    document.body.classList.remove('overflow-hidden');
+function closeDetailModal() {
+    $('#detailModal').addClass('hidden');
+    $('body').removeClass('overflow-hidden');
 }
 
-document.addEventListener('keydown', function(event) {
+function markCourseAsViewed(courseId) {
+    $.ajax({
+        url: `/candidats/cours/${courseId}/view`,
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            const courseElement = $(`[data-course-id="${courseId}"]`);
+            if (courseElement.find('.view-indicator').length === 0) {
+                courseElement.find('.relative').append(`
+                    <div class="absolute top-3 right-3 bg-green-500 text-white text-xs px-3 py-1 rounded-full shadow view-indicator">
+                        <i class="fas fa-check-circle mr-1"></i> Vu
+                    </div>
+                `);
+            }
+            
+            if (response.progress) {
+                $('#progress-text').text(`${response.progress.percentage}%`);
+                $('#progress-bar').css('width', `${response.progress.percentage}%`);
+            }
+        },
+        error: function(xhr) {
+            console.error('Erreur lors de l\'enregistrement de la vue', xhr.responseText);
+        }
+    });
+}
+
+$(document).keydown(function(event) {
     if (event.key === 'Escape') {
-        closeModal();
+        closeDetailModal();
+    }
+});
+
+$('#detailModal').click(function(event) {
+    if ($(event.target).is('#detailModal')) {
+        closeDetailModal();
     }
 });
 </script>
